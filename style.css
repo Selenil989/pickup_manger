@@ -751,6 +751,202 @@ select {
   color: var(--white);
 }
 
+/* ── 23. Character Manager (gear / + card / edit modal) ─── */
+.card-gear-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+  width: 26px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  border-radius: 8px 0 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.card-gear-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.char-card-add {
+  position: relative;
+  aspect-ratio: 1 / 1.9;
+  border-radius: 8px;
+  border: 2px dashed var(--accent);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.char-card-add:hover {
+  border-color: var(--rec);
+  background: rgba(77, 255, 145, 0.05);
+}
+
+.char-card-add-icon {
+  font-size: 48px;
+  font-weight: 200;
+  line-height: 1;
+  color: var(--accent);
+  transition: color 0.15s;
+  user-select: none;
+}
+
+.char-card-add:hover .char-card-add-icon {
+  color: var(--rec);
+}
+
+.char-card-add-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  user-select: none;
+}
+
+.char-card-pending {
+  border-color: var(--opt);
+}
+
+.char-card-pending-badge {
+  position: absolute;
+  top: 28px;
+  left: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--opt);
+  background: rgba(255, 210, 77, 0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.char-edit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 210, 77, 0.08);
+  border: 1px solid rgba(255, 210, 77, 0.20);
+  border-radius: 6px;
+}
+
+.char-edit-bar-info {
+  font-size: 12px;
+  color: var(--opt);
+}
+
+.char-edit-bar-btn {
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid var(--opt);
+  border-radius: 5px;
+  background: rgba(255, 210, 77, 0.10);
+  color: var(--opt);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.char-edit-bar-btn:hover {
+  background: rgba(255, 210, 77, 0.22);
+}
+
+/* Character Edit / Create Modal */
+.char-edit-panel { width: 480px; }
+
+.edit-id-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.edit-id-label {
+  font-size: 11px;
+  color: var(--muted);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.edit-id-value {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--muted);
+  background: var(--border);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.edit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.edit-required { color: var(--must); }
+
+.edit-input,
+.edit-select {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--text);
+  font-size: 13px;
+  min-width: 0;
+}
+
+.edit-input:focus,
+.edit-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.edit-select { cursor: pointer; }
+
+.edit-id-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.edit-id-hint {
+  font-size: 11px;
+  min-height: 16px;
+}
+
+.hint-error { color: var(--must); }
+.hint-ok    { color: var(--muted); }
+
+.detail-btn-save:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
 /* ── 20. Responsive — 768px breakpoint ───────────────────── */
 @media (max-width: 768px) {
   .app-main {

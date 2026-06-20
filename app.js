@@ -18,6 +18,15 @@ var _detailCharId = null;
 var _detailChar   = null;
 var _detailDraft  = null;
 
+var _charEdits    = {};
+var _charAdds     = [];
+var _editCharId   = null;
+var _editDraft    = null;
+var _editIsCreate = false;
+
+var CHAR_ROLES    = ['attack', 'stun', 'anomaly', 'support', 'defense', 'rupture'];
+var CHAR_ELEMENTS = ['physical', 'fire', 'ice', 'electric', 'ether', 'wind'];
+
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 1: Utilities
 
@@ -227,62 +236,92 @@ function renderCardGrid() {
     ownedMap[roster.characters[o].characterId] = true;
   }
 
-  var html = '<div class="card-grid">';
+  var pendingCount = Object.keys(_charEdits).length + _charAdds.length;
+  var html = pendingCount > 0
+    ? '<div class="char-edit-bar"><span class="char-edit-bar-info">미반영 변경사항 ' + pendingCount + '개</span>' +
+      '<button class="char-edit-bar-btn" onclick="downloadCharactersPreview()">&#x2B07; Preview 다운로드</button></div>'
+    : '';
+
+  html += '<div class="card-grid">';
+
   for (var i = 0; i < appState.characters.length; i++) {
     var char = appState.characters[i];
+    var dc = _charEdits[char.id] ? Object.assign({}, char, _charEdits[char.id]) : char;
     var owned = ownedMap[char.id] ? true : false;
 
-    var elementFile = char.specialElement
-      ? 'element_' + char.specialElement + '.webp'
-      : (char.element ? 'element_' + char.element + '.webp' : '');
-    var rarityFile = char.rarity === 5 ? 'rarity_S.webp'
-      : (char.rarity === 4 ? 'rarity_A.webp' : '');
-    var roleFile = char.role ? 'role_' + char.role + '.webp' : '';
+    var elementFile = dc.specialElement
+      ? 'element_' + dc.specialElement + '.webp'
+      : (dc.element ? 'element_' + dc.element + '.webp' : '');
+    var rarityFile = dc.rarity === 5 ? 'rarity_S.webp'
+      : (dc.rarity === 4 ? 'rarity_A.webp' : '');
+    var roleFile = dc.role ? 'role_' + dc.role + '.webp' : '';
 
     html += '<div class="char-card' + (owned ? ' owned' : '') + '" data-char-id="' + char.id + '">';
-
-    if (char.image) {
-      html += '<img class="char-card-image" src="' + imgBase + char.image + '" alt="' + char.name + '" loading="lazy">';
+    if (dc.image) {
+      html += '<img class="char-card-image" src="' + imgBase + dc.image + '" alt="' + dc.name + '" loading="lazy">';
     } else {
       html += '<div class="char-card-image char-card-no-img"></div>';
     }
-
-    html += '<div class="char-card-icons">';
-    html += '<div class="char-card-icons-left">';
-    if (rarityFile) {
-      html += '<img class="char-card-icon" src="' + imgBase + rarityFile + '" alt="">';
-    }
-    html += '</div>';
-    html += '<div class="char-card-icons-right">';
-    if (roleFile) {
-      html += '<img class="char-card-icon" src="' + imgBase + roleFile + '" alt="">';
-    }
-    if (elementFile) {
-      html += '<img class="char-card-icon" src="' + imgBase + elementFile + '" alt="">';
-    }
-    html += '</div>';
-    html += '</div>';
-
-    if (owned) {
-      html += '<div class="char-card-owned-overlay"></div>';
-    }
-
-    html += '<div class="char-card-name">' + (char.nameKo || char.name) + '</div>';
+    html += '<div class="char-card-icons"><div class="char-card-icons-left">';
+    if (rarityFile) html += '<img class="char-card-icon" src="' + imgBase + rarityFile + '" alt="">';
+    html += '</div><div class="char-card-icons-right">';
+    if (roleFile) html += '<img class="char-card-icon" src="' + imgBase + roleFile + '" alt="">';
+    if (elementFile) html += '<img class="char-card-icon" src="' + imgBase + elementFile + '" alt="">';
+    html += '</div></div>';
+    if (owned) html += '<div class="char-card-owned-overlay"></div>';
+    html += '<div class="char-card-name">' + (dc.nameKo || dc.name) + '</div>';
     html += '<button class="card-quick-toggle" data-toggle-id="' + char.id + '">&#10003;</button>';
+    html += '<button class="card-gear-btn" data-gear-id="' + char.id + '">&#9881;&#65039;</button>';
     html += '</div>';
   }
+
+  for (var a = 0; a < _charAdds.length; a++) {
+    var ac = _charAdds[a];
+    var dca = _charEdits[ac.id] ? Object.assign({}, ac, _charEdits[ac.id]) : ac;
+    var aElemFile = dca.specialElement
+      ? 'element_' + dca.specialElement + '.webp'
+      : (dca.element ? 'element_' + dca.element + '.webp' : '');
+    var aRarityFile = dca.rarity === 5 ? 'rarity_S.webp'
+      : (dca.rarity === 4 ? 'rarity_A.webp' : '');
+    var aRoleFile = dca.role ? 'role_' + dca.role + '.webp' : '';
+
+    html += '<div class="char-card char-card-pending" data-char-id="' + ac.id + '">';
+    if (dca.image) {
+      html += '<img class="char-card-image" src="' + imgBase + dca.image + '" alt="' + dca.name + '" loading="lazy">';
+    } else {
+      html += '<div class="char-card-image char-card-no-img"></div>';
+    }
+    html += '<div class="char-card-icons"><div class="char-card-icons-left">';
+    if (aRarityFile) html += '<img class="char-card-icon" src="' + imgBase + aRarityFile + '" alt="">';
+    html += '</div><div class="char-card-icons-right">';
+    if (aRoleFile) html += '<img class="char-card-icon" src="' + imgBase + aRoleFile + '" alt="">';
+    if (aElemFile) html += '<img class="char-card-icon" src="' + imgBase + aElemFile + '" alt="">';
+    html += '</div></div>';
+    html += '<div class="char-card-name">' + (dca.nameKo || dca.name) + '</div>';
+    html += '<div class="char-card-pending-badge">미반영</div>';
+    html += '<button class="card-gear-btn" data-gear-id="' + ac.id + '">&#9881;&#65039;</button>';
+    html += '</div>';
+  }
+
+  html += '<div class="char-card-add"><div class="char-card-add-icon">+</div>' +
+    '<div class="char-card-add-label">캐릭터 추가</div></div>';
   html += '</div>';
 
   var panel = document.getElementById('resultsPanel');
   panel.innerHTML = html;
 
-  var cards = panel.querySelectorAll('.char-card');
-  for (var j = 0; j < cards.length; j++) {
+  var regularCards = panel.querySelectorAll('.char-card:not(.char-card-pending)');
+  for (var j = 0; j < regularCards.length; j++) {
     (function(card) {
-      card.onclick = function() {
-        openCharacterDetail(card.getAttribute('data-char-id'));
-      };
-    })(cards[j]);
+      card.onclick = function() { openCharacterDetail(card.getAttribute('data-char-id')); };
+    })(regularCards[j]);
+  }
+
+  var pendingCards = panel.querySelectorAll('.char-card-pending');
+  for (var p = 0; p < pendingCards.length; p++) {
+    (function(card) {
+      card.onclick = function() { openCharacterEdit(card.getAttribute('data-char-id')); };
+    })(pendingCards[p]);
   }
 
   var toggleBtns = panel.querySelectorAll('.card-quick-toggle');
@@ -294,6 +333,19 @@ function renderCardGrid() {
       };
     })(toggleBtns[k]);
   }
+
+  var gearBtns = panel.querySelectorAll('.card-gear-btn');
+  for (var g = 0; g < gearBtns.length; g++) {
+    (function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        openCharacterEdit(btn.getAttribute('data-gear-id'));
+      };
+    })(gearBtns[g]);
+  }
+
+  var addCard = panel.querySelector('.char-card-add');
+  if (addCard) addCard.onclick = openCharacterCreate;
 }
 
 function openCharacterDetail(charId) {
@@ -459,6 +511,205 @@ function closeCharacterDetail() {
   _detailChar   = null;
   _detailDraft  = null;
   var modal = document.getElementById('charDetailModal');
+  modal.style.display = 'none';
+  modal.innerHTML = '';
+}
+
+// ── INTERNAL ──────────────────────────────────────────────────────────────────
+// Section 10: Character Manager (Edit / Create)
+
+function openCharacterEdit(charId) {
+  _editCharId   = charId;
+  _editIsCreate = false;
+  var base = null;
+  for (var i = 0; i < appState.characters.length; i++) {
+    if (appState.characters[i].id === charId) { base = appState.characters[i]; break; }
+  }
+  if (!base) {
+    for (var j = 0; j < _charAdds.length; j++) {
+      if (_charAdds[j].id === charId) { base = _charAdds[j]; break; }
+    }
+  }
+  if (!base) return;
+  var cur = _charEdits[charId] ? Object.assign({}, base, _charEdits[charId]) : base;
+  _editDraft = {
+    name:           cur.name || '',
+    nameKo:         cur.nameKo || '',
+    image:          cur.image || '',
+    rarity:         cur.rarity || 5,
+    role:           cur.role || '',
+    element:        cur.element || '',
+    specialElement: cur.specialElement || '',
+    releaseDate:    cur.releaseDate || '',
+    isReleased:     cur.isReleased !== false
+  };
+  renderCharacterEditModal();
+  document.getElementById('charEditModal').style.display = 'block';
+}
+
+function openCharacterCreate() {
+  _editCharId   = null;
+  _editIsCreate = true;
+  _editDraft = {
+    id: '', name: '', nameKo: '', image: '',
+    rarity: 5, role: 'attack', element: 'physical',
+    specialElement: '', releaseDate: '', isReleased: true
+  };
+  renderCharacterEditModal();
+  document.getElementById('charEditModal').style.display = 'block';
+}
+
+function renderCharacterEditModal() {
+  var d        = _editDraft;
+  var isCreate = _editIsCreate;
+
+  var roleOpts = '<option value="">-</option>';
+  for (var r = 0; r < CHAR_ROLES.length; r++) {
+    roleOpts += '<option value="' + CHAR_ROLES[r] + '"' + (d.role === CHAR_ROLES[r] ? ' selected' : '') + '>' + CHAR_ROLES[r] + '</option>';
+  }
+  var elemOpts = '<option value="">-</option>';
+  for (var e = 0; e < CHAR_ELEMENTS.length; e++) {
+    elemOpts += '<option value="' + CHAR_ELEMENTS[e] + '"' + (d.element === CHAR_ELEMENTS[e] ? ' selected' : '') + '>' + CHAR_ELEMENTS[e] + '</option>';
+  }
+
+  var topSection = isCreate
+    ? '<div class="edit-row"><label class="edit-label">ID <span class="edit-required">*</span></label>' +
+      '<div class="edit-id-wrap"><input class="edit-input" id="edit-id-field" type="text" value="' + (d.id || '') + '" ' +
+      'placeholder="영문 소문자, 언더스코어" oninput="validateCreateId(this.value)">' +
+      '<span class="edit-id-hint" id="edit-id-hint"></span></div></div>'
+    : '<div class="edit-id-display"><span class="edit-id-label">ID</span><span class="edit-id-value">' + _editCharId + '</span></div>';
+
+  var html =
+    '<div class="char-detail-overlay" onclick="if(event.target===this)closeCharacterEdit()">' +
+    '<div class="char-detail-panel char-edit-panel">' +
+    '<div class="detail-header">' +
+    '<span class="detail-header-name">' + (isCreate ? '캐릭터 추가' : '캐릭터 수정') + '</span>' +
+    '<button class="detail-close-btn" onclick="closeCharacterEdit()">&#x2715;</button>' +
+    '</div>' +
+    '<div class="detail-body">' +
+    topSection +
+    '<div class="edit-row"><label class="edit-label">이름 (영문)</label>' +
+    '<input class="edit-input" id="edit-name" type="text" value="' + (d.name || '').replace(/"/g, '&quot;') + '"></div>' +
+    '<div class="edit-row"><label class="edit-label">이름 (한글)</label>' +
+    '<input class="edit-input" id="edit-nameKo" type="text" value="' + (d.nameKo || '').replace(/"/g, '&quot;') + '"></div>' +
+    '<div class="edit-row"><label class="edit-label">이미지 파일</label>' +
+    '<input class="edit-input" id="edit-image" type="text" value="' + (d.image || '').replace(/"/g, '&quot;') + '" placeholder="예: 벨리나.webp"></div>' +
+    '<div class="edit-row"><label class="edit-label">희귀도</label>' +
+    '<select class="edit-select" id="edit-rarity">' +
+    '<option value="5"' + (d.rarity === 5 ? ' selected' : '') + '>S (5성)</option>' +
+    '<option value="4"' + (d.rarity === 4 ? ' selected' : '') + '>A (4성)</option>' +
+    '</select></div>' +
+    '<div class="edit-row"><label class="edit-label">역할</label>' +
+    '<select class="edit-select" id="edit-role">' + roleOpts + '</select></div>' +
+    '<div class="edit-row"><label class="edit-label">속성</label>' +
+    '<select class="edit-select" id="edit-element">' + elemOpts + '</select></div>' +
+    '<div class="edit-row"><label class="edit-label">특수속성</label>' +
+    '<input class="edit-input" id="edit-specialElement" type="text" value="' + (d.specialElement || '') + '" placeholder="MIYABI / YIXUAN / SHUNGUANG"></div>' +
+    '<div class="edit-row"><label class="edit-label">출시일</label>' +
+    '<input class="edit-input" id="edit-releaseDate" type="text" value="' + (d.releaseDate || '') + '" placeholder="yyyy-mm-dd"></div>' +
+    '<div class="edit-row"><label class="edit-label">출시 여부</label>' +
+    '<button class="toggle-btn' + (d.isReleased ? ' active' : '') + '" onclick="editToggleReleased()">' + (d.isReleased ? '출시' : '출시 예정') + '</button></div>' +
+    '</div>' +
+    '<div class="detail-footer">' +
+    '<button class="detail-btn-cancel" onclick="closeCharacterEdit()">취소</button>' +
+    '<button class="detail-btn-save" id="edit-save-btn"' + (isCreate && !d.id ? ' disabled' : '') +
+    ' onclick="saveCharacterEdit()">' + (isCreate ? '추가' : '저장') + '</button>' +
+    '</div></div></div>';
+
+  document.getElementById('charEditModal').innerHTML = html;
+}
+
+function editToggleReleased() {
+  _editDraft.isReleased = !_editDraft.isReleased;
+  var btn = document.querySelector('[onclick="editToggleReleased()"]');
+  if (btn) {
+    btn.classList.toggle('active', _editDraft.isReleased);
+    btn.textContent = _editDraft.isReleased ? '출시' : '출시 예정';
+  }
+}
+
+function validateCreateId(rawId) {
+  var sanitized = rawId.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  _editDraft.id = sanitized;
+  var hint    = document.getElementById('edit-id-hint');
+  var saveBtn = document.getElementById('edit-save-btn');
+
+  if (!sanitized) {
+    if (hint) { hint.textContent = 'ID는 필수입니다.'; hint.className = 'edit-id-hint hint-error'; }
+    if (saveBtn) saveBtn.disabled = true;
+    return;
+  }
+
+  var isDupe = false;
+  for (var i = 0; i < appState.characters.length; i++) {
+    if (appState.characters[i].id === sanitized) { isDupe = true; break; }
+  }
+  if (!isDupe) {
+    for (var j = 0; j < _charAdds.length; j++) {
+      if (_charAdds[j].id === sanitized) { isDupe = true; break; }
+    }
+  }
+
+  if (isDupe) {
+    if (hint) { hint.textContent = '중복된 ID입니다.'; hint.className = 'edit-id-hint hint-error'; }
+    if (saveBtn) saveBtn.disabled = true;
+  } else {
+    if (hint) { hint.textContent = sanitized !== rawId ? '→ ' + sanitized : ''; hint.className = 'edit-id-hint hint-ok'; }
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+function saveCharacterEdit() {
+  if (_editIsCreate && !_editDraft.id) return;
+
+  function gv(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  var updates = {
+    name:           gv('edit-name'),
+    nameKo:         gv('edit-nameKo'),
+    image:          gv('edit-image'),
+    rarity:         parseInt(gv('edit-rarity')) || 5,
+    role:           gv('edit-role') || null,
+    element:        gv('edit-element') || null,
+    specialElement: gv('edit-specialElement') || null,
+    releaseDate:    gv('edit-releaseDate'),
+    isReleased:     _editDraft.isReleased
+  };
+
+  if (_editIsCreate) {
+    var newChar = Object.assign({ id: _editDraft.id, gameId: 'zzz', basePerformance: null }, updates);
+    _charAdds.push(newChar);
+  } else {
+    _charEdits[_editCharId] = updates;
+  }
+
+  renderCardGrid();
+  closeCharacterEdit();
+}
+
+function downloadCharactersPreview() {
+  var merged = appState.characters.map(function(char) {
+    return _charEdits[char.id] ? Object.assign({}, char, _charEdits[char.id]) : char;
+  });
+  for (var i = 0; i < _charAdds.length; i++) {
+    var ac = _charAdds[i];
+    merged.push(_charEdits[ac.id] ? Object.assign({}, ac, _charEdits[ac.id]) : ac);
+  }
+  var blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url;
+  a.download = 'zzz.characters.preview.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function closeCharacterEdit() {
+  _editCharId   = null;
+  _editDraft    = null;
+  _editIsCreate = false;
+  var modal = document.getElementById('charEditModal');
   modal.style.display = 'none';
   modal.innerHTML = '';
 }
