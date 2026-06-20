@@ -406,6 +406,106 @@ select {
 .pull-optional    .verdict { color: var(--opt);  }
 .pull-skip        .verdict { color: var(--skip); }
 
+/* ── 21. Character Card Grid ─────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.char-card {
+  position: relative;
+  aspect-ratio: 1 / 1.9;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.char-card:hover {
+  border-color: var(--muted);
+  transform: translateY(-2px);
+}
+
+.char-card.owned {
+  border-color: var(--accent);
+}
+
+.char-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.char-card-no-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--border);
+}
+
+.char-card-icons {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.char-card-icons-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.char-card-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
+}
+
+.char-card-owned-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(123, 108, 255, 0.2);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.char-card-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 5px 5px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--white);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* ── 20. Responsive — 768px breakpoint ───────────────────── */
 @media (max-width: 768px) {
   .app-main {

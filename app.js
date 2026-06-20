@@ -91,7 +91,11 @@ function setGame(gameId) {
 
       renderCharacterSelect();
       renderRoster();
-      renderPlaceholder("캐릭터를 선택하고 분석하기를 누르세요.");
+      if (gameId === 'zzz') {
+        renderCardGrid();
+      } else {
+        renderPlaceholder("캐릭터를 선택하고 분석하기를 누르세요.");
+      }
 
       document.getElementById("characterSelect").disabled = false;
       document.getElementById("analyzeBtn").disabled = false;
@@ -127,6 +131,8 @@ function toggleRosterCharacter(characterId) {
 
   if (appState.selectedCharacterId) {
     runAnalysis();
+  } else if (appState.currentGame === 'zzz') {
+    renderCardGrid();
   }
 }
 
@@ -201,6 +207,72 @@ function renderCharacterSelect() {
     option.value = char.id;
     option.textContent = label;
     select.appendChild(option);
+  }
+}
+
+function renderCardGrid() {
+  var imgBase = 'data/games/zzz/images/';
+  var roster = appState.rosters['zzz'] || { characters: [] };
+  var ownedMap = {};
+  for (var o = 0; o < roster.characters.length; o++) {
+    ownedMap[roster.characters[o].characterId] = true;
+  }
+
+  var html = '<div class="card-grid">';
+  for (var i = 0; i < appState.characters.length; i++) {
+    var char = appState.characters[i];
+    var owned = ownedMap[char.id] ? true : false;
+
+    var elementFile = char.specialElement
+      ? 'element_' + char.specialElement + '.webp'
+      : (char.element ? 'element_' + char.element + '.webp' : '');
+    var rarityFile = char.rarity === 5 ? 'rarity_S.webp'
+      : (char.rarity === 4 ? 'rarity_A.webp' : '');
+    var roleFile = char.role ? 'role_' + char.role + '.webp' : '';
+
+    html += '<div class="char-card' + (owned ? ' owned' : '') + '" data-char-id="' + char.id + '">';
+
+    if (char.image) {
+      html += '<img class="char-card-image" src="' + imgBase + char.image + '" alt="' + char.name + '" loading="lazy">';
+    } else {
+      html += '<div class="char-card-image char-card-no-img"></div>';
+    }
+
+    html += '<div class="char-card-icons">';
+    html += '<div class="char-card-icons-left">';
+    if (rarityFile) {
+      html += '<img class="char-card-icon" src="' + imgBase + rarityFile + '" alt="">';
+    }
+    html += '</div>';
+    html += '<div class="char-card-icons-right">';
+    if (roleFile) {
+      html += '<img class="char-card-icon" src="' + imgBase + roleFile + '" alt="">';
+    }
+    if (elementFile) {
+      html += '<img class="char-card-icon" src="' + imgBase + elementFile + '" alt="">';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    if (owned) {
+      html += '<div class="char-card-owned-overlay"></div>';
+    }
+
+    html += '<div class="char-card-name">' + char.name + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  var panel = document.getElementById('resultsPanel');
+  panel.innerHTML = html;
+
+  var cards = panel.querySelectorAll('.char-card');
+  for (var j = 0; j < cards.length; j++) {
+    (function(card) {
+      card.onclick = function() {
+        toggleRosterCharacter(card.getAttribute('data-char-id'));
+      };
+    })(cards[j]);
   }
 }
 
@@ -427,6 +499,8 @@ function onCharacterChange(characterId) {
   appState.selectedCharacterId = characterId || null;
   if (appState.selectedCharacterId) {
     runAnalysis();
+  } else if (appState.currentGame === 'zzz') {
+    renderCardGrid();
   } else {
     renderPlaceholder("캐릭터를 선택해주세요.");
   }
