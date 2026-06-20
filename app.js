@@ -202,7 +202,7 @@ function renderCharacterSelect() {
 
   for (var i = 0; i < appState.characters.length; i++) {
     var char = appState.characters[i];
-    var label = char.name + (char.isReleased ? "" : " [출시 예정]");
+    var label = (char.nameKo || char.name) + (char.isReleased ? "" : " [출시 예정]");
     var option = document.createElement("option");
     option.value = char.id;
     option.textContent = label;
@@ -258,7 +258,7 @@ function renderCardGrid() {
       html += '<div class="char-card-owned-overlay"></div>';
     }
 
-    html += '<div class="char-card-name">' + char.name + '</div>';
+    html += '<div class="char-card-name">' + (char.nameKo || char.name) + '</div>';
     html += '</div>';
   }
   html += '</div>';
@@ -301,7 +301,7 @@ function renderRoster() {
 
     var div = document.createElement("div");
     div.className = "roster-item" + (owned ? " owned" : "");
-    div.textContent = char.name + (char.isReleased ? "" : " ✦");
+    div.textContent = (char.nameKo || char.name) + (char.isReleased ? "" : " ✦");
     div.title = char.isReleased ? "" : "출시 예정";
     (function(charId) {
       div.onclick = function() { toggleRosterCharacter(charId); };
@@ -466,7 +466,7 @@ function renderResults(result) {
 function renderNoMeta(character) {
   document.getElementById("resultsPanel").innerHTML =
     '<div class="results-placeholder">' +
-    '<p><strong>' + character.name + '</strong>의 메타 데이터가 아직 등록되지 않았습니다.</p>' +
+    '<p><strong>' + (character.nameKo || character.name) + '</strong>의 메타 데이터가 아직 등록되지 않았습니다.</p>' +
     '<p class="sub-note">현재 픽업 캐릭터의 메타 분석이 완료되면 자동으로 표시됩니다.</p>' +
     '</div>';
 }

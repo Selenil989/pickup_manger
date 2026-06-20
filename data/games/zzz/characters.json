@@ -2,6 +2,7 @@
   {
     "id": "velina",
     "name": "Velina",
+    "nameKo": "벨리나",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -15,6 +16,7 @@
   {
     "id": "ye_shunguang",
     "name": "Ye Shunguang",
+    "nameKo": "엽빛나",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -28,6 +30,7 @@
   {
     "id": "pyrois",
     "name": "Pyrois",
+    "nameKo": "피로이스",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -41,6 +44,7 @@
   {
     "id": "starlight_billy",
     "name": "Starlight Billy",
+    "nameKo": "스타라이트 빌리",
     "gameId": "zzz",
     "rarity": 5,
     "role": "rupture",
@@ -54,6 +58,7 @@
   {
     "id": "promeia",
     "name": "Promeia",
+    "nameKo": "프로미아",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -67,6 +72,7 @@
   {
     "id": "sunna",
     "name": "Sunna",
+    "nameKo": "수나",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -80,6 +86,7 @@
   {
     "id": "aria",
     "name": "Aria",
+    "nameKo": "아리아",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -93,6 +100,7 @@
   {
     "id": "lucia",
     "name": "Lucia",
+    "nameKo": "루시아",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -106,6 +114,7 @@
   {
     "id": "yidhari",
     "name": "Yidhari",
+    "nameKo": "이드리히",
     "gameId": "zzz",
     "rarity": 5,
     "role": "rupture",
@@ -119,6 +128,7 @@
   {
     "id": "yixuan",
     "name": "Yixuan",
+    "nameKo": "의현",
     "gameId": "zzz",
     "rarity": 5,
     "role": "rupture",
@@ -132,6 +142,7 @@
   {
     "id": "ju_fufu",
     "name": "Ju Fufu",
+    "nameKo": "귤복복",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -145,6 +156,7 @@
   {
     "id": "astra_yao",
     "name": "Astra Yao",
+    "nameKo": "아스트라 야오",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -158,6 +170,7 @@
   {
     "id": "evelyn",
     "name": "Evelyn",
+    "nameKo": "이블린",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -171,6 +184,7 @@
   {
     "id": "miyabi",
     "name": "Miyabi",
+    "nameKo": "미야비",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -184,6 +198,7 @@
   {
     "id": "harumasa",
     "name": "Harumasa",
+    "nameKo": "하루마사",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -197,6 +212,7 @@
   {
     "id": "yanagi",
     "name": "Yanagi",
+    "nameKo": "야나기",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -210,6 +226,7 @@
   {
     "id": "lighter",
     "name": "Lighter",
+    "nameKo": "라이터",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -223,6 +240,7 @@
   {
     "id": "caesar",
     "name": "Caesar",
+    "nameKo": "카이사르",
     "gameId": "zzz",
     "rarity": 5,
     "role": "defense",
@@ -236,6 +254,7 @@
   {
     "id": "jane",
     "name": "Jane Doe",
+    "nameKo": "제인 도",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -249,6 +268,7 @@
   {
     "id": "burnice",
     "name": "Burnice",
+    "nameKo": "버니스",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -262,6 +282,7 @@
   {
     "id": "ellen",
     "name": "Ellen",
+    "nameKo": "엘렌",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -275,6 +296,7 @@
   {
     "id": "qingyi",
     "name": "Qingyi",
+    "nameKo": "청의",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -288,6 +310,7 @@
   {
     "id": "zhu_yuan",
     "name": "Zhu Yuan",
+    "nameKo": "주연",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -301,6 +324,7 @@
   {
     "id": "lycaon",
     "name": "Von Lycaon",
+    "nameKo": "폰 리카온",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -314,6 +338,7 @@
   {
     "id": "nekomata",
     "name": "Nekomata",
+    "nameKo": "네코마타",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -327,6 +352,7 @@
   {
     "id": "koleda",
     "name": "Koleda",
+    "nameKo": "콜레다",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -340,6 +366,7 @@
   {
     "id": "soldier_11",
     "name": "Soldier 11",
+    "nameKo": "11호",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -353,6 +380,7 @@
   {
     "id": "grace",
     "name": "Grace Howard",
+    "nameKo": "그레이스 하워드",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -366,6 +394,7 @@
   {
     "id": "rina",
     "name": "Rina",
+    "nameKo": "리나",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -379,6 +408,7 @@
   {
     "id": "hugo",
     "name": "Hugo",
+    "nameKo": "휴고",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -392,6 +422,7 @@
   {
     "id": "vivian",
     "name": "Vivian",
+    "nameKo": "비비안",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -405,6 +436,7 @@
   {
     "id": "trigger",
     "name": "Trigger",
+    "nameKo": "트리거",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -418,6 +450,7 @@
   {
     "id": "soldier_0_anby",
     "name": "Soldier 0 - Anby",
+    "nameKo": "0호 앤비",
     "gameId": "zzz",
     "rarity": 5,
     "role": "attack",
@@ -431,6 +464,7 @@
   {
     "id": "alice",
     "name": "Alice",
+    "nameKo": "앨리스",
     "gameId": "zzz",
     "rarity": 5,
     "role": "anomaly",
@@ -444,6 +478,7 @@
   {
     "id": "yuzuha",
     "name": "Yuzuha",
+    "nameKo": "유즈하",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -457,6 +492,7 @@
   {
     "id": "nicole",
     "name": "Nicole Demara",
+    "nameKo": "니콜 드마라",
     "gameId": "zzz",
     "rarity": 4,
     "role": "support",
@@ -470,6 +506,7 @@
   {
     "id": "billy",
     "name": "Billy Kid",
+    "nameKo": "빌리 키드",
     "gameId": "zzz",
     "rarity": 4,
     "role": "attack",
@@ -483,6 +520,7 @@
   {
     "id": "anby",
     "name": "Anby Demara",
+    "nameKo": "앤비 드마라",
     "gameId": "zzz",
     "rarity": 4,
     "role": "stun",
@@ -496,6 +534,7 @@
   {
     "id": "soukaku",
     "name": "Soukaku",
+    "nameKo": "소우카쿠",
     "gameId": "zzz",
     "rarity": 4,
     "role": "support",
@@ -509,6 +548,7 @@
   {
     "id": "piper",
     "name": "Piper",
+    "nameKo": "파이퍼",
     "gameId": "zzz",
     "rarity": 4,
     "role": "anomaly",
@@ -522,6 +562,7 @@
   {
     "id": "corin",
     "name": "Corin",
+    "nameKo": "코린",
     "gameId": "zzz",
     "rarity": 4,
     "role": "attack",
@@ -535,6 +576,7 @@
   {
     "id": "anton",
     "name": "Anton",
+    "nameKo": "앤톤",
     "gameId": "zzz",
     "rarity": 4,
     "role": "attack",
@@ -548,6 +590,7 @@
   {
     "id": "ben",
     "name": "Ben Bigger",
+    "nameKo": "벤 비거",
     "gameId": "zzz",
     "rarity": 4,
     "role": "defense",
@@ -561,6 +604,7 @@
   {
     "id": "lucy",
     "name": "Lucy",
+    "nameKo": "루시",
     "gameId": "zzz",
     "rarity": 4,
     "role": "support",
@@ -574,6 +618,7 @@
   {
     "id": "pan_yinhu",
     "name": "Pan Yinhu",
+    "nameKo": "반인호",
     "gameId": "zzz",
     "rarity": 4,
     "role": "defense",
@@ -587,6 +632,7 @@
   {
     "id": "manato",
     "name": "Komano Manato",
+    "nameKo": "코마노 마나토",
     "gameId": "zzz",
     "rarity": 4,
     "role": "rupture",
@@ -600,6 +646,7 @@
   {
     "id": "seth",
     "name": "Seth",
+    "nameKo": "세스",
     "gameId": "zzz",
     "rarity": 4,
     "role": "support",
@@ -613,6 +660,7 @@
   {
     "id": "pulchra",
     "name": "Pulchra",
+    "nameKo": "펄크라",
     "gameId": "zzz",
     "rarity": 4,
     "role": "stun",
@@ -626,6 +674,7 @@
   {
     "id": "opi_fire",
     "name": "오피 도깨비불",
+    "nameKo": "오피 도깨비불",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -639,6 +688,7 @@
   {
     "id": "zao",
     "name": "자오",
+    "nameKo": "자오",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -652,6 +702,7 @@
   {
     "id": "sid",
     "name": "시드",
+    "nameKo": "시드",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -665,6 +716,7 @@
   {
     "id": "ban_ak",
     "name": "반악",
+    "nameKo": "반악",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -678,6 +730,7 @@
   {
     "id": "diairin",
     "name": "다이아린",
+    "nameKo": "다이아린",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -691,6 +744,7 @@
   {
     "id": "nangong",
     "name": "남궁우",
+    "nameKo": "남궁우",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
@@ -704,6 +758,7 @@
   {
     "id": "sissia",
     "name": "시시아",
+    "nameKo": "시시아",
     "gameId": "zzz",
     "rarity": null,
     "role": null,
