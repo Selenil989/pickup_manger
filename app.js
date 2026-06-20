@@ -12,6 +12,13 @@ var appState = {
 };
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
+// Section 9: Character Detail Modal state
+
+var _detailCharId = null;
+var _detailChar   = null;
+var _detailDraft  = null;
+
+// ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 1: Utilities
 
 function getRosterKey(gameId) {
@@ -122,7 +129,9 @@ function toggleRosterCharacter(characterId) {
     roster.characters.push({
       characterId: characterId,
       dupeLevel: 0,
-      weapon: { hasSignature: false, refinement: 0 }
+      weapon: { hasSignature: false, refinement: 0 },
+      isLeveledUp: false,
+      memo: ''
     });
   }
 
@@ -259,6 +268,7 @@ function renderCardGrid() {
     }
 
     html += '<div class="char-card-name">' + (char.nameKo || char.name) + '</div>';
+    html += '<button class="card-quick-toggle" data-toggle-id="' + char.id + '">&#10003;</button>';
     html += '</div>';
   }
   html += '</div>';
@@ -270,10 +280,187 @@ function renderCardGrid() {
   for (var j = 0; j < cards.length; j++) {
     (function(card) {
       card.onclick = function() {
-        toggleRosterCharacter(card.getAttribute('data-char-id'));
+        openCharacterDetail(card.getAttribute('data-char-id'));
       };
     })(cards[j]);
   }
+
+  var toggleBtns = panel.querySelectorAll('.card-quick-toggle');
+  for (var k = 0; k < toggleBtns.length; k++) {
+    (function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        toggleRosterCharacter(btn.getAttribute('data-toggle-id'));
+      };
+    })(toggleBtns[k]);
+  }
+}
+
+function openCharacterDetail(charId) {
+  _detailCharId = charId;
+  _detailChar = null;
+  for (var i = 0; i < appState.characters.length; i++) {
+    if (appState.characters[i].id === charId) { _detailChar = appState.characters[i]; break; }
+  }
+  if (!_detailChar) return;
+
+  var roster = appState.rosters[appState.currentGame] || { characters: [] };
+  var entry = null;
+  for (var j = 0; j < roster.characters.length; j++) {
+    if (roster.characters[j].characterId === charId) { entry = roster.characters[j]; break; }
+  }
+
+  _detailDraft = entry ? {
+    owned:        true,
+    dupeLevel:    entry.dupeLevel  || 0,
+    hasSignature: entry.weapon ? (entry.weapon.hasSignature || false) : false,
+    refinement:   entry.weapon ? (entry.weapon.refinement   || 1)     : 1,
+    isLeveledUp:  entry.isLeveledUp || false,
+    memo:         entry.memo || ''
+  } : {
+    owned: false, dupeLevel: 0, hasSignature: false,
+    refinement: 1, isLeveledUp: false, memo: ''
+  };
+
+  renderCharacterDetailModal();
+  document.getElementById('charDetailModal').style.display = 'block';
+}
+
+function syncDetailMemo() {
+  var el = document.getElementById('det-memo');
+  if (el) _detailDraft.memo = el.value;
+}
+
+function renderCharacterDetailModal() {
+  var char   = _detailChar;
+  var d      = _detailDraft;
+  var dis    = d.owned ? '' : ' disabled';
+  var disSig = (d.owned && d.hasSignature) ? '' : ' disabled';
+
+  var releaseLabel = char.isReleased
+    ? '<span class="detail-release detail-release-out">출시</span>'
+    : '<span class="detail-release detail-release-pre">출시 예정</span>';
+
+  var dupeHtml = '';
+  for (var i = 0; i <= 6; i++) {
+    dupeHtml += '<button class="num-btn' + (d.dupeLevel === i ? ' active' : '') + '"' + dis +
+      ' onclick="detailSetDupe(' + i + ')">' + i + '</button>';
+  }
+
+  var refHtml = '';
+  for (var r = 1; r <= 5; r++) {
+    refHtml += '<button class="num-btn' + (d.refinement === r ? ' active' : '') + '"' + disSig +
+      ' onclick="detailSetRefinement(' + r + ')">R' + r + '</button>';
+  }
+
+  var safeMemo = (d.memo || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+
+  var html =
+    '<div class="char-detail-overlay" onclick="if(event.target===this)closeCharacterDetail()">' +
+    '<div class="char-detail-panel">' +
+    '<div class="detail-header">' +
+    '<div class="detail-header-info">' +
+    '<span class="detail-header-name">' + (char.nameKo || char.name) + '</span>' +
+    releaseLabel +
+    '</div>' +
+    '<button class="detail-close-btn" onclick="closeCharacterDetail()">&#x2715;</button>' +
+    '</div>' +
+    '<div class="detail-body">' +
+    '<div class="detail-row"><label class="detail-label">보유 여부</label>' +
+    '<button class="toggle-btn' + (d.owned ? ' active' : '') + '" onclick="detailToggleOwned()">' +
+    (d.owned ? '보유' : '미보유') + '</button></div>' +
+    '<div class="detail-row"><label class="detail-label">돌파 수</label>' +
+    '<div class="num-btn-group">' + dupeHtml + '</div></div>' +
+    '<div class="detail-row"><label class="detail-label">전무 보유</label>' +
+    '<button class="toggle-btn' + (d.hasSignature ? ' active' : '') + '"' + dis +
+    ' onclick="detailToggleSignature()">' + (d.hasSignature ? '보유' : '미보유') + '</button></div>' +
+    '<div class="detail-row"><label class="detail-label">전무 정련</label>' +
+    '<div class="num-btn-group">' + refHtml + '</div></div>' +
+    '<div class="detail-row"><label class="detail-label">육성 완료</label>' +
+    '<button class="toggle-btn' + (d.isLeveledUp ? ' active' : '') + '"' + dis +
+    ' onclick="detailToggleLeveledUp()">' + (d.isLeveledUp ? '완료' : '미완료') + '</button></div>' +
+    '<div class="detail-row"><label class="detail-label">메모</label>' +
+    '<input class="detail-memo-input" id="det-memo" type="text" maxlength="100"' +
+    ' value="' + safeMemo + '"' + dis + ' placeholder="최대 100자"></div>' +
+    '</div>' +
+    '<div class="detail-footer">' +
+    '<button class="detail-btn-cancel" onclick="closeCharacterDetail()">취소</button>' +
+    '<button class="detail-btn-save" onclick="saveCharacterDetail()">저장</button>' +
+    '</div></div></div>';
+
+  document.getElementById('charDetailModal').innerHTML = html;
+}
+
+function detailToggleOwned() {
+  syncDetailMemo();
+  _detailDraft.owned = !_detailDraft.owned;
+  renderCharacterDetailModal();
+}
+
+function detailToggleSignature() {
+  syncDetailMemo();
+  _detailDraft.hasSignature = !_detailDraft.hasSignature;
+  renderCharacterDetailModal();
+}
+
+function detailToggleLeveledUp() {
+  syncDetailMemo();
+  _detailDraft.isLeveledUp = !_detailDraft.isLeveledUp;
+  renderCharacterDetailModal();
+}
+
+function detailSetDupe(level) {
+  syncDetailMemo();
+  _detailDraft.dupeLevel = level;
+  renderCharacterDetailModal();
+}
+
+function detailSetRefinement(level) {
+  syncDetailMemo();
+  _detailDraft.refinement = level;
+  renderCharacterDetailModal();
+}
+
+function saveCharacterDetail() {
+  if (!_detailCharId || !appState.currentGame) return;
+  syncDetailMemo();
+
+  var roster = appState.rosters[appState.currentGame];
+  var idx = -1;
+  for (var i = 0; i < roster.characters.length; i++) {
+    if (roster.characters[i].characterId === _detailCharId) { idx = i; break; }
+  }
+
+  if (_detailDraft.owned) {
+    var entry = {
+      characterId: _detailCharId,
+      dupeLevel:   _detailDraft.dupeLevel,
+      weapon:      { hasSignature: _detailDraft.hasSignature, refinement: _detailDraft.refinement },
+      isLeveledUp: _detailDraft.isLeveledUp,
+      memo:        _detailDraft.memo
+    };
+    if (idx !== -1) { roster.characters[idx] = entry; } else { roster.characters.push(entry); }
+  } else {
+    if (idx !== -1) { roster.characters.splice(idx, 1); }
+  }
+
+  saveRoster(appState.currentGame);
+  renderRoster();
+  if (appState.selectedCharacterId) {
+    runAnalysis();
+  } else if (appState.currentGame === 'zzz') {
+    renderCardGrid();
+  }
+  closeCharacterDetail();
+}
+
+function closeCharacterDetail() {
+  _detailCharId = null;
+  _detailChar   = null;
+  _detailDraft  = null;
+  var modal = document.getElementById('charDetailModal');
+  modal.style.display = 'none';
+  modal.innerHTML = '';
 }
 
 function renderRoster() {
