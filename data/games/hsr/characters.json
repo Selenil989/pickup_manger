@@ -1,0 +1,24 @@
+[
+  {
+    "id": "firefly",
+    "name": "Firefly",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "destruction",
+    "element": "fire",
+    "basePerformance": 9.2,
+    "releaseDate": "2024-06-19",
+    "isReleased": true
+  },
+  {
+    "id": "robin",
+    "name": "Robin",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "harmony",
+    "element": "physical",
+    "basePerformance": 9.5,
+    "releaseDate": "2024-04-17",
+    "isReleased": true
+  }
+]

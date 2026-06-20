@@ -1,0 +1,36 @@
+[
+  {
+    "version": "1.0",
+    "characterId": "perlica",
+    "investmentType": ["meta", "synergy"],
+    "metaScore": 8.8,
+    "futureScore": 8.5,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 8, "priority": "high", "reason": "화염 캐스터 핵심" },
+    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
+    "weaponRecommendation": { "score": 7, "priority": "medium", "reason": "전용 무기 권장" },
+    "pullReasons": ["화염 계열 핵심 캐스터"],
+    "skipReasons": ["화염 딜러 보유 시 시너지 제한"],
+    "sources": [{ "name": "아카라이브", "weight": 1.0 }],
+    "recommendation": { "pull": "optional", "priority": "medium" }
+  },
+  {
+    "version": "1.0",
+    "characterId": "ulpianus",
+    "investmentType": ["meta"],
+    "metaScore": 8.5,
+    "futureScore": 7.5,
+    "replacementScore": 7,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 8, "priority": "medium", "reason": "전위 탱커 핵심" },
+    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
+    "weaponRecommendation": { "score": 6, "priority": "medium", "reason": "무기 효율 보통" },
+    "pullReasons": ["전위 포지션 공백 해소"],
+    "skipReasons": ["대체 가능한 포지션", "다른 전위 보유 시 불필요"],
+    "sources": [{ "name": "아카라이브", "weight": 1.0 }],
+    "recommendation": { "pull": "optional", "priority": "low" }
+  }
+]

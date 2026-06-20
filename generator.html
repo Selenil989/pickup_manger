@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>캐릭터 데이터 생성기</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gen-wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .gen-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .gen-card-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .gen-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .gen-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .gen-table th { background: var(--bg); color: var(--muted); font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; font-size: 11px; }
+    .gen-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .gen-table tr:last-child td { border-bottom: none; }
+    .gen-input { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box; }
+    .gen-input:focus { outline: none; border-color: var(--accent); }
+    .gen-input.dup { border-color: var(--must); background: var(--must-bg); }
+    .gen-select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 13px; }
+    .gen-select:focus { outline: none; border-color: var(--accent); }
+    .gen-btn { background: var(--accent); color: var(--white); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .gen-btn:hover { opacity: 0.85; }
+    .gen-btn-sm { padding: 4px 10px; font-size: 12px; }
+    .gen-btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .gen-btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+    .gen-note { font-size: 13px; color: var(--muted); }
+    .gen-textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--text); width: 100%; box-sizing: border-box; height: 280px; resize: vertical; }
+    .gen-hidden { display: none; }
+    .gen-mt { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>캐릭터 데이터 생성기</h1>
+  </header>
+
+  <div class="gen-wrap">
+
+    <!-- Step 1: 게임 선택 -->
+    <div class="gen-card">
+      <div class="gen-card-title">Step 1 — 게임 선택</div>
+      <div class="gen-row">
+        <select id="gameSelect" class="gen-select" aria-label="게임 선택">
+          <option value="">게임을 선택하세요</option>
+          <option value="zzz">젠레스 존 제로 (ZZZ)</option>
+          <option value="hsr">붕괴: 스타레일 (HSR)</option>
+          <option value="wuwa">명조: 워더링 웨이브 (WuWa)</option>
+          <option value="endfield">엔드필드 (Endfield)</option>
+        </select>
+        <span id="existingStatus" class="gen-note"></span>
+      </div>
+    </div>
+
+    <!-- Step 2: 이미지 폴더 선택 -->
+    <div class="gen-card">
+      <div class="gen-card-title">Step 2 — 이미지 폴더 선택</div>
+      <div class="gen-row">
+        <button class="gen-btn" id="folderBtn">이미지 폴더 선택</button>
+        <input type="file" id="folderInput" webkitdirectory multiple class="gen-hidden" aria-label="이미지 폴더 선택">
+        <span id="scanStatus" class="gen-note">data/games/{gameId}/images/ 폴더를 선택하세요</span>
+      </div>
+    </div>
+
+    <!-- Step 3: 스캔 결과 -->
+    <div class="gen-card gen-hidden" id="stepScan">
+      <div class="gen-card-title">Step 3 — 스캔 결과</div>
+      <div id="scanResults"></div>
+    </div>
+
+    <!-- Step 4: 캐릭터 정보 입력 -->
+    <div class="gen-card gen-hidden" id="stepForm">
+      <div class="gen-card-title">Step 4 — 캐릭터 정보 입력</div>
+      <p class="gen-note" style="margin-bottom: 12px;">id를 영문 소문자/언더스코어로 입력하세요. 기존 등록된 id와 중복 시 빨간 테두리로 표시됩니다.</p>
+      <div style="overflow-x: auto;">
+        <table class="gen-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>파일명</th>
+              <th>nameKo</th>
+              <th>id (영문) *</th>
+              <th>nameEn</th>
+              <th>role</th>
+              <th>element</th>
+              <th>rarity</th>
+              <th>basePerf</th>
+              <th>releaseDate</th>
+              <th>출시</th>
+            </tr>
+          </thead>
+          <tbody id="entryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 5: 출력 -->
+    <div class="gen-card gen-hidden" id="stepOutput">
+      <div class="gen-card-title">Step 5 — 출력</div>
+      <div class="gen-row">
+        <button class="gen-btn" id="generateBtn">JSON 생성</button>
+        <button class="gen-btn gen-btn-outline" id="renameListBtn">Rename 매핑 보기</button>
+        <button class="gen-btn gen-btn-outline" id="psScriptBtn">PowerShell 스크립트 생성</button>
+      </div>
+
+      <div class="gen-hidden gen-mt" id="jsonSection">
+        <div class="gen-row" style="margin-bottom: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: var(--text);">신규 캐릭터 배열 — characters.json에 추가하세요</span>
+          <button class="gen-btn gen-btn-outline gen-btn-sm" id="copyJsonBtn">복사</button>
+        </div>
+        <textarea class="gen-textarea" id="jsonOutput" readonly></textarea>
+      </div>
+
+      <div class="gen-hidden gen-mt" id="renameSection">
+        <div class="gen-card-title" style="margin-bottom: 8px;">Rename 매핑 목록</div>
+        <div id="renameList"></div>
+      </div>
+
+      <div class="gen-hidden gen-mt" id="psSection">
+        <div class="gen-row" style="margin-bottom: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: var(--text);">PowerShell Rename 스크립트</span>
+          <button class="gen-btn gen-btn-outline gen-btn-sm" id="copyPSBtn">복사</button>
+        </div>
+        <p class="gen-note" style="margin-bottom: 8px;">data\games\{gameId}\images\ 폴더에서 실행하세요.</p>
+        <textarea class="gen-textarea" id="psOutput" readonly style="height: 180px;"></textarea>
+      </div>
+    </div>
+
+  </div>
+  <script src="generator.js"></script>
+</body>
+</html>

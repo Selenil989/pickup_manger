@@ -1,0 +1,9 @@
+# Claude Code internal
+.claude/
+
+# Node
+node_modules/
+
+# Temp / test files
+*.tmp
+stage6_test.mjs

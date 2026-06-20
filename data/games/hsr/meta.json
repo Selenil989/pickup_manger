@@ -1,0 +1,36 @@
+[
+  {
+    "version": "1.0",
+    "characterId": "firefly",
+    "investmentType": ["meta"],
+    "metaScore": 9.2,
+    "futureScore": 7.5,
+    "replacementScore": 5,
+    "confidence": 0.90,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 9, "priority": "high", "reason": "파멸 최상위 딜러" },
+    "breakthroughRecommendation": { "score": 7, "priority": "medium", "reason": "E1 이후 큰 향상" },
+    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 광추 효율 우수" },
+    "pullReasons": ["파멸 계열 최상위 딜러"],
+    "skipReasons": ["DHIL, Blade 보유 시 역할 중복"],
+    "sources": [{ "name": "레딧", "weight": 1.0 }],
+    "recommendation": { "pull": "recommended", "priority": "high" }
+  },
+  {
+    "version": "1.0",
+    "characterId": "robin",
+    "investmentType": ["meta", "synergy"],
+    "metaScore": 9.5,
+    "futureScore": 9.0,
+    "replacementScore": 3,
+    "confidence": 0.92,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 9, "priority": "high", "reason": "범용 서포터 최상위" },
+    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "에이도론 효율 보통" },
+    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 광추 권장" },
+    "pullReasons": ["모든 딜러와 시너지", "메타 지속력 높음"],
+    "skipReasons": ["브로냐 보유 시 일부 역할 중복"],
+    "sources": [{ "name": "레딧", "weight": 1.0 }],
+    "recommendation": { "pull": "must_pull", "priority": "high" }
+  }
+]

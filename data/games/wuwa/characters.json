@@ -1,0 +1,24 @@
+[
+  {
+    "id": "camellya",
+    "name": "Camellya",
+    "gameId": "wuwa",
+    "rarity": 5,
+    "role": "dps",
+    "element": "havoc",
+    "basePerformance": 9.6,
+    "releaseDate": "2024-11-14",
+    "isReleased": true
+  },
+  {
+    "id": "carlotta",
+    "name": "Carlotta",
+    "gameId": "wuwa",
+    "rarity": 5,
+    "role": "dps",
+    "element": "glacio",
+    "basePerformance": 9.4,
+    "releaseDate": "2025-01-22",
+    "isReleased": true
+  }
+]

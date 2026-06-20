@@ -1,0 +1,57 @@
+[
+  {
+    "id": "velina",
+    "name": "Velina",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "wind",
+    "basePerformance": 9.5,
+    "releaseDate": "2026-06-01",
+    "isReleased": true
+  },
+  {
+    "id": "remiel",
+    "name": "Remiel",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "support",
+    "element": "wind",
+    "basePerformance": 9.0,
+    "releaseDate": "2026-09-01",
+    "isReleased": false
+  },
+  {
+    "id": "lycaon",
+    "name": "Von Lycaon",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "stun",
+    "element": "ice",
+    "basePerformance": 8.5,
+    "releaseDate": "2024-07-04",
+    "isReleased": true
+  },
+  {
+    "id": "jane",
+    "name": "Jane Doe",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "fire",
+    "basePerformance": 8.8,
+    "releaseDate": "2024-09-25",
+    "isReleased": true
+  },
+  {
+    "id": "miyabi",
+    "name": "Miyabi",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "ice",
+    "basePerformance": 9.8,
+    "releaseDate": "2024-12-25",
+    "isReleased": true
+  }
+]

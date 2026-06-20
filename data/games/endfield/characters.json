@@ -1,0 +1,24 @@
+[
+  {
+    "id": "perlica",
+    "name": "Perlica",
+    "gameId": "endfield",
+    "rarity": 5,
+    "role": "caster",
+    "element": "fire",
+    "basePerformance": 8.8,
+    "releaseDate": "2025-01-16",
+    "isReleased": true
+  },
+  {
+    "id": "ulpianus",
+    "name": "Ulpianus",
+    "gameId": "endfield",
+    "rarity": 5,
+    "role": "vanguard",
+    "element": "physical",
+    "basePerformance": 8.5,
+    "releaseDate": "2025-01-16",
+    "isReleased": true
+  }
+]

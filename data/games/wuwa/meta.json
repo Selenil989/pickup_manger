@@ -1,0 +1,36 @@
+[
+  {
+    "version": "1.0",
+    "characterId": "camellya",
+    "investmentType": ["meta"],
+    "metaScore": 9.6,
+    "futureScore": 8.0,
+    "replacementScore": 4,
+    "confidence": 0.88,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 9, "priority": "high", "reason": "혼돈 계열 최상위" },
+    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "S1 이후 효율 향상" },
+    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 무기 효율 우수" },
+    "pullReasons": ["혼돈 계열 독보적 성능"],
+    "skipReasons": ["Havoc Rover 보유 시 역할 일부 중복"],
+    "sources": [{ "name": "레딧", "weight": 1.0 }],
+    "recommendation": { "pull": "recommended", "priority": "high" }
+  },
+  {
+    "version": "1.0",
+    "characterId": "carlotta",
+    "investmentType": ["meta"],
+    "metaScore": 9.4,
+    "futureScore": 8.5,
+    "replacementScore": 5,
+    "confidence": 0.85,
+    "futureLinks": [],
+    "characterRecommendation": { "score": 9, "priority": "high", "reason": "빙결 계열 최상위 딜러" },
+    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
+    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 무기 권장" },
+    "pullReasons": ["빙결 계열 톱 딜러"],
+    "skipReasons": ["Lingyang 보유 시 역할 중복"],
+    "sources": [{ "name": "레딧", "weight": 1.0 }],
+    "recommendation": { "pull": "recommended", "priority": "high" }
+  }
+]

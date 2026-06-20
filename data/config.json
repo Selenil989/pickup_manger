@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "supportedGames": ["zzz", "hsr", "wuwa", "endfield"],
+  "evaluationWeights": {
+    "ownPerformance":  0.25,
+    "accountGrowth":   0.30,
+    "futureMetaValue": 0.25,
+    "replaceability":  0.10,
+    "itemValue":       0.10
+  },
+  "itemSubWeights": {
+    "characterValue":    0.50,
+    "weaponValue":       0.35,
+    "breakthroughValue": 0.15
+  },
+  "accountGrowthMethod": "mvp"
+}

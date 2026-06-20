@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가챠 투자 분석기</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <!-- Header -->
+    <header class="app-header">
+      <h1>가챠 투자 분석기</h1>
+      <select id="gameSelect" aria-label="게임 선택">
+        <!-- populated by renderGameSelect() -->
+      </select>
+    </header>
+
+    <!-- Main layout: left panel + right panel side by side -->
+    <main class="app-main">
+
+      <!-- Left Panel -->
+      <aside class="panel panel-left">
+
+        <!-- Character selection section -->
+        <section class="character-section">
+          <h2>분석 대상</h2>
+          <select id="characterSelect" aria-label="캐릭터 선택" disabled>
+            <option value="">캐릭터 선택</option>
+          </select>
+          <button id="analyzeBtn" disabled>분석하기</button>
+        </section>
+
+        <!-- Owned character roster section -->
+        <section class="roster-section">
+          <h2>보유 캐릭터 <span id="rosterCount" class="badge">0</span></h2>
+          <div id="rosterList" class="roster-list">
+            <!-- populated by renderRoster() -->
+          </div>
+        </section>
+
+      </aside>
+
+      <!-- Right Panel: Analysis Results -->
+      <section class="panel panel-right" id="resultsPanel" aria-label="분석 결과">
+        <!--
+          innerHTML set by:
+          - renderResults(result)    → analysis output
+          - renderNoMeta(character)  → no meta data message
+          - renderPlaceholder(msg)   → idle/loading message
+          - renderError(msg)         → error message
+        -->
+        <noscript><p style="padding:16px">JavaScript가 필요한 서비스입니다.</p></noscript>
+      </section>
+
+    </main>
+
+    <!-- Scripts: engine first, then app -->
+    <script src="evaluationEngine.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

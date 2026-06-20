@@ -1,0 +1,138 @@
+[
+  {
+    "version": "1.0",
+    "characterId": "velina",
+    "investmentType": ["meta", "future"],
+    "metaScore": 9.5,
+    "futureScore": 10,
+    "replacementScore": 3,
+    "confidence": 0.82,
+    "futureLinks": [
+      {
+        "characterId": "remiel",
+        "synergy": "Wind Core",
+        "confidence": 0.9
+      }
+    ],
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "명함만으로 핵심 성능 확보"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "초기 돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "medium",
+      "reason": "전무 효율 우수"
+    },
+    "pullReasons": [
+      "레미엘 핵심 파츠",
+      "미래 메타 가치 높음",
+      "이상 계열 최상위 딜러"
+    ],
+    "skipReasons": [
+      "현재 계정 즉시 상승량은 제한적",
+      "미야비 보유 시 역할 중복"
+    ],
+    "sources": [
+      { "name": "아카라이브", "weight": 0.4 },
+      { "name": "레딧", "weight": 0.3 },
+      { "name": "빌리빌리", "weight": 0.3 }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "remiel",
+    "investmentType": ["future", "synergy"],
+    "metaScore": 8.5,
+    "futureScore": 9.5,
+    "replacementScore": 5,
+    "confidence": 0.70,
+    "futureLinks": [
+      {
+        "characterId": "velina",
+        "synergy": "Wind Core",
+        "confidence": 0.9
+      }
+    ],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "벨리나와 핵심 시너지"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 미검증"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "서포터 전무 효율 보통"
+    },
+    "pullReasons": [
+      "벨리나 보유 시 필수 파츠",
+      "바람 계열 서포터 공백 해소"
+    ],
+    "skipReasons": [
+      "벨리나 미보유 시 단독 가치 낮음",
+      "미출시 캐릭터로 실성능 미검증"
+    ],
+    "sources": [
+      { "name": "아카라이브", "weight": 0.5 },
+      { "name": "레딧", "weight": 0.5 }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "miyabi",
+    "investmentType": ["meta"],
+    "metaScore": 9.8,
+    "futureScore": 8.0,
+    "replacementScore": 2,
+    "confidence": 0.95,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 10,
+      "priority": "high",
+      "reason": "이상 계열 독보적 1위"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "M2 이후 큰 향상"
+    },
+    "weaponRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "전용 W엔진 효율 최상"
+    },
+    "pullReasons": [
+      "현재 메타 최강 이상 딜러",
+      "대체 불가 퍼포먼스"
+    ],
+    "skipReasons": [
+      "재픽업 주기가 불명확"
+    ],
+    "sources": [
+      { "name": "아카라이브", "weight": 0.5 },
+      { "name": "레딧", "weight": 0.5 }
+    ],
+    "recommendation": {
+      "pull": "must_pull",
+      "priority": "high"
+    }
+  }
+]
