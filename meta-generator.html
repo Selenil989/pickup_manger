@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gen-wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .gen-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .gen-card-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .gen-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .gen-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .gen-table th { background: var(--bg); color: var(--muted); font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; font-size: 11px; }
+    .gen-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .gen-table tr:last-child td { border-bottom: none; }
+    .gen-input { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box; }
+    .gen-input:focus { outline: none; border-color: var(--accent); }
+    .gen-select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 13px; }
+    .gen-select:focus { outline: none; border-color: var(--accent); }
+    .gen-btn { background: var(--accent); color: var(--white); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .gen-btn:hover { opacity: 0.85; }
+    .gen-btn:disabled { opacity: 0.35; cursor: default; }
+    .gen-btn-sm { padding: 4px 10px; font-size: 12px; }
+    .gen-btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .gen-btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+    .gen-note { font-size: 13px; color: var(--muted); }
+    .gen-textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--text); width: 100%; box-sizing: border-box; height: 360px; resize: vertical; }
+    .gen-hidden { display: none; }
+    .gen-mt { margin-top: 16px; }
+    .gen-status-ok  { color: var(--rec); }
+    .gen-status-err { color: var(--must); }
+    .tier-SSS { color: var(--must); font-weight: 700; }
+    .tier-SS  { color: var(--opt);  font-weight: 700; }
+    .tier-S   { color: var(--rec);  font-weight: 700; }
+    .tier-A   { color: var(--accent); }
+    .tier-B   { color: var(--muted); }
+    .tier-C   { color: var(--skip); }
+    .gen-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .gen-summary-chip { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 4px 12px; font-size: 13px; color: var(--muted); }
+    .gen-summary-chip span { color: var(--accent); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Meta Generator</h1>
+    <span class="gen-note" style="margin-left: 12px;">수동 티어 입력 → meta.json 초안 생성 도구</span>
+  </header>
+
+  <div class="gen-wrap">
+
+    <!-- Step 1: 게임 선택 -->
+    <div class="gen-card">
+      <div class="gen-card-title">Step 1 — 게임 선택</div>
+      <div class="gen-row">
+        <select id="gameSelect" class="gen-select" aria-label="게임 선택">
+          <option value="">게임을 선택하세요</option>
+          <option value="zzz">젠레스 존 제로 (ZZZ)</option>
+          <option value="hsr">붕괴: 스타레일 (HSR)</option>
+          <option value="wuwa">명조: 워더링 웨이브 (WuWa)</option>
+          <option value="endfield">엔드필드 (Endfield)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Step 2: 캐릭터 로드 -->
+    <div class="gen-card">
+      <div class="gen-card-title">Step 2 — 캐릭터 로드</div>
+      <div class="gen-row">
+        <button class="gen-btn" id="loadBtn" disabled>characters.json 로드</button>
+        <span id="loadStatus" class="gen-note"></span>
+      </div>
+    </div>
+
+    <!-- Step 3: 티어 입력 -->
+    <div class="gen-card gen-hidden" id="stepTier">
+      <div class="gen-card-title">Step 3 — 티어 입력</div>
+      <p class="gen-note" style="margin-bottom: 12px;">
+        tier를 비워두면 해당 캐릭터는 출력에서 제외됩니다. 전무/돌파/미래점수는 비워두면 기본값이 적용됩니다.
+      </p>
+      <div style="overflow-x: auto;">
+        <table class="gen-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>id</th>
+              <th>이름</th>
+              <th>직군</th>
+              <th>속성</th>
+              <th>tier *</th>
+              <th>전무 (1-10)</th>
+              <th>돌파 (1-10)</th>
+              <th>미래 (1-10)</th>
+              <th>메모</th>
+            </tr>
+          </thead>
+          <tbody id="tierTableBody"></tbody>
+        </table>
+      </div>
+      <div class="gen-mt">
+        <button class="gen-btn" id="generateBtn">Preview JSON 생성</button>
+      </div>
+    </div>
+
+    <!-- Step 4: 결과 출력 -->
+    <div class="gen-card gen-hidden" id="stepOutput">
+      <div class="gen-card-title">Step 4 — Preview 결과</div>
+      <div class="gen-summary" id="genSummary"></div>
+      <div class="gen-row" style="margin-bottom: 12px;">
+        <button class="gen-btn" id="copyBtn">JSON 복사</button>
+        <button class="gen-btn gen-btn-outline" id="downloadBtn">JSON 다운로드</button>
+      </div>
+      <textarea class="gen-textarea" id="jsonOutput" readonly></textarea>
+      <p class="gen-note gen-mt">
+        이 파일은 <strong>meta.json에 직접 반영되지 않습니다.</strong>
+        검토 후 수동으로 복사하거나 다운로드하여 사용하세요.
+      </p>
+    </div>
+
+  </div>
+  <script src="meta-generator.js"></script>
+</body>
+</html>
