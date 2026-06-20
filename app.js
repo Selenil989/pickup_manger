@@ -26,6 +26,8 @@ var _editIsCreate = false;
 
 var CHAR_ROLES    = ['attack', 'stun', 'anomaly', 'support', 'defense', 'rupture'];
 var CHAR_ELEMENTS = ['physical', 'fire', 'ice', 'electric', 'ether', 'wind'];
+var CHAR_ROLE_LABELS    = { attack: '강공', stun: '격파', anomaly: '이상', support: '지원', defense: '방어', rupture: '명파' };
+var CHAR_ELEMENT_LABELS = { physical: '물리', fire: '불', ice: '얼음', electric: '전기', ether: '에테르', wind: '바람' };
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 1: Utilities
@@ -218,9 +220,36 @@ function renderCharacterSelect() {
   var select = document.getElementById("characterSelect");
   select.innerHTML = '<option value="">캐릭터 선택</option>';
 
-  for (var i = 0; i < appState.characters.length; i++) {
-    var char = appState.characters[i];
-    var label = (char.nameKo || char.name) + (char.isReleased ? "" : " [출시 예정]");
+  var filtered = appState.characters.filter(function(c) {
+    var dc = _charEdits[c.id] ? Object.assign({}, c, _charEdits[c.id]) : c;
+    return (dc.rarity || 5) === 5;
+  });
+
+  filtered.sort(function(a, b) {
+    var da = _charEdits[a.id] ? Object.assign({}, a, _charEdits[a.id]) : a;
+    var db = _charEdits[b.id] ? Object.assign({}, b, _charEdits[b.id]) : b;
+    var ga = !da.isReleased ? 0 : (da.releaseDate ? 1 : 2);
+    var gb = !db.isReleased ? 0 : (db.releaseDate ? 1 : 2);
+    if (ga !== gb) return ga - gb;
+    if (ga === 1) {
+      var ra = /^\d{8}$/.test(da.releaseDate) ? da.releaseDate.slice(0,4)+'-'+da.releaseDate.slice(4,6)+'-'+da.releaseDate.slice(6) : da.releaseDate;
+      var rb = /^\d{8}$/.test(db.releaseDate) ? db.releaseDate.slice(0,4)+'-'+db.releaseDate.slice(4,6)+'-'+db.releaseDate.slice(6) : db.releaseDate;
+      if (ra > rb) return -1;
+      if (ra < rb) return 1;
+      if ((db.rarity || 0) !== (da.rarity || 0)) return (db.rarity || 0) - (da.rarity || 0);
+      var oa = da.releaseOrder || 999999;
+      var ob = db.releaseOrder || 999999;
+      if (oa !== ob) return oa - ob;
+    }
+    var na = da.nameKo || da.name || '';
+    var nb = db.nameKo || db.name || '';
+    return na < nb ? -1 : na > nb ? 1 : 0;
+  });
+
+  for (var i = 0; i < filtered.length; i++) {
+    var char = filtered[i];
+    var dc = _charEdits[char.id] ? Object.assign({}, char, _charEdits[char.id]) : char;
+    var label = (dc.nameKo || dc.name) + (dc.isReleased ? "" : " [출시 예정]");
     var option = document.createElement("option");
     option.value = char.id;
     option.textContent = label;
@@ -242,10 +271,32 @@ function renderCardGrid() {
       '<button class="char-edit-bar-btn" onclick="downloadCharactersPreview()">&#x2B07; Preview 다운로드</button></div>'
     : '';
 
+  var sortedChars = appState.characters.slice();
+  sortedChars.sort(function(a, b) {
+    var da = _charEdits[a.id] ? Object.assign({}, a, _charEdits[a.id]) : a;
+    var db = _charEdits[b.id] ? Object.assign({}, b, _charEdits[b.id]) : b;
+    var ga = !da.isReleased ? 0 : (da.releaseDate ? 1 : 2);
+    var gb = !db.isReleased ? 0 : (db.releaseDate ? 1 : 2);
+    if (ga !== gb) return ga - gb;
+    if (ga === 1) {
+      var ra = /^\d{8}$/.test(da.releaseDate) ? da.releaseDate.slice(0,4)+'-'+da.releaseDate.slice(4,6)+'-'+da.releaseDate.slice(6) : da.releaseDate;
+      var rb = /^\d{8}$/.test(db.releaseDate) ? db.releaseDate.slice(0,4)+'-'+db.releaseDate.slice(4,6)+'-'+db.releaseDate.slice(6) : db.releaseDate;
+      if (ra > rb) return -1;
+      if (ra < rb) return 1;
+      if ((db.rarity || 0) !== (da.rarity || 0)) return (db.rarity || 0) - (da.rarity || 0);
+      var oa = da.releaseOrder || 999999;
+      var ob = db.releaseOrder || 999999;
+      if (oa !== ob) return oa - ob;
+    }
+    var na = da.nameKo || da.name || '';
+    var nb = db.nameKo || db.name || '';
+    return na < nb ? -1 : na > nb ? 1 : 0;
+  });
+
   html += '<div class="card-grid">';
 
-  for (var i = 0; i < appState.characters.length; i++) {
-    var char = appState.characters[i];
+  for (var i = 0; i < sortedChars.length; i++) {
+    var char = sortedChars[i];
     var dc = _charEdits[char.id] ? Object.assign({}, char, _charEdits[char.id]) : char;
     var owned = ownedMap[char.id] ? true : false;
 
@@ -271,7 +322,6 @@ function renderCardGrid() {
     if (owned) html += '<div class="char-card-owned-overlay"></div>';
     html += '<div class="char-card-name">' + (dc.nameKo || dc.name) + '</div>';
     html += '<button class="card-quick-toggle" data-toggle-id="' + char.id + '">&#10003;</button>';
-    html += '<button class="card-gear-btn" data-gear-id="' + char.id + '">&#9881;&#65039;</button>';
     html += '</div>';
   }
 
@@ -299,7 +349,6 @@ function renderCardGrid() {
     html += '</div></div>';
     html += '<div class="char-card-name">' + (dca.nameKo || dca.name) + '</div>';
     html += '<div class="char-card-pending-badge">미반영</div>';
-    html += '<button class="card-gear-btn" data-gear-id="' + ac.id + '">&#9881;&#65039;</button>';
     html += '</div>';
   }
 
@@ -332,16 +381,6 @@ function renderCardGrid() {
         toggleRosterCharacter(btn.getAttribute('data-toggle-id'));
       };
     })(toggleBtns[k]);
-  }
-
-  var gearBtns = panel.querySelectorAll('.card-gear-btn');
-  for (var g = 0; g < gearBtns.length; g++) {
-    (function(btn) {
-      btn.onclick = function(e) {
-        e.stopPropagation();
-        openCharacterEdit(btn.getAttribute('data-gear-id'));
-      };
-    })(gearBtns[g]);
   }
 
   var addCard = panel.querySelector('.char-card-add');
@@ -436,6 +475,7 @@ function renderCharacterDetailModal() {
     ' value="' + safeMemo + '"' + dis + ' placeholder="최대 100자"></div>' +
     '</div>' +
     '<div class="detail-footer">' +
+    '<button class="detail-gear-btn" onclick="openCharacterEditFromModal()">&#9881;&#65039;</button>' +
     '<button class="detail-btn-cancel" onclick="closeCharacterDetail()">취소</button>' +
     '<button class="detail-btn-save" onclick="saveCharacterDetail()">저장</button>' +
     '</div></div></div>';
@@ -515,6 +555,12 @@ function closeCharacterDetail() {
   modal.innerHTML = '';
 }
 
+function openCharacterEditFromModal() {
+  var charId = _detailCharId;
+  closeCharacterDetail();
+  openCharacterEdit(charId);
+}
+
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 10: Character Manager (Edit / Create)
 
@@ -541,6 +587,7 @@ function openCharacterEdit(charId) {
     element:        cur.element || '',
     specialElement: cur.specialElement || '',
     releaseDate:    cur.releaseDate || '',
+    releaseOrder:   cur.releaseOrder || null,
     isReleased:     cur.isReleased !== false
   };
   renderCharacterEditModal();
@@ -553,7 +600,7 @@ function openCharacterCreate() {
   _editDraft = {
     id: '', name: '', nameKo: '', image: '',
     rarity: 5, role: 'attack', element: 'physical',
-    specialElement: '', releaseDate: '', isReleased: true
+    specialElement: '', releaseDate: '', releaseOrder: null, isReleased: true
   };
   renderCharacterEditModal();
   document.getElementById('charEditModal').style.display = 'block';
@@ -565,11 +612,11 @@ function renderCharacterEditModal() {
 
   var roleOpts = '<option value="">-</option>';
   for (var r = 0; r < CHAR_ROLES.length; r++) {
-    roleOpts += '<option value="' + CHAR_ROLES[r] + '"' + (d.role === CHAR_ROLES[r] ? ' selected' : '') + '>' + CHAR_ROLES[r] + '</option>';
+    roleOpts += '<option value="' + CHAR_ROLES[r] + '"' + (d.role === CHAR_ROLES[r] ? ' selected' : '') + '>' + (CHAR_ROLE_LABELS[CHAR_ROLES[r]] || CHAR_ROLES[r]) + '</option>';
   }
   var elemOpts = '<option value="">-</option>';
   for (var e = 0; e < CHAR_ELEMENTS.length; e++) {
-    elemOpts += '<option value="' + CHAR_ELEMENTS[e] + '"' + (d.element === CHAR_ELEMENTS[e] ? ' selected' : '') + '>' + CHAR_ELEMENTS[e] + '</option>';
+    elemOpts += '<option value="' + CHAR_ELEMENTS[e] + '"' + (d.element === CHAR_ELEMENTS[e] ? ' selected' : '') + '>' + (CHAR_ELEMENT_LABELS[CHAR_ELEMENTS[e]] || CHAR_ELEMENTS[e]) + '</option>';
   }
 
   var topSection = isCreate
@@ -607,6 +654,8 @@ function renderCharacterEditModal() {
     '<input class="edit-input" id="edit-specialElement" type="text" value="' + (d.specialElement || '') + '" placeholder="MIYABI / YIXUAN / SHUNGUANG"></div>' +
     '<div class="edit-row"><label class="edit-label">출시일</label>' +
     '<input class="edit-input" id="edit-releaseDate" type="text" value="' + (d.releaseDate || '') + '" placeholder="yyyy-mm-dd"></div>' +
+    '<div class="edit-row"><label class="edit-label">출시 순서</label>' +
+    '<input class="edit-input" id="edit-releaseOrder" type="number" min="1" value="' + (d.releaseOrder || '') + '" placeholder="미입력 시 자동"></div>' +
     '<div class="edit-row"><label class="edit-label">출시 여부</label>' +
     '<button class="toggle-btn' + (d.isReleased ? ' active' : '') + '" onclick="editToggleReleased()">' + (d.isReleased ? '출시' : '출시 예정') + '</button></div>' +
     '</div>' +
@@ -672,6 +721,7 @@ function saveCharacterEdit() {
     element:        gv('edit-element') || null,
     specialElement: gv('edit-specialElement') || null,
     releaseDate:    gv('edit-releaseDate'),
+    releaseOrder:   parseInt(gv('edit-releaseOrder')) || null,
     isReleased:     _editDraft.isReleased
   };
 
@@ -751,108 +801,111 @@ function renderRoster() {
 
 function renderResults(result) {
   function scoreBar(score) {
+    if (score == null) {
+      return '<div class="score-display">- / 10</div>' +
+             '<div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:0%"></div></div></div>';
+    }
     var pct = Math.round((score / 10) * 100);
-    return '<div class="score-bar-wrap"><div class="score-bar" style="width:' + pct + '%"></div><span>' + score + '</span></div>';
+    var display = parseFloat(score.toFixed(1));
+    return '<div class="score-display">' + display + ' / 10</div>' +
+           '<div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:' + pct + '%"></div></div></div>';
   }
 
-  function priorityBadge(priority) {
-    return '<span class="badge badge-' + priority + '">' + priority + '</span>';
+  function scoreBadge(score) {
+    if (score == null) return '';
+    var cls   = score >= 9.0 ? 'badge-high'   : score >= 6.0 ? 'badge-medium'   : 'badge-low';
+    var label = score >= 9.0 ? 'HIGH'          : score >= 6.0 ? 'MEDIUM'          : 'LOW';
+    return '<span class="badge ' + cls + '">' + label + '</span>';
   }
 
   var character = result.character;
   var meta = result.meta;
-  var pullClass = meta.recommendation.pull.replace(/_/g, "-");
   var finalPct = Math.round((result.finalScore / 10) * 100);
+
+  var roster = appState.rosters[appState.currentGame] || { characters: [] };
+  var isOwned = roster.characters.some(function(e) { return e.characterId === character.id; });
+  var verdictLabel = result.finalScore >= 8.5 ? '필수 뽑기'
+                   : result.finalScore >= 7.0 ? '추천'
+                   : result.finalScore >= 5.5 ? '선택'
+                   : '비추천';
+  var pullClass = result.finalScore >= 8.5 ? 'must-pull'
+                : result.finalScore >= 7.0 ? 'recommended'
+                : result.finalScore >= 5.5 ? 'optional'
+                : 'skip';
 
   var html = '';
 
   html += '<div class="results-container">';
 
-  // Block 1: Final score
+  // Block 1: 최종 추천도 + verdict inline
+  var inlineBadge = isOwned
+    ? '<span class="verdict-inline verdict-owned">보유중</span>'
+    : '<span class="verdict-inline">' + verdictLabel + '</span>';
   html += '<div class="result-block result-final pull-' + pullClass + '">';
-  html += '<div class="result-label">최종 추천도</div>';
-  html += '<div class="final-score">' + result.finalScore + ' / 10</div>';
-  html += '<div class="score-bar-wrap"><div class="score-bar" style="width:' + finalPct + '%"></div><span>' + result.finalScore + '</span></div>';
-  if (result.isCurrentPickup) {
-    html += '<div class="pickup-badge">현재 픽업 중</div>';
-  }
+  html += '<div class="result-label">최종 추천도' + inlineBadge + '</div>';
+  html += '<div class="final-score">' + parseFloat(result.finalScore.toFixed(1)) + ' / 10</div>';
+  html += '<div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:' + finalPct + '%"></div></div></div>';
+  if (result.isCurrentPickup) html += '<div class="pickup-badge">현재 픽업 중</div>';
   html += '</div>';
 
-  // Block 2: Investment types
+  // Block 2: 현재 메타 성능
+  var confClass = meta.confidence >= 0.80 ? 'confidence-high'
+                : meta.confidence >= 0.60 ? 'confidence-mid'
+                : 'confidence-low';
   html += '<div class="result-block">';
-  html += '<div class="result-label">투자 유형</div>';
-  html += '<div class="investment-types">';
-  var labels = result.investmentTypeLabels;
-  for (var i = 0; i < labels.length; i++) {
-    html += '<span class="inv-badge">' + labels[i] + '</span>';
-  }
-  html += '</div>';
-  html += '</div>';
-
-  // Block 3: Pull reasons
-  html += '<div class="result-block">';
-  html += '<div class="result-label">뽑아야 할 이유</div>';
-  html += '<ul class="reason-list">';
-  var pullReasons = meta.pullReasons || [];
-  for (var j = 0; j < pullReasons.length; j++) {
-    html += '<li>' + pullReasons[j] + '</li>';
-  }
-  html += '</ul>';
-  html += '</div>';
-
-  // Block 4: Base performance
-  html += '<div class="result-block">';
-  html += '<div class="result-label">캐릭터 자체 성능</div>';
-  html += scoreBar(character.basePerformance);
-  html += '</div>';
-
-  // Block 5: Meta score
-  html += '<div class="result-block">';
-  html += '<div class="result-label">현재 메타 점수<span class="confidence-label">신뢰도 ' + Math.round(meta.confidence * 100) + '%</span></div>';
+  html += '<div class="result-label">현재 메타 성능' + scoreBadge(meta.metaScore) + '</div>';
   html += scoreBar(meta.metaScore);
+  html += '<div class="confidence-note ' + confClass + '">신뢰도 ' + Math.round(meta.confidence * 100) + '%</div>';
   html += '</div>';
 
-  // Block 6: Account growth
+  // Block 3: 계정 체급 상승량
   html += '<div class="result-block">';
-  html += '<div class="result-label">계정 체급 상승량</div>';
+  html += '<div class="result-label">계정 체급 상승량' + scoreBadge(result.accountGrowth) + '</div>';
   html += scoreBar(result.accountGrowth);
   html += '</div>';
 
-  // Block 7: Future meta value
+  // Block 4: 미래 메타 가치
   html += '<div class="result-block">';
-  html += '<div class="result-label">미래 메타 가치</div>';
+  html += '<div class="result-label">미래 메타 가치' + scoreBadge(meta.futureScore) + '</div>';
   html += scoreBar(meta.futureScore);
   html += '</div>';
 
-  // Block 8: Replaceability
+  // Block 5: 대체 가능성 (역점수 개념 — 배지 제외)
   html += '<div class="result-block">';
   html += '<div class="result-label">대체 가능성</div>';
   html += scoreBar(meta.replacementScore);
   html += '<div class="sub-note">점수 높을수록 대체 용이 → 투자 가치 하락</div>';
   html += '</div>';
 
-  // Block 9: Character recommendation
+  // Block 6: 명함 / 돌파 분할 카드
+  var btRecommended = meta.breakthroughRecommendation.recommendedBreakthrough;
+  var btStageHtml = btRecommended
+    ? '<div class="sub-note">추천 돌파 : ' + btRecommended + '</div>'
+    : '<div class="sub-note">추천 돌파 : 정보 없음</div>';
   html += '<div class="result-block">';
-  html += '<div class="result-label">명함 가치' + priorityBadge(meta.characterRecommendation.priority) + '</div>';
+  html += '<div class="rec-split">';
+  html += '<div class="rec-split-col">';
+  html += '<div class="result-label">명함 추천도' + scoreBadge(meta.characterRecommendation.score) + '</div>';
   html += scoreBar(meta.characterRecommendation.score);
   html += '<div class="sub-note">' + meta.characterRecommendation.reason + '</div>';
   html += '</div>';
-
-  // Block 10: Breakthrough recommendation
-  html += '<div class="result-block">';
-  html += '<div class="result-label">돌파 가치' + priorityBadge(meta.breakthroughRecommendation.priority) + '</div>';
+  html += '<div class="rec-split-col">';
+  html += '<div class="result-label">돌파 추천도' + scoreBadge(meta.breakthroughRecommendation.score) + '</div>';
   html += scoreBar(meta.breakthroughRecommendation.score);
+  html += btStageHtml;
   html += '<div class="sub-note">' + meta.breakthroughRecommendation.reason + '</div>';
   html += '</div>';
+  html += '</div>';
+  html += '</div>';
 
-  // Block 11: Weapon recommendation
+  // Block 7: 전무 가치
   html += '<div class="result-block">';
-  html += '<div class="result-label">전무 가치' + priorityBadge(meta.weaponRecommendation.priority) + '</div>';
+  html += '<div class="result-label">전무 가치' + scoreBadge(meta.weaponRecommendation.score) + '</div>';
   html += scoreBar(meta.weaponRecommendation.score);
   html += '<div class="sub-note">' + meta.weaponRecommendation.reason + '</div>';
   html += '</div>';
 
-  // Block 12: Future synergy links
+  // Block 8: 향후 시너지 캐릭터
   html += '<div class="result-block">';
   html += '<div class="result-label">향후 시너지 캐릭터</div>';
   var futureLinks = meta.futureLinks || [];
@@ -879,21 +932,26 @@ function renderResults(result) {
   }
   html += '</div>';
 
-  // Block 13: Skip reasons
+  // Block 9: 👍 뽑아야 할 이유
   html += '<div class="result-block">';
-  html += '<div class="result-label">뽑지 말아야 할 이유</div>';
+  html += '<div class="result-label">👍 뽑아야 할 이유</div>';
+  html += '<ul class="reason-list">';
+  var pullReasons = meta.pullReasons || [];
+  for (var j = 0; j < pullReasons.length; j++) {
+    html += '<li>' + pullReasons[j] + '</li>';
+  }
+  html += '</ul>';
+  html += '</div>';
+
+  // Block 10: 👎 뽑지 말아야 할 이유
+  html += '<div class="result-block">';
+  html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
   html += '<ul class="reason-list reason-skip">';
   var skipReasons = meta.skipReasons || [];
   for (var k2 = 0; k2 < skipReasons.length; k2++) {
     html += '<li>' + skipReasons[k2] + '</li>';
   }
   html += '</ul>';
-  html += '</div>';
-
-  // Block 14: Final verdict
-  html += '<div class="result-block result-verdict pull-' + pullClass + '">';
-  html += '<div class="result-label">최종 추천</div>';
-  html += '<div class="verdict">' + result.recommendationLabel + '</div>';
   html += '</div>';
 
   html += '</div>';
@@ -971,6 +1029,11 @@ function init() {
       document.getElementById("analyzeBtn").onclick = function() {
         onAnalyzeClick();
       };
+
+      var rosterList = document.getElementById('rosterList');
+      rosterList.addEventListener('scroll', function() {
+        rosterList.parentNode.classList.toggle('scroll-top', rosterList.scrollTop > 8);
+      });
     })
     .catch(function() {
       renderError("설정 파일을 불러오지 못했습니다. 페이지를 새로고침해주세요.");

@@ -152,12 +152,48 @@ select {
 }
 
 /* ── 10. Roster ───────────────────────────────────────────── */
+.roster-wrap {
+  position: relative;
+}
+
+.roster-wrap::before,
+.roster-wrap::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.roster-wrap::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--surface), transparent);
+}
+
+.roster-wrap::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--surface), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.roster-wrap.scroll-top::before {
+  opacity: 1;
+}
+
 .roster-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
   max-height: calc(100vh - 300px);
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.roster-list::-webkit-scrollbar {
+  display: none;
 }
 
 .roster-item {
@@ -263,6 +299,16 @@ select {
   letter-spacing: 0;
 }
 
+.confidence-note {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.confidence-high { color: var(--rec);  }
+.confidence-mid  { color: var(--opt);  }
+.confidence-low  { color: var(--must); }
+
 /* ── 14. Results — Final Score Block (highest visual priority) */
 .result-final {
   padding: 16px 20px;
@@ -300,6 +346,30 @@ select {
 }
 
 /* ── 15. Results — Score Bar ──────────────────────────────── */
+
+/* 점수 표시 (X.X / 10) — 게이지 위 */
+.score-display {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+/* verdict 인라인 배지 — 최종 추천도 제목 우측 */
+.verdict-inline {
+  float: right;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.pull-must-pull   .verdict-inline { background: var(--must-bg); color: var(--must); }
+.pull-recommended .verdict-inline { background: var(--high-bg); color: var(--high); }
+.pull-optional    .verdict-inline { background: var(--opt-bg);  color: var(--opt);  }
+.pull-skip        .verdict-inline { background: var(--border);  color: var(--muted); }
+.verdict-inline.verdict-owned     { background: var(--accent-bg); color: var(--accent); }
+
 .score-bar-wrap {
   display: flex;
   align-items: center;
@@ -313,13 +383,18 @@ select {
   font-size: 15px;
 }
 
+.score-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
 .score-bar {
   height: 8px;
   background: var(--accent);
   border-radius: 4px;
-  flex: 1;
-  max-width: calc(100% - 40px);
-  /* NO transition — width is set via inline style */
 }
 
 /* ── 16. Results — Investment Type Badges ─────────────────── */
@@ -405,6 +480,37 @@ select {
 .pull-recommended .verdict { color: var(--rec);  }
 .pull-optional    .verdict { color: var(--opt);  }
 .pull-skip        .verdict { color: var(--skip); }
+
+/* 보유중 — accent(보라) 스타일 */
+.pull-owned                { border-color: var(--accent); }
+.pull-owned .final-score   { color: var(--accent); }
+
+.owned-badge {
+  display: inline-block;
+  padding: 4px 18px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* 명함 / 돌파 분할 카드 */
+.rec-split {
+  display: flex;
+  gap: 0;
+}
+
+.rec-split-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-split-col + .rec-split-col {
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
 
 /* ── 21. Character Card Grid ─────────────────────────────── */
 .card-grid {
@@ -690,6 +796,22 @@ select {
   border-top: 1px solid var(--border);
 }
 
+.detail-gear-btn {
+  margin-right: auto;
+  padding: 7px 11px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.detail-gear-btn:hover {
+  background: var(--border);
+}
+
 .detail-btn-cancel {
   padding: 7px 18px;
   border-radius: 6px;
@@ -723,14 +845,14 @@ select {
 
 .card-quick-toggle {
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 5;
+  bottom: 0;
+  left: 0;
+  z-index: 6;
   width: 26px;
   height: 26px;
   background: rgba(0, 0, 0, 0.55);
   border: none;
-  border-radius: 0 8px 0 8px;
+  border-radius: 0 8px 0 0;
   color: var(--muted);
   font-size: 14px;
   cursor: pointer;

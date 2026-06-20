@@ -3,6 +3,7 @@ function clamp(value, min, max) {
 }
 
 function calculateAccountGrowth_mvp(character, meta, userRoster, allCharacters) {
+  // 1. 역할 공백 (0~3)
   var sameRoleCount = 0;
   for (var i = 0; i < userRoster.characters.length; i++) {
     var entry = userRoster.characters[i];
@@ -13,24 +14,38 @@ function calculateAccountGrowth_mvp(character, meta, userRoster, allCharacters) 
       }
     }
   }
-  var roleGapScore = Math.max(0, 4 - sameRoleCount * 2);
+  var roleGap = sameRoleCount === 0 ? 3 :
+                sameRoleCount === 1 ? 2 :
+                sameRoleCount === 2 ? 1 : 0;
 
+  // 2. 메타 등급 보정 (0~3)
+  var metaBonus = ((meta.metaScore || 0) / 10) * 3;
+
+  // 3. 시너지 점수 (0~2)
   var futureLinks = meta.futureLinks || [];
   var futureLinksIds = futureLinks.map(function(fl) { return fl.characterId; });
   var ownedLinkCount = userRoster.characters.filter(function(entry) {
     return futureLinksIds.indexOf(entry.characterId) !== -1;
   }).length;
-  var currentSynergyScore = Math.min(3, ownedLinkCount * 1.5);
-  var futureSynergyScore = 0;
+  var currentSynergy = Math.min(1.5, ownedLinkCount * 0.75);
+  var futureSynergy = 0;
   if (futureLinks.length > 0) {
     var confidenceSum = 0;
     for (var k = 0; k < futureLinks.length; k++) {
       confidenceSum += futureLinks[k].confidence;
     }
-    futureSynergyScore = (confidenceSum / futureLinks.length) * 3;
+    futureSynergy = Math.min(0.5, (confidenceSum / futureLinks.length) * 0.5);
   }
+  var synergyScore = Math.min(2, currentSynergy + futureSynergy);
 
-  return clamp(roleGapScore + currentSynergyScore + futureSynergyScore, 0, 10);
+  // 4. 파티 기여도 (0~1)
+  var UNIVERSAL_ROLES = ['support', 'defense', 'stun', 'rupture'];
+  var partyBonus = UNIVERSAL_ROLES.indexOf(character.role) !== -1 ? 1 : 0;
+
+  // 5. 대체 불가능성 (0~1)
+  var replacementBonus = ((10 - (meta.replacementScore || 0)) / 10);
+
+  return clamp(roleGap + metaBonus + synergyScore + partyBonus + replacementBonus, 0, 10);
 }
 
 var ACCOUNT_GROWTH_METHODS = {
@@ -45,7 +60,7 @@ function calculateItemAverageScore(meta, itemSubWeights) {
 
 function calculateFinalScore(character, meta, accountGrowth, itemAverageScore, config) {
   var w = config.evaluationWeights;
-  var score = (character.basePerformance         * w.ownPerformance)
+  var score = (meta.metaScore                    * w.ownPerformance)
             + (accountGrowth                      * w.accountGrowth)
             + (meta.futureScore                   * w.futureMetaValue)
             + ((10 - meta.replacementScore)       * w.replaceability)

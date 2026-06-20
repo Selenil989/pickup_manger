@@ -2,7 +2,10 @@
   {
     "version": "1.0",
     "characterId": "velina",
-    "investmentType": ["meta", "future"],
+    "investmentType": [
+      "meta",
+      "future"
+    ],
     "metaScore": 9.5,
     "futureScore": 10,
     "replacementScore": 3,
@@ -39,9 +42,18 @@
       "미야비 보유 시 역할 중복"
     ],
     "sources": [
-      { "name": "아카라이브", "weight": 0.4 },
-      { "name": "레딧", "weight": 0.3 },
-      { "name": "빌리빌리", "weight": 0.3 }
+      {
+        "name": "아카라이브",
+        "weight": 0.4
+      },
+      {
+        "name": "레딧",
+        "weight": 0.3
+      },
+      {
+        "name": "빌리빌리",
+        "weight": 0.3
+      }
     ],
     "recommendation": {
       "pull": "recommended",
@@ -51,11 +63,14 @@
   {
     "version": "1.0",
     "characterId": "remiel",
-    "investmentType": ["future", "synergy"],
+    "investmentType": [
+      "future",
+      "synergy"
+    ],
     "metaScore": 8.5,
     "futureScore": 9.5,
     "replacementScore": 5,
-    "confidence": 0.70,
+    "confidence": 0.7,
     "futureLinks": [
       {
         "characterId": "velina",
@@ -87,8 +102,14 @@
       "미출시 캐릭터로 실성능 미검증"
     ],
     "sources": [
-      { "name": "아카라이브", "weight": 0.5 },
-      { "name": "레딧", "weight": 0.5 }
+      {
+        "name": "아카라이브",
+        "weight": 0.5
+      },
+      {
+        "name": "레딧",
+        "weight": 0.5
+      }
     ],
     "recommendation": {
       "pull": "optional",
@@ -98,7 +119,9 @@
   {
     "version": "1.0",
     "characterId": "miyabi",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 9.8,
     "futureScore": 8.0,
     "replacementScore": 2,
@@ -124,14 +147,234 @@
       "대체 불가 퍼포먼스"
     ],
     "skipReasons": [
-      "재픽업 주기가 불명확"
+      "재픽업 주기 불명확"
     ],
     "sources": [
-      { "name": "아카라이브", "weight": 0.5 },
-      { "name": "레딧", "weight": 0.5 }
+      {
+        "name": "아카라이브",
+        "weight": 0.5
+      },
+      {
+        "name": "레딧",
+        "weight": 0.5
+      }
     ],
     "recommendation": {
       "pull": "must_pull",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "astra_yao",
+    "investmentType": [
+      "meta",
+      "future"
+    ],
+    "metaScore": 9.7,
+    "futureScore": 9.8,
+    "replacementScore": 1,
+    "confidence": 0.95,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 10,
+      "priority": "high",
+      "reason": "범용 서포터 최상위"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "명함 완성도 높음"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전무 체감 양호"
+    },
+    "pullReasons": [
+      "거의 모든 파티 기용",
+      "미래 가치 높음",
+      "범용 버퍼"
+    ],
+    "skipReasons": [
+      "복각 대기 가능"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 0.4
+      },
+      {
+        "name": "레딧",
+        "weight": 0.3
+      },
+      {
+        "name": "빌리빌리",
+        "weight": 0.3
+      }
+    ],
+    "recommendation": {
+      "pull": "must_pull",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "caesar",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 9.1,
+    "futureScore": 9.2,
+    "replacementScore": 1,
+    "confidence": 0.92,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 10,
+      "priority": "high",
+      "reason": "명함만으로 핵심 성능"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전무 의존도 낮음"
+    },
+    "pullReasons": [
+      "범용성 최고",
+      "생존+버프 제공",
+      "장기 사용 가능"
+    ],
+    "skipReasons": [
+      "딜러 체감은 적음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 0.4
+      },
+      {
+        "name": "레딧",
+        "weight": 0.3
+      },
+      {
+        "name": "빌리빌리",
+        "weight": 0.3
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "trigger",
+    "investmentType": [
+      "meta",
+      "future"
+    ],
+    "metaScore": 9.3,
+    "futureScore": 9.5,
+    "replacementScore": 2,
+    "confidence": 0.9,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "격파 핵심 파츠"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전무 효율 양호"
+    },
+    "pullReasons": [
+      "격파 메타 핵심",
+      "강공 딜러와 시너지",
+      "미래 가치 높음"
+    ],
+    "skipReasons": [
+      "격파 파티 없으면 체감 감소"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 0.4
+      },
+      {
+        "name": "레딧",
+        "weight": 0.3
+      },
+      {
+        "name": "빌리빌리",
+        "weight": 0.3
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "yanagi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 9.4,
+    "futureScore": 8.8,
+    "replacementScore": 3,
+    "confidence": 0.92,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "전기 이상 파티 핵심"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "돌파 효율 양호"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "전무 체감 큼"
+    },
+    "pullReasons": [
+      "전기 이상 최상위",
+      "지속 화력 우수",
+      "감전 조합 핵심"
+    ],
+    "skipReasons": [
+      "전기 이상 파츠 부족 시 가치 감소"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 0.4
+      },
+      {
+        "name": "레딧",
+        "weight": 0.3
+      },
+      {
+        "name": "빌리빌리",
+        "weight": 0.3
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
       "priority": "high"
     }
   }

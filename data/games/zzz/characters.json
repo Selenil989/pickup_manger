@@ -178,7 +178,7 @@
     "specialElement": null,
     "image": "이블린.webp",
     "basePerformance": null,
-    "releaseDate": "2025-01-22",
+    "releaseDate": "2025-02-12",
     "isReleased": true
   },
   {
@@ -262,7 +262,7 @@
     "specialElement": null,
     "image": "제인.webp",
     "basePerformance": 8.8,
-    "releaseDate": "2024-09-25",
+    "releaseDate": "2024-09-04",
     "isReleased": true
   },
   {
@@ -290,8 +290,9 @@
     "specialElement": null,
     "image": "엘렌.webp",
     "basePerformance": null,
-    "releaseDate": "2024-08-14",
-    "isReleased": true
+    "releaseDate": "2024-07-04",
+    "isReleased": true,
+    "releaseOrder": 1
   },
   {
     "id": "qingyi",
@@ -318,7 +319,7 @@
     "specialElement": null,
     "image": "주연.webp",
     "basePerformance": null,
-    "releaseDate": "2024-07-04",
+    "releaseDate": "2024-07-24",
     "isReleased": true
   },
   {
@@ -333,7 +334,8 @@
     "image": "리카온.webp",
     "basePerformance": 8.5,
     "releaseDate": "2024-07-04",
-    "isReleased": true
+    "isReleased": true,
+    "releaseOrder": 2
   },
   {
     "id": "nekomata",
@@ -361,7 +363,8 @@
     "image": "콜레다.webp",
     "basePerformance": null,
     "releaseDate": "2024-07-04",
-    "isReleased": true
+    "isReleased": true,
+    "releaseOrder": 6
   },
   {
     "id": "soldier_11",
@@ -389,7 +392,8 @@
     "image": "그레이스.webp",
     "basePerformance": null,
     "releaseDate": "2024-07-04",
-    "isReleased": true
+    "isReleased": true,
+    "releaseOrder": 5
   },
   {
     "id": "rina",
@@ -402,8 +406,9 @@
     "specialElement": null,
     "image": "리나.webp",
     "basePerformance": null,
-    "releaseDate": null,
-    "isReleased": true
+    "releaseDate": "2024-07-04",
+    "isReleased": true,
+    "releaseOrder": 3
   },
   {
     "id": "hugo",
@@ -416,7 +421,7 @@
     "specialElement": null,
     "image": "휴고.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-04-23",
     "isReleased": true
   },
   {
@@ -430,7 +435,7 @@
     "specialElement": null,
     "image": "비비안.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-04-02",
     "isReleased": true
   },
   {
@@ -444,7 +449,7 @@
     "specialElement": null,
     "image": "트리거.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-03-12",
     "isReleased": true
   },
   {
@@ -458,7 +463,7 @@
     "specialElement": null,
     "image": "0호_앤비.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-03-12",
     "isReleased": true
   },
   {
@@ -472,7 +477,7 @@
     "specialElement": null,
     "image": "앨리스.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-08-06",
     "isReleased": true
   },
   {
@@ -486,7 +491,7 @@
     "specialElement": null,
     "image": "유즈하.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-07-16",
     "isReleased": true
   },
   {
@@ -654,7 +659,7 @@
     "specialElement": null,
     "image": "세스.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2024-09-04",
     "isReleased": true
   },
   {
@@ -668,7 +673,7 @@
     "specialElement": null,
     "image": "펄크라.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-03-12",
     "isReleased": true
   },
   {
@@ -676,13 +681,13 @@
     "name": "오피 도깨비불",
     "nameKo": "오피 도깨비불",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "fire",
     "specialElement": null,
     "image": "오피_도깨비불.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-09-04",
     "isReleased": true
   },
   {
@@ -690,13 +695,13 @@
     "name": "자오",
     "nameKo": "자오",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "defense",
+    "element": "ice",
     "specialElement": null,
     "image": "자오.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-12-30",
     "isReleased": true
   },
   {
@@ -704,13 +709,13 @@
     "name": "시드",
     "nameKo": "시드",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "attack",
+    "element": "electric",
     "specialElement": null,
     "image": "시드.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-09-04",
     "isReleased": true
   },
   {
@@ -718,13 +723,13 @@
     "name": "반악",
     "nameKo": "반악",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "rupture",
+    "element": "fire",
     "specialElement": null,
     "image": "반악.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-12-17",
     "isReleased": true
   },
   {
@@ -732,13 +737,13 @@
     "name": "다이아린",
     "nameKo": "다이아린",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "stun",
+    "element": "physical",
     "specialElement": null,
     "image": "다이아린.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2025-11-26",
     "isReleased": true
   },
   {
@@ -746,13 +751,13 @@
     "name": "남궁우",
     "nameKo": "남궁우",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "stun",
+    "element": "ether",
     "specialElement": null,
     "image": "남궁우.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2026-03-24",
     "isReleased": true
   },
   {
@@ -760,13 +765,13 @@
     "name": "시시아",
     "nameKo": "시시아",
     "gameId": "zzz",
-    "rarity": null,
-    "role": null,
-    "element": null,
+    "rarity": 5,
+    "role": "attack",
+    "element": "electric",
     "specialElement": null,
     "image": "시시아.webp",
     "basePerformance": null,
-    "releaseDate": null,
+    "releaseDate": "2026-04-15",
     "isReleased": true
   }
 ]
