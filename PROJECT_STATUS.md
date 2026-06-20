@@ -68,6 +68,16 @@ Generator Tool: 캐릭터 데이터 생성기 구현 완료
   - Rename 매핑 목록 / PowerShell Rename-Item 스크립트 생성
   - 한글 파일명 지원, id 중복 검사 (기존 characters.json 비교)
 
+Meta Generator Tool: meta.json 초안 생성기 구현 완료
+  - meta-generator.html / meta-generator.js 신규 생성 (기존 파일 무수정)
+  - 수동 티어 입력 기반 meta.json 초안 생성 도구
+  - tier → metaScore / confidence 자동 변환
+  - 동일 role 내 SS 이상 캐릭터 수 기반 replacementScore 계산
+  - character / weapon / breakthrough 추천도 자동 생성
+  - meta.preview.json 복사/다운로드 지원
+  - meta.json 직접 반영 금지 구조
+  - 추후 게임별 캐릭터 티어 입력 UI 시스템의 1차 버전
+
 ### 진행 중
 
 없음
@@ -79,6 +89,13 @@ Generator Tool: 캐릭터 데이터 생성기 구현 완료
 ---
 
 ## 최근 변경 사항
+
+2026-06-20 Meta Generator 완료: meta-generator.html / meta-generator.js 생성
+  - 수동 티어 입력 기반 meta.json 초안 생성 도구
+  - tier → metaScore / confidence / replacementScore 자동 변환
+  - 브라우저 복사/다운로드 출력
+  - meta.json 직접 반영 금지
+  - 추후 "게임별 캐릭터 티어 입력 UI 시스템" 1차 버전
 
 2026-06-19 Generator Tool 완료: generator.html / generator.js 생성
   - 이미지 폴더 스캔 기반 characters.json 초안 생성 도구
@@ -124,6 +141,8 @@ Generator Tool: 캐릭터 데이터 생성기 구현 완료
 앱 레이어:   app.js (상태 관리, fetch, localStorage, 렌더링)
 UI 셸:       index.html (레이아웃 구조)
 스타일:      style.css (다크 테마, CSS 변수 기반)
+캐릭터 도구: generator.html / generator.js (characters.json 초안 생성)
+메타 도구:   meta-generator.html / meta-generator.js (meta.json 초안 생성 / 기존 meta.json 직접 수정 없음)
 
 평가 공식:
 finalScore = basePerformance×0.25 + accountGrowth×0.30 + futureScore×0.25
@@ -155,10 +174,10 @@ GitHub 미설정 (MVP 단계)
 
 ## 다음 작업 우선순위
 
-1. (선택) AI 메타 분석 시스템 연동 (웹 커뮤니티 → meta.json 자동 생성)
-2. (선택) synergy 방식 accountGrowth 구현
-3. (선택) ZZZ lycaon, jane 메타 데이터 등록
-4. (선택) HSR / WuWa / Endfield 메타 데이터 충실화
+1. ZZZ characters.json 충실화 (5 → 55명)
+2. Meta Generator로 ZZZ meta.json 초안 생성
+3. (선택) AI 메타 분석 시스템 연동 (웹 커뮤니티 → meta.json 자동 생성)
+4. (선택) synergy 방식 accountGrowth 구현
 
 ---
 
