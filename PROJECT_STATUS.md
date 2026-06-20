@@ -78,6 +78,26 @@ Meta Generator Tool: meta.json 초안 생성기 구현 완료
   - meta.json 직접 반영 금지 구조
   - 추후 게임별 캐릭터 티어 입력 UI 시스템의 1차 버전
 
+ZZZ DB 확장: characters.json 55개 구축 완료
+  - 5개 → 55개 (S랭크 35개 / A랭크 13개 / placeholder 7개)
+  - image 필드 추가 (한글 webp 파일명)
+  - specialElement 필드 추가 (MIYABI / YIXUAN / SHUNGUANG)
+  - 아이콘 셋 추가: rarity_A/S / role_6종 / element_6종 + 전용 3종
+  - basePerformance 기존값 보존 (velina 9.5 / lycaon 8.5 / jane 8.8 / miyabi 9.8)
+  - 테스트 15/15 PASS
+
+ZZZ Character Card UI: 카드 그리드 구현 완료
+  - app.js renderCardGrid() 추가 (기존 분석 기능 무수정)
+  - ZZZ 55명 인게임 로스터 느낌의 세로형 카드 UI
+  - aspect-ratio 1/1.9 기반, 이미지 중심 카드
+  - rarity / role / element 아이콘 표시
+  - specialElement 우선 표시 규칙 적용 (MIYABI / YIXUAN / SHUNGUANG)
+  - 보유 캐릭터 owned 상태 시각화 (accent 테두리 + 보라색 tint)
+  - 카드 클릭 → 보유 토글 (toggleRosterCharacter 재사용, 임시 동작)
+  - ZZZ 선택 시 카드 그리드 / 분석 실행 시 분석 결과로 전환
+  - HSR / WuWa / Endfield placeholder 동작 유지
+  - 테스트 16/16 PASS
+
 ### 진행 중
 
 없음
@@ -89,6 +109,21 @@ Meta Generator Tool: meta.json 초안 생성기 구현 완료
 ---
 
 ## 최근 변경 사항
+
+2026-06-21 ZZZ Character Card UI 완료: app.js renderCardGrid() / style.css 카드 CSS 추가
+  - ZZZ 55명 카드 그리드 구현 (ZZZ 인게임 로스터 느낌의 세로형 카드)
+  - aspect-ratio 1/1.9 기반 카드 비율 적용, Lv 표시 제외
+  - specialElement 아이콘 처리 적용 (MIYABI / YIXUAN / SHUNGUANG)
+  - 분석 실행 시 기존 분석 결과 화면으로 전환, 해제 시 카드 그리드 복귀
+  - 테스트 16/16 PASS
+  - 커밋: 585b850 feat: add ZZZ character card grid UI
+
+2026-06-21 ZZZ DB 확장 완료: characters.json 5 → 55개
+  - S랭크 35개 / A랭크 13개 / placeholder 7개 구축
+  - image / specialElement 필드 추가, 기존 basePerformance 보존
+  - role_Stun.webp → role_stun.webp rename, 아이콘 셋 전체 추가
+  - 테스트 15/15 PASS
+  - 커밋: 7dd11ea data: expand zzz character database
 
 2026-06-20 Meta Generator 완료: meta-generator.html / meta-generator.js 생성
   - 수동 티어 입력 기반 meta.json 초안 생성 도구
@@ -138,9 +173,9 @@ Meta Generator Tool: meta.json 초안 생성기 구현 완료
 
 데이터 계층: data/config.json + data/games/{gameId}/*.json (정적 JSON)
 평가 엔진:   evaluationEngine.js (순수 함수, DOM 접근 없음)
-앱 레이어:   app.js (상태 관리, fetch, localStorage, 렌더링)
+앱 레이어:   app.js (상태 관리, fetch, localStorage, 렌더링, ZZZ 카드 그리드)
 UI 셸:       index.html (레이아웃 구조)
-스타일:      style.css (다크 테마, CSS 변수 기반)
+스타일:      style.css (다크 테마, CSS 변수 기반, 카드 그리드 CSS)
 캐릭터 도구: generator.html / generator.js (characters.json 초안 생성)
 메타 도구:   meta-generator.html / meta-generator.js (meta.json 초안 생성 / 기존 meta.json 직접 수정 없음)
 
@@ -174,10 +209,10 @@ GitHub 미설정 (MVP 단계)
 
 ## 다음 작업 우선순위
 
-1. ZZZ characters.json 충실화 (5 → 55명)
-2. Meta Generator로 ZZZ meta.json 초안 생성
-3. (선택) AI 메타 분석 시스템 연동 (웹 커뮤니티 → meta.json 자동 생성)
-4. (선택) synergy 방식 accountGrowth 구현
+1. Character Manager UI 설계 (카드 클릭 → 캐릭터 상세/수정 열기)
+2. Meta Generator 2차 개선 (ZZZ 55개 대응 / 필터링 / 일괄 입력)
+3. ZZZ meta.json 초안 생성 (Meta Generator 활용)
+4. HSR / WuWa / Endfield 자동 카드 초안 생성기 설계
 
 ---
 
@@ -210,4 +245,4 @@ docs/superpowers/plans/2026-06-18-ai-gacha-investment-analyzer.md  구현 플랜
 - HSR / WuWa / Endfield 메타 데이터 충실화
 
 
-**버전: MVP v1.0 | 상태: 완료**
+**버전: MVP v1.1 | 상태: ZZZ DB + Card UI 완료 / Character Manager 설계 예정**
