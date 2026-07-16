@@ -1378,5 +1378,20 @@
     "releaseDate": null,
     "isReleased": true,
     "version": ""
+  },
+  {
+    "id": "himekonova",
+    "name": "Himeko • Nova",
+    "nameKo": "히메코·노바",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "erudition",
+    "element": "fire",
+    "specialElement": null,
+    "image": null,
+    "basePerformance": null,
+    "releaseDate": "2026-07-15",
+    "isReleased": true,
+    "version": ""
   }
 ]

@@ -802,6 +802,71 @@ function runClaudeCode(prompt) {
 
 // Claude Code 응답 텍스트에서 추출한 JSON을 프로젝트 meta.json 스키마 기준으로
 // 검증한다. 통과한 경우에만 저장 가능한 정리된 엔트리를 함께 반환한다.
+// gachaGuide는 기존 meta 스키마와 완전히 분리된 선택 필드다. 없으면 그냥 생략되고,
+// 있는데 형식이 잘못됐으면 저장 전체를 막지 않고 gachaGuide만 안전하게 제거한다 —
+// 핵심 투자 판단 필드(metaScore 등)는 gachaGuide 없이도 완결되므로 이 필드 하나
+// 때문에 나머지 정상 데이터까지 저장 실패시킬 이유가 없다.
+function validateGachaGuide(guide) {
+  if (guide === undefined || guide === null) return { ok: true, value: undefined };
+  if (typeof guide !== 'object' || Array.isArray(guide)) return { ok: false };
+
+  function isNonEmptyString(v) { return typeof v === 'string' && v.length > 0; }
+  function isStringArray(v) { return Array.isArray(v) && v.every((x) => typeof x === 'string'); }
+
+  const keyFeatures = Array.isArray(guide.keyFeatures) ? guide.keyFeatures : [];
+  for (const f of keyFeatures) {
+    if (!f || !isNonEmptyString(f.title) || !isNonEmptyString(f.description)) return { ok: false };
+  }
+
+  const partyRequirements = Array.isArray(guide.partyRequirements) ? guide.partyRequirements : [];
+  for (const r of partyRequirements) {
+    if (!r || ['all', 'one_of', 'role'].indexOf(r.type) === -1) return { ok: false };
+    if (!isStringArray(r.characterIds || [])) return { ok: false };
+    if (!isStringArray(r.roles || [])) return { ok: false };
+    if (!isNonEmptyString(r.description)) return { ok: false };
+  }
+
+  // corePartners: 시스템상 필수는 아니지만(그건 partyRequirements의 역할) 실전
+  // 파티 성능에서 핵심으로 평가되는 캐릭터. 검증 형태는 alternativePartners와 동일.
+  const corePartners = Array.isArray(guide.corePartners) ? guide.corePartners : [];
+  for (const p of corePartners) {
+    if (!p) return { ok: false };
+    if (!isStringArray(p.characterIds || [])) return { ok: false };
+    if (!isStringArray(p.roles || [])) return { ok: false };
+    if (!isNonEmptyString(p.description)) return { ok: false };
+  }
+
+  const alternativePartners = Array.isArray(guide.alternativePartners) ? guide.alternativePartners : [];
+  for (const p of alternativePartners) {
+    if (!p) return { ok: false };
+    if (!isStringArray(p.characterIds || [])) return { ok: false };
+    if (!isStringArray(p.roles || [])) return { ok: false };
+    if (!isNonEmptyString(p.description)) return { ok: false };
+  }
+
+  const alternativeEquipment = Array.isArray(guide.alternativeEquipment) ? guide.alternativeEquipment : [];
+  for (const e of alternativeEquipment) {
+    if (!e || !isNonEmptyString(e.name) || !isNonEmptyString(e.description)) return { ok: false };
+  }
+
+  if (!isStringArray(guide.recommendedFor || [])) return { ok: false };
+  if (!isStringArray(guide.reconsiderIf || [])) return { ok: false };
+
+  return {
+    ok: true,
+    value: {
+      version: isNonEmptyString(guide.version) ? guide.version : '1.0',
+      keyFeatures: keyFeatures,
+      partyRequirements: partyRequirements,
+      corePartners: corePartners,
+      alternativePartners: alternativePartners,
+      alternativeEquipment: alternativeEquipment,
+      recommendedFor: guide.recommendedFor || [],
+      reconsiderIf: guide.reconsiderIf || []
+    }
+  };
+}
+
 function validateMetaEntry(entry, characterId) {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
     return { ok: false, reason: '결과가 객체가 아닙니다.' };
@@ -903,6 +968,13 @@ function validateMetaEntry(entry, characterId) {
   };
   if (entry.officialSummary && typeof entry.officialSummary === 'object') {
     cleanEntry.officialSummary = entry.officialSummary;
+  }
+
+  const gachaGuideResult = validateGachaGuide(entry.gachaGuide);
+  if (!gachaGuideResult.ok) {
+    console.warn('[gachaGuide 검증 실패] characterId=' + entry.characterId + ' — gachaGuide 필드를 제거하고 나머지만 저장합니다.');
+  } else if (gachaGuideResult.value) {
+    cleanEntry.gachaGuide = gachaGuideResult.value;
   }
 
   return { ok: true, entry: cleanEntry };
