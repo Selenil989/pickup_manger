@@ -2,35 +2,1919 @@
   {
     "version": "1.0",
     "characterId": "perlica",
-    "investmentType": ["meta", "synergy"],
+    "investmentType": [
+      "meta",
+      "synergy"
+    ],
     "metaScore": 8.8,
     "futureScore": 8.5,
     "replacementScore": 6,
     "confidence": 0.75,
     "futureLinks": [],
-    "characterRecommendation": { "score": 8, "priority": "high", "reason": "화염 캐스터 핵심" },
-    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 7, "priority": "medium", "reason": "전용 무기 권장" },
-    "pullReasons": ["화염 계열 핵심 캐스터"],
-    "skipReasons": ["화염 딜러 보유 시 시너지 제한"],
-    "sources": [{ "name": "아카라이브", "weight": 1.0 }],
-    "recommendation": { "pull": "optional", "priority": "medium" }
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "화염 캐스터 핵심"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전용 무기 권장"
+    },
+    "pullReasons": [
+      "화염 계열 핵심 캐스터"
+    ],
+    "skipReasons": [
+      "화염 딜러 보유 시 시너지 제한"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
   },
   {
     "version": "1.0",
     "characterId": "ulpianus",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 8.5,
     "futureScore": 7.5,
     "replacementScore": 7,
     "confidence": 0.72,
     "futureLinks": [],
-    "characterRecommendation": { "score": 8, "priority": "medium", "reason": "전위 탱커 핵심" },
-    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 6, "priority": "medium", "reason": "무기 효율 보통" },
-    "pullReasons": ["전위 포지션 공백 해소"],
-    "skipReasons": ["대체 가능한 포지션", "다른 전위 보유 시 불필요"],
-    "sources": [{ "name": "아카라이브", "weight": 1.0 }],
-    "recommendation": { "pull": "optional", "priority": "low" }
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "medium",
+      "reason": "전위 탱커 핵심"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "무기 효율 보통"
+    },
+    "pullReasons": [
+      "전위 포지션 공백 해소"
+    ],
+    "skipReasons": [
+      "대체 가능한 포지션",
+      "다른 전위 보유 시 불필요"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "akekuri",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 레바테인(라에바테인) 파티에서 준필수급으로 언급되나 전투기술 소모로 궁극기 타이밍 관리 필요"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "P5(잠재능력 5)에서 지력 스탯 기반 공격력 최대 40% 증가 확인, 궁극기 충전 효율도 지력 비례"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "테르밋커터가 OBJ보다 데미지 효율 우위로 반복 확인"
+    },
+    "pullReasons": [
+      "레바테인 파티에서 준필수급 서포트 역할",
+      "지력 스탯 기반 잠재능력으로 공격력 최대 40% 증가"
+    ],
+    "skipReasons": [
+      "전투기술 소모형 궁극기 타이밍 관리가 번거롭다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "파이어 속성 뱅가드. 연쇄 스킬 및 지력 스탯 기반 궁극기 충전 구조.",
+      "synergySummary": "레바테인(라에바테인) 파티 서포트"
+    },
+    "communitySummary": {
+      "positive": [
+        "레바테인 파티 준필수급",
+        "잠재능력 공격력 증가 효율 좋음"
+      ],
+      "negative": [
+        "궁극기 타이밍 관리 번거로움"
+      ],
+      "commonOpinion": "특정 파티(레바테인)에서 준필수, 범용성은 제한적",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "alesh",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 스킬 로테이션 속도로 부족한 버프량을 보완하나, 대체 옵션 대비 성능은 낮은 편이라는 평가가 반복 확인됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "완전 돌파 및 자질 레벨링이 되어야 대체 옵션과 DPS 격차를 좁힐 수 있다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "pullReasons": [
+      "스킬 로테이션 속도가 빨라 궁극기 조기 발동이 중요한 상황에서 유효",
+      "게임 템포가 느리게 느껴질 때 강점"
+    ],
+    "skipReasons": [
+      "대체 옵션 대비 전반적 성능이 낮은 편이라는 평가 반복",
+      "완전 돌파 전제로 투자 부담 있음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 뱅가드. 물리·냉기 혼합 데미지 및 SP 회복 구조.",
+      "synergySummary": "쇄빙팟 등 얼음 속성 파티"
+    },
+    "communitySummary": {
+      "positive": [
+        "빠른 스킬 로테이션",
+        "궁극기 조기 발동에 유리"
+      ],
+      "negative": [
+        "대체 옵션 대비 성능 낮은 편",
+        "완전 투자 전제 필요"
+      ],
+      "commonOpinion": "취향 픽에 가까운 캐릭터, 최우선 픽업 대상은 아님",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "antal",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5,
+    "futureScore": 4,
+    "replacementScore": 7,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "아카라이브 확인: '조합에 안 맞는 것 같다', '쓰기가 좀 애매하다'는 부정적 평가가 반복 확인됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "정보 제한적"
+    },
+    "pullReasons": [
+      "전기 속성 파티 서포트 포지션"
+    ],
+    "skipReasons": [
+      "연계 스킬 발동 조건이 까다로워 실효성 낮다는 평가 반복",
+      "장방이 등 주력 딜러와 조합해도 궁극기 쿨타임 활용도가 낮음",
+      "현재 메타(물리·냉기 중심)와 버프 속성(열·전기)이 어긋난다는 지적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전기 속성 서포터. 아군 연계 스킬 조건부 버프 구조.",
+      "synergySummary": "전기 속성 파티 지원 목적이나 실효성 제한적"
+    },
+    "communitySummary": {
+      "positive": [
+        "전기 속성 파티 서포트 포지션 보유"
+      ],
+      "negative": [
+        "조합에 맞지 않는다는 평가 반복",
+        "연계 조건 까다로움",
+        "현재 메타 속성과 버프 속성 불일치"
+      ],
+      "commonOpinion": "포지션은 있으나 실전 활용도가 낮다는 의견이 우세",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "저평가 캐릭터로 FOMO 압박 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "arclight",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 5.5,
+    "replacementScore": 5,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "'데미지 낮고 스킬 발동이 잦아 사이클 놓치기 쉽다'는 평가와 '생각보다 성능 좋다'는 평가가 공존 — 혼재된 커뮤니티 의견"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전기팟 전용 장비/무기 테스트 게시물 존재하나 명확한 결론 부족"
+    },
+    "pullReasons": [
+      "뱅가드 중 사이클 속도 최상위, 조건도 다른 뱅가드보다 수월",
+      "펠리카와 조합 시 무자원 연쇄스킬 활용 가능"
+    ],
+    "skipReasons": [
+      "데미지 자체는 낮은 편, 스킬 발동 빈도가 잦아 사이클을 놓치기 쉬움",
+      "피지컬 난이도가 높다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전기 속성 뱅가드. 연쇄스킬 중심 고빈도 스킬 로테이션 구조.",
+      "synergySummary": "펠리카 등과 전기팟 구성"
+    },
+    "communitySummary": {
+      "positive": [
+        "뱅가드 최상위 사이클 속도",
+        "펠리카 조합 시 무자원 연쇄"
+      ],
+      "negative": [
+        "데미지 자체는 낮음",
+        "높은 조작 난이도"
+      ],
+      "commonOpinion": "평가가 엇갈리나 전기팟 특화 캐릭터로는 유효",
+      "concern": "커뮤니티 평가가 시기·숙련도에 따라 크게 갈림"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "평가가 반복적으로 엇갈려 대표 의견 확정이 어려움"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "ardelia",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.8,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "조작감은 5인 중 가장 불쾌하다는 평가와 서포터로서 우수한 범용성이라는 평가가 함께 확인됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "'기사도 정신' 등 무기 선택 논의 존재하나 명확한 결론 부족"
+    },
+    "pullReasons": [
+      "서포터로서 우수한 범용성, 다양한 조합과 좋은 시너지",
+      "필요 시 펠리카 대체 가능",
+      "부식 디버프가 물리팟에서 효과적"
+    ],
+    "skipReasons": [
+      "조작감이 나쁘다는 평가('가장 불쾌한 운용')가 반복 확인됨",
+      "서포터로서 성능 상한선은 상대적으로 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "자연 속성 서포터. 부식 디버프 및 회복 지원 구조.",
+      "synergySummary": "물리 속성 파티, 펠리카 대체 옵션"
+    },
+    "communitySummary": {
+      "positive": [
+        "서포터 범용성 우수",
+        "펠리카 대체 가능",
+        "물리팟 부식 디버프 효과적"
+      ],
+      "negative": [
+        "조작감이 좋지 않다는 평가 반복",
+        "성능 상한 제한적"
+      ],
+      "commonOpinion": "쉽지 않지만 범용적으로 쓸만한 서포터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "avywenna",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "F2P 유저에게 희망적인 캐릭터로 평가되나, 펠리카와 쿨타임이 맞지 않아 사이클 운용이 번거롭다는 의견 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "pullReasons": [
+      "F2P 유저에게 희망적인 전기 속성 딜러로 평가",
+      "번개창 설치 후 회수하는 매커니즘으로 준수한 데미지"
+    ],
+    "skipReasons": [
+      "펠리카와 쿨타임이 맞지 않아 사이클 운용이 번거로움",
+      "포지셔닝 스킬 각을 맞추기 불편하다는 평가",
+      "과거 전기팟 메타에 투자한 유저 중심으로만 활용되는 한계"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전기 속성 스트라이커. 번개창 설치·회수형 데미지 구조.",
+      "synergySummary": "펠리카 등 전기 속성 파티, 다만 쿨타임 궁합 이슈 존재"
+    },
+    "communitySummary": {
+      "positive": [
+        "F2P 친화적 전기 딜러",
+        "준수한 실행 데미지"
+      ],
+      "negative": [
+        "펠리카와 사이클 궁합 아쉬움",
+        "포지셔닝 번거로움"
+      ],
+      "commonOpinion": "전기팟 F2P 옵션이나 최신 조합에는 시너지 제한적",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "catcher",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 5,
+    "futureScore": 4,
+    "replacementScore": 7,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "엠버와 강력한 시너지가 확인되나, '포그(라니치니크)가 대체불가라 사실상 쓸 데 없다'는 반박 의견도 존재"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "헤비 버든 방어력 증가로 '개인적으로 제일 확실한 전무'라는 평가 존재"
+    },
+    "pullReasons": [
+      "엠버와 범위 내 90% 비호 시너지로 강력한 조합 형성",
+      "헤비 버든 장비로 쉴드 체감이 확실히 늘어남"
+    ],
+    "skipReasons": [
+      "포그라니치니크가 대체 불가능한 포지션이라 실질적 채용률이 낮다는 반박 의견",
+      "엠버 외 조합에서는 활용도가 제한적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 디펜더. 방어 지원 및 아군 비호 구조.",
+      "synergySummary": "엠버와 조합 시 강력한 방어 시너지"
+    },
+    "communitySummary": {
+      "positive": [
+        "엠버와 강력한 방어 시너지",
+        "헤비 버든 장비 효율 좋음"
+      ],
+      "negative": [
+        "포그라니치니크 대체불가로 실질 채용률 낮다는 의견"
+      ],
+      "commonOpinion": "엠버 조합 한정으로 유효, 범용성은 낮음",
+      "concern": "포그라니치니크와의 포지션 경쟁으로 평가가 갈림"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "포그라니치니크와의 포지션 중복으로 실사용 평가가 엇갈림"
+      ]
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "chen_qianyu",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6.5,
+    "replacementScore": 4,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "'6성 오퍼레이터로도 쉽게 대체되지 않는다'는 평가 확인 — 연계 스킬 발동 조건이 매우 수월해 대체 어려움"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "'강철의 여운' 등 복수 무기 옵션이 논의되며 상황별 선택지가 있음"
+    },
+    "pullReasons": [
+      "연계 스킬 발동 조건이 매우 수월해 6성 오퍼레이터로도 쉽게 대체되지 않음",
+      "물리팟 핵심 구성원으로 반복 확인",
+      "다양한 무기 선택지로 유연한 세팅 가능"
+    ],
+    "skipReasons": [
+      "특정 최상위 조합에서는 여전히 대체 캐릭터 논의가 존재"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 가드. 연계 스킬 조건 충족형 딜링 구조.",
+      "synergySummary": "물리 속성 파티 핵심 구성원, 엠버·관리자 등과 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "연계 조건이 수월해 대체가 어려움",
+        "물리팟 핵심 구성원"
+      ],
+      "negative": [
+        "최상위 조합에서는 대체 논의 존재"
+      ],
+      "commonOpinion": "물리팟의 안정적 핵심 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "da_pan",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "관리자 대비 스탯 35 높고 물리피증 1.4% 추가 확인, '예상보다 강한 성능'이라는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "신규 장비 관련 논의 존재하나 명확한 결론 부족"
+    },
+    "pullReasons": [
+      "관리자 대비 상위 스탯 및 물리피증 확인",
+      "여풍 미보유 시 대체 옵션으로 유효",
+      "예상보다 강한 성능이라는 반복적 호평"
+    ],
+    "skipReasons": [
+      "여풍을 이미 보유한 경우 우선순위 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 스트라이커. 관리자와 유사 계열 딜링 구조.",
+      "synergySummary": "물리 속성 파티, 여풍 대체 옵션"
+    },
+    "communitySummary": {
+      "positive": [
+        "관리자 대비 상위 스탯",
+        "여풍 대체 가능한 성능"
+      ],
+      "negative": [
+        "여풍 보유자에게는 우선순위 낮음"
+      ],
+      "commonOpinion": "예상보다 강한 물리 딜러로 재평가됨",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "ember",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5.5,
+    "futureScore": 4.5,
+    "replacementScore": 6,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "'왜 평가가 안 좋냐'는 질문 게시물이 존재할 만큼 인식이 낮으나, 딜러로 써보니 괜찮다는 반박 후기도 다수 확인 — 평가가 엇갈림"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "잠재능력은 소폭 데미지 증가와 보호 효과 강화 정도로 확인, 효과가 크지 않음"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "'분쇄의 군주' vs '모범' 등 무기 비교 논의 존재"
+    },
+    "pullReasons": [
+      "딜러로 직접 사용 시 괜찮다는 반박 후기 다수",
+      "카치르와 조합 시 강력한 방어 시너지"
+    ],
+    "skipReasons": [
+      "'왜 평가가 안 좋냐'는 질문이 나올 만큼 초기 인식이 낮음",
+      "잠재능력 효과가 미미함"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "파이어 속성 디펜더. 방어 및 딜 겸용 구조.",
+      "synergySummary": "카치르와 조합 시 방어 시너지 강화"
+    },
+    "communitySummary": {
+      "positive": [
+        "딜러로 활용 시 반박 후기 다수(괜찮다는 평가)",
+        "카치르 조합 시너지"
+      ],
+      "negative": [
+        "초기 평가가 낮았음",
+        "잠재능력 효과 미미"
+      ],
+      "commonOpinion": "인식 대비 실사용 평가는 엇갈리며 재평가가 진행 중",
+      "concern": "초기 저평가와 최근 반박 후기가 공존해 대표 의견 확정이 어려움"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "평가가 시점별로 크게 엇갈려 반복 검증이 더 필요"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "endministrator",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6,
+    "replacementScore": 4,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "P5(잠재능력 5)로 초반 4스택 방깨기를 채울 수 있어 초반 게임 진행에 매우 효율적이라는 평가 확인"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "전투기술+궁극기 조합으로 4스택 방어 무력화 채움 가능, 초반 빌드업에 매우 효과적으로 확인"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "신구 장비 데미지 비교 게시물 다수, '판'과 유사 계열로 대체 가능성 논의됨"
+    },
+    "pullReasons": [
+      "스토리 진행으로 무료 확보, 초반 핵심 물리 딜러",
+      "P5 잠재능력으로 초반 방깨기 효율 매우 높음",
+      "로시·질베르타·울프가드 등과 다양한 조합 가능"
+    ],
+    "skipReasons": [
+      "'판' 등 후속 캐릭터로 대체 가능성 논의 존재"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 가드. 주인공 캐릭터로 스토리 진행을 통해 확보.",
+      "synergySummary": "로시·질베르타·울프가드 등과 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "초반 핵심 무료 딜러",
+        "P5 방깨기 효율 매우 좋음"
+      ],
+      "negative": [
+        "후속 캐릭터('판')로 일부 대체 가능성 논의"
+      ],
+      "commonOpinion": "무료로 확보되는 초반 핵심 물리 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "스토리 진행으로 무료 확보되어 FOMO 압박 없음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "estella",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.3,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "'딜세팅이 꽤 강하다'는 평가 반복 확인, 다만 운용법을 몰라 제대로 못 쓰는 유저가 많다는 지적도 있음"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "'응룡 3셋 + 검술사 장갑' 조합이 연계딜·궁극기딜 모두에서 좋은 성능으로 확인"
+    },
+    "pullReasons": [
+      "딜 세팅이 강력하다는 평가 반복 확인",
+      "울프가드·레바테인·질베르타 조합으로 엘리트 몹 처리 편함",
+      "전기덱에서 울프가드보다 낫다는 의견도 존재"
+    ],
+    "skipReasons": [
+      "운용법 진입장벽이 있어 제대로 활용 못하는 유저가 많다는 지적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 가드. 연계·궁극기 복합 딜링 구조.",
+      "synergySummary": "울프가드·레바테인·질베르타 등과 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "강한 딜 세팅으로 반복 호평",
+        "엘리트 몹 처리 편의성"
+      ],
+      "negative": [
+        "운용법 진입장벽 있음"
+      ],
+      "commonOpinion": "제대로 다루면 강력하나 학습 곡선이 있는 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "fluorite",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.3,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "궁극기 없이도 단독으로 2스택 구축 가능한 유일한 캐릭터로 확인, 다만 연결기 40초 쿨타임이 실전 활용을 제약"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "4충전 세팅 등 논의 존재하나 명확한 결론 부족"
+    },
+    "pullReasons": [
+      "궁극기 없이 단독 2스택 구축 가능한 독자적 매커니즘",
+      "연결기로 자연 속성 부여 가능",
+      "메인딜러로 전환 시 활용도 상승"
+    ],
+    "skipReasons": [
+      "연결기 40초 쿨타임으로 서브 캐릭터로는 실전 활용이 어려움"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "자연 속성 캐스터. 연결기 기반 자연 속성 부여 구조.",
+      "synergySummary": "메인딜러 전환 시 자연 속성 파티에서 효과적"
+    },
+    "communitySummary": {
+      "positive": [
+        "독자적 2스택 구축 매커니즘",
+        "메인딜러 전환 시 강점"
+      ],
+      "negative": [
+        "연결기 40초 쿨타임 제약",
+        "서브 캐릭터로는 실전 활용 어려움"
+      ],
+      "commonOpinion": "잠재력은 높으나 쿨타임 제약으로 호불호가 갈림",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "메인딜/서브 역할에 따라 평가 편차가 큼"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "gilberta",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 7,
+    "futureScore": 7.5,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "연계·궁극기만으로 최고 수준 디버프를 걸면서 스킬 게이지를 소모하지 않는 고효율 서포터로 확인, 다만 탕탕 출시 이후 유일했던 몹몰이 강점이 상대적으로 약화됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전용 무기는 약 22% 추가 데미지로 확인되나, 현재는 대체 무기(망자의 노래)로도 충분해 '필수급은 아니나 미래(자연 속성 딜러 출시 시) 필수'라는 평가"
+    },
+    "pullReasons": [
+      "연계+궁만으로 최고 수준 디버프, 게이지 소모 없음",
+      "아츠파티 극딜타임 개방용 서포터로 확고한 포지션",
+      "미래 자연 속성 딜러 출시 시 전용 무기 가치 상승 예상"
+    ],
+    "skipReasons": [
+      "탕탕 출시 이후 몹몰이 유일성이 사라져 필수도 하락",
+      "딜러를 다소 가린다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "자연 속성 서포터. 연계·궁극기 기반 디버프 및 몹 유인 구조.",
+      "synergySummary": "아츠파티, 물리팟 몹몰이 지원(탕탕 출시 후 대체 가능)"
+    },
+    "communitySummary": {
+      "positive": [
+        "게이지 소모 없는 고효율 디버프",
+        "잡몹전 최상위"
+      ],
+      "negative": [
+        "탕탕 출시로 몹몰이 유일성 상실",
+        "딜러 궁합을 가림"
+      ],
+      "commonOpinion": "여전히 고효율 서포터이나 필수도는 탕탕 출시 이후 다소 낮아짐",
+      "concern": "신규 캐릭터 출시로 포지션이 계속 변동 중"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "탕탕 출시 이후 재평가가 진행 중"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "laevatain",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.8,
+    "futureScore": 5.5,
+    "replacementScore": 5,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "허술한 부분이 있으나 높은 저점을 바탕으로 준수한 화력, 궁극기 유무에 따라 화력 편차가 매우 크다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "5돌에서 체감이 있다는 후기 확인, 전용 무기 효율은 약 2배 이상으로 확인"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "전용 무기가 대체 무기 대비 약 2배 이상 효율로 확인, 열 속성 장비가 사실상 유일한 선택지"
+    },
+    "pullReasons": [
+      "궁극기 발동 시 급격한 화력 상승",
+      "아델리아·울프가드·아케쿠리 등과 정석 조합 구성",
+      "전용 무기 효율이 매우 높음(약 2배)"
+    ],
+    "skipReasons": [
+      "궁 없으면 화력이 절반 이하로 떨어짐",
+      "열기 부착이 부족하다는 지적",
+      "이펙트가 빨라 회피 타이밍을 놓치기 쉬움"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "파이어 속성 스트라이커. 궁극기 발동 여부에 따라 화력 편차가 큰 구조.",
+      "synergySummary": "아델리아·울프가드·아케쿠리(생존형) 또는 아델리아·질베르타·엠버(안정형) 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "궁극기 발동 시 급격한 화력 상승",
+        "전용 무기 효율 매우 높음"
+      ],
+      "negative": [
+        "궁 없으면 화력 절반 이하",
+        "회피 타이밍을 놓치기 쉬운 빠른 이펙트"
+      ],
+      "commonOpinion": "허술한 부분은 있으나 준수한 화력의 파이어 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "last_rite",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 5.5,
+    "replacementScore": 5,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "'생각보다 강할 수도 있다'는 평가 확인, 낮은 투자로도 보스 처리 우수, 다만 기본 공격 자체가 다소 지루하다는 지적 존재"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "힘 스탯 올인 여부에 대한 논의 존재하나 명확한 결론 부족"
+    },
+    "pullReasons": [
+      "궁극기 없이 완전 돌파가 멀어도 보스 처리 우수",
+      "냉기 4스택 부착 시 연쇄스킬 데미지 1024%(레벨9 기준)로 확인",
+      "자이히와 조합 시 냉기 부착 효율 최상"
+    ],
+    "skipReasons": [
+      "기본 공격 자체가 다소 지루하다는 평가",
+      "데미지만 보고 판단하면 자신감이 없는 유저에게는 비추천된다는 의견"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 스트라이커. 냉기 스택 부착 기반 연쇄스킬 데미지 구조.",
+      "synergySummary": "자이히 등 냉기 부착 서포터와 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "낮은 투자로도 보스 처리 우수",
+        "냉기 스택 활용 시 강력한 연쇄스킬 데미지"
+      ],
+      "negative": [
+        "기본 공격이 다소 지루함"
+      ],
+      "commonOpinion": "생각보다 강하다는 재평가가 진행 중인 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "lifeng",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "물리팟(미브 파티 비교)에서 엠버보다 우위, 궁극기로 2스택 방깨기 적용 가능해 '물리팟 확고한 선택'으로 평가됨. 대체자는 많으나 있으면 체감 차이가 크다는 의견"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "1돌 체감이 크다는 평가 확인, 다만 세부 수치는 자료 부족"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전무 vs 용사 무기 비교 논의 활발하나 결론은 상황에 따라 갈림"
+    },
+    "pullReasons": [
+      "궁극기로 방깨기 2스택 적용 가능한 물리팟 확고 선택",
+      "대체자는 많으나 보유 시 체감 차이가 크다는 반복 평가",
+      "스킬 로테이션을 제대로 활용하면 성능이 크게 개선된다는 재평가 존재('잘못 쓰이고 있었다')"
+    ],
+    "skipReasons": [
+      "대체 가능한 옵션이 다수 존재해 필수급은 아님"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 가드. 궁극기 기반 방어 무력화 스택 부여 구조.",
+      "synergySummary": "물리 속성 파티(미브 파티 등) 핵심 딜러"
+    },
+    "communitySummary": {
+      "positive": [
+        "물리팟 확고한 선택으로 반복 확인",
+        "궁극기 방깨기 효율 우수"
+      ],
+      "negative": [
+        "대체 옵션이 다수 존재"
+      ],
+      "commonOpinion": "물리팟에서 확실한 존재감을 보이는 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "mifu",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "훈련 부담이 거의 없는 탄탄한 기반, 순수 데미지는 관리자 대비 약 1.25배로 확인되나 사이클이 길어질수록 격차는 좁혀짐"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "1돌 효율이 매우 좋다는 평가 확인 — 연계 스킬 쿨타임 2초 감소가 핵심 효과"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "대검 무기가 타격감과 불균형 축적에 좋다는 평가"
+    },
+    "pullReasons": [
+      "훈련 부담이 거의 없는 탄탄한 기반",
+      "1번 배틀스킬의 몹몰이 능력이 독특한 강점",
+      "1돌 효율이 매우 좋음(연계 쿨타임 2초 감소)"
+    ],
+    "skipReasons": [
+      "순수 데미지 자체는 최상위권이 아니며 사이클이 길어질수록 우위가 줄어듦"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 가드. 대검 기반 몹몰이·불균형 축적 구조.",
+      "synergySummary": "로시·질베르타·펠리카 등과 조합(로질펠)"
+    },
+    "communitySummary": {
+      "positive": [
+        "훈련 부담 낮은 탄탄한 기반",
+        "독특한 몹몰이 능력",
+        "1돌 효율 매우 좋음"
+      ],
+      "negative": [
+        "장기 사이클에서는 순수 데미지 우위가 줄어듦"
+      ],
+      "commonOpinion": "안정적이고 육성 부담 낮은 물리 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "pogranichnik",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "물리덱의 '무한동력 심장' 역할로 표현될 만큼 핵심 서포터로 반복 확인, 정형화된 사이클에 묶이지 않는 유연성도 호평"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "테르밋커터 보유 시 무조건 장착 권장, 추천 세팅은 개척궁충 조합으로 확인"
+    },
+    "pullReasons": [
+      "연계·배틀스킬 모두 게이지 수급을 담당하는 물리덱 핵심 서포터",
+      "정형화된 사이클에 묶이지 않는 상황 대응력",
+      "물리팟 특유의 손맛과 빠른 불균형치 누적을 동시에 제공"
+    ],
+    "skipReasons": [
+      "명확한 스킵 사유 확인되지 않음 — 물리팟 내에서 범용성 최고 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 뱅가드. 스킬 게이지 수급과 딜을 겸비한 구조.",
+      "synergySummary": "물리 속성 파티 전반의 핵심 서포터"
+    },
+    "communitySummary": {
+      "positive": [
+        "물리덱 핵심 서포터로 반복 확인",
+        "상황 대응력 우수"
+      ],
+      "negative": [
+        "뚜렷한 단점 확인되지 않음"
+      ],
+      "commonOpinion": "물리팟에서 가장 무난하면서도 훌륭한 서포터로 평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rossi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.3,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "덱 빌딩을 로시에 맞춰야 할 정도로 존재감이 크고, 로시가 포함된 파티는 '로시 파티'로 불릴 만큼 주목받는 딜러로 확인"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전무 vs 패스 무기 완전 돌파 기준 데미지 차이가 약 10%로 크지 않다는 실측 비교 확인 — 패스 무기로도 충분"
+    },
+    "pullReasons": [
+      "덱 빌딩을 로시 중심으로 짜게 될 만큼 강한 존재감",
+      "엘리트 몹 처리에서 매우 편하다는 평가",
+      "전무 없이 패스 무기로도 약 90% 성능 확보 가능(투자 부담 낮음)"
+    ],
+    "skipReasons": [
+      "'현재 모든 픽업이 OP급은 아니다'라는 상대적 평가도 존재"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "물리 속성 가드. 독자적 사이클 중심 딜링 구조.",
+      "synergySummary": "울프가드·질베르타 등과 조합(로울포질)"
+    },
+    "communitySummary": {
+      "positive": [
+        "강한 존재감의 딜러",
+        "엘리트 몹 처리 편의성",
+        "패스 무기로도 충분한 효율(투자 부담 낮음)"
+      ],
+      "negative": [
+        "절대적 OP급은 아니라는 상대적 평가도 존재"
+      ],
+      "commonOpinion": "덱 전체를 이끌 만큼 강한 존재감의 물리 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "snowshine",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "반격 데미지와 90% 데미지 경감이 만족스럽다는 호평이 반복 확인됨, 보스전 패링 활용에 특히 강점"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "'라스트 에코'(아군 회복 지속력)와 '패스트 글로리'(자체 회복력) 사이 선택 논의 활발"
+    },
+    "pullReasons": [
+      "반격 데미지+90% 데미지 경감으로 만족스러운 운용감",
+      "고난도 보스전에서 패링 매커니즘으로 안정적 대응",
+      "다른 오퍼레이터의 궁극기 타이밍을 안전하게 확보해주는 팀 지원 능력"
+    ],
+    "skipReasons": [
+      "명확한 스킵 사유 확인되지 않음 — 반복적으로 긍정 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 디펜더. 패링 기반 반격 및 데미지 경감 구조.",
+      "synergySummary": "고난도 보스전에서 팀 전체 궁극기 타이밍 지원"
+    },
+    "communitySummary": {
+      "positive": [
+        "반격딜+데미지 경감 만족스러움",
+        "보스전 패링 강점",
+        "팀 궁극기 타이밍 안전 확보"
+      ],
+      "negative": [
+        "뚜렷한 단점 확인되지 않음"
+      ],
+      "commonOpinion": "쓰면 쓸수록 만족도가 높아지는 디펜더로 반복 확인",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "tangtang",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 7.8,
+    "futureScore": 7,
+    "replacementScore": 4,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "아케쿠리 역할을 완벽 대체하면서 딜까지 나오는 '옆그레이드 또는 상위호환'으로 평가 — 이본(냉기)팟 육성 시 필수적으로 언급됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "1돌은 고수·컨트롤 능숙·냉기팟 지속 투자를 전제로만 추천된다는 조건부 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "pullReasons": [
+      "아케쿠리 역할을 완벽 대체하며 딜까지 추가 확보",
+      "본크러셔 세트 조합 시 잡몹 처리 매우 우수",
+      "평타 모션이 답답하지 않아 조작감 좋음"
+    ],
+    "skipReasons": [
+      "1돌은 고수·냉기팟 지속 투자 전제 조건이 있어 캐주얼 유저에게는 신중 필요"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 캐스터. 잡몹 처리 특화 연계 구조.",
+      "synergySummary": "이본(냉기)팟에서 아케쿠리 대체 및 딜 추가"
+    },
+    "communitySummary": {
+      "positive": [
+        "아케쿠리 완전 대체+딜 추가",
+        "잡몹 처리 최상위",
+        "좋은 조작감"
+      ],
+      "negative": [
+        "1돌은 고수·지속투자 전제 조건부 추천"
+      ],
+      "commonOpinion": "냉기팟 육성 시 사실상 필수로 자리잡은 신규 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "wulfgard",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 5.5,
+    "replacementScore": 5,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "난이도는 높지만 제대로 세팅하면 재미있는 딜러로 평가, 감전/연소 상태 적에게는 배틀스킬 추가딜이 매우 강함"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "'작별'이라는 특정 무기가 정석으로 언급됨"
+    },
+    "pullReasons": [
+      "감전·연소 상태 적에게 배틀스킬 추가딜이 매우 강함",
+      "레바테인 팟에서 열기 서포트로 확실한 역할",
+      "메인딜러로도 재미있게 활용 가능하다는 평가"
+    ],
+    "skipReasons": [
+      "난이도가 높아 진입장벽이 있음",
+      "단순히 열기 보조 역할로만 여겨지기 쉬우나 실제로는 별도 세팅이 필요"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "파이어 속성 캐스터. 감전/연소 상태 조건부 추가딜 구조.",
+      "synergySummary": "레바테인 팟 열기 서포트, 로시와 조합 시 엘리트 몹 처리 용이"
+    },
+    "communitySummary": {
+      "positive": [
+        "조건부 상태 적에게 강력한 추가딜",
+        "메인딜러로도 재미있는 활용성"
+      ],
+      "negative": [
+        "난이도가 높은 편"
+      ],
+      "commonOpinion": "세팅만 맞추면 준수한 화력을 내는 난이도 있는 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "xaihi",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 7.8,
+    "futureScore": 7,
+    "replacementScore": 4,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "'현 시점 성능 1위 서포터'로 평가되며, 이본·라라를 메인딜러로 쓸 경우 '뺄 수 없는 캐릭터'로 반복 확인"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "의지+지능 스탯 활용, 체력 관련 옵션은 비효율적이라는 스탯 특성 확인"
+    },
+    "pullReasons": [
+      "현 시점 성능 1위 서포터로 평가",
+      "이본·라라 등 냉기 메인딜러 사용 시 필수급",
+      "향후 자연 한정 딜러 출시 시에도 계속 활용될 가능성 높음"
+    ],
+    "skipReasons": [
+      "의지+지능 스탯 전용이라 스탯 옵션 선택 폭이 제한적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 서포터. 냉기 부착 특화 구조.",
+      "synergySummary": "이본·라라 등 냉기 메인딜러 필수 파트너"
+    },
+    "communitySummary": {
+      "positive": [
+        "현 시점 성능 1위 서포터",
+        "냉기 메인딜러 필수급",
+        "미래 자연 딜러 출시 시에도 계속 유효할 것으로 전망"
+      ],
+      "negative": [
+        "스탯 전용성으로 옵션 선택 폭 제한"
+      ],
+      "commonOpinion": "냉기 메인딜러 운용 시 사실상 필수인 최상위 서포터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "yvonne",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "'생각만큼 안 강하다'는 평가와 연계 파츠(질베르타·자이히) 없이는 현시점 활용도가 낮다는 의견이 반복 확인됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "정보 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "지능 주스탯, 민첩 부스탯 확인. 전무 여부 논의는 활발하나 결론은 갈림"
+    },
+    "pullReasons": [
+      "3코팅(최고 난이도) 클리어 사례가 있을 만큼 상급 유저에게는 강력",
+      "질베르타·자이히 고정 조합 완성 시 안정적 딜"
+    ],
+    "skipReasons": [
+      "'생각만큼 안 강하다'는 평가 반복 확인",
+      "연계 파츠(질베르타·자이히) 없이는 현시점 사용 매력이 낮음",
+      "회피·평타 타이밍 정교함이 요구되는 높은 조작 난이도"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 스트라이커. 회피·평타 정밀 타이밍 기반 딜링 구조.",
+      "synergySummary": "질베르타·자이히 고정 조합 필요"
+    },
+    "communitySummary": {
+      "positive": [
+        "상급 유저 손에서는 최고 난이도 클리어 가능한 잠재력"
+      ],
+      "negative": [
+        "체감 성능이 기대보다 낮다는 평가",
+        "연계 파츠 없이는 활용도 낮음",
+        "높은 조작 난이도"
+      ],
+      "commonOpinion": "완성형 조합과 숙련도가 갖춰져야 진가를 발휘하는 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "zhuang_fangyi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6,
+    "replacementScore": 4,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "전투가 길게 지속될수록 기하급수적으로 강해지는 '필드 패왕'으로 표현, 감전 스택으로 청뢰검을 생성해 배틀스킬을 강화하는 독자적 구조"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "2돌이 사실상 필수로 언급됨"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "전용 무기가 패스 무기 대비 약 25~30% 데미지 우위로 확인, 완전 돌파(P5) 5성 무기로도 전용 무기의 유틸·화력 증폭을 따라잡기 어렵다는 평가"
+    },
+    "pullReasons": [
+      "전투 지속 시 기하급수적으로 강해지는 독자적 딜 구조",
+      "전용 무기 데미지 우위가 매우 뚜렷함(약 25~30%)",
+      "펠리카 등과 연계 쿨타임 궁합이 매우 좋음"
+    ],
+    "skipReasons": [
+      "2돌이 사실상 필수라 투자 부담이 있음",
+      "궁극기 타이밍에 전투기술 소모가 심해 아크라이트가 반필수",
+      "아비웨나와 동급으로 육성해야 제 성능이 나온다는 지적(고투자 요구)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브 명일방주 엔드필드 채널",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전기 속성 스트라이커. 감전 스택 기반 청뢰검 생성 및 배틀스킬 강화 구조.",
+      "synergySummary": "아크라이트(반필수)·아비웨나·펠리카와 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "전투 지속 시 기하급수적 화력 상승",
+        "전용 무기 우위 뚜렷"
+      ],
+      "negative": [
+        "2돌 사실상 필수로 투자 부담",
+        "아크라이트 반필수 및 아비웨나 동급 투자 요구로 고투자형"
+      ],
+      "commonOpinion": "장기전에서 강력하나 투자 요구가 높은 하이리스크·하이리턴 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "최근 픽업 캐릭터로 신규 유저 FOMO 다소 존재"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
   }
 ]

@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    AI Gacha Investment Analyzer — style.css
    Stage 5 · Dark game-wiki + investment-tool theme
    Desktop-first (1024px+), basic usability at 768px+
@@ -32,6 +32,10 @@
   --opt-bg:     rgba(255, 210,  77, 0.20);
   --low-bg:     rgba(255, 140,  66, 0.20);
   --header-h:   57px;
+
+  /* Analysis dashboard tokens (renderResults) */
+  --surface-2:   #1e1e2b;
+  --radius-card: 12px;
 }
 
 /* ── 2. Reset ─────────────────────────────────────────────── */
@@ -46,7 +50,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   min-height: 100vh;
 }
 
@@ -110,7 +114,7 @@ select {
 /* ── 7. Left Panel — Section Headings ─────────────────────── */
 .character-section h2,
 .roster-section h2 {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -137,7 +141,7 @@ select {
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -220,7 +224,7 @@ select {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   background: var(--border);
   color: var(--muted);
 }
@@ -264,19 +268,19 @@ select {
 .results-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   padding: 4px;
 }
 
 .result-block {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 16px;
+  border-radius: var(--radius-card);
+  padding: 16px 18px;
 }
 
 .result-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -287,20 +291,20 @@ select {
 }
 
 .sub-note {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 6px;
 }
 
 .confidence-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--opt);
   text-transform: none;
   letter-spacing: 0;
 }
 
 .confidence-note {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   margin-top: 6px;
 }
@@ -339,7 +343,7 @@ select {
   margin-top: 8px;
   padding: 3px 10px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   background: var(--must-bg);
   color: var(--must);
   border: 1px solid var(--must);
@@ -358,7 +362,7 @@ select {
 /* verdict 인라인 배지 — 최종 추천도 제목 우측 */
 .verdict-inline {
   float: right;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   padding: 2px 10px;
   border-radius: 12px;
@@ -380,7 +384,7 @@ select {
   min-width: 28px;
   text-align: right;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .score-bar-track {
@@ -407,7 +411,7 @@ select {
 .inv-badge {
   padding: 3px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 13px;
   background: var(--accent-bg);
   color: var(--accent);
   border: 1px solid var(--accent);
@@ -422,7 +426,7 @@ select {
 }
 
 .reason-list li {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .reason-skip li {
@@ -436,7 +440,7 @@ select {
   gap: 8px;
   padding: 6px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .future-link:last-child {
@@ -450,23 +454,23 @@ select {
 
 .future-synergy {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .future-conf {
   color: var(--opt);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .no-data {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .results-container em {
   font-style: normal;
   color: var(--opt);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* ── 19. Results — Verdict Block ──────────────────────────── */
@@ -600,7 +604,7 @@ select {
   left: 0;
   right: 0;
   padding: 20px 5px 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-align: center;
   color: var(--white);
@@ -661,7 +665,7 @@ select {
 }
 
 .detail-release {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 10px;
@@ -709,7 +713,7 @@ select {
 }
 
 .detail-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   width: 70px;
   flex-shrink: 0;
@@ -721,7 +725,7 @@ select {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -750,7 +754,7 @@ select {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -774,7 +778,7 @@ select {
   border-radius: 6px;
   padding: 6px 10px;
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
   min-width: 0;
 }
 
@@ -796,13 +800,45 @@ select {
   border-top: 1px solid var(--border);
 }
 
-.detail-gear-btn {
+.detail-delete-btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--must);
+  background: rgba(255, 77, 109, 0.08);
+  color: var(--must);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
   margin-right: auto;
+  transition: background 0.15s;
+}
+
+.detail-delete-btn:hover {
+  background: rgba(255, 77, 109, 0.20);
+}
+
+.char-card-unreleased-badge {
+  position: absolute;
+  top: 28px;
+  left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(255, 210, 77, 0.85);
+  color: #3a2800;
+  pointer-events: none;
+  z-index: 3;
+  white-space: nowrap;
+}
+
+.detail-gear-btn {
+  margin-right: 0;
   padding: 7px 11px;
   border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--bg);
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   line-height: 1;
   transition: background 0.15s;
@@ -818,7 +854,7 @@ select {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -833,7 +869,7 @@ select {
   border: 1px solid var(--accent);
   background: var(--accent-bg);
   color: var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.15s;
@@ -843,35 +879,6 @@ select {
   background: var(--accent-bg2);
 }
 
-.card-quick-toggle {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 6;
-  width: 26px;
-  height: 26px;
-  background: rgba(0, 0, 0, 0.55);
-  border: none;
-  border-radius: 0 8px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
-  transition: background 0.15s, color 0.15s;
-}
-
-.char-card.owned .card-quick-toggle {
-  color: var(--accent);
-}
-
-.card-quick-toggle:hover {
-  background: rgba(0, 0, 0, 0.85);
-  color: var(--white);
-}
 
 /* ── 23. Character Manager (gear / + card / edit modal) ─── */
 .card-gear-btn {
@@ -884,7 +891,7 @@ select {
   background: rgba(0, 0, 0, 0.55);
   border: none;
   border-radius: 8px 0 8px 0;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -932,7 +939,7 @@ select {
 }
 
 .char-card-add-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   text-align: center;
   user-select: none;
@@ -942,11 +949,29 @@ select {
   border-color: var(--opt);
 }
 
+.char-card.card-dragging {
+  opacity: 0.3;
+  cursor: grabbing;
+}
+
+.card-drag-placeholder {
+  aspect-ratio: 1 / 1.9;
+  border-radius: 8px;
+  border: 2px dashed var(--accent);
+  background: rgba(123, 108, 255, 0.08);
+  animation: placeholder-pulse 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes placeholder-pulse {
+  from { background: rgba(123, 108, 255, 0.05); box-shadow: none; }
+  to   { background: rgba(123, 108, 255, 0.18); box-shadow: 0 0 14px rgba(123, 108, 255, 0.45); }
+}
+
 .char-card-pending-badge {
   position: absolute;
   top: 28px;
   left: 4px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--opt);
   background: rgba(255, 210, 77, 0.15);
@@ -954,6 +979,52 @@ select {
   border-radius: 3px;
   z-index: 3;
   pointer-events: none;
+}
+
+.card-hint-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(123, 108, 255, 0.07);
+  border: 1px solid rgba(123, 108, 255, 0.20);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.card-hint-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-hint-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.card-hint-sep {
+  color: var(--border);
+}
+
+.card-hint-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.card-hint-close:hover {
+  opacity: 1;
 }
 
 .char-edit-bar {
@@ -968,12 +1039,12 @@ select {
 }
 
 .char-edit-bar-info {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--opt);
 }
 
 .char-edit-bar-btn {
-  font-size: 12px;
+  font-size: 13px;
   padding: 5px 12px;
   border: 1px solid var(--opt);
   border-radius: 5px;
@@ -998,14 +1069,14 @@ select {
 }
 
 .edit-id-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   width: 90px;
   flex-shrink: 0;
 }
 
 .edit-id-value {
-  font-size: 12px;
+  font-size: 13px;
   font-family: monospace;
   color: var(--muted);
   background: var(--border);
@@ -1020,7 +1091,7 @@ select {
 }
 
 .edit-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   width: 90px;
   flex-shrink: 0;
@@ -1036,7 +1107,7 @@ select {
   border-radius: 6px;
   padding: 6px 10px;
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
   min-width: 0;
 }
 
@@ -1057,7 +1128,7 @@ select {
 }
 
 .edit-id-hint {
-  font-size: 11px;
+  font-size: 12px;
   min-height: 16px;
 }
 
@@ -1067,6 +1138,91 @@ select {
 .detail-btn-save:disabled {
   opacity: 0.38;
   cursor: not-allowed;
+}
+
+/* ── 22. Investment Action Block ─────────────────────────── */
+.action-label {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+.action-full      { border-color: var(--accent); }
+.action-full      .action-label { color: var(--accent); }
+.action-char      { border-color: var(--high); }
+.action-char      .action-label { color: var(--high); }
+.action-hold      { border-color: var(--opt); }
+.action-hold      .action-label { color: var(--opt); }
+.action-wait      { border-color: var(--muted); }
+.action-wait      .action-label { color: var(--muted); }
+.action-skip      { border-color: var(--must); }
+.action-skip      .action-label { color: var(--must); }
+
+.fomo-warn {
+  color: var(--must);
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* ── 23. Summary Sections (official / community) ─────────── */
+.summary-section {
+  margin-bottom: 10px;
+}
+.summary-section:last-child {
+  margin-bottom: 0;
+}
+.summary-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+.summary-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.comm-pos  { color: var(--high); }
+.comm-neg  { color: var(--must); }
+.comm-note { color: var(--opt); }
+
+/* ── 24. Final Verdict ───────────────────────────────────── */
+.verdict-block {
+  border-color: var(--accent);
+}
+.verdict-sentence {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  padding: 4px 0;
+}
+
+/* ── 25. Meta Update Button + Preview Banner ─────────────── */
+#metaUpdateBtn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  margin-top: 6px;
+}
+#metaUpdateBtn:hover:not(:disabled) {
+  background: var(--accent-bg);
+}
+#metaUpdateBtn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.preview-banner {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 /* ── 20. Responsive — 768px breakpoint ───────────────────── */
@@ -1085,4 +1241,1675 @@ select {
   .panel-right {
     height: auto;
   }
+}
+
+/* ── 26. New Layout — Sidebar + Main ─────────────────────── */
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── 27. Sidebar ──────────────────────────────────────────── */
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.sidebar-footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.sidebar-footer-btn {
+  flex: 1;
+  padding: 7px 0;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-footer-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.sidebar-title {
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  padding: 12px 16px 8px;
+  flex-shrink: 0;
+}
+
+.sidebar-section-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+/* ── 28. Game List Cards ──────────────────────────────────── */
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sidebar-section-header .sidebar-section-label {
+  margin-bottom: 0;
+}
+
+.sidebar-section-add {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.sidebar-section-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 5px 8px 5px 5px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.game-card:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.game-card.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.game-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+}
+
+.game-card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-card-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.add-game-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px dashed var(--border);
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.add-game-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── 29. Sidebar Nav Tabs ─────────────────────────────────── */
+
+.sidebar-nav {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.nav-tab {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-tab:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.nav-tab.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── 30. Sidebar Side Content (analysis) ──────────────────── */
+
+#analysisSideContent {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+#analysisSideContent .character-section {
+  flex-shrink: 0;
+}
+
+#analysisSideContent .roster-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#analysisSideContent .roster-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+#analysisSideContent .roster-list {
+  height: 100%;
+  max-height: none;
+  overflow-y: auto;
+}
+
+/* ── 31. Main Content + Tab Pages ────────────────────────── */
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-page {
+  height: 100%;
+  overflow: hidden;
+}
+
+.tab-page > .panel {
+  height: 100%;
+}
+
+/* ── 32. Currency Page ────────────────────────────────────── */
+
+.currency-page {
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--bg);
+}
+
+.currency-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.currency-header-info {
+  flex-shrink: 0;
+}
+.currency-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.mp-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 18px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  margin-left: auto;
+  font-size: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+}
+.mp-label { color: var(--muted); font-size: 16px; }
+.mp-days  { font-weight: 700; font-size: 20px; }
+.mp-badge--ok       .mp-days { color: var(--rec, #4caf50); }
+.mp-badge--warn     .mp-days { color: #f5a623; }
+.mp-badge--expired  .mp-days { color: var(--muted); }
+.mp-add-btn {
+  padding: 3px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mp-add-btn:hover { background: var(--hover, rgba(255,255,255,0.07)); }
+.mp-cfg-btn {
+  padding: 2px 7px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.mp-cfg-btn:hover { background: var(--hover, rgba(255,255,255,0.07)); color: var(--text); }
+.mp-cfg-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card, #1e1e1e);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  z-index: 200;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+.mp-cfg-input {
+  font-size: 14px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg, #121212);
+  color: var(--text);
+}
+.mp-cfg-save {
+  padding: 5px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mp-cfg-save:hover { background: var(--hover, rgba(255,255,255,0.07)); }
+
+.currency-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+
+.pass-cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+  max-width: 1600px;
+  align-items: stretch;
+}
+
+.pass-card {
+  flex: 0 1 45%;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.pass-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-right: 1px solid var(--border);
+  background: rgba(123, 108, 255, 0.05);
+  flex-shrink: 0;
+  min-width: 56px;
+}
+
+.pass-card-edit-btn {
+  margin: 0 10px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.pass-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.pass-card-body {
+  padding: 10px 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 28px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pass-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pass-card-row:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.pass-card-row--end {
+  flex-shrink: 0;
+}
+
+.pass-card-label {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pass-card-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pass-conversion {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.pass-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.currency-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.currency-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.currency-row {
+  display: grid;
+  grid-template-columns: 20px 36px 1fr 110px 24px 76px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.drag-handle {
+  cursor: grab;
+  color: var(--muted, #555);
+  font-size: 16px;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+.currency-row:hover .drag-handle { opacity: 1; }
+.drag-handle:active { cursor: grabbing; }
+.currency-row--dragging { opacity: 0.35; }
+.currency-row--drag-over { box-shadow: inset 0 2px 0 0 var(--acc, #7b68ee); }
+
+.currency-row:last-child {
+  border-bottom: none;
+}
+
+.currency-icon-wrap {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.currency-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.currency-icon-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+}
+
+.currency-name {
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.currency-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.currency-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--text);
+  font-size: 14px;
+  text-align: right;
+}
+
+.currency-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.currency-unit {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.currency-equals {
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.currency-equals strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.currency-desc {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.currency-total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--accent-bg);
+  border-top: 1px solid var(--accent);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.currency-total strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 2px;
+}
+
+/* ── 33. Currency Edit UI ─────────────────────────────────── */
+
+
+/* Override currency-row to include action buttons column */
+.currency-row {
+  grid-template-columns: 20px 36px 1fr 110px 24px 76px 1fr auto;
+}
+
+.currency-row-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.currency-row-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  transition: opacity 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.currency-row:hover .currency-row-btn {
+  opacity: 0.7;
+}
+
+.currency-row-btn:hover {
+  opacity: 1 !important;
+  background: var(--border);
+}
+
+.currency-add-row {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.currency-add-btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px dashed var(--border);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.currency-add-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── 34. Currency Type Selector ───────────────────────────── */
+
+.currency-type-select {
+  margin-top: 3px;
+  padding: 2px 5px;
+  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  width: fit-content;
+}
+
+.currency-type-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* ── 35. Pity Summary ─────────────────────────────────────── */
+
+.pity-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(min-content, 1fr));
+  gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.pity-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pity-card--accent {
+  border-color: var(--accent);
+  background: var(--accent-bg2);
+}
+
+.pity-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+
+.pity-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.pity-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.pity-card--accent .pity-value {
+  color: var(--accent);
+}
+
+.pity-unit {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ── 36. Version Planner ──────────────────────────────────── */
+
+.planner-section {
+  border-top: 2px solid var(--border);
+  margin-top: 0;
+}
+
+.planner-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 14px 16px 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.planner-config-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+  margin-left: auto;
+}
+
+.planner-config-btn:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.planner-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.planner-top-row {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.planner-top-row .planner-group--half {
+  flex: 1;
+  border-bottom: none;
+}
+
+.planner-top-row .planner-group--half:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.planner-group--third {
+  flex: 1;
+  min-width: 0;
+}
+
+.planner-top-row .planner-group--third {
+  border-bottom: none;
+}
+
+.planner-top-row .planner-group--third:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.planner-group {
+  padding: 10px 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.planner-group:last-child {
+  border-bottom: none;
+}
+
+.planner-group-label {
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.planner-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.planner-field:last-child {
+  margin-bottom: 0;
+}
+
+.planner-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.planner-input {
+  padding: 5px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 14px;
+  width: 130px;
+}
+
+.planner-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.planner-num {
+  width: 100px;
+}
+
+.planner-unit {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.planner-auto-hint {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.planner-next-ver {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  padding: 5px 8px;
+  background: var(--surface);
+  border-radius: 5px;
+  min-height: 16px;
+}
+
+.planner-calc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.planner-calc-rows--cost {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.planner-cr {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.planner-cr strong {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 50px;
+}
+
+.planner-cr--lack strong {
+  color: var(--must);
+}
+
+.planner-cr--monthly strong {
+  color: var(--accent);
+}
+
+.planner-sub {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+.planner-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.planner-badge--ok {
+  background: rgba(77, 255, 145, 0.12);
+  color: var(--rec);
+}
+
+.planner-badge--lack {
+  background: rgba(255, 77, 109, 0.12);
+  color: var(--must);
+}
+
+.planner-hint-text {
+  font-size: 13px;
+  color: var(--muted);
+  opacity: 0.7;
+  padding: 4px 0;
+  margin: 0;
+}
+
+.planner-hint-text--ok {
+  color: var(--rec);
+  opacity: 1;
+}
+
+/* --- Planner summary cards --- */
+.planner-summary {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+
+.planner-sum-card {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.planner-sum-card--cur {
+  border-color: var(--accent);
+  background: rgba(123,97,255,0.07);
+}
+
+.planner-sum-card--next {
+  opacity: 0.75;
+}
+
+.planner-sum-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.planner-sum-ver {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.planner-dday {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+}
+
+.planner-dday--active {
+  background: rgba(123,97,255,0.18);
+  color: var(--accent);
+}
+
+.planner-dday--today {
+  background: rgba(80,200,120,0.15);
+  color: var(--rec);
+}
+
+.planner-dday--ended {
+  background: rgba(255,255,255,0.07);
+  color: var(--muted);
+}
+
+.planner-sum-range {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.planner-sum-next-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.planner-sum-next-ver {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.planner-sum-card-goal {
+  padding-top: 15px;
+}
+
+.planner-sum-goal-section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+
+.planner-sum-inputs {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.planner-sum-goal-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+}
+
+.planner-sum-goal-row .planner-unit {
+  margin-right: 10px;
+}
+
+.planner-sum-goal-row .planner-unit:last-child {
+  margin-right: 0;
+}
+
+.planner-sum-goal-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.planner-num--sm {
+  width: 54px !important;
+}
+
+/* --- Planner bottom row (달성 분석 | 과금 계산) --- */
+.planner-bottom-row {
+  display: flex;
+  border-top: 1px solid var(--border);
+}
+
+.planner-bottom-row .planner-group--half {
+  flex: 1;
+  border-bottom: none;
+}
+
+.planner-bottom-row .planner-group--half:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.planner-bottom-row .planner-group--full {
+  flex: 2;
+  border-right: 1px solid var(--border);
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+}
+.planner-bottom-row .planner-group--full #plannerCalcResult {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.planner-bottom-row .planner-group--full .pacc-grid {
+  align-items: start;
+}
+.pacc-card {
+  display: flex;
+  flex-direction: column;
+}
+.pacc-card-body {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  align-items: center;
+  column-gap: 8px;
+  padding: 4px 10px 8px;
+}
+
+/* --- 2버전 누적 목표 --- */
+.planner-cumulative {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.planner-cum-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.planner-advance-btn {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  display: block;
+}
+
+.planner-advance-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(123,97,255,0.1);
+}
+
+/* --- 전반/후반 토글 --- */
+.planner-half-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0;
+}
+.planner-half-btn {
+  flex: 1;
+  padding: 4px 0;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.planner-half-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.planner-half-btn--active {
+  background: rgba(123,97,255,0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- 달성 분석 3카드 그리드 --- */
+.pacc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+@media (max-width: 720px) {
+  .pacc-grid { grid-template-columns: 1fr; }
+}
+.pacc-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  position: relative;
+}
+.pacc-card--cur   { border-color: var(--accent); }
+.pacc-card--dim   { opacity: 0.45; }
+.pacc-card-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 6px 10px 5px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px 8px 0 0;
+}
+.pacc-card--cur   .pacc-card-title { color: var(--accent); background: rgba(123,97,255,0.07); }
+.pacc-card--next  .pacc-card-title { color: var(--muted);  background: rgba(255,255,255,0.02); }
+.pacc-card--total .pacc-card-title { color: var(--muted);  background: rgba(255,255,255,0.02); }
+.pacc-lbl {
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+  padding: 6px 0;
+  align-self: center;
+}
+.pacc-col-left,
+.pacc-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 0;
+}
+.pacc-col-left {
+  padding-left: 16px;
+}
+.pacc-sep {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+}
+.pacc-row-goal,
+.pacc-row-owned {
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.pacc-row-goal strong,
+.pacc-row-owned strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.pacc-row-status {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pacc-row-rate {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+.pacc-ok   { color: var(--rec); }
+.pacc-lack { color: var(--must); }
+.pacc-divider {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  margin: 2px 0;
+}
+.pacc-total-row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+}
+.pacc-total-sf { font-weight: 600; font-size: 15px; }
+.pacc-total-rate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+.pacc-total-rate-lbl { display: flex; align-items: center; gap: 3px; }
+.pacc-total-rate strong { font-size: 19px; font-weight: 700; }
+.pacc-total-rate .cmp-tip::after {
+  right: auto;
+  left: 0;
+  top: auto;
+  bottom: 130%;
+}
+
+/* --- 달성 분석 가로 비교 테이블 --- */
+.planner-cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+.planner-cmp-table tr + tr td {
+  border-top: 1px solid var(--border);
+}
+.planner-cmp-label {
+  padding: 6px 4px 6px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  width: 36px;
+}
+.planner-cmp-cell {
+  padding: 6px 8px;
+  color: var(--text-dim);
+}
+.planner-cmp-cell strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.planner-cmp-status {
+  padding: 6px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+.planner-cmp-ok   { color: var(--rec); }
+.planner-cmp-lack { color: var(--must); }
+.planner-cmp-th-blank { border: none; padding: 0; }
+.planner-cmp-th-rate  { text-align: right; font-size: 12px; color: var(--text-muted, #888); padding-bottom: 4px; font-weight: normal; border: none; }
+.cmp-tip { position: relative; cursor: help; font-style: normal; }
+.cmp-tip::after {
+  content: attr(data-tip);
+  position: absolute; right: 0; top: 130%;
+  width: 220px; background: var(--card, #1e1e1e); border: 1px solid var(--border, #333);
+  border-radius: 6px; padding: 7px 10px; font-size: 12px; color: var(--text, #eee);
+  white-space: normal; line-height: 1.5; z-index: 200; display: none; pointer-events: none;
+}
+.cmp-tip:hover::after { display: block; }
+.planner-cmp-row--common td { border-top: 1px solid var(--border); padding-top: 6px; }
+.planner-cmp-rate {
+  padding: 6px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* --- 총 부족 한 줄 강조 --- */
+.planner-total-shortfall {
+  margin-top: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.planner-total-shortfall strong { font-size: 17px; }
+.planner-total-shortfall--ok {
+  background: rgba(77,255,145,0.1);
+  color: var(--rec);
+}
+.planner-total-shortfall--lack {
+  background: rgba(255,77,109,0.1);
+  color: var(--must);
+}
+
+/* --- 구간별 예상 과금 카드 --- */
+.cost-ver-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.cost-ver-card--cur {
+  border-color: var(--accent);
+}
+.cost-ver-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.cost-ver-card--cur .cost-ver-label {
+  color: var(--accent);
+  background: rgba(123,97,255,0.07);
+  border-color: var(--accent);
+}
+.cost-ver-halves {
+  display: flex;
+}
+.cost-phase-cell {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cost-phase-cell + .cost-phase-cell {
+  border-left: 1px solid var(--border);
+}
+.cost-phase-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+.cost-phase-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.cost-phase-cell--dim .cost-phase-amount {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.planner-cost-divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 8px 0;
+}
+
+/* ── 37. Analysis Dashboard Redesign (renderResults only) ─── */
+
+/* Verdict Hero — 최종 추천도 + 추천 행동 통합 카드 */
+.verdict-hero {
+  border-radius: var(--radius-card);
+  padding: 20px 22px;
+}
+
+.pull-must-pull.verdict-hero   { background: rgba(255, 77, 109, 0.08); }
+.pull-recommended.verdict-hero { background: rgba(77, 255, 145, 0.08); }
+.pull-optional.verdict-hero    { background: rgba(255, 210, 77, 0.08); }
+.pull-skip.verdict-hero        { background: rgba(102, 102, 119, 0.10); }
+.pull-owned.verdict-hero       { background: var(--accent-bg2); }
+
+.verdict-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.verdict-hero-score-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.verdict-hero-score {
+  font-size: 44px;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.verdict-hero-score-unit {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.verdict-hero-bar-col {
+  flex: 1;
+  min-width: 200px;
+  padding-bottom: 5px;
+}
+
+.verdict-hero-action {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.verdict-hero-action-arrow {
+  color: var(--accent);
+}
+
+/* KPI Tile Grid — 6개 핵심 지표 */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kpi-tile {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 14px 15px;
+}
+
+.kpi-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 9px;
+}
+
+.kpi-tile-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.kpi-tile-value-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kpi-tile-value {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.kpi-tile-bar-track {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 9px;
+}
+
+.kpi-tile-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.kpi-tile-caption {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+
+.kpi-tile-caption.is-warn {
+  color: var(--must);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
+
+/* KPI Notes — 신뢰도/불확실/FOMO 부가 설명 (보조 정보) */
+.kpi-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.kpi-notes strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.kpi-notes .note-warn {
+  color: var(--must);
+  font-weight: 700;
+}
+
+/* Trio Split — 명함 / 돌파 / 전무 3분할 */
+.trio-split {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.trio-col {
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.trio-col + .trio-col {
+  border-left: 1px solid var(--border);
+}
+
+.trio-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 7px;
+}
+
+.trio-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.trio-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .trio-split { grid-template-columns: 1fr; }
+  .trio-col + .trio-col { border-left: none; border-top: 1px solid var(--border); }
+}
+
+/* Two-Column Grid — 뽑을이유/스킵이유, 커뮤니티/시너지 */
+.two-col-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 700px) {
+  .two-col-grid { grid-template-columns: 1fr; }
+}
+
+/* Verdict Callout — 최종 판단 강조 */
+.verdict-callout {
+  background: var(--accent-bg2);
+  border-color: var(--accent);
+}
+
+.verdict-callout .result-label {
+  color: var(--accent);
 }

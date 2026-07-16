@@ -1,0 +1,57 @@
+{
+  "gameId": "endfield",
+  "gameName": "아크나이츠: 엔드필드",
+  "version": "1.0",
+  "lastUpdated": "2026-07-05",
+  "status": "filled",
+  "sources": [
+    {
+      "name": "Game8 - Pity System Explained (game8.co/games/Arknights-Endfield/archives/576231)",
+      "type": "wiki",
+      "usage": "캐릭터 65 소프트/80 하드/120 픽업 확정/이월 규칙, 기본 확률 0.8% 확인"
+    },
+    {
+      "name": "PCGamesN - Endfield Pity System (pcgamesn.com/arknights-endfield/pity-system)",
+      "type": "wiki",
+      "usage": "캐릭터 80뽑 50:50 구조 및 기본 확률(캐릭터 0.8%/무기 4%) 교차 확인"
+    },
+    {
+      "name": "Mobalytics - Arknights Endfield Explained (mobalytics.gg/arknights-endfield/guides/arknights-endfield-explained)",
+      "type": "wiki",
+      "usage": "무기(Arsenal) 배너 40/80뽑 구조 및 이월 규칙 확인"
+    },
+    {
+      "name": "endfieldtools.dev - Gacha Rates & Pity Guide",
+      "type": "community",
+      "usage": "무기 배너 100뽑/180뽑 반복 구조 세부 확인"
+    }
+  ],
+  "character": {
+    "baseRate": 0.008,
+    "softPityStart": 65,
+    "softPityIncreasePerPull": 0.05,
+    "hardPity": 80,
+    "featuredRate": 0.5,
+    "has5050": true,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": false,
+    "curveSource": "3개 독립 출처(Game8/PCGamesN/Mobalytics) 교차 확인: 65뽑부터 회당 5%p 증가, 80뽑에서 임의 6성 100% 확정",
+    "curveConfidence": "medium",
+    "notes": "80뽑마다 임의 6성을 확정 획득하며 이때 50% 확률로 픽업 6성이 결정된다(전통적 50:50과 달리 하드 천장 시점에 고정). 120뽑 누적 시 해당 배너의 픽업 6성을 1회 확정 획득한다(시뮬레이션은 guaranteeAfterLose=true로 근사: 최악 160뽑, 실제는 120뽑 보장). 80뽑 천장은 이월되지만 120뽑 픽업 보장은 배너 종료 시 초기화된다. 소프트 천장 증가폭(회당 5%p)은 공식 미공개 커뮤니티 추정값이라 confidence는 medium으로 유지."
+  },
+  "weapon": {
+    "baseRate": 0.04,
+    "softPityStart": 31,
+    "softPityIncreasePerPull": 0.06,
+    "hardPity": 40,
+    "featuredRate": 0.25,
+    "has5050": false,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": false,
+    "guaranteeCarryOver": false,
+    "curveSource": "커뮤니티 추정: 31뽑부터 회당 약 6%p 증가, 40뽑에서 100%",
+    "curveConfidence": "low",
+    "notes": "무기는 40뽑마다 6성을 확정 획득하며 이때 25% 확률로 픽업 무기가 결정된다. 첫 6성이 픽업이 아니면 80뽑(40+40)까지 픽업 무기 확정 — guaranteeAfterLose=true로 모델링. [한계] 실제 시스템은 80뽑 이후에도 100뽑(비픽업 6성 무기 선택권 '무기 헌납')↔180뽑(픽업 무기 재확정)이 80뽑 주기로 무한 반복되나, 현재 스키마 필드(softPityStart/hardPity 단일값)로는 이 반복 구조를 표현할 수 없어 최초 40/80 구간만 모델링함. 무기 배너 천장·픽업 보장은 배너 종료 시 전혀 이월되지 않음(캐릭터 배너의 80뽑 천장과 달리 완전 초기화). 소프트 천장 곡선 형태(선형 증가 vs 계단식)도 출처 간 서술이 엇갈려 confidence는 low로 유지."
+  }
+}

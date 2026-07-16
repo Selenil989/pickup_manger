@@ -7,60 +7,95 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <div class="app-layout">
 
-    <!-- Header -->
-    <header class="app-header">
-      <h1>가챠 투자 분석기</h1>
-      <select id="gameSelect" aria-label="게임 선택">
-        <!-- populated by renderGameSelect() -->
-      </select>
-    </header>
+      <!-- Sidebar: always visible -->
+      <aside class="sidebar">
+        <div class="sidebar-title">가챠 투자 분석기</div>
 
-    <!-- Main layout: left panel + right panel side by side -->
-    <main class="app-main">
-
-      <!-- Left Panel -->
-      <aside class="panel panel-left">
-
-        <!-- Character selection section -->
-        <section class="character-section">
-          <h2>분석 대상</h2>
-          <select id="characterSelect" aria-label="캐릭터 선택" disabled>
-            <option value="">캐릭터 선택</option>
-          </select>
-          <button id="analyzeBtn" disabled>분석하기</button>
-        </section>
-
-        <!-- Owned character roster section -->
-        <section class="roster-section">
-          <h2>보유 캐릭터 <span id="rosterCount" class="badge">0</span></h2>
-          <div class="roster-wrap">
-            <div id="rosterList" class="roster-list">
-              <!-- populated by renderRoster() -->
-            </div>
+        <!-- Game list -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">게임 목록</div>
+          <div id="gameList" class="game-list">
+            <!-- populated by renderGameSelect() -->
           </div>
-        </section>
+          <button id="addGameBtn" class="add-game-btn">+ 게임 추가</button>
+        </div>
+
+        <!-- Nav tabs -->
+        <nav class="sidebar-nav">
+          <button class="nav-tab active" data-tab="analysis">가챠 분석</button>
+          <button class="nav-tab" data-tab="currency">보유 재화</button>
+        </nav>
+
+        <!-- Analysis side content (hidden when currency tab is active) -->
+        <div id="analysisSideContent" class="sidebar-side-content">
+
+          <!-- Character selection section -->
+          <section class="character-section">
+            <h2>분석 대상</h2>
+            <select id="characterSelect" aria-label="캐릭터 선택" disabled>
+              <option value="">캐릭터 선택</option>
+            </select>
+            <button id="analyzeBtn" disabled>분석하기</button>
+            <button id="metaUpdateBtn" disabled>메타 업데이트</button>
+            <button id="metaUpdateClaudeCodeBtn" disabled>Claude Code로 메타 갱신</button>
+          </section>
+
+          <!-- Owned character roster section (hidden, logic retained) -->
+          <section class="roster-section" style="display:none;">
+            <h2>보유 캐릭터 <span id="rosterCount" class="badge">0</span></h2>
+            <div class="roster-wrap">
+              <div id="rosterList" class="roster-list"></div>
+            </div>
+          </section>
+
+        </div>
+        <!-- Personal settings save/load -->
+        <div class="sidebar-footer">
+          <button class="sidebar-footer-btn" onclick="exportPersonalSettings()">저장</button>
+          <button class="sidebar-footer-btn" onclick="importPersonalSettings()">불러오기</button>
+        </div>
 
       </aside>
 
-      <!-- Right Panel: Analysis Results -->
-      <section class="panel panel-right" id="resultsPanel" aria-label="분석 결과">
-        <!--
-          innerHTML set by:
-          - renderResults(result)    → analysis output
-          - renderNoMeta(character)  → no meta data message
-          - renderPlaceholder(msg)   → idle/loading message
-          - renderError(msg)         → error message
-        -->
-        <noscript><p style="padding:16px">JavaScript가 필요한 서비스입니다.</p></noscript>
-      </section>
+      <!-- Main content area -->
+      <main class="main-content">
 
-    </main>
+        <!-- Tab: 가챠 분석 -->
+        <div id="tabAnalysis" class="tab-page">
+          <section class="panel panel-right" id="resultsPanel" aria-label="분석 결과">
+            <!--
+              innerHTML set by:
+              - renderResults(result)    → analysis output
+              - renderNoMeta(character)  → no meta data message
+              - renderPlaceholder(msg)   → idle/loading message
+              - renderError(msg)         → error message
+            -->
+            <noscript><p style="padding:16px">JavaScript가 필요한 서비스입니다.</p></noscript>
+          </section>
+        </div>
+
+        <!-- Tab: 현재 보유 재화 리스트 -->
+        <div id="tabCurrency" class="tab-page" style="display:none;">
+          <div id="currencyPage" class="currency-page">
+            <!-- populated by renderCurrencyPage() -->
+          </div>
+        </div>
+
+      </main>
+    </div>
 
     <!-- Account Manager Modal -->
     <div id="charDetailModal" style="display:none;"></div>
     <!-- Character Manager Modal -->
     <div id="charEditModal" style="display:none;"></div>
+    <!-- Game Config Modal -->
+    <div id="gameConfigModal" style="display:none;"></div>
+    <!-- Currency Config Modal -->
+    <div id="currencyConfigModal" style="display:none;"></div>
+    <!-- Pass Edit Modal -->
+    <div id="passEditModal" style="display:none;"></div>
 
     <!-- Scripts: engine first, then app -->
     <script src="evaluationEngine.js"></script>

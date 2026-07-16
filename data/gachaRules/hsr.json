@@ -1,0 +1,57 @@
+{
+  "gameId": "hsr",
+  "gameName": "붕괴: 스타레일",
+  "version": "1.0",
+  "lastUpdated": "2026-07-05",
+  "status": "filled",
+  "sources": [
+    {
+      "name": "Honkai: Star Rail 공식 사이트 - Warp Rate Notification (hsr.hoyoverse.com/en-us/news/public)",
+      "type": "official",
+      "usage": "5성 기본 확률 0.6%/0.8%, 하드 천장 90/80, 50:50 및 75:25, 확정 규칙 확인"
+    },
+    {
+      "name": "HoYoLAB 공식 아티클 - About Warps (hoyolab.com/article/17351825)",
+      "type": "official",
+      "usage": "캐릭터 배너 50:50 및 확정 이월 규칙 원문 확인"
+    },
+    {
+      "name": "Game8 - The Pity System Explained (game8.co/games/Honkai-Star-Rail/archives/409610)",
+      "type": "wiki",
+      "usage": "캐릭터/광추 소프트 천장 구간(약 73~88 / 65~78) 교차 확인"
+    },
+    {
+      "name": "PlayAware - HSR Pity Guide (playaware.in/guides/hsr-pity)",
+      "type": "community",
+      "usage": "소프트 천장 회당 증가폭 커뮤니티 추정값 교차 확인"
+    }
+  ],
+  "character": {
+    "baseRate": 0.006,
+    "softPityStart": 74,
+    "softPityIncreasePerPull": 0.06,
+    "hardPity": 90,
+    "featuredRate": 0.5,
+    "has5050": true,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": true,
+    "curveSource": "커뮤니티 추정: pity 74부터 회당 약 6%p 증가, 90에서 100%",
+    "curveConfidence": "medium",
+    "notes": "공식은 기본 확률(0.6%), 하드 천장(90), 50:50, 확정 및 이월 규칙만 공개. 소프트 천장 시작점과 회당 증가폭은 공식 미공개로, 위키마다 73~74뽑으로 약간의 편차가 있는 커뮤니티 추정값."
+  },
+  "weapon": {
+    "baseRate": 0.008,
+    "softPityStart": 65,
+    "softPityIncreasePerPull": 0.07,
+    "hardPity": 80,
+    "featuredRate": 0.75,
+    "has5050": false,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": true,
+    "curveSource": "커뮤니티 추정: pity 65부터 회당 약 7%p 증가, 80에서 100%",
+    "curveConfidence": "medium",
+    "notes": "광추 배너는 75:25 시스템이며, 픽뚫 시 다음 5성 광추는 픽업 확정 — 이 규칙은 공식 확인됨. 기본 확률(0.8%), 하드 천장(80), 확정 및 이월 규칙도 공식 공개. 소프트 천장 시작점과 증가폭은 공식 미공개 커뮤니티 추정값."
+  }
+}

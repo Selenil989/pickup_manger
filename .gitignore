@@ -4,6 +4,17 @@
 # Node
 node_modules/
 
+# API Keys
+.env
+
+# User account data (개인 계정 데이터 — GitHub 업로드 금지)
+data/user/roster.json
+data/user/settings.json
+data/user/history.json
+
 # Temp / test files
 *.tmp
 stage6_test.mjs
+
+# Import pipeline scratch space (downloaded source data, not project data)
+tools/import/.cache/

@@ -2,35 +2,3448 @@
   {
     "version": "1.0",
     "characterId": "camellya",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 9.6,
-    "futureScore": 8.0,
+    "futureScore": 8,
     "replacementScore": 4,
     "confidence": 0.88,
     "futureLinks": [],
-    "characterRecommendation": { "score": 9, "priority": "high", "reason": "혼돈 계열 최상위" },
-    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "S1 이후 효율 향상" },
-    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 무기 효율 우수" },
-    "pullReasons": ["혼돈 계열 독보적 성능"],
-    "skipReasons": ["Havoc Rover 보유 시 역할 일부 중복"],
-    "sources": [{ "name": "레딧", "weight": 1.0 }],
-    "recommendation": { "pull": "recommended", "priority": "high" }
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "혼돈 계열 최상위"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "S1 이후 효율 향상"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "medium",
+      "reason": "전용 무기 효율 우수"
+    },
+    "pullReasons": [
+      "혼돈 계열 독보적 성능"
+    ],
+    "skipReasons": [
+      "Havoc Rover 보유 시 역할 일부 중복"
+    ],
+    "sources": [
+      {
+        "name": "레딧",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
   },
   {
     "version": "1.0",
     "characterId": "carlotta",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 9.4,
     "futureScore": 8.5,
     "replacementScore": 5,
     "confidence": 0.85,
     "futureLinks": [],
-    "characterRecommendation": { "score": 9, "priority": "high", "reason": "빙결 계열 최상위 딜러" },
-    "breakthroughRecommendation": { "score": 5, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 8, "priority": "medium", "reason": "전용 무기 권장" },
-    "pullReasons": ["빙결 계열 톱 딜러"],
-    "skipReasons": ["Lingyang 보유 시 역할 중복"],
-    "sources": [{ "name": "레딧", "weight": 1.0 }],
-    "recommendation": { "pull": "recommended", "priority": "high" }
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "빙결 계열 최상위 딜러"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "medium",
+      "reason": "전용 무기 권장"
+    },
+    "pullReasons": [
+      "빙결 계열 톱 딜러"
+    ],
+    "skipReasons": [
+      "Lingyang 보유 시 역할 중복"
+    ],
+    "sources": [
+      {
+        "name": "레딧",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "aalto",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5.5,
+    "futureScore": 4.5,
+    "replacementScore": 7,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 몹 소집(에어본 유틸)과 보호막 유틸 보유한 서브딜러이나, 최신 5성 캐릭 육성 우선 경향으로 자원 배분에서 밀린다는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 관련 커뮤니티 논의 자체가 적어 우선순위 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "전무보다는 범용 무기로 충분하다는 평가"
+    },
+    "pullReasons": [
+      "광역 소집/보호막 유틸로 특정 컨텐츠에서 편의성 제공"
+    ],
+    "skipReasons": [
+      "최신 5성 캐릭 우선 육성 경향으로 자원 배분 후순위",
+      "단독 딜 성능은 낮은 편"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "바람 속성 서브딜러/유틸. 몹 소집 및 보호막 스킬 보유.",
+      "synergySummary": "특정 잡몹 처리 컨텐츠에서 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "몹 소집/보호막 유틸 편의성"
+      ],
+      "negative": [
+        "자원 부족으로 육성 우선순위 밀림",
+        "단독 딜 성능 낮음"
+      ],
+      "commonOpinion": "유틸은 있으나 육성 우선순위는 낮은 구세대 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "오래된 캐릭터로 최신 평가 자료 적음"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "skip",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "aemeath",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 조정 이후 사이클이 개선되었고, 돌파로 스택 전이 기능이 생겨 다수 적 상대 특화가 가능하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "돌파 시 스택 전이 기능 추가로 다수 적 상대 효율 상승 반복 확인"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "전무 효율 계산 게시물 존재, 필수급은 아니라는 평가"
+    },
+    "pullReasons": [
+      "조정 이후 사이클 개선",
+      "돌파 시 다수 적 상대 특화 가능",
+      "스토리 평가 양호"
+    ],
+    "skipReasons": [
+      "전무가 필수급은 아니라는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "스택 축적형 서브딜러. 돌파로 스택 전이 기능 추가.",
+      "synergySummary": "다수 적 컨텐츠에서 활용도 상승"
+    },
+    "communitySummary": {
+      "positive": [
+        "조정 후 사이클 개선",
+        "돌파로 다수 적 특화 가능"
+      ],
+      "negative": [
+        "전무 없이는 성능 제한적"
+      ],
+      "commonOpinion": "조정 이후 재평가된 서브딜러, 돌파 시 다수 적 상대 특화",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "augusta",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 7,
+    "replacementScore": 5,
+    "confidence": 0.78,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 유노와 조합 시 완성도 높고 데미지가 높아 너프 추측까지 나올 정도라는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전무와 돌파 중 우선순위 논의가 반복되는 캐릭터, 3속성 스택 예열이 필요해 초반 워밍업이 단점으로 지적됨"
+    },
+    "weaponRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "전무 없을 시 대체 4성 무기 논의 활발, 전무 효율 자체는 양호"
+    },
+    "pullReasons": [
+      "유노와 조합 시 완성도 높은 딜 사이클",
+      "데미지 상위권으로 평가"
+    ],
+    "skipReasons": [
+      "3속성 스택 예열 필요로 초반 워밍업 단점",
+      "유노 부재 시 조합 완성도 하락"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "3속성 스택 기반 딜러. 스택 완성 후 폭딜 구조.",
+      "synergySummary": "유노(Iuno)와 조합 시 시너지 극대화"
+    },
+    "communitySummary": {
+      "positive": [
+        "유노 조합 시 데미지 상위권",
+        "완성도 높은 사이클"
+      ],
+      "negative": [
+        "3속성 스택 예열 시간 필요",
+        "유노 없으면 조합 완성도 하락"
+      ],
+      "commonOpinion": "유노 동반 시 최상위권 딜러, 단독으로는 예열 단점 존재",
+      "concern": "너프 가능성 언급되는 수준의 고성능"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "너프 가능성에 대한 추측성 의견 존재"
+      ]
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "baizhi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5.5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 힐 위주 캐릭터로 딜/유틸 비중은 약한 편, 오픈월드에서는 좋으나 시간 제한 컨텐츠에서는 상대적으로 약하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "힐량 위주 강화로 시급성 낮다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "전무 없이도 힐러 역할 수행 가능하다는 평가"
+    },
+    "pullReasons": [
+      "오픈월드 탐사용 안정적 힐러",
+      "미궁(폐허) 컨텐츠에서 개선된 평가"
+    ],
+    "skipReasons": [
+      "시간 제한 컨텐츠에서 벨리나 대비 딜/유틸 열세",
+      "단독 딜 기여도 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "힐 특화 서포터. 딜 기여도는 낮은 편.",
+      "synergySummary": "오픈월드 및 특정 미궁 컨텐츠에서 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "안정적인 힐량",
+        "오픈월드에서 편리"
+      ],
+      "negative": [
+        "시간 제한 컨텐츠에서 벨리나 대비 열세",
+        "딜 기여 낮음"
+      ],
+      "commonOpinion": "오픈월드용 안정적 힐러, 벨리나 대비 딜/유틸 일부 열세",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "brant",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 평가가 양극화(OP~평범)되는 캐릭터, 특유의 공중전 조작감이 특징이며 특정 조합에서는 거의 필수급이라는 의견 존재"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "전무가 거의 필수인지에 대한 질문/논의가 반복 등장, 평가 편차가 큼"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전무 필수 여부 논쟁이 반복되나 있으면 확실히 좋다는 의견 다수"
+    },
+    "pullReasons": [
+      "특정 조합에서 거의 필수급이라는 평가",
+      "독특한 공중전 조작감"
+    ],
+    "skipReasons": [
+      "평가 편차가 커 범용성에 의문 제기",
+      "평범하다는 의견도 상당수"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "공중전 특화 딜러. 특유의 부유/공중 콤보 구조.",
+      "synergySummary": "특정 팀 조합에서 필수급으로 언급"
+    },
+    "communitySummary": {
+      "positive": [
+        "특정 조합 필수급",
+        "독특한 공중전 조작감"
+      ],
+      "negative": [
+        "평가 편차 큼(OP~평범)",
+        "전무 필수 여부 논쟁"
+      ],
+      "commonOpinion": "평가가 극단적으로 갈리는 캐릭터, 특정 조합에서만 강점 뚜렷",
+      "concern": "조합 의존도가 높다는 지적"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "평가 편차가 큰 캐릭터로 확정적 결론 어려움"
+      ]
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "buling",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.78,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 가장 쓰기 쉬운 4성 힐러로 평가, 공속 조합에서는 벨리나와, 그 외에는 설지와 비교되며 사이클 체감이 더 좋다는 의견"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "4성 캐릭터로 돌파 관련 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무보다 범용 4성 무기로도 충분하다는 평가"
+    },
+    "pullReasons": [
+      "가장 쓰기 쉬운 4성 힐러",
+      "공속 조합에서 벨리나 대체 가능",
+      "설지 대비 좋은 사이클 체감"
+    ],
+    "skipReasons": [
+      "벨리나/설지 보유 시 우선순위 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "4성 힐러. 공속 기반 사이클 구조.",
+      "synergySummary": "공속 조합에서 벨리나 대체, 일반 조합에서 설지 대체 가능"
+    },
+    "communitySummary": {
+      "positive": [
+        "입문자 친화적 힐러",
+        "좋은 사이클 체감"
+      ],
+      "negative": [
+        "5성 힐러 보유 시 우선순위 낮음"
+      ],
+      "commonOpinion": "입문자에게 추천되는 가장 쉬운 4성 힐러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "4성 상시 획득 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "calcharo",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5,
+    "futureScore": 4,
+    "replacementScore": 7,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 회피/피격 시 공명 회로 스택이 초기화되는 구조적 약점이 반복 지적되며, 상시 캐릭터 중 하위권으로 평가됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "메인 딜러로만 기능해 서브딜러 순환이 어렵다는 평가, 90레벨에서도 최종 컨텐츠 클리어용으로는 부족하다는 의견"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "무기 우선순위 논쟁 존재하나 전무 필수급은 아님"
+    },
+    "pullReasons": [
+      "간신(Jianxin)과 조합 시 안정적 히트앤런 구조"
+    ],
+    "skipReasons": [
+      "회피 시 공명 회로 스택 초기화되는 구조적 약점",
+      "메인 딜러 전용이라 서브딜러 순환 불가",
+      "상시 캐릭터 중 하위권 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "평타 연속 시전형 메인 딜러. 공명 회로 스택 축적 구조.",
+      "synergySummary": "간신(실드), 벨리나(버프) 조합 시 안정적"
+    },
+    "communitySummary": {
+      "positive": [
+        "간신 조합 시 안정적 딜 사이클"
+      ],
+      "negative": [
+        "회피 시 스택 초기화되는 구조적 약점",
+        "메인 딜러 전용, 순환 불가",
+        "상시 캐릭터 중 하위권"
+      ],
+      "commonOpinion": "메인 딜러 자원 확보 전까지 임시로 육성하는 정도로 충분, 우선순위 낮음",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "skip",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "cantarella",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 7,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 근접 타격형 증폭딜러로 딜+힐 겸용 하이브리드, 플로로 등 후속 캐릭터 출시 이후 조합 완성도가 높아져 가치 상승했다는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "돌파 없이는 다소 애매하다는 초기 평가가 있었으나 이후 조합 확립으로 완화됨"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전무 재련 효율이 명조 캐릭터 중 상위권, 공격력 40%까지 효율 확인"
+    },
+    "pullReasons": [
+      "서브딜러+힐러 겸용 하이브리드",
+      "플로로 등 후속 캐릭 출시로 조합 완성도 상승",
+      "전무 재련 효율 상위권"
+    ],
+    "skipReasons": [
+      "조작감(전진형 평타)이 호불호 갈림",
+      "초기에는 마땅한 조합 부재로 평가 애매했음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "근접 타격형 증폭딜러 겸 힐러. 공명 회로로 딜+힐 병행.",
+      "synergySummary": "금희, 플로로 등과 조합 시 완성도 높음"
+    },
+    "communitySummary": {
+      "positive": [
+        "딜+힐 겸용 유틸리티",
+        "후속 캐릭 출시로 가치 상승",
+        "전무 효율 상위권"
+      ],
+      "negative": [
+        "전진형 평타로 조작감 호불호",
+        "초기 조합 부재로 평가 낮았음"
+      ],
+      "commonOpinion": "출시 초기보다 후속 캐릭 등장 이후 재평가된 하이브리드 딜러/힐러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "cartethyia",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8.5,
+    "futureScore": 8,
+    "replacementScore": 4,
+    "confidence": 0.82,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8.5,
+      "priority": "high",
+      "reason": "아카라이브 확인: 단독 성능이 기대 이상으로 좋다는 평가가 반복되며, 로코코와 조합 시 장리급 성능까지 도달한다는 의견 다수"
+    },
+    "breakthroughRecommendation": {
+      "score": 7.5,
+      "priority": "high",
+      "reason": "돌파 효율표 기준 1돌 118%, 2돌 150%, 3돌 186%, 풀돌 304%로 매우 우수하며, 돌파 시 플뢰르 상태도 함께 돌파되어 효율이 배가된다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전무 재련 효율이 3돌까지는 100회 기준 32.5~36.5%로 매우 우수"
+    },
+    "pullReasons": [
+      "단독 성능이 예상보다 높음",
+      "샤콘 조합 시 최우선 서포터 시너지",
+      "돌파 효율 전 구간 우수(공명 사슬 동반 돌파 구조)"
+    ],
+    "skipReasons": [
+      "샤콘 부재 시 조합 완성도 다소 하락"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "해방형 딜러. 공명 해방으로 폭풍 상태(플뢰르)와 평시 상태를 전환.",
+      "synergySummary": "샤콘(전속성 지원) 최우선 파트너, 로코코 조합도 유효"
+    },
+    "communitySummary": {
+      "positive": [
+        "기대 이상의 단독 성능",
+        "전 구간 우수한 돌파 효율",
+        "해방 전 필드 성능도 우수"
+      ],
+      "negative": [
+        "샤콘 없이는 조합 완성도 하락"
+      ],
+      "commonOpinion": "샤콘과 함께일 때 최상위권, 단독으로도 준수한 신규 메인 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 5,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재, 놓치면 장기간 재획득 어려움"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "changli",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 데미지가 공명 사이클과 해방 스킬에 집중되어 있어 스택만 채우면 딜이 쉽다는 평가, 다만 최신 딜러 대비 돌파 효율은 열세"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "최신 딜러들이 3돌에 150~170% 상승을 보이는 반면 장리는 5돌에서야 168%에 도달해 돌파 효율이 상대적으로 나쁘다는 평가 반복"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "상시 직검(무료 무기)이 전무와 큰 차이 없다는 평가, 다만 120 이상 공명 효율 확보 시 전무 이점 존재"
+    },
+    "pullReasons": [
+      "공명 사이클+해방 집중형으로 딜 사이클이 명확함",
+      "상시 무기로도 전무와 큰 격차 없어 무과금 친화적"
+    ],
+    "skipReasons": [
+      "돌파 효율이 최신 딜러 대비 열세(5돌 필요)",
+      "생존력이 약해 스킬 관리 필요",
+      "평타 시 피격 증가로 실드 캐릭 동반 권장"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "화속성 메인 딜러. 공명 사슬(메아리 에센스) 축적 기반.",
+      "synergySummary": "실드/보호막 캐릭터와 동반 시 안정적"
+    },
+    "communitySummary": {
+      "positive": [
+        "명확한 딜 사이클",
+        "상시 무기로도 준수한 성능"
+      ],
+      "negative": [
+        "돌파 효율 열세",
+        "생존력 약함",
+        "스택 축적 부담"
+      ],
+      "commonOpinion": "딜 자체는 준수하나 돌파 효율은 최신 딜러 대비 아쉽다는 평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "chisa",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 7,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 이상 효과(피뢰) 조합에서 지속적으로 활용도가 높다는 평가, 본인 딜은 낮으나 유틸과 조작감이 만족스럽다는 의견 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "풀돌 성능이 메인 딜러 2~3돌급 버프 가치와 맞먹는다는 평가로 돌파 효율 우수한 편"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "3파티원 슬롯 사용 시 130% 이상 공명 효율 확보 필요, 전무 관련 논의 활발"
+    },
+    "pullReasons": [
+      "이상 효과 조합에서 지속적 활용도",
+      "만족스러운 조작감",
+      "풀돌 시 메인 딜러급 버프 가치"
+    ],
+    "skipReasons": [
+      "자체 딜량은 낮은 편",
+      "공명 효율 스탯 요구치가 높음(130%+)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "이상 효과 스택 증가형 지원 힐러/디버퍼.",
+      "synergySummary": "이상 효과 파티 조합에서 핵심 지원"
+    },
+    "communitySummary": {
+      "positive": [
+        "이상 효과 파티 필수급 지원력",
+        "좋은 조작감"
+      ],
+      "negative": [
+        "자체 딜량 낮음",
+        "공명 효율 스탯 요구치 높음"
+      ],
+      "commonOpinion": "이상 효과 조합에서 지속적으로 중요도가 유지되는 지원형 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "chixia",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5.5,
+    "futureScore": 4.5,
+    "replacementScore": 7,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 출시 초기 4성 딜러로 초반 진행에는 무난하나, 다른 단일 타겟 딜러 대비 딜 사이클에 공백이 있다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "풀돌파 효율이 370%로 절지(320%), 로로(330%) 대비 높다는 평가로 돌파 자체 효율은 우수한 편"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "메인 딜러로 쓸 때만 전무 체감이 뚜렷, 서포터 겸용 시 차이 미미"
+    },
+    "pullReasons": [
+      "풀돌파 효율이 동급 4성 대비 우수",
+      "초반 진행용으로 무난한 4성 딜러"
+    ],
+    "skipReasons": [
+      "다른 단일 타겟 딜러 대비 딜 사이클 공백",
+      "5성 딜러 보유 시 우선순위 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "4성 단일 타겟 딜러. 권총 기반 연사형 스킬.",
+      "synergySummary": "초반 진행 및 서브딜러로 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "풀돌파 효율 우수",
+        "초반 진행 무난"
+      ],
+      "negative": [
+        "딜 사이클 공백 존재",
+        "5성 대비 우선순위 낮음"
+      ],
+      "commonOpinion": "초반용 4성 딜러로 무난하나 5성 확보 이후 우선순위는 낮음",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "4성 상시 획득 캐릭터로 FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "ciaccona",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 7,
+    "replacementScore": 5,
+    "confidence": 0.78,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 대검 조작감이 뛰어나 호평받으며, 카르티시아 조합에서 최우선 서포터로 언급 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "전무 효율 관련 논의는 있으나 서포터 특성상 돌파 시급성은 중간 수준"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전용 무기가 자체 딜 128% 증가를 제공하나, 파티 전체 공중 저항 감소 기여도는 약 11% 수준으로 제한적"
+    },
+    "pullReasons": [
+      "카르티시아 조합 최우선 서포터",
+      "뛰어난 대검 조작감",
+      "공중 딜러 대상 저항 감소 유틸"
+    ],
+    "skipReasons": [
+      "젠니 보유 시 특정 상황에서 대체 가능",
+      "파티 전체 기여도는 제한적(저항 감소 효과 자체)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "대검 기반 서포터. 공중 속성 딜러 대상 저항 감소 부여.",
+      "synergySummary": "카르티시아 최우선 파트너, 공중 딜러 전반과 호환"
+    },
+    "communitySummary": {
+      "positive": [
+        "뛰어난 조작감",
+        "카르티시아 최우선 서포터"
+      ],
+      "negative": [
+        "파티 전체 기여도는 제한적"
+      ],
+      "commonOpinion": "카르티시아 등 공중 딜러 조합의 핵심 서포터로 평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "danjin",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 순수 딜량이 5성급에 준한다는 평가, 패링 판정이 의외로 좋고 사이클이 우호적이라는 의견 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "고숙련 조작 시 낮은 돌파로도 성능 임계값 도달 가능하다는 의견 존재"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무 관련 논의보다 조작 숙련도 영향이 더 크다는 평가"
+    },
+    "pullReasons": [
+      "5성급에 준하는 순수 딜량",
+      "좋은 패링 판정과 화려한 연출"
+    ],
+    "skipReasons": [
+      "자해형 딜러로 생존력이 낮음",
+      "완벽한 콤보 없으면 최소 성능에 머무름"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "자해(셀프 데미지) 기반 메인 딜러. 패링 스킬 보유.",
+      "synergySummary": "서브딜러로 활용하며 대체 조합 준비 병행 가능"
+    },
+    "communitySummary": {
+      "positive": [
+        "5성급에 준하는 딜량",
+        "좋은 패링 판정",
+        "화려한 연출"
+      ],
+      "negative": [
+        "자해형이라 생존력 낮음",
+        "숙련도에 따른 성능 편차 큼"
+      ],
+      "commonOpinion": "숙련자에게는 강력하나 조작 난도가 있어 편차가 큰 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "숙련도 의존도가 높아 평가 편차 존재"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "encore",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 원거리 평타 안정성과 해방 스킬로 두 가지 전투 스타일 전환 가능, 메인/서브딜러 겸용 가능한 상시 캐릭터로 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "상시 캐릭터로 돌파 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무보다 범용 무기로도 딜 유지 가능하다는 평가"
+    },
+    "pullReasons": [
+      "메인/서브딜러 겸용 가능한 안정적 원거리 딜러",
+      "빠른 스왑 플레이에 유리한 긴 후딜"
+    ],
+    "skipReasons": [
+      "혼돈 게이지로 매 사이클 강공격 사용 여부를 선택해야 하는 번거로움",
+      "증폭형 무기로 패링이 매우 어려움"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "원거리 평타 기반 딜러. 해방 스킬로 전투 스타일 전환.",
+      "synergySummary": "메인/서브딜러 겸용, 빠른 스왑 조합에 적합"
+    },
+    "communitySummary": {
+      "positive": [
+        "메인/서브 겸용 가능",
+        "안정적인 원거리 딜"
+      ],
+      "negative": [
+        "혼돈 게이지 관리 번거로움",
+        "패링 매우 어려움"
+      ],
+      "commonOpinion": "상시 캐릭터 중 다재다능한 원거리 딜러로 꾸준히 평가받음",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "galbrena",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 쌍권총 모션이 화려하고 타격감이 뛰어나며, 준수한 딜량과 짧은 예열이 장점으로 반복 언급"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "3돌 이상에서 자체 딜량이 크게 증가하나, 루파 조합 대비 클리어 타임에서는 근소하게 밀린다는 비교 결과 존재"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전무 관련 질문이 반복되나 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "화려한 모션과 뛰어난 타격감",
+      "짧은 예열과 간단한 조작",
+      "3돌 이상에서 자체 딜량 크게 증가"
+    ],
+    "skipReasons": [
+      "경직에 취약",
+      "에코 스킬로 스택을 쌓아야 하는 번거로움",
+      "루파 조합 대비 클리어 타임 근소 열세"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "쌍권총 기반 딜러. 에코 스킬로 스택 축적.",
+      "synergySummary": "구원(Qiuyuan) 등과 조합, 루파와 포지션 비교됨"
+    },
+    "communitySummary": {
+      "positive": [
+        "화려한 타격감",
+        "짧은 예열, 쉬운 조작"
+      ],
+      "negative": [
+        "경직 취약",
+        "스택 관리 필요",
+        "루파 대비 클리어 타임 근소 열세"
+      ],
+      "commonOpinion": "조작감과 연출이 뛰어난 딜러, 루파와 포지션이 비교되며 근소한 우열 논의 지속",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "iuno",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8,
+    "futureScore": 7.5,
+    "replacementScore": 4,
+    "confidence": 0.8,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "아카라이브 확인: 딜을 내면서도 자힐로 안정성을 챙기는 서브딜러로, 칸타렐라/브렌트와 함께 딜량 최상위권 서포터로 평가받으며 \"진짜 사기\"라는 반응 다수"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "메인딜은 돌파 기준이라는 논의 존재, 돌파별 데미지 계산 게시물 다수"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전무 돌파별 데미지 및 무기 효율 계산 자료 존재"
+    },
+    "pullReasons": [
+      "자힐 겸용 고딜량 서브딜러",
+      "빠른 협주 속도",
+      "공중 회피로 안전하게 원거리 딜 가능",
+      "칸타렐라/브렌트급 최상위 서포터 평가"
+    ],
+    "skipReasons": [
+      "좁은 공격 범위로 다수 적 대상 시 효율 하락",
+      "명함 기준 공명 효율 의존도 높음",
+      "필드런 시 공명 게이지 충전이 어려움"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "원거리 자힐형 서브딜러. 빠른 협주와 공중 회피 특화.",
+      "synergySummary": "아우구스타 등 3속성 스택형 딜러와 조합 시 시너지"
+    },
+    "communitySummary": {
+      "positive": [
+        "최상위권 서포터 딜량",
+        "자힐로 안정성 확보",
+        "빠른 협주 속도"
+      ],
+      "negative": [
+        "좁은 공격 범위",
+        "공명 효율 의존도 높음"
+      ],
+      "commonOpinion": "출시 이후 최상위권 서포터로 평가받으며 커뮤니티에서 \"사기\" 표현이 반복 등장",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "jianxin",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 시기별 평가가 크게 변동(베타 약체→출시 버프→한때 애매→현재는 쉬운 클리어용 최상위급)했다는 평가, 풀돌 기준 빠른 협주와 낮은 필드 점유율, 강한 실드 생성이 장점"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "풀돌 기준 사용 후기가 활발하며 각성 단계에 따라 체감 성능이 크게 갈린다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "벨리나가 없다면 감심을 추천한다는 의견 존재, 전무 필수급 언급은 적음"
+    },
+    "pullReasons": [
+      "풀돌 기준 쉬운 클리어용 최상위급 서포터",
+      "낮은 필드 점유율과 빠른 협주",
+      "강한 실드 생성으로 생존력 보강"
+    ],
+    "skipReasons": [
+      "명함 기준 성능은 실망스럽다는 평가",
+      "매우 짧은 사거리",
+      "명함 기준 딜 기여는 거의 없음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "실드 생성형 서포터. 공명 버프 및 결계 버프 제공.",
+      "synergySummary": "벨리나 대체 옵션으로 언급, 각성 단계에 따라 평가 상이"
+    },
+    "communitySummary": {
+      "positive": [
+        "풀돌 기준 최상위급 서포터",
+        "강한 실드와 빠른 협주"
+      ],
+      "negative": [
+        "명함 기준 실망스러운 성능",
+        "매우 짧은 사거리"
+      ],
+      "commonOpinion": "각성 투자 수준에 따라 평가가 크게 갈리는 서포터, 완돌 시 우수",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "각성 단계별 평가 편차가 매우 크게 보고됨"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "jinhsi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 현재 최상위권 딜량과 매우 단순한 조작 난이도를 겸비했다는 평가가 반복되나, 실드 없이는 취약하다는 지적도 함께 존재"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "2사이클 1돌 캐릭터로 돌파 효율이 기대보다 낮다는 평가, 무기 우선순위가 돌파보다 앞선다는 의견 다수"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전무 효율이 다른 무기 대비 준수하나 상시 명함 기준 무기와 큰 차이는 없다는 계산 결과 존재"
+    },
+    "pullReasons": [
+      "최상위권 딜량",
+      "매우 단순한 조작 난이도",
+      "강력한 광역 제어기"
+    ],
+    "skipReasons": [
+      "실드 없이는 생존력 취약",
+      "공명 효율 요구치 높음(120~130%)",
+      "돌파 효율이 기대보다 낮다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "공명 해방 기반 메인 딜러. 광역 제어 스킬 보유.",
+      "synergySummary": "실드/보호 캐릭터 동반 필요"
+    },
+    "communitySummary": {
+      "positive": [
+        "최상위권 딜량",
+        "단순한 조작"
+      ],
+      "negative": [
+        "생존력 취약, 실드 필요",
+        "공명 효율 요구치 높음",
+        "돌파 효율 낮은 편"
+      ],
+      "commonOpinion": "강력하고 쉬운 딜러지만 실드 파트너 필요, 무기 투자가 돌파보다 우선",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "jiyan",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 구세대 딜러 중에서도 견고한 딜량을 유지하며, 공명 효율 세팅에 따라 딜 차이가 크다는 실험 결과 다수 존재"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "오래된 캐릭터로 돌파 관련 신규 논의보다는 기존 공략이 반복 참조됨"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전용 무기 복각 시점에 대한 질문이 반복될 정도로 신규 획득 기회가 제한적"
+    },
+    "pullReasons": [
+      "견고한 광역 창술 딜량",
+      "풍부한 커뮤니티 공략 자료"
+    ],
+    "skipReasons": [
+      "실드 없이는 취약",
+      "복각 전까지 신규 획득 어려움"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "바람 속성 창술 메인 딜러. 공명 효율 기반 사이클 구조.",
+      "synergySummary": "실드/보호막 캐릭터 동반 권장"
+    },
+    "communitySummary": {
+      "positive": [
+        "견고한 딜량",
+        "풍부한 공략 자료"
+      ],
+      "negative": [
+        "실드 없이는 취약",
+        "복각 전까지 획득 어려움"
+      ],
+      "commonOpinion": "초창기 5성 딜러로 여전히 견고한 성능을 유지한다는 평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": [
+        "복각 일정 불확실"
+      ]
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "복각 주기가 길어 재획득 기회가 제한적이라는 의견 존재"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "lingyang",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 실사용 시 공중 공격 범위가 예상보다 넓어 불편함이 적고, DPS 표 상의 저평가와 실전 체감이 다르다는 의견 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "투자 수준이 높을수록 진가를 발휘한다는 평가로 돌파 투자 효율은 중간 수준"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "무기 관련 질문이 반복되나 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "실전에서 예상보다 넓은 공중 공격 범위",
+      "강한 해방/동반 스킬 계수(동반 스킬 약 600%)",
+      "투자 시 안정적 딜 출력"
+    ],
+    "skipReasons": [
+      "공식 컨셉이 극단적이라는 평가로 출시 후 지지 부족",
+      "초반 DPS 표 저평가로 인식 저하"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "평타 기반 메인 딜러. 해방 및 동반 스킬 계수 보유.",
+      "synergySummary": "투자 수준에 비례해 안정적 딜 출력"
+    },
+    "communitySummary": {
+      "positive": [
+        "실전 공중 공격 범위 우수",
+        "강한 해방/동반 스킬 계수"
+      ],
+      "negative": [
+        "초기 평판 저하",
+        "극단적 컨셉으로 지지 부족"
+      ],
+      "commonOpinion": "평판보다 실사용 체감이 좋다는 재평가가 이어지는 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "평판과 실사용 평가가 엇갈려 확정적 결론 어려움"
+      ]
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "lumi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 도기(Taoqi)와 비교되는 딜러로, 극딜은 루미가 우세하나 생존은 도기가 우세하다는 평가가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "공명 스킬을 빠르게 사용할 수 있는 특수 무기 사용자로 평가되나 돌파 관련 심화 논의는 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 세팅 관련 논의는 있으나 전무 필수급 언급은 적음"
+    },
+    "pullReasons": [
+      "도기 대비 우수한 극딜량",
+      "공명 스킬 사용 속도가 빠른 특수 무기 체계"
+    ],
+    "skipReasons": [
+      "원거리 모드에서 저스트 회피 판정 부재로 조작 난도 있음",
+      "타겟 고정 없이는 공격이 빗나갈 수 있음",
+      "도기 대비 생존력 열세"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "원거리/근접 전환형 딜러. 특수 무기 체계로 공명 스킬 가속.",
+      "synergySummary": "도기와 포지션이 비교되며 팀 구성에 따라 선택"
+    },
+    "communitySummary": {
+      "positive": [
+        "우수한 극딜량",
+        "빠른 공명 스킬 사용"
+      ],
+      "negative": [
+        "조작 난도 있음(회피 판정 부재)",
+        "도기 대비 생존력 열세"
+      ],
+      "commonOpinion": "도기와 용도가 겹치나 극딜에서는 우위, 조작 난도가 있는 편",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "lupa",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 빠른 협주로 3번째 슬롯에 적합한 딜+서포트 겸용 캐릭터로, 장리 조합에서 안정적으로 버프를 받는 구조라는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "돌파 효율표 기준 1돌 17%, 2돌 38%, 3돌 86%로 중간 수준의 효율, 딜용은 3돌 이상, 버퍼 전용은 2~3돌이 적정선이라는 의견"
+    },
+    "weaponRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "전무 효율이 112%로 장리 무기(107%), 구원 무기(106%), 상시 대검(100%) 대비 우위"
+    },
+    "pullReasons": [
+      "장리 조합에서 안정적인 3번 슬롯 딜+서포트",
+      "전무 효율 상위권",
+      "3돌 이상에서 준수한 돌파 효율"
+    ],
+    "skipReasons": [
+      "전통적 서브딜러보다는 메인딜러(장리) 의존형 버퍼 포지션"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "이중 회로 게이지형 딜러/서포터. 강공격/공중 공격으로 2단계 게이지 충전.",
+      "synergySummary": "장리(메인딜러)와 조합 시 버프 수혜 구조"
+    },
+    "communitySummary": {
+      "positive": [
+        "장리 조합 안정적 성능",
+        "상위권 전무 효율"
+      ],
+      "negative": [
+        "메인딜러 의존형 포지션"
+      ],
+      "commonOpinion": "장리 파티의 3번 슬롯으로 안정적인 딜+서포트 역할 수행",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "luuk_herssen",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 전체적인 체급이 좋은 메인딜러로, 대체 파츠인 린네를 감안해도 딜이 전혀 밀리지 않는다는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "돌파별 후기가 존재하나 \"아무도 안 쓸 것 같다\"는 반응처럼 인지도 대비 심화 자료는 상대적으로 적음"
+    },
+    "weaponRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "신규 상시 5성 권갑이 크확+공명스킬 피해버프로 무기 쌀먹(F2P)이 가능하다는 평가"
+    },
+    "pullReasons": [
+      "좋은 전체 체급의 메인딜러",
+      "산화(4성)와 찰떡궁합으로 무과금 친화적 조합",
+      "신규 상시 5성 무기로 쌀먹 가능",
+      "캐릭터 하나만으로 파티 완성 가능"
+    ],
+    "skipReasons": [
+      "321 사이클을 반드시 지켜야 하는 엄격한 조작 요구",
+      "엔진 구성에 따라 특정 캐릭터의 반주가 필수"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "회절 속성 메인 딜러. 공명 스킬 반복형 사이클(321 사이클) 구조.",
+      "synergySummary": "산화(4성), 린네 등과 조합, 신규 상시 5성 권갑과도 궁합 좋음"
+    },
+    "communitySummary": {
+      "positive": [
+        "좋은 전체 체급",
+        "무과금 친화적 조합 가능",
+        "캐릭터 하나로 파티 완성"
+      ],
+      "negative": [
+        "엄격한 321 사이클 준수 필요"
+      ],
+      "commonOpinion": "체급 좋은 메인딜러로 무과금 친화적이나 사이클 준수가 까다롭다는 평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "lynae",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 5성 한정 서브딜러로 해방 대미지와 전반적 대미지를 증폭하는 역할, 해방형 메인딜러(특히 에이메스)와 궁합이 좋다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "풀돌 후기에서 생각보다 좋다는 반응이 반복되며, 필드 성능이 우수하다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "공명 효율 130 전후가 권장되며 전무 효율 자체 논의보다 세팅 효율 논의가 중심"
+    },
+    "pullReasons": [
+      "해방형 메인딜러와 시너지",
+      "풀돌 시 예상보다 좋은 필드 성능",
+      "전반적 대미지 증폭 역할"
+    ],
+    "skipReasons": [
+      "공명 효율 요구치가 높은 편(130 전후)",
+      "특정 메인딜러(에이메스 등)와 궁합이 갈림"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "해방 대미지 증폭형 서브딜러.",
+      "synergySummary": "에이메스 등 해방형 메인딜러와 최적 시너지"
+    },
+    "communitySummary": {
+      "positive": [
+        "해방형 딜러와 강한 시너지",
+        "풀돌 시 우수한 필드 성능"
+      ],
+      "negative": [
+        "공명 효율 요구치 높음"
+      ],
+      "commonOpinion": "해방형 메인딜러 파티에서 가치가 높은 증폭형 서브딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "mornye",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 1돌 효과가 예상보다 고평가되어 있으며, 1돌과 전무 중 1돌을 추천하는 의견이 반복 등장"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "1돌 유무에 따른 차이가 상당히 크다는 평가가 반복되며, 전무보다 1돌 우선을 권장하는 의견 다수"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무보다 1돌 투자가 더 효율적이라는 커뮤니티 의견이 반복 확인됨"
+    },
+    "pullReasons": [
+      "1돌 효과가 기대 이상으로 우수",
+      "전무 대비 1돌 투자 효율이 더 좋다는 반복 의견"
+    ],
+    "skipReasons": [
+      "공명 효율 요구치가 높은 편(약 240~260)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "공명 사슬(돌파) 1단계 효과가 핵심인 버퍼형 캐릭터.",
+      "synergySummary": "특정 엔진 조합에서 1돌 투자 시 효율 극대화"
+    },
+    "communitySummary": {
+      "positive": [
+        "1돌 효과 고평가",
+        "전무보다 1돌이 더 효율적"
+      ],
+      "negative": [
+        "공명 효율 요구치 높음"
+      ],
+      "commonOpinion": "전무보다 1돌 투자가 더 가치있다는 의견이 반복되는 버퍼형 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "복각을 통해 재획득 가능, FOMO 압박 중간"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "mortefi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 강공 피해를 약 40% 부스팅해주는 버프셔틀형 서포터로, 기염 파티에서 채용되는 핵심 이유로 언급됨"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "단순 버프셔틀로 쓰이는 것을 아쉬워하는 의견도 있으나 서브딜러 잠재력을 살릴 수 있다는 반론도 존재"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "부옵 종결 시 클리어 타임에서 1분 이상 차이가 날 정도로 딜 기여가 유의미하다는 평가"
+    },
+    "pullReasons": [
+      "기염 등 강공 딜러 파티에서 핵심 버프 제공",
+      "협주 게이지 관리 숙련 시 클리어 타임 크게 단축"
+    ],
+    "skipReasons": [
+      "단순 버프셔틀로만 쓰인다는 아쉬움",
+      "초반 협주 게이지 관리와 교체 컨트롤이 어렵다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "화속성 버프형 서포터. 강공격 피해 증폭 스킬 보유.",
+      "synergySummary": "기염 등 강공 중심 딜러와 조합 시 핵심 버퍼"
+    },
+    "communitySummary": {
+      "positive": [
+        "강공 딜러 파티 핵심 버프",
+        "숙련 시 클리어 타임 크게 단축"
+      ],
+      "negative": [
+        "단순 버프셔틀 역할에 그친다는 아쉬움",
+        "초반 조작 난도 있음"
+      ],
+      "commonOpinion": "특정 강공 딜러 파티의 핵심 버퍼로 꾸준히 채용되는 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "phoebe",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 적절한 빌드로 딜이 매우 강해지며 상위권 캐릭터에 준하는 성능을 보인다는 평가, 젠니와 함께일 때 필수급이라는 의견 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "3돌 후기 등 돌파 투자 후기가 존재하나 젠니 동반 여부가 평가를 크게 좌우함"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "크확 위주의 에코 세팅과 함께 무기 조합 논의가 이루어짐"
+    },
+    "pullReasons": [
+      "적절한 빌드 시 상위권급 딜량",
+      "젠니와 조합 시 필수급 평가",
+      "방랑자(로버) 서브딜러와도 의외로 좋은 궁합"
+    ],
+    "skipReasons": [
+      "젠니 없이는 활용도가 제한적",
+      "초기 평가는 딜/시너지 부족으로 다소 낮았음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "크리티컬 특화 딜러. 방랑자 각성과의 연계가 중요.",
+      "synergySummary": "젠니와 조합 시 필수급, 후속 캐릭터 출시로 조합 다양화"
+    },
+    "communitySummary": {
+      "positive": [
+        "상위권급 딜량",
+        "젠니 조합 필수급"
+      ],
+      "negative": [
+        "젠니 없이는 활용도 제한적",
+        "초기 평가 다소 낮았음"
+      ],
+      "commonOpinion": "젠니 동반 시 필수급이나 단독 활용도는 제한적인 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "phrolova",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: \"그냥 JOAT(만능형)\"이라는 평가로, 좋지도 나쁘지도 않은 무난한 성능이라는 의견이 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "2돌이 \"고효율 좆사기돌파\"로 평가되며 강화강공이 매우 강해지고 1사이클부터 크뎀 버프 풀스택이 가능해짐"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무 관련 논의보다 돌파 효율 논의가 중심"
+    },
+    "pullReasons": [
+      "2돌 시 매우 높은 효율(강화강공 강화, 크뎀 버프 풀스택)",
+      "파수인 버프와 궁합 좋은 오프필드 자동딜",
+      "장루브 조합보다 완성도 있는 느낌"
+    ],
+    "skipReasons": [
+      "회피캔슬 없이 플레이하면 사이클이 길고 답답함",
+      "전체적으로 특출나지 않은 무난한 성능(JOAT)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "해방 후 자동 오프필드 딜 구조. 2돌 시 강화강공 대폭 강화.",
+      "synergySummary": "파수인 버프와 궁합 좋음, 로코코/상리요 조합과 비교됨"
+    },
+    "communitySummary": {
+      "positive": [
+        "2돌 효율 매우 우수",
+        "오프필드 자동딜 편의성"
+      ],
+      "negative": [
+        "회피캔슬 없이는 답답한 조작감",
+        "전체적으로 무난한 수준(JOAT)"
+      ],
+      "commonOpinion": "만능형이나 튀지 않는 캐릭터, 2돌 투자 시 효율이 크게 상승",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "qiuyuan",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5.5,
+    "futureScore": 4.5,
+    "replacementScore": 7,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 짧은 사이클과 회로 설계 이슈가 있으며, 갈브레나가 3돌 이상 도달 시 자체 딜량이 크게 늘어 구원의 기여도가 상대적으로 줄어든다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "3돌 이상 강화 피해 패시브의 투자 대비 수익이 적절하지 않다는 지적 존재"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "갈브레나 전용 파트너로서의 활용 위주로 논의됨"
+    },
+    "pullReasons": [
+      "갈브레나 저돌파 구간에서 유의미한 딜 기여",
+      "플로로 조합 시 활용 가능"
+    ],
+    "skipReasons": [
+      "갈브레나 고돌파 시 기여도 감소",
+      "짧은 사이클/회로 설계 이슈로 조작감 아쉬움",
+      "갈브레나 전용 파트너라는 인식으로 범용성 의문 제기"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "짧은 사이클형 서브딜러/서포터.",
+      "synergySummary": "갈브레나 전용 파트너로 주로 활용, 플로로와도 조합"
+    },
+    "communitySummary": {
+      "positive": [
+        "갈브레나 저돌파 구간 유의미한 기여"
+      ],
+      "negative": [
+        "갈브레나 고돌파 시 기여도 감소",
+        "회로 설계 아쉬움",
+        "범용성 의문"
+      ],
+      "commonOpinion": "갈브레나 전용 파트너 성격이 강해 범용성에는 물음표가 붙는 캐릭터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "범용성에 대한 커뮤니티 의견이 엇갈림"
+      ]
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "skip",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "roccia",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.78,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 산화의 상위 호환으로 평가받으나 산화가 협주 게이지 충전은 더 빠르다는 비교, 필드 탐사가 크게 쉬워져 탐사 시간이 크게 단축된다는 후기 다수"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "1돌이 거의 필수급이라는 반응이 반복 등장"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "43311 빌드가 44111 대비 대부분 상황에서 효율이 더 좋다는 계산 결과"
+    },
+    "pullReasons": [
+      "필드 탐사 효율 크게 개선",
+      "몹 소집+낙하 공격 기반 재미있는 플레이감",
+      "1돌 효율이 거의 필수급"
+    ],
+    "skipReasons": [
+      "산화 대비 협주 게이지 충전 속도는 느림"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "몹 소집 및 낙하 공격 특화 서브딜러.",
+      "synergySummary": "산화와 포지션 비교, 다양한 딜러와 조합 가능"
+    },
+    "communitySummary": {
+      "positive": [
+        "필드 탐사 효율 크게 향상",
+        "재미있는 플레이감",
+        "1돌 효율 우수"
+      ],
+      "negative": [
+        "산화 대비 협주 속도 느림"
+      ],
+      "commonOpinion": "산화의 상위 호환급으로 평가받는 인기 서브딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "sanhua",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.78,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 평타 기반 딜러에게 14초간 평타 피해 38% 증가를 제공하는 인기 서포터, 공명 에너지 충전 효율도 우수하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "초반 배포 캐릭터로 돌파 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "전무보다 범용 무기로도 서포터 역할 수행 가능하다는 평가"
+    },
+    "pullReasons": [
+      "평타 딜러 대상 38% 피해 증가 버프",
+      "우수한 공명 에너지 충전 효율",
+      "벨리나와 함께 뉴비 파티 즉시 완성"
+    ],
+    "skipReasons": [
+      "평타 기반 딜러가 없으면 활용도 제한적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "평타 피해 증폭형 서포터.",
+      "synergySummary": "벨리나와 함께 초반 뉴비 파티의 핵심, 평타 딜러와 시너지"
+    },
+    "communitySummary": {
+      "positive": [
+        "평타 딜러 대상 강력한 버프",
+        "우수한 에너지 충전 효율",
+        "뉴비 친화적"
+      ],
+      "negative": [
+        "평타 딜러 부재 시 활용도 제한적"
+      ],
+      "commonOpinion": "뉴비부터 활용 가능한 평타 딜러 전용 인기 서포터",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "shorekeeper",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8,
+    "futureScore": 7.5,
+    "replacementScore": 4,
+    "confidence": 0.8,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "아카라이브 확인: 속성 제한 없이 30초간 전체 피해 증가를 제공하는 범용 힐러/버퍼로, 성능 자체가 매우 좋다는 평가가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "1돌은 궁 지속시간 10초 증가+범위 확장으로 탑 컨텐츠에서 매우 유용, 2돌은 파티 전체 DPS를 끌어올려 체감이 크다는 평가(특히 금희 조합)"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "명전 기준 자체 협주 속도가 느리다는 단점이 지적되며 이를 보완하는 판변/전무 논의 존재"
+    },
+    "pullReasons": [
+      "속성 무관 전체 피해 증가로 범용성 최상급",
+      "1돌/2돌 투자 효율이 뚜렷하게 체감됨",
+      "거의 모든 파티에 채용 가능"
+    ],
+    "skipReasons": [
+      "명전 기준 협주 속도가 느림"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전체 피해 증가형 범용 버퍼/힐러.",
+      "synergySummary": "금희 등 대부분의 메인딜러와 궁합이 좋은 범용 서포터"
+    },
+    "communitySummary": {
+      "positive": [
+        "범용 전체 피해 증가",
+        "1돌/2돌 투자 효율 뚜렷",
+        "거의 모든 파티에 채용 가능"
+      ],
+      "negative": [
+        "명전 기준 느린 협주 속도"
+      ],
+      "commonOpinion": "범용성과 성능을 모두 갖춘 최상위권 서포터로 꾸준히 고평가",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 5,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재, 범용성이 높아 미보유 시 아쉬움이 크다는 의견"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "taoqi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5.5,
+    "futureScore": 5,
+    "replacementScore": 6,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5.5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 방어형 지원기로 피해 감소와 실드를 제공하는 탱키한 서포터, 다만 지나치게 수비적인 플레이스타일로 메인딜러로는 부적합하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "초반에는 딜 스펙 부족과 파트너 캐릭터 부재로 유틸 가치가 낮았으나 이후 평가가 다소 개선됨"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "방어 스탯 기반 세팅 위주로 전무 필수급 논의는 적음"
+    },
+    "pullReasons": [
+      "피해 감소 및 실드로 파티 생존력 보강",
+      "루미 대비 근소하게 생존 우위"
+    ],
+    "skipReasons": [
+      "지나치게 수비적인 플레이스타일로 메인딜러 부적합",
+      "초반 파트너 캐릭터 부재로 유틸 가치 낮았던 이력"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "피해 감소/실드 제공형 방어 서포터.",
+      "synergySummary": "공명 스킬 피해 증폭형 시너지 딜러, 루미와 포지션 비교됨"
+    },
+    "communitySummary": {
+      "positive": [
+        "피해 감소 및 실드로 안정적 생존력"
+      ],
+      "negative": [
+        "지나치게 수비적, 메인딜러 부적합",
+        "초반 유틸 가치 낮았음"
+      ],
+      "commonOpinion": "생존력 위주의 방어형 서포터로 루미 대비 안정성은 우위이나 화력은 열세",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "verina",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8,
+    "futureScore": 7.5,
+    "replacementScore": 4,
+    "confidence": 0.8,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "아카라이브 확인: 힐량은 준수하고 딜은 미미하나 공명 스킬로 파티 전체에 15% 최대체력 및 20% 공격력 증가를 제공, 해당 역할군 최강 힐러/버퍼로 평가받음"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "탑 컨텐츠에서는 벨리나 단독으로도 충분하다는 평가로 돌파 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "전용 무기 \"격류의 기록\" 추천, 없을 시 3성 무기로도 무난하다는 평가"
+    },
+    "pullReasons": [
+      "해당 역할군 최강 힐러/버퍼",
+      "빠른 협주 발동으로 신속한 캐릭터 교체",
+      "탑 컨텐츠에서 단독으로도 충분"
+    ],
+    "skipReasons": [
+      "자체 딜은 미미함"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "힐+전체 버프형 서포터. 공명 스킬로 HP/공격력 동시 증가.",
+      "synergySummary": "거의 모든 파티에 채용 가능한 범용 힐러"
+    },
+    "communitySummary": {
+      "positive": [
+        "최강급 힐/버프 성능",
+        "빠른 협주 발동",
+        "탑 컨텐츠 단독 활용 가능"
+      ],
+      "negative": [
+        "자체 딜량 미미"
+      ],
+      "commonOpinion": "범용성과 성능 모두 최상위권으로 평가받는 필수급 힐러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 2,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "must_pull",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "xiangli_yao",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 강한 딜량과 편안한 조작감을 갖췄으나, 공명 해방 의존도가 높아 최소 공명 효율 임계치 확보가 필요하다는 평가, 스토리로 무료 획득 가능함에도 강력하다는 반응 다수"
+    },
+    "breakthroughRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "메인딜러급 투자 대비 준수한 성능이라는 평가가 반복되나 상세 돌파 효율 논의는 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 5.5,
+      "priority": "medium",
+      "reason": "에코 세팅 딜 비교 자료 존재, 전무보다 공명 효율 확보가 우선이라는 의견"
+    },
+    "pullReasons": [
+      "강한 딜량과 편안한 조작감",
+      "스토리로 무료 획득 가능한 고성능 캐릭터"
+    ],
+    "skipReasons": [
+      "공명 해방 의존도가 높아 최소 공명 효율 필요",
+      "필드 활용성은 다소 불편하다는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "도끼 기반 메인 딜러. 공명 회로+공명 해방 폭딜 구조.",
+      "synergySummary": "공명 효율 확보를 위한 서포터 조합 권장"
+    },
+    "communitySummary": {
+      "positive": [
+        "강한 딜량",
+        "편안한 조작감",
+        "무료 획득 가능"
+      ],
+      "negative": [
+        "공명 해방 의존도 높음",
+        "필드 활용성 다소 불편"
+      ],
+      "commonOpinion": "무료로 획득 가능함에도 강력한 성능으로 반복 호평받는 딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "스토리 진행으로 상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "yangyang",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 5,
+    "futureScore": 4,
+    "replacementScore": 7,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "아카라이브 확인: 딜 증폭이 아닌 파티 사이클 속도를 끌어올리는 방식으로 작동하는 구세대 서브딜러"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "오래된 캐릭터로 돌파 관련 신규 논의는 제한적"
+    },
+    "weaponRecommendation": {
+      "score": 3.5,
+      "priority": "low",
+      "reason": "구름셋 효율이 나쁘고 질풍셋 대비 열세라는 평가"
+    },
+    "pullReasons": [
+      "파티 사이클 속도 향상 유틸"
+    ],
+    "skipReasons": [
+      "직접적인 딜 증폭보다는 사이클 속도 위주 기여로 체감이 약함",
+      "구름셋 효율이 나쁜 편"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "사이클 가속형 서브딜러.",
+      "synergySummary": "파티 전환 속도가 중요한 조합에서 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "파티 사이클 속도 향상"
+      ],
+      "negative": [
+        "직접 딜 증폭 효과는 약함",
+        "구름셋 효율 낮음"
+      ],
+      "commonOpinion": "딜 증폭보다는 사이클 속도 위주로 기여하는 구세대 서브딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "skip",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "yinlin",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5,
+    "replacementScore": 7,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "low",
+      "reason": "아카라이브 확인: 출시 초반에는 범용성으로 좋은 평가를 받았으나, 이후 역할을 대체할 캐릭터가 늘어나면서 상대적 가치가 하락했다는 평가 반복"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "협공셋 사용 시 생존력이 크게 높아지나 클리어 타임은 구름셋과 비슷해 새로 캐야 할 이유는 없다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "전무 옵션/공명 회로 판정 분석 자료 존재하나 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "협공셋 사용 시 향상된 생존력",
+      "예열 시 스왑 활용하면 준수한 조작감"
+    ],
+    "skipReasons": [
+      "출시 초반 대비 상대적 가치 하락(대체 캐릭 증가)",
+      "예열 시 스왑 없이는 조작감이 불편함"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "전기 속성 서브딜러. 협공셋/구름셋 선택 빌드 가능.",
+      "synergySummary": "절지 등과 함께 활용, 대체 캐릭터 다수 존재"
+    },
+    "communitySummary": {
+      "positive": [
+        "협공셋 기준 향상된 생존력"
+      ],
+      "negative": [
+        "상대적 가치 하락",
+        "예열 조작감 불편"
+      ],
+      "commonOpinion": "출시 초반 대비 상대적 가치가 하락한 서브딜러, 이미 보유 시 여전히 사용 가능",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "youhu",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 4.5,
+    "futureScore": 4,
+    "replacementScore": 7,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "아카라이브 확인: \"귀여운 장난감 힐러\"로 표현되며, 3성 컨텐츠 정도는 무난히 클리어 가능하나 성능 면에서는 육성하지 않는 것이 정답이라는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 3,
+      "priority": "low",
+      "reason": "메타적으로 중요하지 않은 캐릭터로 돌파 투자 우선순위는 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 3,
+      "priority": "low",
+      "reason": "전무 관련 논의 자체가 거의 없음"
+    },
+    "pullReasons": [
+      "재미로 사용하기 좋은 캐릭터",
+      "3성 컨텐츠 클리어에는 무난함"
+    ],
+    "skipReasons": [
+      "성능 면에서 육성하지 않는 것이 정답이라는 평가",
+      "벨리나/파수인 대비 명확한 열세(4성 힐러급)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "힐+협공 버프형 서포터.",
+      "synergySummary": "기염 등과 조합해 재미 위주로 활용 가능"
+    },
+    "communitySummary": {
+      "positive": [
+        "재미있는 플레이감",
+        "입문 컨텐츠에서 무난함"
+      ],
+      "negative": [
+        "성능은 육성 비추천 수준",
+        "4성 힐러급 성능"
+      ],
+      "commonOpinion": "재미로 쓰는 캐릭터로 평가되며 메타적으로는 육성 우선순위가 매우 낮음",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "skip",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "yuanwu",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 5.5,
+    "replacementScore": 6,
+    "confidence": 0.72,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 순수 딜러보다는 탱커+딜러 혼합형 플레이스타일로, 보스전 특화 캐릭터라는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "음림 등 확보 이후 확실히 쓸만해진다는 평가로 파트너 캐릭터 확보가 우선"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "무기보다 파트너 캐릭터(모르테피, 음림 등) 확보가 성능에 더 큰 영향"
+    },
+    "pullReasons": [
+      "보스전 특화 서브딜러/탱커 혼합형",
+      "모르테피, 음림 등 오프필드 딜러와 좋은 시너지",
+      "빠른 평타 콤보와 처형 상태에서의 빠른 스킬 로테이션"
+    ],
+    "skipReasons": [
+      "일반 잡몹 상대로는 사거리가 짧아 약함",
+      "음림 등 파트너 캐릭터 없이는 활용도 제한적"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "방어형 서브딜러. E스킬로 기둥 설치 후 오프필드 딜 구조.",
+      "synergySummary": "모르테피, 음림 등 오프필드 딜러와 시너지"
+    },
+    "communitySummary": {
+      "positive": [
+        "보스전 특화 성능",
+        "오프필드 딜러와 좋은 시너지",
+        "빠른 콤보"
+      ],
+      "negative": [
+        "잡몹 상대 사거리 짧음",
+        "파트너 캐릭터 의존도 있음"
+      ],
+      "commonOpinion": "보스전에 특화된 탱커형 서브딜러, 음림 등 파트너 확보 시 진가 발휘",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 2,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "zani",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 조작감과 타격감, 퍼포먼스 면에서 매우 만족스럽다는 평가, 페비와 조합 시 최적이나 페비 없이도 고돌파 시 충분하다는 의견"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "강화 E스킬이 강력하나 충전에 시간이 걸린다는 평가, 페비 부재 시 고돌파로 보완 가능"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전무보다 조합(페비) 및 돌파 여부가 성능에 더 큰 영향"
+    },
+    "pullReasons": [
+      "만족스러운 조작감과 타격감",
+      "홀로그램 컨텐츠에서 칼로타에 준하는 안정적 딜량",
+      "빠른 스왑 최적화 캐릭터"
+    ],
+    "skipReasons": [
+      "필드전에서는 다소 약한 편",
+      "조합 경직성(콤보 유연성 부족)이 아쉽다는 평가",
+      "홀로그램 컨텐츠는 칼로타가 있으면 칼로타가 우선"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "빠른 스왑 최적화 딜러. 강화 E스킬 기반 폭딜 구조.",
+      "synergySummary": "페비와 조합 시 최적, 홀로그램 컨텐츠에서는 칼로타와 포지션 비교"
+    },
+    "communitySummary": {
+      "positive": [
+        "만족스러운 조작감/타격감",
+        "홀로그램 컨텐츠에서 준수한 딜 안정성"
+      ],
+      "negative": [
+        "필드전 다소 약함",
+        "콤보 경직성"
+      ],
+      "commonOpinion": "조작감이 뛰어난 스왑 딜러로 페비 조합 시 최적, 단독으로도 활용 가능",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "한정 배너 캐릭터로 재판매 주기 존재"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "zhezhi",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6,
+    "replacementScore": 6,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6.5,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 금희와 조합 시 인상적인 성능을 보이나 다른 캐릭터와는 평범한 수준이라는 평가, 메인딜러로 조작 방해나 스킬 끊김 이슈 없이 재미있게 사용 가능"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "명함 기준으로도 하급 장비/세팅으로 3성 컨텐츠 클리어가 가능했다는 후기 존재"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "금희 조합 여부가 무기 투자 효율보다 성능에 더 큰 영향"
+    },
+    "pullReasons": [
+      "금희 조합 시 인상적인 성능",
+      "조작 방해/스킬 끊김 없는 안정적 메인딜러",
+      "음림과 클리어 타임이 비슷하면서 음림을 다른 파티에 자유롭게 활용 가능"
+    ],
+    "skipReasons": [
+      "평타로 회로를 채우는 속도가 느려 공격적인 보스 상대 시 불편",
+      "금희 없이는 평범한 수준이라는 평가"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "얼음 속성 메인 딜러. 평타 기반 회로 축적 구조.",
+      "synergySummary": "금희와 조합 시 인상적 성능, 음림과 포지션 비교"
+    },
+    "communitySummary": {
+      "positive": [
+        "금희 조합 시 인상적 성능",
+        "안정적인 메인딜러 조작감",
+        "음림과 유사한 클리어 타임"
+      ],
+      "negative": [
+        "회로 충전 속도 느림",
+        "금희 없이는 평범한 성능"
+      ],
+      "commonOpinion": "금희 조합 시 빛을 발하는 안정적인 메인딜러, 음림 대체 옵션으로도 언급",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 3,
+      "reason": "상시 획득 가능, FOMO 압박 낮음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_havoc_male",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 인멸 방랑자는 4단 강공 계수가 978%로 회절(561%) 대비 훨씬 높으나, 패시브 관리가 까다롭고 요구 숙련도가 높다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "한정 캐릭터인 카멜리아/로코코가 서브딜러로 존재해 인멸 방랑자 자체의 채용 빈도는 상대적으로 낮다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "메인딜러 전용 세팅 위주로 전무 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "가장 높은 강공 피해 계수",
+      "보스전 메인딜러로서 확실한 화력"
+    ],
+    "skipReasons": [
+      "패시브 관리가 까다롭고 요구 숙련도가 높음",
+      "카멜리아/로코코 등 대체 5성 서브딜러 존재로 채용 빈도 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "인멸(강화 강공) 속성 메인 딜러 방랑자. 패시브 스택 관리형 구조.",
+      "synergySummary": "카멜리아, 로코코 등과 포지션 비교됨"
+    },
+    "communitySummary": {
+      "positive": [
+        "최고 수준의 강공 피해 계수"
+      ],
+      "negative": [
+        "까다로운 패시브 관리",
+        "대체 캐릭 존재로 채용 빈도 낮음"
+      ],
+      "commonOpinion": "순수 화력은 가장 높으나 관리 난도로 인해 실제 채용은 제한적인 상시 방랑자 형태",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_havoc_female",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 인멸 방랑자는 4단 강공 계수가 978%로 회절(561%) 대비 훨씬 높으나, 패시브 관리가 까다롭고 요구 숙련도가 높다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "한정 캐릭터인 카멜리아/로코코가 서브딜러로 존재해 인멸 방랑자 자체의 채용 빈도는 상대적으로 낮다는 평가"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "메인딜러 전용 세팅 위주로 전무 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "가장 높은 강공 피해 계수",
+      "보스전 메인딜러로서 확실한 화력"
+    ],
+    "skipReasons": [
+      "패시브 관리가 까다롭고 요구 숙련도가 높음",
+      "카멜리아/로코코 등 대체 5성 서브딜러 존재로 채용 빈도 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "인멸(강화 강공) 속성 메인 딜러 방랑자. 패시브 스택 관리형 구조.",
+      "synergySummary": "카멜리아, 로코코 등과 포지션 비교됨"
+    },
+    "communitySummary": {
+      "positive": [
+        "최고 수준의 강공 피해 계수"
+      ],
+      "negative": [
+        "까다로운 패시브 관리",
+        "대체 캐릭 존재로 채용 빈도 낮음"
+      ],
+      "commonOpinion": "순수 화력은 가장 높으나 관리 난도로 인해 실제 채용은 제한적인 상시 방랑자 형태",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_spectro_male",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 회절 방랑자는 패시브 관리 없이 쉽게 사용 가능하며, 서브딜러로서 빠르게 딜을 넣고 빠지는 용도로 실전 DPS 경쟁에서 우수하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "메인딜러 대비 서브딜러 포지션으로 돌파 투자 우선순위는 중간 수준"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "서브딜러 세팅 위주로 전무 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "패시브 관리 없이 쉬운 조작",
+      "빠른 진입/이탈형 서브딜러로 실전 DPS 우수"
+    ],
+    "skipReasons": [
+      "인멸 대비 강공 피해 계수는 낮은 편(561% vs 978%)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "회절 속성 서브딜러 방랑자. 패시브 관리 없이 사용 가능.",
+      "synergySummary": "빠른 진입/이탈형 서브딜러로 다양한 조합에 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "쉬운 조작",
+        "실전 DPS 경쟁 우수"
+      ],
+      "negative": [
+        "인멸 대비 낮은 피해 계수"
+      ],
+      "commonOpinion": "조작 난도가 낮고 실전 성능이 좋은 진입/이탈형 서브딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_spectro_female",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 회절 방랑자는 패시브 관리 없이 쉽게 사용 가능하며, 서브딜러로서 빠르게 딜을 넣고 빠지는 용도로 실전 DPS 경쟁에서 우수하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "메인딜러 대비 서브딜러 포지션으로 돌파 투자 우선순위는 중간 수준"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "서브딜러 세팅 위주로 전무 필수급 논의는 제한적"
+    },
+    "pullReasons": [
+      "패시브 관리 없이 쉬운 조작",
+      "빠른 진입/이탈형 서브딜러로 실전 DPS 우수"
+    ],
+    "skipReasons": [
+      "인멸 대비 강공 피해 계수는 낮은 편(561% vs 978%)"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "회절 속성 서브딜러 방랑자. 패시브 관리 없이 사용 가능.",
+      "synergySummary": "빠른 진입/이탈형 서브딜러로 다양한 조합에 활용"
+    },
+    "communitySummary": {
+      "positive": [
+        "쉬운 조작",
+        "실전 DPS 경쟁 우수"
+      ],
+      "negative": [
+        "인멸 대비 낮은 피해 계수"
+      ],
+      "commonOpinion": "조작 난도가 낮고 실전 성능이 좋은 진입/이탈형 서브딜러",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 3,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_aero_male",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 기류 방랑자는 힐+지원 겸용 하이브리드로, 해방 스킬로 힐을, 공명 스킬로 버프를 제공하며 약간의 딜도 가능하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "힐/지원 중심 포지션으로 돌파 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "전무보다 힐/지원 스탯 세팅이 중심"
+    },
+    "pullReasons": [
+      "힐+지원+소량 딜을 겸비한 하이브리드",
+      "해방 스킬 힐과 공명 스킬 버프를 주기적으로 제공"
+    ],
+    "skipReasons": [
+      "벨리나/파수인 등 전용 힐러 대비 딜 기여는 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "기류 속성 하이브리드 힐러/서포터 방랑자. 해방 힐+공명 버프 구조.",
+      "synergySummary": "전용 힐러 부재 시 대체 가능한 하이브리드 포지션"
+    },
+    "communitySummary": {
+      "positive": [
+        "힐+지원+소량 딜 겸용"
+      ],
+      "negative": [
+        "전용 힐러 대비 딜 기여 낮음"
+      ],
+      "commonOpinion": "전용 힐러가 없을 때 활용 가능한 하이브리드 지원형 방랑자",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "rover_aero_female",
+    "investmentType": [
+      "meta"
+    ],
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "아카라이브 확인: 기류 방랑자는 힐+지원 겸용 하이브리드로, 해방 스킬로 힐을, 공명 스킬로 버프를 제공하며 약간의 딜도 가능하다는 평가"
+    },
+    "breakthroughRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "힐/지원 중심 포지션으로 돌파 시급성은 낮은 편"
+    },
+    "weaponRecommendation": {
+      "score": 4.5,
+      "priority": "low",
+      "reason": "전무보다 힐/지원 스탯 세팅이 중심"
+    },
+    "pullReasons": [
+      "힐+지원+소량 딜을 겸비한 하이브리드",
+      "해방 스킬 힐과 공명 스킬 버프를 주기적으로 제공"
+    ],
+    "skipReasons": [
+      "벨리나/파수인 등 전용 힐러 대비 딜 기여는 낮음"
+    ],
+    "sources": [
+      {
+        "name": "아카라이브",
+        "weight": 1
+      }
+    ],
+    "officialSummary": {
+      "sourceSummary": "공식 스킬 설명 확인",
+      "skillSummary": "기류 속성 하이브리드 힐러/서포터 방랑자. 해방 힐+공명 버프 구조.",
+      "synergySummary": "전용 힐러 부재 시 대체 가능한 하이브리드 포지션"
+    },
+    "communitySummary": {
+      "positive": [
+        "힐+지원+소량 딜 겸용"
+      ],
+      "negative": [
+        "전용 힐러 대비 딜 기여 낮음"
+      ],
+      "commonOpinion": "전용 힐러가 없을 때 활용 가능한 하이브리드 지원형 방랑자",
+      "concern": "없음"
+    },
+    "uncertainty": {
+      "score": 4,
+      "reasons": []
+    },
+    "fomoRisk": {
+      "score": 1,
+      "reason": "상시 획득/전환 가능한 방랑자 형태로 FOMO 없음"
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
   }
 ]

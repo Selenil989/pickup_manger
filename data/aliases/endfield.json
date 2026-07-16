@@ -1,0 +1,142 @@
+{
+  "gameId": "endfield",
+  "lastUpdated": "2026-07-05",
+  "note": "meta.json 조사 효율화를 위한 별도 리서치 보조 데이터. characters.json/meta.json 스키마와 무관하며 앱 코드에서 참조하지 않음.",
+  "characters": {
+    "akekuri": {
+      "official": "아케쿠리",
+      "nameEn": "Akekuri",
+      "aliases": []
+    },
+    "alesh": {
+      "official": "알레쉬",
+      "nameEn": "Alesh",
+      "aliases": []
+    },
+    "antal": {
+      "official": "안탈",
+      "nameEn": "Antal",
+      "aliases": []
+    },
+    "arclight": {
+      "official": "아크라이트",
+      "nameEn": "Arclight",
+      "aliases": []
+    },
+    "ardelia": {
+      "official": "아델리아",
+      "nameEn": "Ardelia",
+      "aliases": []
+    },
+    "avywenna": {
+      "official": "아비웨나",
+      "nameEn": "Avywenna",
+      "aliases": []
+    },
+    "catcher": {
+      "official": "카치르",
+      "nameEn": "Catcher",
+      "aliases": []
+    },
+    "chen_qianyu": {
+      "official": "진천우",
+      "nameEn": "Chen Qianyu",
+      "aliases": []
+    },
+    "da_pan": {
+      "official": "판",
+      "nameEn": "Da Pan",
+      "aliases": []
+    },
+    "ember": {
+      "official": "엠버",
+      "nameEn": "Ember",
+      "aliases": []
+    },
+    "endministrator": {
+      "official": "관리자",
+      "nameEn": "Endministrator",
+      "aliases": []
+    },
+    "estella": {
+      "official": "에스텔라",
+      "nameEn": "Estella",
+      "aliases": []
+    },
+    "fluorite": {
+      "official": "플루라이트",
+      "nameEn": "Fluorite",
+      "aliases": []
+    },
+    "gilberta": {
+      "official": "질베르타",
+      "nameEn": "Gilberta",
+      "aliases": []
+    },
+    "laevatain": {
+      "official": "레바테인",
+      "nameEn": "Laevatain",
+      "aliases": []
+    },
+    "last_rite": {
+      "official": "라스트 라이트",
+      "nameEn": "Last Rite",
+      "aliases": []
+    },
+    "lifeng": {
+      "official": "여풍",
+      "nameEn": "Lifeng",
+      "aliases": []
+    },
+    "mifu": {
+      "official": "미브",
+      "nameEn": "Mifu",
+      "aliases": []
+    },
+    "perlica": {
+      "official": "펠리카",
+      "nameEn": "Perlica",
+      "aliases": []
+    },
+    "pogranichnik": {
+      "official": "포그라니치니크",
+      "nameEn": "Pogranichnik",
+      "aliases": []
+    },
+    "rossi": {
+      "official": "로시",
+      "nameEn": "Rossi",
+      "aliases": []
+    },
+    "snowshine": {
+      "official": "스노우샤인",
+      "nameEn": "Snowshine",
+      "aliases": []
+    },
+    "tangtang": {
+      "official": "탕탕",
+      "nameEn": "Tangtang",
+      "aliases": []
+    },
+    "wulfgard": {
+      "official": "울프가드",
+      "nameEn": "Wulfgard",
+      "aliases": []
+    },
+    "xaihi": {
+      "official": "자이히",
+      "nameEn": "Xaihi",
+      "aliases": []
+    },
+    "yvonne": {
+      "official": "이본",
+      "nameEn": "Yvonne",
+      "aliases": []
+    },
+    "zhuang_fangyi": {
+      "official": "장방이",
+      "nameEn": "Zhuang Fangyi",
+      "aliases": []
+    }
+  }
+}

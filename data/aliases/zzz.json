@@ -1,0 +1,259 @@
+{
+  "gameId": "zzz",
+  "lastUpdated": "2026-07-05",
+  "note": "meta.json 조사 효율화를 위한 별도 리서치 보조 데이터. characters.json/meta.json 스키마와 무관하며 앱 코드에서 참조하지 않음.",
+  "termGlossary": {
+    "돌파": "Mindscape (명함 중복 강화, N돌 = MN 표기와 동일)",
+    "전무": "전용 무기 (Signature W-Engine)",
+    "전무/전공": "해당 없음 (ZZZ는 W-Engine 단일 명칭 사용, '전광'은 HSR 전용 표현)",
+    "명함": "캐릭터 기본 획득(C0) 가치를 뜻하는 커뮤니티 표현"
+  },
+  "characters": {
+    "ye_shunguang": {
+      "official": "엽빛나",
+      "nameEn": "Ye Shunguang",
+      "aliases": [
+        "빛나"
+      ]
+    },
+    "pyrois": {
+      "official": "피로이스",
+      "nameEn": "Pyrois",
+      "aliases": []
+    },
+    "starlight_billy": {
+      "official": "스타라이트 빌리",
+      "nameEn": "Starlight Billy",
+      "aliases": [
+        "스라리",
+        "빌리"
+      ]
+    },
+    "promeia": {
+      "official": "프로미아",
+      "nameEn": "Promeia",
+      "aliases": []
+    },
+    "sissia": {
+      "official": "시시아",
+      "nameEn": "Cissia",
+      "aliases": []
+    },
+    "nangong": {
+      "official": "남궁우",
+      "nameEn": "Nangong Yu",
+      "aliases": [
+        "남궁"
+      ]
+    },
+    "sunna": {
+      "official": "수나",
+      "nameEn": "Sunna",
+      "aliases": []
+    },
+    "aria": {
+      "official": "아리아",
+      "nameEn": "Aria",
+      "aliases": []
+    },
+    "zao": {
+      "official": "자오",
+      "nameEn": "Zhao",
+      "aliases": []
+    },
+    "ban_ak": {
+      "official": "반악",
+      "nameEn": "Banyue",
+      "aliases": []
+    },
+    "diairin": {
+      "official": "다이아린",
+      "nameEn": "Dialyn",
+      "aliases": []
+    },
+    "lucia": {
+      "official": "루시아",
+      "nameEn": "Lucia Elowen",
+      "aliases": []
+    },
+    "yidhari": {
+      "official": "이드리히",
+      "nameEn": "Yidhari",
+      "aliases": [
+        "이드하리"
+      ]
+    },
+    "manato": {
+      "official": "코마노 마나토",
+      "nameEn": "Komano Manato",
+      "aliases": [
+        "마나토"
+      ]
+    },
+    "opi_fire": {
+      "official": "오피 도깨비불",
+      "nameEn": "Ofi & Ghostfire",
+      "aliases": [
+        "오피"
+      ]
+    },
+    "sid": {
+      "official": "시드",
+      "nameEn": "Seed",
+      "aliases": []
+    },
+    "alice": {
+      "official": "앨리스",
+      "nameEn": "Alice",
+      "aliases": []
+    },
+    "yuzuha": {
+      "official": "유즈하",
+      "nameEn": "Yuzuha",
+      "aliases": []
+    },
+    "yixuan": {
+      "official": "의현",
+      "nameEn": "Yixuan",
+      "aliases": []
+    },
+    "ju_fufu": {
+      "official": "귤복복",
+      "nameEn": "Ju Fufu / Citrinitas",
+      "aliases": [
+        "귤뽁뽁",
+        "계화떡"
+      ]
+    },
+    "hugo": {
+      "official": "휴고",
+      "nameEn": "Hugo",
+      "aliases": []
+    },
+    "vivian": {
+      "official": "비비안",
+      "nameEn": "Vivian",
+      "aliases": []
+    },
+    "soldier_0_anby": {
+      "official": "0호 앤비",
+      "nameEn": "Soldier 0 - Anby",
+      "aliases": [
+        "실비",
+        "0호 엔비"
+      ]
+    },
+    "evelyn": {
+      "official": "이블린",
+      "nameEn": "Evelyn",
+      "aliases": []
+    },
+    "harumasa": {
+      "official": "하루마사",
+      "nameEn": "Harumasa",
+      "aliases": []
+    },
+    "lighter": {
+      "official": "라이터",
+      "nameEn": "Lighter",
+      "aliases": []
+    },
+    "burnice": {
+      "official": "버니스",
+      "nameEn": "Burnice",
+      "aliases": []
+    },
+    "jane": {
+      "official": "제인 도",
+      "nameEn": "Jane Doe",
+      "aliases": [
+        "제인"
+      ]
+    },
+    "astra_yao": {
+      "official": "아스트라 야오",
+      "nameEn": "Astra Yao",
+      "aliases": [
+        "아스트라"
+      ]
+    },
+    "lycaon": {
+      "official": "폰 리카온",
+      "nameEn": "Von Lycaon",
+      "aliases": [
+        "리카온"
+      ]
+    },
+    "miyabi": {
+      "official": "미야비",
+      "nameEn": "Miyabi",
+      "aliases": [
+        "미야봉"
+      ]
+    },
+    "velina": {
+      "official": "벨리나",
+      "nameEn": "Velina",
+      "aliases": []
+    },
+    "caesar": {
+      "official": "카이사르",
+      "nameEn": "Caesar",
+      "aliases": []
+    },
+    "trigger": {
+      "official": "트리거",
+      "nameEn": "Trigger",
+      "aliases": []
+    },
+    "yanagi": {
+      "official": "야나기",
+      "nameEn": "Yanagi",
+      "aliases": []
+    },
+    "qingyi": {
+      "official": "청의",
+      "nameEn": "Qingyi",
+      "aliases": [
+        "QY"
+      ]
+    },
+    "zhu_yuan": {
+      "official": "주연",
+      "nameEn": "Zhu Yuan",
+      "aliases": []
+    },
+    "ellen": {
+      "official": "엘렌",
+      "nameEn": "Ellen Joe",
+      "aliases": []
+    },
+    "nekomata": {
+      "official": "네코마타",
+      "nameEn": "Nekomata",
+      "aliases": []
+    },
+    "koleda": {
+      "official": "콜레다",
+      "nameEn": "Koleda",
+      "aliases": []
+    },
+    "soldier_11": {
+      "official": "11호",
+      "nameEn": "Soldier 11",
+      "aliases": []
+    },
+    "grace": {
+      "official": "그레이스 하워드",
+      "nameEn": "Grace Howard",
+      "aliases": [
+        "그레이스"
+      ]
+    },
+    "rina": {
+      "official": "리나",
+      "nameEn": "Rina",
+      "aliases": []
+    }
+  }
+}

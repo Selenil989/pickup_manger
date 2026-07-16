@@ -1,0 +1,57 @@
+{
+  "gameId": "zzz",
+  "gameName": "젠레스 존 제로",
+  "version": "1.0",
+  "lastUpdated": "2026-07-05",
+  "status": "filled",
+  "sources": [
+    {
+      "name": "Zenless Zone Zero 공식 사이트 - Signal Search 확률 공지 (zenless.hoyoverse.com/en-us/news/public)",
+      "type": "official",
+      "usage": "기본 확률 0.6%(캐릭터)/1.0%(W-Engine), 하드 천장 90/80, 50:50 및 75:25, 확정·이월 규칙 확인"
+    },
+    {
+      "name": "Icy Veins - Signal Search Guide (icy-veins.com/zenless-zone-zero/signal-search)",
+      "type": "wiki",
+      "usage": "소프트 천장 시작점(74) 및 하드 천장(90) 교차 확인"
+    },
+    {
+      "name": "Icy Veins - W-Engine Channel Guide (icy-veins.com/zenless-zone-zero/w-engine-channel)",
+      "type": "wiki",
+      "usage": "W-Engine 기본 확률 1.0%, 하드 천장 80, 75:25 확정 이월 확인"
+    },
+    {
+      "name": "ONE Esports - ZZZ Pity System (oneesports.gg/zenless-zone-zero/zenless-zone-zero-pity-system)",
+      "type": "community",
+      "usage": "소프트 천장 구간(74~89뽑) 증가폭 추정값 교차 확인"
+    }
+  ],
+  "character": {
+    "baseRate": 0.006,
+    "softPityStart": 74,
+    "softPityIncreasePerPull": 0.06,
+    "hardPity": 90,
+    "featuredRate": 0.5,
+    "has5050": true,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": true,
+    "curveSource": "커뮤니티 추정: pity 74부터 회당 약 6%p 증가, 90에서 100%",
+    "curveConfidence": "medium",
+    "notes": "공식 발표는 기본 확률(0.6%)/하드 천장(90)/50:50/확정 및 이월 규칙만 공개. 소프트 천장 시작점(74)과 회당 증가폭은 공식 미공개이며 위키 간에도 74~75뽑으로 약간의 편차가 있는 커뮤니티 추정값."
+  },
+  "weapon": {
+    "baseRate": 0.01,
+    "softPityStart": 65,
+    "softPityIncreasePerPull": 0.06,
+    "hardPity": 80,
+    "featuredRate": 0.75,
+    "has5050": false,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": true,
+    "curveSource": "커뮤니티 추정: pity 65부터 회당 약 6%p 증가, 80에서 100%",
+    "curveConfidence": "medium",
+    "notes": "W-Engine 기본 확률(1.0%)은 HoYoverse 무기류 배너 중 최고치로 공식 확인됨. 하드 천장(80)/75:25/확정 및 이월 규칙도 공식 공개. 소프트 천장 시작점(65)과 증가폭은 공식 미공개 커뮤니티 추정값."
+  }
+}

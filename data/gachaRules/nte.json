@@ -1,0 +1,57 @@
+{
+  "gameId": "nte",
+  "gameName": "네버니스 투 에버니스",
+  "version": "1.0",
+  "lastUpdated": "2026-07-05",
+  "status": "filled",
+  "sources": [
+    {
+      "name": "Icy Veins - NTE Gacha System Guide (icy-veins.com/neverness-to-everness/nte-gacha-system)",
+      "type": "wiki",
+      "usage": "캐릭터 기본 확률 0.99%, 70뽑 시점 19.59% 점프, 90뽑 확정, 무기 Arc 60/80뽑 구조 확인"
+    },
+    {
+      "name": "Dexerto - NTE Gacha & Pity Explained (dexerto.com/wikis/neverness-to-everness/gacha-system--pity-explained)",
+      "type": "wiki",
+      "usage": "70뽑에서 보드 타일이 재구성되며 확률이 즉시 점프하는 방식임을 교차 확인"
+    },
+    {
+      "name": "dotesports - NTE Gacha System Explained",
+      "type": "wiki",
+      "usage": "50:50 없음, 무기 배너 이월 규칙 교차 확인"
+    },
+    {
+      "name": "Community soft pity analysis (보드 타일 매커니즘 보조 확인)",
+      "type": "community",
+      "usage": "일부 2차 출처가 언급하는 '실효 확률 1.88%'는 보드 보너스 포함 추정치로 판단, baseRate는 타일 기본 확률 0.99%로 채택"
+    }
+  ],
+  "character": {
+    "baseRate": 0.0099,
+    "softPityStart": 70,
+    "softPityIncreasePerPull": 0.1959,
+    "hardPity": 90,
+    "featuredRate": 1.0,
+    "has5050": false,
+    "guaranteeAfterLose": false,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": false,
+    "curveSource": "70뽑 시점 S급 확률 0.99%→19.59% 즉시 점프(선형 증가 아님), 90뽑 픽업 확정",
+    "curveConfidence": "high",
+    "notes": "한정 캐릭터 배너는 50:50이 없고 S급 획득 시 픽업 캐릭터가 무조건 확정된다(has5050=false). [중요] NTE는 보드게임형 가챠로, 70뽑 시점에 다른 게임처럼 회당 점진적으로 확률이 증가하는 것이 아니라 보드 타일이 즉시 재구성되며 S급 확률이 0.99%에서 19.59%로 한 번에 점프한다. 이후 90뽑까지 19.59%가 유지되다 90뽑에서 100% 확정된다. softPityIncreasePerPull(0.1959) 필드는 '회당 증가폭'이 아니라 '70뽑 시점의 목표 확률값'으로 해석해야 함 — 스키마상 필드명과 실제 동작 방식이 다르므로 유의. baseRate는 타일 기본 확률 0.99%를 채택(일부 2차 출처의 '실효 확률 1.88%'는 보드 보너스 포함 추정치로 미채택)."
+  },
+  "weapon": {
+    "baseRate": 0.03,
+    "softPityStart": 60,
+    "softPityIncreasePerPull": 0.25,
+    "hardPity": 80,
+    "featuredRate": 0.25,
+    "has5050": false,
+    "guaranteeAfterLose": true,
+    "pityCarryOver": true,
+    "guaranteeCarryOver": true,
+    "curveSource": "60뽑 S급 무기 확정, 첫 S급이 픽업이 아니면 80뽑까지 픽업 확정",
+    "curveConfidence": "medium",
+    "notes": "무기 Arc는 기본 S급 확률 3%(10연 기준). 60뽑에 S급 무기 확정되며 이때 25% 확률로 픽업 무기 결정. 첫 S급이 픽업이 아니면 80뽑까지 픽업 무기 확정. 캐릭터 배너와 달리 무기는 피티/보장이 모두 다음 배너로 이월된다. 60뽑 이후 확률 처리는 근사값 0.25를 사용(공식 발표 수치가 아닌 커뮤니티 정리 기준)."
+  }
+}

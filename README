@@ -1,0 +1,119 @@
+PickupManager
+│
+├─ AI_PM_SYSTEM.md
+├─ AI_ANALYSIS_QUALITY.md
+├─ PROJECT_STATUS.md
+├─ CLAUDE.md
+│
+├─ index.html          ← 메인 분석기 UI
+├─ app.js              ← 화면 표시 + 보유 캐릭터 조작
+├─ evaluationEngine.js ← 점수/추천 계산
+├─ server.js           ← GPT API + roster 저장 API
+├─ style.css
+│
+├─ meta-generator.html/js
+│   └─ 수동 meta 초안 생성 도구
+│
+├─ data
+│  ├─ config.json
+│  │
+│  ├─ games
+│  │  ├─ zzz
+│  │  │  ├─ characters.json ← 캐릭터 기본 정보
+│  │  │  ├─ meta.json       ← 현재 메타 지식
+│  │  │  ├─ banner.json
+│  │  │  └─ images/
+│  │  ├─ hsr/
+│  │  ├─ wuwa/
+│  │  └─ endfield/
+│  │
+│  └─ user
+│     ├─ roster.json   ← 내 보유 캐릭터
+│     ├─ settings.json
+│     └─ history.json
+│
+└─ Launcher.ps1 / Launcher.bat
+
+
+characters.json
+= 캐릭터 사실 정보
+
+meta.json
+= AI가 사용할 현재 메타 지식
+
+roster.json
+= 내 계정 상태
+
+evaluationEngine.js
+= meta + roster를 보고 최종 추천 계산
+
+app.js
+= 화면 표시 / 보유 체크 / 결과 출력
+
+server.js
+= GPT 메타 업데이트 + roster.json 저장
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+아이콘 커스텀
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 게임 목록 아이콘 (사이드바 카드)
+
+  경로 규칙:
+    assets/icons/{게임ID}/icon.png
+
+  예시:
+    assets/icons/zzz/icon.png
+    assets/icons/hsr/icon.png
+    assets/icons/wuwa/icon.png
+    assets/icons/endfield/icon.png
+
+  - 이미지가 있으면 자동 적용
+  - 이미지가 없으면 텍스트 약자(ZZ, SR, WW, EF)로 대체
+  - 권장 크기: 38×38px 이상 (정사각형)
+  - 지원 형식: .png / .webp / .jpg
+
+  텍스트 약자·배경색 변경:
+    app.js 상단 GAME_META 객체 수정
+      iconText  : 표시할 텍스트 약자
+      iconBg    : 아이콘 배경색 (hex 또는 CSS 색상)
+      iconColor : 텍스트 색상
+
+  커스텀 게임 아이콘:
+    게임 추가 시 생성되는 ID(예: custom_1720000000000)를 폴더명으로 사용
+      assets/icons/custom_1720000000000/icon.png
+
+
+■ 보유 재화 아이콘 (재화 리스트 행)
+
+  경로 규칙:
+    assets/icons/{게임ID}/{재화파일명}.png
+
+  기본 게임 재화 경로 (app.js CURRENCY_CONFIG 기준):
+
+    ZZZ
+      assets/icons/zzz/polychrome.png        ← 폴리크롬
+      assets/icons/zzz/limited_ticket.png    ← 암호화 마스터 테이프
+
+    붕괴: 스타레일
+      assets/icons/hsr/jade.png              ← 성옥
+      assets/icons/hsr/limited_pass.png      ← 별의 궤도 특별 패스
+
+    명조: 워더링 웨이브
+      assets/icons/wuwa/astrite.png          ← 별의 소리
+      assets/icons/wuwa/limited_tide.png     ← 금빛 파도 티켓
+
+    아크나이츠: 엔드필드
+      assets/icons/endfield/crystal.png      ← 폴리 크롬
+      assets/icons/endfield/limited_permit.png ← 채용 허가증
+
+  - 이미지가 없으면 재화 이름 첫 글자로 대체
+  - 권장 크기: 32×32px 이상 (정사각형)
+
+  재화 추가 시:
+    앱 내 "재화 추가" 모달에서 이름·비율을 입력하면 등록됨
+    아이콘은 추후 위 경로 규칙에 맞는 파일을 추가하면 자동 적용
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

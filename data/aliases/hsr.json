@@ -1,0 +1,483 @@
+{
+  "gameId": "hsr",
+  "lastUpdated": "2026-07-06",
+  "note": "meta.json 조사 효율화를 위한 별도 리서치 보조 데이터. characters.json/meta.json 스키마와 무관하며 앱 코드에서 참조하지 않음.",
+  "termGlossary": {
+    "돌파": "Eidolon (E1~E6, 캐릭터 중복 강화)",
+    "전광": "전용 광추 (Signature Light Cone)",
+    "중첩": "Superimposition (S1~S5, 광추 중복 강화)",
+    "명함": "캐릭터 기본 획득(E0) 가치를 뜻하는 커뮤니티 표현"
+  },
+  "characters": {
+    "firefly": {
+      "official": "파이어플라이",
+      "nameEn": "Firefly",
+      "aliases": [
+        "샘",
+        "SAM"
+      ]
+    },
+    "robin": {
+      "official": "로빈",
+      "nameEn": "Robin",
+      "aliases": []
+    },
+    "acheron": {
+      "official": "아케론",
+      "nameEn": "Acheron",
+      "aliases": []
+    },
+    "aglaea": {
+      "official": "아글라이아",
+      "nameEn": "Aglaea",
+      "aliases": []
+    },
+    "anaxa": {
+      "official": "아낙사",
+      "nameEn": "Anaxa",
+      "aliases": []
+    },
+    "archer": {
+      "official": "아처",
+      "nameEn": "Archer",
+      "aliases": []
+    },
+    "argenti": {
+      "official": "아젠티",
+      "nameEn": "Argenti",
+      "aliases": []
+    },
+    "arlan": {
+      "official": "아를란",
+      "nameEn": "Arlan",
+      "aliases": []
+    },
+    "ashveil": {
+      "official": "Ashveil",
+      "nameEn": "Ashveil",
+      "aliases": []
+    },
+    "asta": {
+      "official": "아스타",
+      "nameEn": "Asta",
+      "aliases": []
+    },
+    "aventurine": {
+      "official": "어벤츄린",
+      "nameEn": "Aventurine",
+      "aliases": []
+    },
+    "bailu": {
+      "official": "백로",
+      "nameEn": "Bailu",
+      "aliases": []
+    },
+    "blackswan": {
+      "official": "블랙 스완",
+      "nameEn": "Black Swan",
+      "aliases": []
+    },
+    "blade": {
+      "official": "블레이드",
+      "nameEn": "Blade",
+      "aliases": []
+    },
+    "boothill": {
+      "official": "부트힐",
+      "nameEn": "Boothill",
+      "aliases": []
+    },
+    "bronya": {
+      "official": "브로냐",
+      "nameEn": "Bronya",
+      "aliases": []
+    },
+    "castorice": {
+      "official": "카스토리스",
+      "nameEn": "Castorice",
+      "aliases": []
+    },
+    "cerydra": {
+      "official": "케리드라",
+      "nameEn": "Cerydra",
+      "aliases": []
+    },
+    "cipher": {
+      "official": "사이퍼",
+      "nameEn": "Cipher",
+      "aliases": []
+    },
+    "clara": {
+      "official": "클라라",
+      "nameEn": "Clara",
+      "aliases": []
+    },
+    "cyrene": {
+      "official": "키레네",
+      "nameEn": "Cyrene",
+      "aliases": []
+    },
+    "dahlia": {
+      "official": "달리아",
+      "nameEn": "The Dahlia",
+      "aliases": []
+    },
+    "danheng": {
+      "official": "단항",
+      "nameEn": "Dan Heng",
+      "aliases": []
+    },
+    "danhengil": {
+      "official": "단항•음월",
+      "nameEn": "Dan Heng • Imbibitor Lunae",
+      "aliases": []
+    },
+    "danhengpt": {
+      "official": "단항•등황",
+      "nameEn": "Dan Heng • Permansor Terrae",
+      "aliases": []
+    },
+    "drratio": {
+      "official": "Dr. 레이시오",
+      "nameEn": "Dr. Ratio",
+      "aliases": []
+    },
+    "evanescia": {
+      "official": "Evanescia",
+      "nameEn": "Evanescia",
+      "aliases": []
+    },
+    "evernight": {
+      "official": "에버나이트",
+      "nameEn": "Evernight",
+      "aliases": []
+    },
+    "feixiao": {
+      "official": "비소",
+      "nameEn": "Feixiao",
+      "aliases": []
+    },
+    "fugue": {
+      "official": "망귀인",
+      "nameEn": "Fugue",
+      "aliases": []
+    },
+    "fuxuan": {
+      "official": "부현",
+      "nameEn": "Fu Xuan",
+      "aliases": []
+    },
+    "gallagher": {
+      "official": "갤러거",
+      "nameEn": "Gallagher",
+      "aliases": []
+    },
+    "gepard": {
+      "official": "게파드",
+      "nameEn": "Gepard",
+      "aliases": []
+    },
+    "guinaifen": {
+      "official": "계네빈",
+      "nameEn": "Guinaifen",
+      "aliases": []
+    },
+    "hanya": {
+      "official": "한아",
+      "nameEn": "Hanya",
+      "aliases": []
+    },
+    "herta": {
+      "official": "헤르타",
+      "nameEn": "Herta",
+      "aliases": []
+    },
+    "himeko": {
+      "official": "히메코",
+      "nameEn": "Himeko",
+      "aliases": []
+    },
+    "hook": {
+      "official": "후크",
+      "nameEn": "Hook",
+      "aliases": []
+    },
+    "huohuo": {
+      "official": "곽향",
+      "nameEn": "Huohuo",
+      "aliases": []
+    },
+    "hyacine": {
+      "official": "히아킨",
+      "nameEn": "Hyacine",
+      "aliases": []
+    },
+    "hysilens": {
+      "official": "히실렌스",
+      "nameEn": "Hysilens",
+      "aliases": []
+    },
+    "jade": {
+      "official": "제이드",
+      "nameEn": "Jade",
+      "aliases": []
+    },
+    "jiaoqiu": {
+      "official": "초구",
+      "nameEn": "Jiaoqiu",
+      "aliases": []
+    },
+    "jingliu": {
+      "official": "경류",
+      "nameEn": "Jingliu",
+      "aliases": []
+    },
+    "jingyuan": {
+      "official": "경원",
+      "nameEn": "Jing Yuan",
+      "aliases": []
+    },
+    "kafka": {
+      "official": "카프카",
+      "nameEn": "Kafka",
+      "aliases": []
+    },
+    "lingsha": {
+      "official": "영사",
+      "nameEn": "Lingsha",
+      "aliases": []
+    },
+    "luka": {
+      "official": "루카",
+      "nameEn": "Luka",
+      "aliases": []
+    },
+    "luocha": {
+      "official": "나찰",
+      "nameEn": "Luocha",
+      "aliases": []
+    },
+    "lynx": {
+      "official": "링스",
+      "nameEn": "Lynx",
+      "aliases": []
+    },
+    "mar7th": {
+      "official": "Mar. 7th",
+      "nameEn": "March 7th",
+      "aliases": [
+        "삼칠이"
+      ]
+    },
+    "mar7th2": {
+      "official": "Mar. 7th",
+      "nameEn": "March 7th",
+      "aliases": []
+    },
+    "misha": {
+      "official": "미샤",
+      "nameEn": "Misha",
+      "aliases": []
+    },
+    "mortenaxblade": {
+      "official": "Mortenax Blade",
+      "nameEn": "Mortenax Blade",
+      "aliases": []
+    },
+    "moze": {
+      "official": "맥택",
+      "nameEn": "Moze",
+      "aliases": []
+    },
+    "mydei": {
+      "official": "마이데이",
+      "nameEn": "Mydei",
+      "aliases": []
+    },
+    "natasha": {
+      "official": "나타샤",
+      "nameEn": "Natasha",
+      "aliases": []
+    },
+    "pela": {
+      "official": "페라",
+      "nameEn": "Pela",
+      "aliases": []
+    },
+    "phainon": {
+      "official": "파이논",
+      "nameEn": "Phainon",
+      "aliases": []
+    },
+    "playerboy": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playerboy2": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playerboy3": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playerboy4": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playerboy5": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playergirl": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playergirl2": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playergirl3": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playergirl4": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "playergirl5": {
+      "official": "{NICKNAME}",
+      "nameEn": "{NICKNAME}",
+      "aliases": []
+    },
+    "qingque": {
+      "official": "청작",
+      "nameEn": "Qingque",
+      "aliases": []
+    },
+    "rappa": {
+      "official": "라파",
+      "nameEn": "Rappa",
+      "aliases": []
+    },
+    "ruanmei": {
+      "official": "완•매",
+      "nameEn": "Ruan Mei",
+      "aliases": []
+    },
+    "saber": {
+      "official": "세이버",
+      "nameEn": "Saber",
+      "aliases": []
+    },
+    "sam": {
+      "official": "반디",
+      "nameEn": "Firefly",
+      "aliases": []
+    },
+    "sampo": {
+      "official": "삼포",
+      "nameEn": "Sampo",
+      "aliases": []
+    },
+    "seele": {
+      "official": "제레",
+      "nameEn": "Seele",
+      "aliases": []
+    },
+    "serval": {
+      "official": "서벌",
+      "nameEn": "Serval",
+      "aliases": []
+    },
+    "silverwolf": {
+      "official": "은랑",
+      "nameEn": "Silver Wolf",
+      "aliases": []
+    },
+    "silverwolflv999": {
+      "official": "Silver Wolf LV.999",
+      "nameEn": "Silver Wolf LV.999",
+      "aliases": []
+    },
+    "sparkle": {
+      "official": "스파클",
+      "nameEn": "Sparkle",
+      "aliases": []
+    },
+    "Sparxie": {
+      "official": "스파키",
+      "nameEn": "Sparxie",
+      "aliases": []
+    },
+    "sunday": {
+      "official": "선데이",
+      "nameEn": "Sunday",
+      "aliases": []
+    },
+    "sushang": {
+      "official": "소상",
+      "nameEn": "Sushang",
+      "aliases": []
+    },
+    "theherta": {
+      "official": "더 헤르타",
+      "nameEn": "The Herta",
+      "aliases": []
+    },
+    "tingyun": {
+      "official": "정운",
+      "nameEn": "Tingyun",
+      "aliases": []
+    },
+    "topaz": {
+      "official": "토파즈&복순이",
+      "nameEn": "Topaz & Numby",
+      "aliases": []
+    },
+    "tribbie": {
+      "official": "트리비",
+      "nameEn": "Tribbie",
+      "aliases": []
+    },
+    "welt": {
+      "official": "웰트",
+      "nameEn": "Welt",
+      "aliases": []
+    },
+    "xueyi": {
+      "official": "설의",
+      "nameEn": "Xueyi",
+      "aliases": []
+    },
+    "yanqing": {
+      "official": "연경",
+      "nameEn": "Yanqing",
+      "aliases": []
+    },
+    "yaoguang": {
+      "official": "효광",
+      "nameEn": "Yao Guang",
+      "aliases": []
+    },
+    "yukong": {
+      "official": "어공",
+      "nameEn": "Yukong",
+      "aliases": []
+    },
+    "yunli": {
+      "official": "운리",
+      "nameEn": "Yunli",
+      "aliases": []
+    }
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "gameId": "wuwa",
+  "lastUpdated": "2026-07-06",
+  "note": "meta.json 조사 효율화를 위한 별도 리서치 보조 데이터. characters.json/meta.json 스키마와 무관하며 앱 코드에서 참조하지 않음.",
+  "termGlossary": {
+    "돌파": "공명 사슬 (Resonance Chain, R1~R6)",
+    "전무/시그": "전용 무기 (Signature Weapon)",
+    "명함": "캐릭터 기본 획득(R0) 가치를 뜻하는 커뮤니티 표현"
+  },
+  "characters": {
+    "camellya": {
+      "official": "카멜리아",
+      "nameEn": "Camellya",
+      "aliases": [
+        "카멜탈"
+      ]
+    },
+    "carlotta": {
+      "official": "칼로타",
+      "nameEn": "Carlotta",
+      "aliases": []
+    },
+    "aalto": {
+      "official": "알토",
+      "nameEn": "Aalto",
+      "aliases": []
+    },
+    "aemeath": {
+      "official": "에이메스",
+      "nameEn": "Aemeath",
+      "aliases": []
+    },
+    "augusta": {
+      "official": "아우구스타",
+      "nameEn": "Augusta",
+      "aliases": []
+    },
+    "baizhi": {
+      "official": "설지",
+      "nameEn": "Baizhi",
+      "aliases": []
+    },
+    "brant": {
+      "official": "브렌트",
+      "nameEn": "Brant",
+      "aliases": []
+    },
+    "buling": {
+      "official": "복링",
+      "nameEn": "Buling",
+      "aliases": []
+    },
+    "calcharo": {
+      "official": "카카루",
+      "nameEn": "Calcharo",
+      "aliases": []
+    },
+    "cantarella": {
+      "official": "칸타렐라",
+      "nameEn": "Cantarella",
+      "aliases": []
+    },
+    "cartethyia": {
+      "official": "카르티시아",
+      "nameEn": "Cartethyia",
+      "aliases": []
+    },
+    "changli": {
+      "official": "장리",
+      "nameEn": "Changli",
+      "aliases": []
+    },
+    "chisa": {
+      "official": "치사",
+      "nameEn": "Chisa",
+      "aliases": []
+    },
+    "chixia": {
+      "official": "치샤",
+      "nameEn": "Chixia",
+      "aliases": []
+    },
+    "ciaccona": {
+      "official": "샤콘",
+      "nameEn": "Ciaccona",
+      "aliases": []
+    },
+    "danjin": {
+      "official": "단근",
+      "nameEn": "Danjin",
+      "aliases": [
+        "당근"
+      ]
+    },
+    "encore": {
+      "official": "앙코",
+      "nameEn": "Encore",
+      "aliases": []
+    },
+    "galbrena": {
+      "official": "갈브레나",
+      "nameEn": "Galbrena",
+      "aliases": []
+    },
+    "iuno": {
+      "official": "유노",
+      "nameEn": "Iuno",
+      "aliases": []
+    },
+    "jianxin": {
+      "official": "감심",
+      "nameEn": "Jianxin",
+      "aliases": []
+    },
+    "jinhsi": {
+      "official": "금희",
+      "nameEn": "Jinhsi",
+      "aliases": []
+    },
+    "jiyan": {
+      "official": "기염",
+      "nameEn": "Jiyan",
+      "aliases": []
+    },
+    "lingyang": {
+      "official": "능양",
+      "nameEn": "Lingyang",
+      "aliases": []
+    },
+    "lumi": {
+      "official": "루미",
+      "nameEn": "Lumi",
+      "aliases": []
+    },
+    "lupa": {
+      "official": "루파",
+      "nameEn": "Lupa",
+      "aliases": []
+    },
+    "luuk_herssen": {
+      "official": "루크 · 헤르센",
+      "nameEn": "Luuk Herssen",
+      "aliases": []
+    },
+    "lynae": {
+      "official": "린네",
+      "nameEn": "Lynae",
+      "aliases": []
+    },
+    "mornye": {
+      "official": "모니에",
+      "nameEn": "Mornye",
+      "aliases": []
+    },
+    "mortefi": {
+      "official": "모르테피",
+      "nameEn": "Mortefi",
+      "aliases": []
+    },
+    "phoebe": {
+      "official": "페비",
+      "nameEn": "Phoebe",
+      "aliases": []
+    },
+    "phrolova": {
+      "official": "플로로",
+      "nameEn": "Phrolova",
+      "aliases": []
+    },
+    "qiuyuan": {
+      "official": "구원",
+      "nameEn": "Qiuyuan",
+      "aliases": []
+    },
+    "roccia": {
+      "official": "로코코",
+      "nameEn": "Roccia",
+      "aliases": []
+    },
+    "rover_aero_female": {
+      "official": "방랑자 · 기류",
+      "nameEn": "Rover: Aero",
+      "aliases": []
+    },
+    "rover_aero_male": {
+      "official": "방랑자 · 기류",
+      "nameEn": "Rover: Aero",
+      "aliases": []
+    },
+    "rover_havoc_female": {
+      "official": "방랑자 · 인멸",
+      "nameEn": "Rover: Havoc",
+      "aliases": []
+    },
+    "rover_havoc_male": {
+      "official": "방랑자 · 인멸",
+      "nameEn": "Rover: Havoc",
+      "aliases": []
+    },
+    "rover_spectro_female": {
+      "official": "방랑자",
+      "nameEn": "Rover: Spectro",
+      "aliases": []
+    },
+    "rover_spectro_male": {
+      "official": "방랑자 · 회절",
+      "nameEn": "Rover: Spectro",
+      "aliases": []
+    },
+    "sanhua": {
+      "official": "산화",
+      "nameEn": "Sanhua",
+      "aliases": []
+    },
+    "shorekeeper": {
+      "official": "파수인",
+      "nameEn": "Shorekeeper",
+      "aliases": []
+    },
+    "taoqi": {
+      "official": "도기",
+      "nameEn": "Taoqi",
+      "aliases": []
+    },
+    "verina": {
+      "official": "벨리나",
+      "nameEn": "Verina",
+      "aliases": []
+    },
+    "xiangli_yao": {
+      "official": "상리요",
+      "nameEn": "Xiangli Yao",
+      "aliases": []
+    },
+    "yangyang": {
+      "official": "양양",
+      "nameEn": "Yangyang",
+      "aliases": []
+    },
+    "yinlin": {
+      "official": "음림",
+      "nameEn": "Yinlin",
+      "aliases": []
+    },
+    "youhu": {
+      "official": "유호",
+      "nameEn": "Youhu",
+      "aliases": []
+    },
+    "yuanwu": {
+      "official": "연무",
+      "nameEn": "Yuanwu",
+      "aliases": []
+    },
+    "zani": {
+      "official": "젠니",
+      "nameEn": "Zani",
+      "aliases": []
+    },
+    "zhezhi": {
+      "official": "절지",
+      "nameEn": "Zhezhi",
+      "aliases": []
+    }
+  }
+}

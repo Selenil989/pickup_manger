@@ -156,7 +156,7 @@
   {
     "id": "astra_yao",
     "name": "Astra Yao",
-    "nameKo": "아스트라 야오",
+    "nameKo": "아스트라",
     "gameId": "zzz",
     "rarity": 5,
     "role": "support",
@@ -325,7 +325,7 @@
   {
     "id": "lycaon",
     "name": "Von Lycaon",
-    "nameKo": "폰 리카온",
+    "nameKo": "리카온",
     "gameId": "zzz",
     "rarity": 5,
     "role": "stun",
@@ -773,5 +773,35 @@
     "basePerformance": null,
     "releaseDate": "2026-04-15",
     "isReleased": true
+  },
+  {
+    "id": "norma",
+    "gameId": "zzz",
+    "basePerformance": null,
+    "name": "노르마",
+    "nameKo": "노르마",
+    "image": "노르마.webp",
+    "rarity": 5,
+    "role": "stun",
+    "element": "fire",
+    "specialElement": null,
+    "releaseDate": "20260708",
+    "releaseOrder": null,
+    "isReleased": false
+  },
+  {
+    "id": "remiell",
+    "gameId": "zzz",
+    "basePerformance": null,
+    "name": "레미엘",
+    "nameKo": "레미엘",
+    "image": "레미엘.webp",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "physical",
+    "specialElement": "REMIELL",
+    "releaseDate": "",
+    "releaseOrder": null,
+    "isReleased": false
   }
 ]
