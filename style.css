@@ -587,6 +587,15 @@ select {
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
 }
 
+/* 배경 없는 흰색 문양 아이콘(HSR 운명/속성)용 반투명 검은 원형 배경 — 시인성 확보 */
+.char-card-icon--backdrop {
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 50%;
+}
+
 .char-card-owned-overlay {
   position: absolute;
   top: 0;
@@ -2912,4 +2921,142 @@ select {
 
 .verdict-callout .result-label {
   color: var(--accent);
+}
+
+/* Gacha Guide — meta.gachaGuide 표시 전용 섹션 (계산 없음) */
+.gg-heading {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+
+.gg-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.gg-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 700px) {
+  .gg-feature-grid { grid-template-columns: 1fr; }
+}
+
+.gg-feature-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+}
+
+.gg-feature-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.gg-feature-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.gg-req-row {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gg-req-row:last-child {
+  border-bottom: none;
+}
+
+.gg-req-targets {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.gg-req-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.gg-partner-row {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gg-partner-row:last-child {
+  border-bottom: none;
+}
+
+.gg-partner-names {
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.gg-partner-role {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.gg-partner-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.gg-checklist {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gg-checklist li {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.gg-checklist-warn li {
+  color: var(--muted);
+}
+
+.gg-warn-block {
+  border-color: var(--must);
+}
+
+.gg-sources summary {
+  cursor: pointer;
+}
+
+.gg-source-list {
+  list-style: none;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gg-source-list a {
+  color: var(--accent);
+  font-size: 13px;
+  word-break: break-all;
 }

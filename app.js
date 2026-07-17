@@ -43,6 +43,24 @@ var GAME_META = {
 
 var _currencyTab      = null;
 var _charCustomOrder  = null;
+
+// 카드 그리드를 지원하는 게임과 게임별 표시 설정.
+// iconExt: 등급/역할/속성 아이콘 파일 확장자 (zzz는 webp, hsr은 StarRailRes png)
+// rarityIcon: 등급 아이콘 파일(rarity_S 등) 보유 여부 — hsr은 없음(5성만 표시라 불필요)
+// minRarity: 카드로 표시할 최소 등급 — hsr은 5성만, zzz는 전체
+// iconBackdrop: 아이콘 뒤 반투명 검은 배경 (배경 없는 흰색 문양 아이콘의 시인성 확보용)
+// roleField: 역할 아이콘에 쓸 필드 (명조는 role이 없어 무기 종류를 대신 표시)
+// excludeNamePattern: 카드에서 제외할 플레이어 아바타 계열 이름 패턴
+var CARD_GRID_CONFIG = {
+  zzz:      { iconExt: '.webp', rarityIcon: true,  minRarity: 0, iconBackdrop: false },
+  hsr:      { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true },
+  wuwa:     { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, roleField: 'weaponType', excludeNamePattern: /^Rover:/i },
+  endfield: { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, excludeNamePattern: /^Endministrator/i }
+};
+// 서버 /api/sync-characters 가 자동 동기화(신규 캐릭터/이미지/아이콘/출시일)를
+// 지원하는 게임 목록 — server.js의 SYNC_HANDLERS와 맞춰서 관리한다.
+var CARD_SYNC_GAMES = ['hsr', 'wuwa', 'endfield'];
+function isCardGridGame(gameId) { return !!CARD_GRID_CONFIG[gameId]; }
 var _cardDragging     = false;
 var _cardHintDismissed = false;
 var _plannerCurHalf  = 'first';
@@ -317,7 +335,7 @@ function importPersonalSettings() {
         }
         // 현재 화면 갱신
         renderRoster();
-        if (appState.currentGame === 'zzz') renderCardGrid();
+        if (isCardGridGame(appState.currentGame)) renderCardGrid();
         if (document.getElementById('tabCurrency').style.display !== 'none') renderCurrencyPage();
         alert('개인 설정을 불러왔습니다.');
       } catch(err) {
@@ -347,10 +365,11 @@ function setGame(gameId) {
 
       appState.selectedCharacterId = null;
       appState.evaluationResult = null;
+      _charCustomOrder = null; // 게임 전환 시 카드 순서 캐시 초기화 (게임별 저장 키가 다름)
 
       renderCharacterSelect();
       renderRoster();
-      if (gameId === 'zzz') {
+      if (isCardGridGame(gameId)) {
         renderCardGrid();
       } else {
         renderPlaceholder("캐릭터를 선택하고 분석하기를 누르세요.");
@@ -360,6 +379,7 @@ function setGame(gameId) {
       document.getElementById("analyzeBtn").disabled = false;
       document.getElementById("metaUpdateBtn").disabled = (gameId !== 'zzz');
       document.getElementById("metaUpdateClaudeCodeBtn").disabled = false;
+      document.getElementById("cardSyncBtn").disabled = (CARD_SYNC_GAMES.indexOf(gameId) === -1);
     })
     .catch(function() {
       renderError("게임 데이터를 불러오지 못했습니다.");
@@ -394,7 +414,7 @@ function toggleRosterCharacter(characterId) {
 
   if (appState.selectedCharacterId) {
     runAnalysis();
-  } else if (appState.currentGame === 'zzz') {
+  } else if (isCardGridGame(appState.currentGame)) {
     renderCardGrid();
   }
 }
@@ -408,7 +428,7 @@ function addRosterCharacter(characterId) {
   roster.characters.push({ characterId: characterId, dupeLevel: 0, weapon: { hasSignature: false, refinement: 0 }, isLeveledUp: false, memo: '' });
   saveRoster(appState.currentGame);
   renderRoster();
-  if (appState.selectedCharacterId) { runAnalysis(); } else if (appState.currentGame === 'zzz') { renderCardGrid(); }
+  if (appState.selectedCharacterId) { runAnalysis(); } else if (isCardGridGame(appState.currentGame)) { renderCardGrid(); }
 }
 
 function removeRosterCharacter(characterId) {
@@ -422,7 +442,7 @@ function removeRosterCharacter(characterId) {
   roster.characters.splice(idx, 1);
   saveRoster(appState.currentGame);
   renderRoster();
-  if (appState.selectedCharacterId) { runAnalysis(); } else if (appState.currentGame === 'zzz') { renderCardGrid(); }
+  if (appState.selectedCharacterId) { runAnalysis(); } else if (isCardGridGame(appState.currentGame)) { renderCardGrid(); }
 }
 
 function loadCharCustomOrder(gameId) {
@@ -545,8 +565,10 @@ function renderCharacterSelect() {
 }
 
 function renderCardGrid() {
-  var imgBase = 'assets/images/zzz/';
-  var roster = appState.rosters['zzz'] || { characters: [] };
+  var gameId  = appState.currentGame;
+  var cfg     = CARD_GRID_CONFIG[gameId] || CARD_GRID_CONFIG.zzz;
+  var imgBase = 'assets/images/' + gameId + '/';
+  var roster = appState.rosters[gameId] || { characters: [] };
   var ownedMap = {};
   for (var o = 0; o < roster.characters.length; o++) {
     ownedMap[roster.characters[o].characterId] = true;
@@ -566,10 +588,17 @@ function renderCardGrid() {
   }
 
   if (_charCustomOrder === null) {
-    _charCustomOrder = loadCharCustomOrder('zzz') || [];
+    _charCustomOrder = loadCharCustomOrder(gameId) || [];
   }
 
-  var sortedChars = appState.characters.slice();
+  // 게임별 최소 등급 필터 (hsr은 5성만, zzz는 전체)
+  // 플레이어 아바타 항목(개척자/로버 등)은 카드에서 제외
+  var sortedChars = appState.characters.filter(function(c) {
+    var dc = _charEdits[c.id] ? Object.assign({}, c, _charEdits[c.id]) : c;
+    if (((dc.name || '') + (dc.nameKo || '')).indexOf('{NICKNAME}') !== -1) return false;
+    if (cfg.excludeNamePattern && cfg.excludeNamePattern.test(dc.name || '')) return false;
+    return (dc.rarity || 5) >= cfg.minRarity;
+  });
   if (_charCustomOrder.length > 0) {
     var orderMap = {};
     for (var oi = 0; oi < _charCustomOrder.length; oi++) orderMap[_charCustomOrder[oi]] = oi;
@@ -609,11 +638,13 @@ function renderCardGrid() {
     var owned = ownedMap[char.id] ? true : false;
 
     var elementFile = dc.specialElement
-      ? 'element_' + dc.specialElement + '.webp'
-      : (dc.element ? 'element_' + dc.element + '.webp' : '');
-    var rarityFile = dc.rarity === 5 ? 'rarity_S.webp'
-      : (dc.rarity === 4 ? 'rarity_A.webp' : '');
-    var roleFile = dc.role ? 'role_' + dc.role + '.webp' : '';
+      ? 'element_' + dc.specialElement + cfg.iconExt
+      : (dc.element ? 'element_' + dc.element + cfg.iconExt : '');
+    var rarityFile = !cfg.rarityIcon ? ''
+      : dc.rarity === 5 ? 'rarity_S' + cfg.iconExt
+      : (dc.rarity === 4 ? 'rarity_A' + cfg.iconExt : '');
+    var roleVal = dc[cfg.roleField || 'role'];
+    var roleFile = roleVal ? 'role_' + roleVal + cfg.iconExt : '';
 
     html += '<div class="char-card' + (owned ? ' owned' : '') + '" draggable="true" data-char-id="' + char.id + '">';
     if (dc.image) {
@@ -621,11 +652,12 @@ function renderCardGrid() {
     } else {
       html += '<div class="char-card-image char-card-no-img"></div>';
     }
+    var iconCls = 'char-card-icon' + (cfg.iconBackdrop ? ' char-card-icon--backdrop' : '');
     html += '<div class="char-card-icons"><div class="char-card-icons-left">';
-    if (rarityFile) html += '<img class="char-card-icon" src="' + imgBase + rarityFile + '" alt="">';
+    if (rarityFile) html += '<img class="' + iconCls + '" src="' + imgBase + rarityFile + '" alt="">';
     html += '</div><div class="char-card-icons-right">';
-    if (roleFile) html += '<img class="char-card-icon" src="' + imgBase + roleFile + '" alt="">';
-    if (elementFile) html += '<img class="char-card-icon" src="' + imgBase + elementFile + '" alt="">';
+    if (roleFile) html += '<img class="' + iconCls + '" src="' + imgBase + roleFile + '" alt="">';
+    if (elementFile) html += '<img class="' + iconCls + '" src="' + imgBase + elementFile + '" alt="">';
     html += '</div></div>';
     if (owned) html += '<div class="char-card-owned-overlay"></div>';
     if (!dc.isReleased) html += '<span class="char-card-unreleased-badge">출시 예정</span>';
@@ -721,7 +753,7 @@ function renderCardGrid() {
     }
     var allCards = Array.from(panel.querySelectorAll('.char-card'));
     _charCustomOrder = allCards.map(function(c) { return c.getAttribute('data-char-id'); });
-    saveCharCustomOrder('zzz', _charCustomOrder);
+    saveCharCustomOrder(gameId, _charCustomOrder);
     renderCardGrid();
   });
 }
@@ -880,7 +912,7 @@ function saveCharacterDetail() {
   renderRoster();
   if (appState.selectedCharacterId) {
     runAnalysis();
-  } else if (appState.currentGame === 'zzz') {
+  } else if (isCardGridGame(appState.currentGame)) {
     renderCardGrid();
   }
   closeCharacterDetail();
@@ -891,7 +923,7 @@ function deleteCharacterFromDetail() {
   if (!confirm('"' + (_detailChar && (_detailChar.nameKo || _detailChar.name) || _detailCharId) + '" 캐릭터를 삭제하시겠습니까?')) return;
   var id = _detailCharId;
   appState.characters = appState.characters.filter(function(c) { return c.id !== id; });
-  saveCharactersToLocalStorage('zzz');
+  saveCharactersToLocalStorage(appState.currentGame);
   closeCharacterDetail();
   renderCardGrid();
 }
@@ -1076,7 +1108,7 @@ function saveCharacterEdit() {
   };
 
   if (_editIsCreate) {
-    var newChar = Object.assign({ id: _editDraft.id, gameId: 'zzz', basePerformance: null }, updates);
+    var newChar = Object.assign({ id: _editDraft.id, gameId: appState.currentGame, basePerformance: null }, updates);
     appState.characters.push(newChar);
   } else {
     for (var si = 0; si < appState.characters.length; si++) {
@@ -1088,7 +1120,7 @@ function saveCharacterEdit() {
   }
   _charEdits = {};
   _charAdds  = [];
-  saveCharactersToLocalStorage('zzz');
+  saveCharactersToLocalStorage(appState.currentGame);
 
   renderCardGrid();
   closeCharacterEdit();
@@ -1159,6 +1191,197 @@ function renderRoster() {
 
     rosterList.appendChild(div);
   }
+}
+
+// gachaGuide는 표시 전용이다 — 여기서는 아무것도 계산하지 않고, 계정 상태와도
+// 비교하지 않는다(보유 여부/파티 중복/투자선 계산은 이후 evaluationEngine 단계).
+// meta.gachaGuide가 없으면 빈 문자열을 반환해 기존 화면과 완전히 동일하게 둔다.
+function renderGachaGuideSection(meta) {
+  var guide = meta.gachaGuide;
+  if (!guide) return '';
+
+  var GG_ROLE_LABEL = {
+    support: '지원', harmony: '화합', debuffer: '디버퍼', healer: '힐러', tank: '탱커',
+    attack: '강공', stun: '격파', anomaly: '이상', defense: '방어', rupture: '명파'
+  };
+  function ggRoleLabel(r) { return GG_ROLE_LABEL[r] || r; }
+
+  function ggCharName(id) {
+    for (var i = 0; i < appState.characters.length; i++) {
+      if (appState.characters[i].id === id) {
+        return appState.characters[i].nameKo || appState.characters[i].name || id;
+      }
+    }
+    return id;
+  }
+  function ggCharNames(ids) {
+    if (!ids || ids.length === 0) return '';
+    var names = [];
+    for (var i = 0; i < ids.length; i++) names.push(ggCharName(ids[i]));
+    return names.join(', ');
+  }
+
+  var GG_REQ_TYPE_LABEL = { all: '전원 필요', one_of: '택 1', role: '역할 조건' };
+
+  var html = '';
+  html += '<div class="gg-heading">📖 가챠 가이드</div>';
+
+  // 1. 캐릭터 특징
+  var keyFeatures = guide.keyFeatures || [];
+  if (keyFeatures.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">캐릭터 특징</div>';
+    html += '<div class="gg-feature-grid">';
+    for (var i = 0; i < keyFeatures.length; i++) {
+      var f = keyFeatures[i];
+      if (!f) continue;
+      html += '<div class="gg-feature-card">';
+      html += '<div class="gg-feature-title">' + (f.title || '') + '</div>';
+      html += '<div class="gg-feature-desc">' + (f.description || '') + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // 2. 파티 구성 조건 — 시스템 작동 조건. 고점 추천 파티가 아님을 명시.
+  var partyReq = guide.partyRequirements || [];
+  if (partyReq.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">파티 구성 조건</div>';
+    html += '<div class="gg-hint">스킬이 정상 작동하기 위한 시스템 조건입니다 — 고점 추천 조합이 아닙니다.</div>';
+    for (var i = 0; i < partyReq.length; i++) {
+      var r = partyReq[i];
+      if (!r) continue;
+      html += '<div class="gg-req-row">';
+      html += '<span class="badge">' + (GG_REQ_TYPE_LABEL[r.type] || r.type || '조건') + '</span>';
+      var reqNames = ggCharNames(r.characterIds);
+      var reqRoles = (r.roles || []).map(ggRoleLabel).join(', ');
+      if (reqNames) html += '<span class="gg-req-targets">' + reqNames + '</span>';
+      if (reqRoles) html += '<span class="gg-req-targets">' + reqRoles + '</span>';
+      if (r.description) html += '<div class="gg-req-desc">' + r.description + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 3. 핵심 파츠 — 시스템 조건과는 별도 블록
+  var coreP = guide.corePartners || [];
+  if (coreP.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">핵심 파츠</div>';
+    for (var i = 0; i < coreP.length; i++) {
+      var p = coreP[i];
+      if (!p) continue;
+      html += '<div class="gg-partner-row">';
+      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
+      if (p.description) html += '<div class="gg-partner-desc">' + p.description + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 4. 대체 및 범용 파츠
+  var altP = guide.alternativePartners || [];
+  if (altP.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">대체 및 범용 파츠</div>';
+    for (var i = 0; i < altP.length; i++) {
+      var ap = altP[i];
+      if (!ap) continue;
+      var apRoles = (ap.roles || []).map(ggRoleLabel).join(', ');
+      html += '<div class="gg-partner-row">';
+      html += '<div class="gg-partner-names">' + (ggCharNames(ap.characterIds) || '(대상 없음)') + (apRoles ? ' <span class="gg-partner-role">' + apRoles + '</span>' : '') + '</div>';
+      if (ap.description) html += '<div class="gg-partner-desc">' + ap.description + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 5. 대체 장비 — 비어있으면 섹션 숨김
+  var altEq = guide.alternativeEquipment || [];
+  if (altEq.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">대체 장비</div>';
+    for (var i = 0; i < altEq.length; i++) {
+      var e = altEq[i];
+      if (!e) continue;
+      html += '<div class="gg-partner-row">';
+      html += '<div class="gg-partner-names">' + (e.name || '') + '</div>';
+      if (e.description) html += '<div class="gg-partner-desc">' + e.description + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 6. 이런 계정에 추천 — 계정과 실제 비교하지 않은 일반 조건, 체크리스트로 표시
+  var recFor = guide.recommendedFor || [];
+  if (recFor.length > 0) {
+    html += '<div class="result-block">';
+    html += '<div class="result-label">이런 계정에 추천</div>';
+    html += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다 — 자신의 상황과 비교해보세요.</div>';
+    html += '<ul class="gg-checklist">';
+    for (var i = 0; i < recFor.length; i++) html += '<li>' + recFor[i] + '</li>';
+    html += '</ul>';
+    html += '</div>';
+  }
+
+  // 7. 이런 경우에는 다시 생각 — 경고/재고 영역으로 구분
+  var reconsider = guide.reconsiderIf || [];
+  if (reconsider.length > 0) {
+    html += '<div class="result-block gg-warn-block">';
+    html += '<div class="result-label">⚠️ 이런 경우에는 다시 생각</div>';
+    html += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다.</div>';
+    html += '<ul class="gg-checklist gg-checklist-warn">';
+    for (var i = 0; i < reconsider.length; i++) html += '<li>' + reconsider[i] + '</li>';
+    html += '</ul>';
+    html += '</div>';
+  }
+
+  // 8. GOOD / BAD — 새 데이터 없이 기존 pullReasons/skipReasons 재사용.
+  // 가이드가 있는 캐릭터는 여기서만 렌더링하고, renderResults 본문의 기존 두 이유
+  // 블록은 hasGuide가 true일 때 건너뛰어 중복 표시를 막는다(아래 renderResults 참고).
+  var pullReasons = meta.pullReasons || [];
+  var skipReasons = meta.skipReasons || [];
+  if (pullReasons.length > 0 || skipReasons.length > 0) {
+    html += '<div class="two-col-grid">';
+    html += '<div class="result-block">';
+    html += '<div class="result-label">👍 뽑아야 할 이유</div>';
+    html += '<ul class="reason-list">';
+    for (var i = 0; i < pullReasons.length; i++) html += '<li>' + pullReasons[i] + '</li>';
+    html += '</ul>';
+    html += '</div>';
+    html += '<div class="result-block">';
+    html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
+    html += '<ul class="reason-list reason-skip">';
+    for (var i = 0; i < skipReasons.length; i++) html += '<li>' + skipReasons[i] + '</li>';
+    html += '</ul>';
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // 9. 출처 — 없으면 섹션 숨김. 공식 자료/커뮤니티 참고 자료 구분은 sources[].name
+  // 텍스트에 이미 반영되어 있으므로(예: "(공식 자료)"/"(참고 가이드 평가)") 그대로 노출.
+  var sources = meta.sources || [];
+  if (sources.length > 0) {
+    html += '<details class="result-block gg-sources"><summary class="result-label">출처</summary>';
+    html += '<ul class="gg-source-list">';
+    for (var i = 0; i < sources.length; i++) {
+      var s = sources[i];
+      if (!s) continue;
+      html += '<li>';
+      if (s.url) {
+        html += '<a href="' + escAttr(s.url) + '" target="_blank" rel="noopener noreferrer">' + (s.name || s.url) + '</a>';
+      } else {
+        html += (s.name || '');
+      }
+      html += '</li>';
+    }
+    html += '</ul>';
+    html += '</details>';
+  }
+
+  return html;
 }
 
 function renderResults(result) {
@@ -1233,6 +1456,11 @@ function renderResults(result) {
   }
   html += '</div>';
 
+  // 가챠 가이드 — meta.gachaGuide가 있는 캐릭터에서만 표시(없으면 빈 문자열이라
+  // 기존 화면과 완전히 동일). 최상단 추천 결과 다음, 세부 점수 카드 이전에 배치.
+  var hasGuide = !!meta.gachaGuide;
+  html += renderGachaGuideSection(meta);
+
   // KPI 타일 그리드: 메타성능 / 계정체급 / 미래가치 / 대체가능성 / 불확실성 / FOMO
   var confClass = meta.confidence >= 0.80 ? 'confidence-high'
                 : meta.confidence >= 0.60 ? 'confidence-mid'
@@ -1279,26 +1507,30 @@ function renderResults(result) {
   html += '</div>';
 
   // Two-Col: 뽑아야 할 이유 / 뽑지 말아야 할 이유
-  html += '<div class="two-col-grid">';
-  html += '<div class="result-block">';
-  html += '<div class="result-label">👍 뽑아야 할 이유</div>';
-  html += '<ul class="reason-list">';
-  var pullReasons = meta.pullReasons || [];
-  for (var j = 0; j < pullReasons.length; j++) {
-    html += '<li>' + pullReasons[j] + '</li>';
+  // gachaGuide가 있는 캐릭터는 이 내용을 가이드 섹션의 "GOOD/BAD"에서 이미
+  // 표시했으므로, 여기서는 gachaGuide가 없을 때만 렌더링해 중복을 막는다.
+  if (!hasGuide) {
+    html += '<div class="two-col-grid">';
+    html += '<div class="result-block">';
+    html += '<div class="result-label">👍 뽑아야 할 이유</div>';
+    html += '<ul class="reason-list">';
+    var pullReasons = meta.pullReasons || [];
+    for (var j = 0; j < pullReasons.length; j++) {
+      html += '<li>' + pullReasons[j] + '</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+    html += '<div class="result-block">';
+    html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
+    html += '<ul class="reason-list reason-skip">';
+    var skipReasons = meta.skipReasons || [];
+    for (var k2 = 0; k2 < skipReasons.length; k2++) {
+      html += '<li>' + skipReasons[k2] + '</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+    html += '</div>';
   }
-  html += '</ul>';
-  html += '</div>';
-  html += '<div class="result-block">';
-  html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
-  html += '<ul class="reason-list reason-skip">';
-  var skipReasons = meta.skipReasons || [];
-  for (var k2 = 0; k2 < skipReasons.length; k2++) {
-    html += '<li>' + skipReasons[k2] + '</li>';
-  }
-  html += '</ul>';
-  html += '</div>';
-  html += '</div>';
 
   // Two-Col: 커뮤니티 투자 분석 / 향후 시너지 캐릭터
   html += '<div class="two-col-grid">';
@@ -1416,6 +1648,7 @@ function onGameChange(gameId) {
     document.getElementById("analyzeBtn").disabled = true;
     document.getElementById("metaUpdateBtn").disabled = true;
     document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
+    document.getElementById("cardSyncBtn").disabled = true;
     renderPlaceholder("게임을 선택해주세요.");
     return;
   }
@@ -1431,6 +1664,7 @@ function onGameChange(gameId) {
     document.getElementById("analyzeBtn").disabled = true;
     document.getElementById("metaUpdateBtn").disabled = true;
     document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
+    document.getElementById("cardSyncBtn").disabled = true;
     renderPlaceholder("이 게임은 가챠 분석 데이터가 없습니다.\n보유 재화 탭에서 재화를 관리할 수 있습니다.");
     return;
   }
@@ -1441,7 +1675,7 @@ function onCharacterChange(characterId) {
   appState.selectedCharacterId = characterId || null;
   if (appState.selectedCharacterId) {
     runAnalysis();
-  } else if (appState.currentGame === 'zzz') {
+  } else if (isCardGridGame(appState.currentGame)) {
     renderCardGrid();
   } else {
     renderPlaceholder("캐릭터를 선택해주세요.");
@@ -1578,6 +1812,58 @@ function runClaudeCodeMetaUpdate() {
   })
   .finally(function() {
     btn.disabled = false;
+    setTimeout(function() {
+      if (!btn.disabled) btn.textContent = originalLabel;
+    }, 2000);
+  });
+}
+
+// "카드 데이터 갱신" — 서버가 외부 소스에서 신규 캐릭터/이미지/아이콘/출시일을
+// 자동 수집·저장하면, 프론트는 게임 데이터를 다시 불러와 카드를 재정렬해 보여준다.
+function runCardSync() {
+  var gameId = appState.currentGame;
+  if (!gameId || CARD_SYNC_GAMES.indexOf(gameId) === -1) return;
+
+  var btn = document.getElementById('cardSyncBtn');
+  if (btn.disabled) return;
+  var originalLabel = btn.textContent;
+  btn.disabled    = true;
+  btn.textContent = '자료 수집 중...';
+
+  fetch('http://localhost:3001/api/sync-characters', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ gameId: gameId })
+  })
+  .then(function(res) {
+    return res.json().then(function(data) { return { status: res.status, data: data }; });
+  })
+  .then(function(result) {
+    var data = result.data;
+    if (!data.success || !data.report) {
+      throw new Error(data.error || '서버 오류');
+    }
+    var r = data.report;
+
+    // 파일이 갱신됐으므로 localStorage 캐릭터 캐시를 비우고 파일 기준으로 재로딩
+    try { localStorage.removeItem('pickup_manager_characters_' + gameId); } catch (e) {}
+
+    return setGame(gameId).then(function() {
+      btn.textContent = '갱신 완료';
+      alert('카드 데이터 갱신 완료\n\n' +
+        '신규 캐릭터: ' + r.added.length + '명' + (r.added.length ? ' (' + r.added.join(', ') + ')' : '') + '\n' +
+        '이미지 다운로드: ' + r.imagesDownloaded + '개\n' +
+        '아이콘 다운로드: ' + r.iconsDownloaded + '개\n' +
+        '출시일 갱신: ' + r.datesUpdated + '건\n' +
+        '한글명 보충: ' + r.nameKoFilled + '건');
+    });
+  })
+  .catch(function(err) {
+    btn.textContent = originalLabel;
+    alert('카드 데이터 갱신 실패\n\n' + err.message + '\n\nNode 서버가 실행 중인지 확인하세요.\n실행 방법: node server.js');
+  })
+  .finally(function() {
+    btn.disabled = (CARD_SYNC_GAMES.indexOf(appState.currentGame) === -1);
     setTimeout(function() {
       if (!btn.disabled) btn.textContent = originalLabel;
     }, 2000);
@@ -2855,6 +3141,7 @@ function deleteGame(gameId) {
     document.getElementById('analyzeBtn').disabled = true;
     document.getElementById('metaUpdateBtn').disabled = true;
     document.getElementById('metaUpdateClaudeCodeBtn').disabled = true;
+    document.getElementById('cardSyncBtn').disabled = true;
     renderPlaceholder('게임을 선택해주세요.');
   }
 }
@@ -3308,6 +3595,7 @@ function init() {
       document.getElementById("analyzeBtn").disabled = true;
       document.getElementById("metaUpdateBtn").disabled = true;
       document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
+    document.getElementById("cardSyncBtn").disabled = true;
       renderPlaceholder("게임을 선택해주세요.");
 
       document.getElementById("addGameBtn").addEventListener("click", function() { openGameConfigModal(null); });
@@ -3367,6 +3655,9 @@ function init() {
       };
       document.getElementById("metaUpdateClaudeCodeBtn").onclick = function() {
         runClaudeCodeMetaUpdate();
+      };
+      document.getElementById("cardSyncBtn").onclick = function() {
+        runCardSync();
       };
 
       var rosterList = document.getElementById('rosterList');

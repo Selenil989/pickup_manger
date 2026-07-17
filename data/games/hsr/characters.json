@@ -10,7 +10,7 @@
     "specialElement": null,
     "image": "acheron.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-03-27",
     "isReleased": true,
     "version": ""
   },
@@ -25,7 +25,7 @@
     "specialElement": null,
     "image": "aglaea.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-02-05",
     "isReleased": true,
     "version": ""
   },
@@ -40,7 +40,7 @@
     "specialElement": null,
     "image": "anaxa.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-04-30",
     "isReleased": true,
     "version": ""
   },
@@ -55,7 +55,7 @@
     "specialElement": null,
     "image": "archer.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-07-11",
     "isReleased": true,
     "version": ""
   },
@@ -70,7 +70,7 @@
     "specialElement": null,
     "image": "argenti.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-12-06",
     "isReleased": true,
     "version": ""
   },
@@ -85,7 +85,7 @@
     "specialElement": null,
     "image": "arlan.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -100,7 +100,7 @@
     "specialElement": null,
     "image": "ashveil.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-03-25",
     "isReleased": true,
     "version": ""
   },
@@ -115,7 +115,7 @@
     "specialElement": null,
     "image": "asta.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -130,7 +130,7 @@
     "specialElement": null,
     "image": "aventurine.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-04-17",
     "isReleased": true,
     "version": ""
   },
@@ -145,7 +145,7 @@
     "specialElement": null,
     "image": "bailu.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -160,7 +160,7 @@
     "specialElement": null,
     "image": "blackswan.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-02-06",
     "isReleased": true,
     "version": ""
   },
@@ -175,7 +175,7 @@
     "specialElement": null,
     "image": "blade.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-07-19",
     "isReleased": true,
     "version": ""
   },
@@ -190,7 +190,7 @@
     "specialElement": null,
     "image": "boothill.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-05-29",
     "isReleased": true,
     "version": ""
   },
@@ -205,7 +205,7 @@
     "specialElement": null,
     "image": "bronya.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -220,7 +220,7 @@
     "specialElement": null,
     "image": "castorice.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-04-09",
     "isReleased": true,
     "version": ""
   },
@@ -235,7 +235,7 @@
     "specialElement": null,
     "image": "cerydra.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-09-02",
     "isReleased": true,
     "version": ""
   },
@@ -250,7 +250,7 @@
     "specialElement": null,
     "image": "cipher.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-06-11",
     "isReleased": true,
     "version": ""
   },
@@ -265,7 +265,7 @@
     "specialElement": null,
     "image": "clara.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -280,7 +280,7 @@
     "specialElement": null,
     "image": "cyrene.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-11-05",
     "isReleased": true,
     "version": ""
   },
@@ -295,7 +295,7 @@
     "specialElement": null,
     "image": "dahlia.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-12-17",
     "isReleased": true,
     "version": ""
   },
@@ -310,7 +310,7 @@
     "specialElement": null,
     "image": "danheng.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -325,7 +325,7 @@
     "specialElement": null,
     "image": "danhengil.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-08-30",
     "isReleased": true,
     "version": ""
   },
@@ -340,7 +340,7 @@
     "specialElement": null,
     "image": "danhengpt.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-10-15",
     "isReleased": true,
     "version": ""
   },
@@ -355,7 +355,7 @@
     "specialElement": null,
     "image": "drratio.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-01-17",
     "isReleased": true,
     "version": ""
   },
@@ -370,7 +370,7 @@
     "specialElement": null,
     "image": "evanescia.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-05-13",
     "isReleased": true,
     "version": ""
   },
@@ -385,7 +385,7 @@
     "specialElement": null,
     "image": "evernight.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-09-24",
     "isReleased": true,
     "version": ""
   },
@@ -400,7 +400,7 @@
     "specialElement": null,
     "image": "feixiao.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-09-10",
     "isReleased": true,
     "version": ""
   },
@@ -415,7 +415,7 @@
     "specialElement": null,
     "image": "fugue.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-12-25",
     "isReleased": true,
     "version": ""
   },
@@ -430,7 +430,7 @@
     "specialElement": null,
     "image": "fuxuan.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-09-20",
     "isReleased": true,
     "version": ""
   },
@@ -445,7 +445,7 @@
     "specialElement": null,
     "image": "gallagher.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-03-27",
     "isReleased": true,
     "version": ""
   },
@@ -460,7 +460,7 @@
     "specialElement": null,
     "image": "gepard.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -475,7 +475,7 @@
     "specialElement": null,
     "image": "guinaifen.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-10-27",
     "isReleased": true,
     "version": ""
   },
@@ -490,7 +490,7 @@
     "specialElement": null,
     "image": "hanya.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-12-06",
     "isReleased": true,
     "version": ""
   },
@@ -505,7 +505,7 @@
     "specialElement": null,
     "image": "herta.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -520,7 +520,7 @@
     "specialElement": null,
     "image": "himeko.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -535,7 +535,7 @@
     "specialElement": null,
     "image": "hook.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -550,7 +550,7 @@
     "specialElement": null,
     "image": "huohuo.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-11-15",
     "isReleased": true,
     "version": ""
   },
@@ -565,7 +565,7 @@
     "specialElement": null,
     "image": "hyacine.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-05-21",
     "isReleased": true,
     "version": ""
   },
@@ -580,7 +580,7 @@
     "specialElement": null,
     "image": "hysilens.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-08-13",
     "isReleased": true,
     "version": ""
   },
@@ -595,7 +595,7 @@
     "specialElement": null,
     "image": "jade.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-07-10",
     "isReleased": true,
     "version": ""
   },
@@ -610,7 +610,7 @@
     "specialElement": null,
     "image": "jiaoqiu.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-08-21",
     "isReleased": true,
     "version": ""
   },
@@ -625,7 +625,7 @@
     "specialElement": null,
     "image": "jingliu.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-10-11",
     "isReleased": true,
     "version": ""
   },
@@ -640,7 +640,7 @@
     "specialElement": null,
     "image": "jingyuan.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-05-17",
     "isReleased": true,
     "version": ""
   },
@@ -655,7 +655,7 @@
     "specialElement": null,
     "image": "kafka.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-08-09",
     "isReleased": true,
     "version": ""
   },
@@ -670,7 +670,7 @@
     "specialElement": null,
     "image": "lingsha.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-10-02",
     "isReleased": true,
     "version": ""
   },
@@ -685,7 +685,7 @@
     "specialElement": null,
     "image": "luka.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-08-09",
     "isReleased": true,
     "version": ""
   },
@@ -700,7 +700,7 @@
     "specialElement": null,
     "image": "luocha.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-06-28",
     "isReleased": true,
     "version": ""
   },
@@ -715,7 +715,7 @@
     "specialElement": null,
     "image": "lynx.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-09-20",
     "isReleased": true,
     "version": ""
   },
@@ -730,7 +730,7 @@
     "specialElement": null,
     "image": "mar7th.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -745,7 +745,7 @@
     "specialElement": null,
     "image": "mar7th2.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-07-31",
     "isReleased": true,
     "version": ""
   },
@@ -760,7 +760,7 @@
     "specialElement": null,
     "image": "misha.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-02-06",
     "isReleased": true,
     "version": ""
   },
@@ -775,7 +775,7 @@
     "specialElement": null,
     "image": "mortenaxblade.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-06-01",
     "isReleased": true,
     "version": ""
   },
@@ -790,7 +790,7 @@
     "specialElement": null,
     "image": "moze.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-09-10",
     "isReleased": true,
     "version": ""
   },
@@ -805,7 +805,7 @@
     "specialElement": null,
     "image": "mydei.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-03-19",
     "isReleased": true,
     "version": ""
   },
@@ -820,7 +820,7 @@
     "specialElement": null,
     "image": "natasha.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -835,7 +835,7 @@
     "specialElement": null,
     "image": "pela.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -850,7 +850,7 @@
     "specialElement": null,
     "image": "phainon.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-07-02",
     "isReleased": true,
     "version": ""
   },
@@ -1015,7 +1015,7 @@
     "specialElement": null,
     "image": "qingque.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1030,7 +1030,7 @@
     "specialElement": null,
     "image": "rappa.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-10-23",
     "isReleased": true,
     "version": ""
   },
@@ -1045,7 +1045,7 @@
     "specialElement": null,
     "image": "robin.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-05-08",
     "isReleased": true,
     "version": ""
   },
@@ -1060,7 +1060,7 @@
     "specialElement": null,
     "image": "ruanmei.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-12-27",
     "isReleased": true,
     "version": ""
   },
@@ -1075,7 +1075,7 @@
     "specialElement": null,
     "image": "saber.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-07-11",
     "isReleased": true,
     "version": ""
   },
@@ -1090,7 +1090,7 @@
     "specialElement": null,
     "image": "sam.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-06-19",
     "isReleased": true,
     "version": ""
   },
@@ -1105,7 +1105,7 @@
     "specialElement": null,
     "image": "sampo.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1120,7 +1120,7 @@
     "specialElement": null,
     "image": "seele.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1135,7 +1135,7 @@
     "specialElement": null,
     "image": "serval.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1150,7 +1150,7 @@
     "specialElement": null,
     "image": "silverwolf.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-06-07",
     "isReleased": true,
     "version": ""
   },
@@ -1165,7 +1165,7 @@
     "specialElement": null,
     "image": "silverwolflv999.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-04-22",
     "isReleased": true,
     "version": ""
   },
@@ -1180,7 +1180,7 @@
     "specialElement": null,
     "image": "sparkle.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-02-29",
     "isReleased": true,
     "version": ""
   },
@@ -1195,7 +1195,7 @@
     "specialElement": null,
     "image": "Sparxie.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-03-03",
     "isReleased": true,
     "version": ""
   },
@@ -1210,7 +1210,7 @@
     "specialElement": null,
     "image": "sunday.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-12-04",
     "isReleased": true,
     "version": ""
   },
@@ -1225,7 +1225,7 @@
     "specialElement": null,
     "image": "sushang.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1240,7 +1240,7 @@
     "specialElement": null,
     "image": "theherta.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-01-15",
     "isReleased": true,
     "version": ""
   },
@@ -1255,7 +1255,7 @@
     "specialElement": null,
     "image": "tingyun.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1270,7 +1270,7 @@
     "specialElement": null,
     "image": "topaz.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-10-27",
     "isReleased": true,
     "version": ""
   },
@@ -1285,7 +1285,7 @@
     "specialElement": null,
     "image": "tribbie.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2025-02-26",
     "isReleased": true,
     "version": ""
   },
@@ -1300,7 +1300,7 @@
     "specialElement": null,
     "image": "welt.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1315,7 +1315,7 @@
     "specialElement": null,
     "image": "xueyi.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-12-27",
     "isReleased": true,
     "version": ""
   },
@@ -1330,7 +1330,7 @@
     "specialElement": null,
     "image": "yanqing.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-04-26",
     "isReleased": true,
     "version": ""
   },
@@ -1345,7 +1345,7 @@
     "specialElement": null,
     "image": "yaoguang.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2026-02-13",
     "isReleased": true,
     "version": ""
   },
@@ -1360,7 +1360,7 @@
     "specialElement": null,
     "image": "yukong.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2023-06-28",
     "isReleased": true,
     "version": ""
   },
@@ -1375,7 +1375,7 @@
     "specialElement": null,
     "image": "yunli.png",
     "basePerformance": 5,
-    "releaseDate": null,
+    "releaseDate": "2024-07-31",
     "isReleased": true,
     "version": ""
   },
@@ -1388,10 +1388,40 @@
     "role": "erudition",
     "element": "fire",
     "specialElement": null,
-    "image": null,
+    "image": "himekonova.png",
     "basePerformance": null,
     "releaseDate": "2026-07-15",
     "isReleased": true,
+    "version": ""
+  },
+  {
+    "id": "tohsakarin",
+    "name": "Rin Tohsaka",
+    "nameKo": "토오사카 린",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "erudition",
+    "element": "quantum",
+    "specialElement": null,
+    "image": "tohsakarin.png",
+    "basePerformance": null,
+    "releaseDate": "2026-07-24",
+    "isReleased": false,
+    "version": ""
+  },
+  {
+    "id": "gilgamesh",
+    "name": "Gilgamesh",
+    "nameKo": "길가메시",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "destruction",
+    "element": "thunder",
+    "specialElement": null,
+    "image": "gilgamesh.png",
+    "basePerformance": null,
+    "releaseDate": "2026-07-24",
+    "isReleased": false,
     "version": ""
   }
 ]

@@ -1109,6 +1109,573 @@ app.post('/api/meta-update-claude-code', async (req, res) => {
   }
 });
 
+// ── /api/sync-characters (게임별 카드 데이터 자동 동기화) ─────────────────────
+// "카드 데이터 갱신" 버튼용. 외부 공개 소스에서 다음을 자동 수행한다:
+//   1) 업스트림 데이터 저장소 대조 → 신규 캐릭터 추가 (기존 항목의 수동 필드 보존)
+//   2) 누락된 캐릭터 이미지 + 운명/속성 아이콘 다운로드
+//   3) 위키에서 출시일 수집 → releaseDate 갱신 (카드 출시순 정렬의 근거)
+// 로컬에만 있는 캐릭터는 절대 삭제하지 않는다. 현재 hsr만 지원하며,
+// 다른 게임은 SYNC_HANDLERS에 게임별 함수를 등록해 확장한다.
+
+let syncJobRunning = false;
+
+async function syncFetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + url);
+  return res.json();
+}
+
+async function syncDownload(url, destPath) {
+  // 위키 계열 호스트의 일시적 속도 제한에 대비해 짧은 백오프로 재시도한다
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        fs.writeFileSync(destPath, Buffer.from(await res.arrayBuffer()));
+        return true;
+      }
+    } catch (e) { /* 아래 대기 후 재시도 */ }
+    await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+  }
+  return false;
+}
+
+// characters.json 원자적 저장 (임시 파일 → 재파싱 검증 → rename)
+function atomicWriteCharacters(gameId, arr) {
+  const filePath = path.join(__dirname, 'data', 'games', gameId, 'characters.json');
+  const serialized = JSON.stringify(arr, null, 2) + '\n';
+  const tmpPath = filePath + '.tmp-' + process.pid + '-' + Date.now();
+  try {
+    JSON.parse(serialized);
+    fs.writeFileSync(tmpPath, serialized, 'utf8');
+    JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
+    fs.renameSync(tmpPath, filePath);
+    return { ok: true };
+  } catch (err) {
+    try { fs.unlinkSync(tmpPath); } catch (e) { /* 무시 */ }
+    return { ok: false, reason: err.message };
+  }
+}
+
+const HSR_SYNC = {
+  BASE: 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master',
+  WIKI_API: 'https://honkai-star-rail.fandom.com/api.php',
+  PATH_MAP: {
+    Warrior: 'destruction', Rogue: 'hunt', Mage: 'erudition', Shaman: 'harmony',
+    Warlock: 'nihility', Knight: 'preservation', Priest: 'abundance',
+    Memory: 'remembrance', Elation: 'elation'
+  },
+  ROLE_ICONS: {
+    destruction: ['Destruction'], hunt: ['Hunt'], erudition: ['Erudition'],
+    harmony: ['Harmony'], nihility: ['Nihility'], preservation: ['Preservation'],
+    abundance: ['Abundance'], remembrance: ['Remembrance'], elation: ['Elation']
+  },
+  ELEMENT_ICONS: {
+    fire: ['Fire'], ice: ['Ice'], imaginary: ['Imaginary'],
+    thunder: ['Thunder', 'Lightning'], physical: ['Physical'],
+    quantum: ['Quantum'], wind: ['Wind']
+  }
+};
+
+function hsrNormName(s) {
+  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Fandom 위키 Character/List에서 플레이어블 전원의 release_date 맵을 수집
+async function fetchHsrWikiDates() {
+  const listRes = await fetch(HSR_SYNC.WIKI_API + '?action=parse&page=Character/List&format=json&prop=text');
+  if (!listRes.ok) throw new Error('위키 목록 조회 실패 HTTP ' + listRes.status);
+  const listJson = await listRes.json();
+  const html = listJson.parse.text['*'];
+  const firstTable = html.indexOf('article-table sortable');
+  const secondTable = html.indexOf('article-table sortable', firstTable + 10);
+  const tableHtml = html.slice(firstTable, secondTable > firstTable ? secondTable : undefined);
+
+  const rows = tableHtml.split('<tr>').slice(2);
+  const titles = [];
+  for (const row of rows) {
+    const m = row.match(/<a href="\/wiki\/[^"]+" title="([^"]+)"/);
+    if (m && titles.indexOf(m[1]) === -1) titles.push(m[1]);
+  }
+
+  const dates = {};
+  for (let i = 0; i < titles.length; i += 50) {
+    const batch = titles.slice(i, i + 50);
+    const url = HSR_SYNC.WIKI_API + '?action=query&prop=revisions&rvprop=content&rvslots=main&format=json&titles=' + encodeURIComponent(batch.join('|'));
+    const j = await syncFetchJson(url);
+    const pages = (j.query && j.query.pages) || {};
+    for (const pid of Object.keys(pages)) {
+      const p = pages[pid];
+      const content = p.revisions && p.revisions[0] && p.revisions[0].slots && p.revisions[0].slots.main['*'];
+      if (!content) continue;
+      const m = content.match(/\|\s*release_date\s*=\s*(\d{4}-\d{2}-\d{2})/);
+      if (m) dates[hsrNormName(p.title)] = m[1];
+    }
+  }
+  return dates;
+}
+
+async function syncHsrCharacters() {
+  const gameId = 'hsr';
+  const imgDir = path.join(__dirname, 'assets', 'images', gameId);
+  const report = { added: [], imagesDownloaded: 0, iconsDownloaded: 0, datesUpdated: 0, nameKoFilled: 0 };
+
+  const [krIndex, wikiDates] = await Promise.all([
+    syncFetchJson(HSR_SYNC.BASE + '/index_min/kr/characters.json'),
+    fetchHsrWikiDates()
+  ]);
+
+  const arr = loadCharactersFile(gameId);
+  const localIds = new Set(arr.map((c) => c.id));
+  const today = new Date().toISOString().slice(0, 10);
+
+  // 1) 업스트림 신규 캐릭터 추가 (플레이어 아바타 {NICKNAME} 계열은 tag로 이미 로컬 존재)
+  for (const upId of Object.keys(krIndex)) {
+    const up = krIndex[upId];
+    if (!up.tag || localIds.has(up.tag)) continue;
+    const imgOk = await syncDownload(HSR_SYNC.BASE + '/' + up.preview, path.join(imgDir, up.tag + '.png'));
+    if (imgOk) report.imagesDownloaded++;
+    const wikiDate = wikiDates[hsrNormName(up.name)] || null;
+    arr.push({
+      id: up.tag,
+      name: up.name || up.tag,
+      nameKo: up.name || '',
+      gameId: gameId,
+      rarity: up.rarity,
+      role: HSR_SYNC.PATH_MAP[up.path] || (up.path || '').toLowerCase(),
+      element: (up.element || '').toLowerCase(),
+      specialElement: null,
+      image: imgOk ? up.tag + '.png' : null,
+      basePerformance: null,
+      releaseDate: wikiDate,
+      isReleased: wikiDate ? wikiDate <= today : false,
+      version: ''
+    });
+    report.added.push(up.tag);
+    localIds.add(up.tag);
+  }
+
+  // 2) 기존 항목 보강: 출시일 / 비어있는 한글명 / 누락 이미지 (수동 필드는 보존)
+  const upByTag = {};
+  for (const upId of Object.keys(krIndex)) {
+    if (krIndex[upId].tag) upByTag[krIndex[upId].tag] = krIndex[upId];
+  }
+  for (const c of arr) {
+    if ((c.name || '').indexOf('{NICKNAME}') !== -1) continue;
+    // 위키가 원본과 같은 페이지를 쓰는 수렵 Mar.7th는 별도 확정일 유지
+    const wikiDate = c.id === 'mar7th2' ? '2024-07-31' : wikiDates[hsrNormName(c.name)];
+    if (wikiDate && c.releaseDate !== wikiDate) { c.releaseDate = wikiDate; report.datesUpdated++; }
+    if (c.releaseDate) c.isReleased = c.releaseDate <= today;
+
+    const up = upByTag[c.id];
+    if (up) {
+      if (!c.nameKo && up.name) { c.nameKo = up.name; report.nameKoFilled++; }
+      const imgPath = c.image ? path.join(imgDir, c.image) : null;
+      if ((!c.image || !fs.existsSync(imgPath)) && up.preview) {
+        const ok = await syncDownload(HSR_SYNC.BASE + '/' + up.preview, path.join(imgDir, c.id + '.png'));
+        if (ok) { c.image = c.id + '.png'; report.imagesDownloaded++; }
+      }
+    }
+  }
+
+  // 3) 누락된 운명/속성 아이콘 다운로드
+  for (const [role, cands] of Object.entries(HSR_SYNC.ROLE_ICONS)) {
+    const dest = path.join(imgDir, 'role_' + role + '.png');
+    if (fs.existsSync(dest)) continue;
+    for (const cand of cands) {
+      if (await syncDownload(HSR_SYNC.BASE + '/icon/path/' + cand + '.png', dest)) { report.iconsDownloaded++; break; }
+    }
+  }
+  for (const [el, cands] of Object.entries(HSR_SYNC.ELEMENT_ICONS)) {
+    const dest = path.join(imgDir, 'element_' + el + '.png');
+    if (fs.existsSync(dest)) continue;
+    for (const cand of cands) {
+      if (await syncDownload(HSR_SYNC.BASE + '/icon/element/' + cand + '.png', dest)) { report.iconsDownloaded++; break; }
+    }
+  }
+
+  const saveResult = atomicWriteCharacters(gameId, arr);
+  if (!saveResult.ok) throw new Error('characters.json 저장 실패: ' + saveResult.reason);
+
+  report.total = arr.length;
+  return report;
+}
+
+// tools/import 파이프라인과 동일한 공용 헬퍼 재사용 (BigInt-safe 파서 등)
+const importCommon = require('./tools/import/import_common');
+
+function syncSleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+// MediaWiki File 페이지에서 실제 이미지 URL을 얻는다 (명조/엔드필드 아이콘용).
+// wiki.gg 계열은 연속 요청에 속도 제한을 걸어 일시 오류가 나므로 재시도한다.
+async function wikiFileUrl(api, title) {
+  const url = api + '?action=query&titles=' + encodeURIComponent('File:' + title) + '&prop=imageinfo&iiprop=url&format=json';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const j = await res.json();
+      const page = Object.values(j.query.pages)[0];
+      return page && page.imageinfo ? page.imageinfo[0].url : null;
+    } catch (e) {
+      await syncSleep(1500 * (attempt + 1)); // 속도 제한 완화 대기 후 재시도
+    }
+  }
+  return null;
+}
+
+// 후보 파일명 목록을 순서대로 시도해 아이콘을 내려받는다 (이미 있으면 건너뜀)
+async function downloadWikiIcons(api, candidatesMap, imgDir, prefix, report) {
+  for (const [key, cands] of Object.entries(candidatesMap)) {
+    const dest = path.join(imgDir, prefix + key + '.png');
+    if (fs.existsSync(dest)) continue;
+    for (const cand of cands) {
+      const url = await wikiFileUrl(api, cand + '.png');
+      if (url && await syncDownload(url, dest)) { report.iconsDownloaded++; break; }
+      await syncSleep(400); // 속도 제한 예방 간격
+    }
+  }
+}
+
+// ── 명조(WuWa) 동기화 ────────────────────────────────────────────────────────
+const WUWA_SYNC = {
+  DATA_BASE: 'https://raw.githubusercontent.com/Dimbreath/WutheringData/master',
+  WIKI_API: 'https://wutheringwaves.fandom.com/api.php',
+  ELEMENT_MAP: { 0: 'neutral', 1: 'glacio', 2: 'fusion', 3: 'electro', 4: 'aero', 5: 'spectro', 6: 'havoc' },
+  WEAPON_MAP: { 1: 'broadblade', 2: 'sword', 3: 'pistols', 4: 'gauntlets', 5: 'rectifier' },
+  ELEMENT_ICONS: { aero: ['Aero'], glacio: ['Glacio'], fusion: ['Fusion'], electro: ['Electro'], havoc: ['Havoc'], spectro: ['Spectro'] },
+  // 무기 아이콘은 카드 그리드 통일성을 위해 role_ 접두사로 저장한다
+  WEAPON_ICONS: { broadblade: ['Icon Broadblade'], sword: ['Icon Sword'], pistols: ['Icon Pistols'], gauntlets: ['Icon Gauntlets'], rectifier: ['Icon Rectifier'] }
+};
+
+function wuwaSlugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+// 로버(플레이어 아바타)는 6개 항목이 같은 표시 이름을 공유하므로 성별/속성으로 구분
+function wuwaCharacterId(nameEn, roleBody) {
+  if (/^Rover:/i.test(nameEn)) {
+    const element = nameEn.split(':')[1].trim().toLowerCase();
+    const gender = /^female/i.test(roleBody) ? 'female' : 'male';
+    return 'rover_' + element + '_' + gender;
+  }
+  return wuwaSlugify(nameEn.replace(/[·:].*$/, '').trim());
+}
+
+async function wuwaWikiPortraitUrl(nameEn) {
+  const title = /^Rover:/i.test(nameEn) ? 'Rover' : nameEn.replace(/[:]/g, '');
+  const url = WUWA_SYNC.WIKI_API + '?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&piprop=original&format=json';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const j = await res.json();
+    const page = Object.values(j.query.pages)[0];
+    return page && page.original ? page.original.source : null;
+  } catch (e) { return null; }
+}
+
+// 로컬 이미지 파일을 확장자 후보(webp/png/jpg)로 찾아 실제 존재하는 파일명을 반환
+function findLocalImage(imgDir, id) {
+  for (const ext of ['webp', 'png', 'jpg']) {
+    if (fs.existsSync(path.join(imgDir, id + '.' + ext))) return id + '.' + ext;
+  }
+  return null;
+}
+
+async function fetchWuwaWikiDates(names) {
+  // 캐릭터 영문명 → 위키 페이지 제목 (Rover 계열은 공용 'Rover' 페이지)
+  const titles = [...new Set(names.map((n) => (/^Rover:/i.test(n) ? 'Rover' : n.replace(/[:]/g, ''))))];
+  const dates = {};
+  for (let i = 0; i < titles.length; i += 50) {
+    const batch = titles.slice(i, i + 50);
+    const url = WUWA_SYNC.WIKI_API + '?action=query&prop=revisions&rvprop=content&rvslots=main&format=json&titles=' + encodeURIComponent(batch.join('|'));
+    const j = await syncFetchJson(url);
+    const pages = (j.query && j.query.pages) || {};
+    for (const pid of Object.keys(pages)) {
+      const p = pages[pid];
+      const content = p.revisions && p.revisions[0] && p.revisions[0].slots && p.revisions[0].slots.main['*'];
+      if (!content) continue;
+      const m = content.match(/\|\s*releaseDate\s*=\s*(\d{4}-\d{2}-\d{2})/);
+      if (m) dates[hsrNormName(p.title)] = m[1];
+    }
+  }
+  return dates;
+}
+
+async function syncWuwaCharacters() {
+  const gameId = 'wuwa';
+  const imgDir = path.join(__dirname, 'assets', 'images', gameId);
+  const report = { added: [], imagesDownloaded: 0, iconsDownloaded: 0, datesUpdated: 0, nameKoFilled: 0 };
+  const today = new Date().toISOString().slice(0, 10);
+
+  const [roleInfoText, koText, enText] = await Promise.all([
+    importCommon.fetchText(WUWA_SYNC.DATA_BASE + '/ConfigDB/RoleInfo.json'),
+    importCommon.fetchText(WUWA_SYNC.DATA_BASE + '/TextMap/ko/MultiText.json'),
+    importCommon.fetchText(WUWA_SYNC.DATA_BASE + '/TextMap/en/MultiText.json')
+  ]);
+  const roles = importCommon.parseJsonBigIntSafe(roleInfoText).filter((c) => c.RoleType === 1);
+  const ko = JSON.parse(koText);
+  const en = JSON.parse(enText);
+
+  const arr = loadCharactersFile(gameId);
+  const localIds = new Set(arr.map((c) => c.id));
+
+  // 1) 업스트림 신규 캐릭터 추가
+  for (const c of roles) {
+    const nameEn = en['RoleInfo_' + c.Id + '_Name'];
+    if (!nameEn) continue;
+    const id = wuwaCharacterId(nameEn, c.RoleBody) || String(c.Id);
+    if (localIds.has(id)) continue;
+
+    let image = null;
+    const imgUrl = await wuwaWikiPortraitUrl(nameEn);
+    if (imgUrl) {
+      const extM = imgUrl.match(/\.(webp|png|jpg)(?:\/|\?|$)/i);
+      const ext = extM ? extM[1].toLowerCase() : 'webp';
+      if (await syncDownload(imgUrl, path.join(imgDir, id + '.' + ext))) {
+        image = id + '.' + ext;
+        report.imagesDownloaded++;
+      }
+    }
+    arr.push({
+      id: id, name: nameEn, nameKo: ko['RoleInfo_' + c.Id + '_Name'] || null,
+      gameId: gameId, rarity: c.QualityId, role: null,
+      element: WUWA_SYNC.ELEMENT_MAP[c.ElementId] || null, specialElement: null,
+      weaponType: WUWA_SYNC.WEAPON_MAP[c.WeaponType] || null,
+      image: image, basePerformance: null, releaseDate: null, isReleased: true, version: ''
+    });
+    report.added.push(id);
+    localIds.add(id);
+  }
+
+  // 2) 기존 항목 보강: 이미지 확장자 불일치 교정 / 누락 이미지 다운로드 / 출시일
+  const wikiDates = await fetchWuwaWikiDates(arr.map((c) => c.name).filter(Boolean));
+  for (const c of arr) {
+    const currentPath = c.image ? path.join(imgDir, c.image) : null;
+    if (!c.image || !fs.existsSync(currentPath)) {
+      const found = findLocalImage(imgDir, c.id);
+      if (found) {
+        c.image = found; // 과거 import가 확장자를 .webp로 잘못 기록한 항목 교정
+      } else if (c.name) {
+        const imgUrl = await wuwaWikiPortraitUrl(c.name);
+        if (imgUrl) {
+          const extM = imgUrl.match(/\.(webp|png|jpg)(?:\/|\?|$)/i);
+          const ext = extM ? extM[1].toLowerCase() : 'webp';
+          if (await syncDownload(imgUrl, path.join(imgDir, c.id + '.' + ext))) {
+            c.image = c.id + '.' + ext;
+            report.imagesDownloaded++;
+          }
+        }
+      }
+    }
+    const wikiTitle = /^Rover:/i.test(c.name || '') ? 'Rover' : (c.name || '').replace(/[:]/g, '');
+    const d = wikiDates[hsrNormName(wikiTitle)];
+    if (d && c.releaseDate !== d) { c.releaseDate = d; report.datesUpdated++; }
+    if (c.releaseDate) c.isReleased = c.releaseDate <= today;
+  }
+
+  // 3) 속성/무기 아이콘
+  await downloadWikiIcons(WUWA_SYNC.WIKI_API, WUWA_SYNC.ELEMENT_ICONS, imgDir, 'element_', report);
+  await downloadWikiIcons(WUWA_SYNC.WIKI_API, WUWA_SYNC.WEAPON_ICONS, imgDir, 'role_', report);
+
+  const saveResult = atomicWriteCharacters(gameId, arr);
+  if (!saveResult.ok) throw new Error('characters.json 저장 실패: ' + saveResult.reason);
+  report.total = arr.length;
+  return report;
+}
+
+// ── 엔드필드 동기화 ──────────────────────────────────────────────────────────
+const EF_SYNC = {
+  WIKI_API: 'https://endfield.wiki.gg/api.php',
+  RELEASES_API: 'https://api.github.com/repos/3aKHP/EndFieldGameData/releases/latest',
+  CACHE_DIR: path.join(__dirname, 'tools', 'import', '.cache', 'endfield-tables'),
+  PROFESSION_MAP: { 0: 'guard', 2: 'defender', 4: 'support', 5: 'caster', 7: 'vanguard', 8: 'striker' },
+  CHARTYPE_MAP: { Physical: 'physical', Fire: 'fire', Natural: 'nature', Cryst: 'ice', Pulse: 'electric' },
+  ELEMENT_ICONS: { fire: ['Heat', 'Fire'], ice: ['Cryst', 'Cryo', 'Ice'], electric: ['Pulse', 'Electric'], nature: ['Nature', 'Natural'], physical: ['Physical'] },
+  ROLE_ICONS: { guard: ['Guard'], defender: ['Defender'], support: ['Support'], caster: ['Caster'], vanguard: ['Vanguard'], striker: ['Striker'] }
+};
+
+// 최신 데이터 zip을 받아 캐시를 갱신한다. 실패해도 기존 캐시로 계속 진행.
+// 주의: "latest" 릴리스에 데이터 zip이 없는 경우가 있어(예: v0.4.0은 worldview만),
+// 전체 릴리스 목록에서 tables zip을 포함한 가장 최신 릴리스를 찾는다.
+async function refreshEndfieldCache() {
+  try {
+    const releases = await (await fetch(EF_SYNC.RELEASES_API.replace(/\/latest$/, ''), { headers: { 'User-Agent': 'PickupManger-sync' } })).json();
+    let rel = null;
+    let asset = null;
+    for (const r of Array.isArray(releases) ? releases : []) {
+      const a = (r.assets || []).find((x) => /tables\.zip$/i.test(x.name));
+      if (a) { rel = r; asset = a; break; } // 릴리스 목록은 최신순
+    }
+    if (!asset) return { refreshed: false, reason: 'tables zip을 포함한 릴리스 없음' };
+
+    // 이미 같은 버전을 캐시했다면 재다운로드 생략
+    const versionMarker = path.join(EF_SYNC.CACHE_DIR, '.version');
+    try {
+      if (fs.readFileSync(versionMarker, 'utf8').trim() === rel.tag_name) {
+        return { refreshed: false, reason: '이미 최신 (' + rel.tag_name + ')' };
+      }
+    } catch (e) { /* 마커 없음 — 계속 진행 */ }
+    const tmpZip = path.join(require('os').tmpdir(), 'endfield-tables-' + Date.now() + '.zip');
+    if (!(await syncDownload(asset.browser_download_url, tmpZip))) {
+      return { refreshed: false, reason: 'zip 다운로드 실패' };
+    }
+    await new Promise((resolve, reject) => {
+      const ps = spawn('powershell', ['-NoProfile', '-NonInteractive', '-Command',
+        'Expand-Archive -LiteralPath "' + tmpZip + '" -DestinationPath "' + EF_SYNC.CACHE_DIR + '" -Force'],
+        { windowsHide: true });
+      ps.on('close', (code) => (code === 0 ? resolve() : reject(new Error('Expand-Archive 실패 code=' + code))));
+      ps.on('error', reject);
+    });
+    try { fs.unlinkSync(tmpZip); } catch (e) { /* 무시 */ }
+    try { fs.writeFileSync(path.join(EF_SYNC.CACHE_DIR, '.version'), rel.tag_name, 'utf8'); } catch (e) { /* 무시 */ }
+    return { refreshed: true, version: rel.tag_name };
+  } catch (err) {
+    return { refreshed: false, reason: err.message };
+  }
+}
+
+// Version 페이지(버전명+시작일) → 각 버전 페이지의 신규 오퍼레이터 목록으로
+// "캐릭터 → 출시일" 맵을 만든다. 어느 버전에도 없으면 런칭일로 간주한다.
+async function fetchEndfieldDates() {
+  async function pageWikitext(page) {
+    const url = EF_SYNC.WIKI_API + '?action=parse&page=' + encodeURIComponent(page) + '&format=json&prop=wikitext';
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const j = await res.json();
+        return j.error ? null : j.parse.wikitext['*'];
+      } catch (e) {
+        await syncSleep(1500 * (attempt + 1));
+      }
+    }
+    return null;
+  }
+
+  const versionText = await pageWikitext('Version');
+  const versions = [];
+  if (versionText) {
+    const cells = versionText.match(/\{\{Event list cell[\s\S]*?\}\}/g) || [];
+    for (const cell of cells) {
+      const ev = cell.match(/\|\s*event\s*=\s*([^\n|]+)/);
+      const st = cell.match(/\|\s*start\s*=\s*(\d{4}-\d{2}-\d{2})/);
+      if (ev && st) versions.push({ name: ev[1].trim(), start: st[1] });
+    }
+  }
+  versions.sort((a, b) => a.start.localeCompare(b.start));
+  const launchDate = versions.length ? versions[0].start : null;
+
+  const dateByNorm = {};
+  // 런칭 버전(첫 번째)은 전 캐릭터가 기본값이므로 이후 버전들만 조회
+  for (const v of versions.slice(1)) {
+    const wt = await pageWikitext(v.name);
+    if (!wt) continue;
+    const opSection = wt.split(/===\s*Operators?\s*===/i)[1];
+    if (!opSection) continue;
+    const opBlock = opSection.split(/\n==/)[0];
+    for (const m of opBlock.matchAll(/^\*\s*\[\[([^\]|]+)/gm)) {
+      dateByNorm[hsrNormName(m[1])] = v.start;
+    }
+  }
+  return { dateByNorm, launchDate };
+}
+
+async function syncEndfieldCharacters() {
+  const gameId = 'endfield';
+  const imgDir = path.join(__dirname, 'assets', 'images', gameId);
+  const report = { added: [], imagesDownloaded: 0, iconsDownloaded: 0, datesUpdated: 0, nameKoFilled: 0 };
+  const today = new Date().toISOString().slice(0, 10);
+
+  const cacheStatus = await refreshEndfieldCache();
+  console.log('[카드 동기화] endfield 데이터 캐시:', cacheStatus.refreshed ? ('갱신됨 ' + cacheStatus.version) : ('기존 캐시 사용 (' + cacheStatus.reason + ')'));
+
+  const tablePath = path.join(EF_SYNC.CACHE_DIR, 'tables', 'CharacterTable.json');
+  if (!fs.existsSync(tablePath)) throw new Error('엔드필드 데이터 캐시가 없습니다 (zip 다운로드도 실패).');
+  const charTable = importCommon.parseJsonBigIntSafe(fs.readFileSync(tablePath, 'utf8'));
+  const kr = importCommon.parseJsonBigIntSafe(fs.readFileSync(path.join(EF_SYNC.CACHE_DIR, 'i18n', 'KR.json'), 'utf8'));
+
+  const arr = loadCharactersFile(gameId);
+  const localIds = new Set(arr.map((c) => c.id));
+  const seenEngNames = new Set();
+
+  // 1) 신규 캐릭터 추가 (플레이어 아바타 성별 변형은 engName 기준 dedupe)
+  for (const c of Object.values(charTable)) {
+    if (!c.engName || seenEngNames.has(c.engName)) continue;
+    seenEngNames.add(c.engName);
+    const id = wuwaSlugify(c.engName);
+    if (localIds.has(id)) continue;
+
+    let image = null;
+    const iconUrl = await wikiFileUrl(EF_SYNC.WIKI_API, c.engName.replace(/\s+/g, '_') + '_icon.png');
+    if (iconUrl && await syncDownload(iconUrl, path.join(imgDir, id + '.png'))) {
+      image = id + '.png';
+      report.imagesDownloaded++;
+    }
+    arr.push({
+      id: id, name: c.engName, nameKo: kr[c.name && c.name.id] || null,
+      gameId: gameId, rarity: c.rarity,
+      role: EF_SYNC.PROFESSION_MAP[c.profession] || null,
+      element: EF_SYNC.CHARTYPE_MAP[c.charTypeId] || null,
+      specialElement: null, image: image, basePerformance: null,
+      releaseDate: null, isReleased: true, version: ''
+    });
+    report.added.push(id);
+    localIds.add(id);
+  }
+
+  // 2) 출시일: 버전 페이지 역산.
+  // 명시적 버전 매칭만 기존 날짜를 덮어쓸 수 있고, 런칭일 폴백은 날짜가 아예
+  // 없을 때만 채운다 — 버전 페이지 조회가 일시 실패해도 이미 확보한 정확한
+  // 날짜가 런칭일로 되돌아가는 일이 없도록 한다.
+  const { dateByNorm, launchDate } = await fetchEndfieldDates();
+  for (const c of arr) {
+    const explicit = dateByNorm[hsrNormName(c.name)];
+    const d = explicit || (!c.releaseDate ? launchDate : null);
+    if (d && c.releaseDate !== d) { c.releaseDate = d; report.datesUpdated++; }
+    if (c.releaseDate) c.isReleased = c.releaseDate <= today;
+    // 비어있는 한글명 보충
+    if (!c.nameKo) {
+      const up = Object.values(charTable).find((u) => u.engName && wuwaSlugify(u.engName) === c.id);
+      if (up && kr[up.name && up.name.id]) { c.nameKo = kr[up.name.id]; report.nameKoFilled++; }
+    }
+  }
+
+  // 3) 속성/직업 아이콘
+  await downloadWikiIcons(EF_SYNC.WIKI_API, EF_SYNC.ELEMENT_ICONS, imgDir, 'element_', report);
+  await downloadWikiIcons(EF_SYNC.WIKI_API, EF_SYNC.ROLE_ICONS, imgDir, 'role_', report);
+
+  const saveResult = atomicWriteCharacters(gameId, arr);
+  if (!saveResult.ok) throw new Error('characters.json 저장 실패: ' + saveResult.reason);
+  report.total = arr.length;
+  return report;
+}
+
+const SYNC_HANDLERS = { hsr: syncHsrCharacters, wuwa: syncWuwaCharacters, endfield: syncEndfieldCharacters };
+
+app.post('/api/sync-characters', async (req, res) => {
+  const { gameId } = req.body || {};
+  if (!gameId || !SYNC_HANDLERS[gameId]) {
+    return res.status(400).json({ error: '자동 동기화를 지원하지 않는 게임입니다: ' + (gameId || '(없음)') });
+  }
+  if (syncJobRunning) {
+    return res.status(409).json({ error: '현재 다른 동기화 작업이 실행 중입니다. 완료 후 다시 시도하세요.' });
+  }
+  syncJobRunning = true;
+  try {
+    console.log('[카드 동기화] 시작 — %s', gameId);
+    const report = await SYNC_HANDLERS[gameId]();
+    console.log('[카드 동기화] 완료 — 신규 %s명 / 이미지 %s / 아이콘 %s / 출시일 %s건',
+      report.added.length, report.imagesDownloaded, report.iconsDownloaded, report.datesUpdated);
+    res.json({ success: true, report: report });
+  } catch (err) {
+    console.error('[카드 동기화 오류]', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    syncJobRunning = false;
+  }
+});
+
 // ── /api/save-roster ─────────────────────────────────────────────────────────
 
 app.post('/api/save-roster', (req, res) => {
