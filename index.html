@@ -31,18 +31,6 @@
         <!-- Analysis side content (hidden when currency tab is active) -->
         <div id="analysisSideContent" class="sidebar-side-content">
 
-          <!-- Character selection section -->
-          <section class="character-section">
-            <h2>분석 대상</h2>
-            <select id="characterSelect" aria-label="캐릭터 선택" disabled>
-              <option value="">캐릭터 선택</option>
-            </select>
-            <button id="analyzeBtn" disabled>분석하기</button>
-            <button id="metaUpdateBtn" disabled>메타 업데이트</button>
-            <button id="metaUpdateClaudeCodeBtn" disabled>Claude Code로 메타 갱신</button>
-            <button id="cardSyncBtn" disabled>카드 데이터 갱신</button>
-          </section>
-
           <!-- Owned character roster section (hidden, logic retained) -->
           <section class="roster-section" style="display:none;">
             <h2>보유 캐릭터 <span id="rosterCount" class="badge">0</span></h2>
@@ -51,6 +39,12 @@
             </div>
           </section>
 
+        </div>
+        <!-- Data update actions (moved to bottom) -->
+        <div id="analysisActions" class="sidebar-actions">
+          <button id="metaUpdateBtn" class="side-action-btn" disabled>메타 업데이트</button>
+          <button id="metaUpdateClaudeCodeBtn" class="side-action-btn" disabled>Claude Code로 메타 갱신</button>
+          <button id="cardSyncBtn" class="side-action-btn" disabled>카드 데이터 갱신</button>
         </div>
         <!-- Personal settings save/load -->
         <div class="sidebar-footer">

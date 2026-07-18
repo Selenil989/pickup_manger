@@ -62,6 +62,7 @@ var CARD_GRID_CONFIG = {
 var CARD_SYNC_GAMES = ['hsr', 'wuwa', 'endfield'];
 function isCardGridGame(gameId) { return !!CARD_GRID_CONFIG[gameId]; }
 var _cardDragging     = false;
+var _gameDragging     = false;
 var _cardHintDismissed = false;
 var _plannerCurHalf  = 'first';
 var _plannerNextHalf = 'first';
@@ -375,8 +376,6 @@ function setGame(gameId) {
         renderPlaceholder("캐릭터를 선택하고 분석하기를 누르세요.");
       }
 
-      document.getElementById("characterSelect").disabled = false;
-      document.getElementById("analyzeBtn").disabled = false;
       document.getElementById("metaUpdateBtn").disabled = (gameId !== 'zzz');
       document.getElementById("metaUpdateClaudeCodeBtn").disabled = false;
       document.getElementById("cardSyncBtn").disabled = (CARD_SYNC_GAMES.indexOf(gameId) === -1);
@@ -518,6 +517,7 @@ function renderGameSelect() {
     var btn = document.createElement('button');
     btn.className = 'game-card' + (gameId === appState.currentGame ? ' active' : '');
     btn.dataset.game = gameId;
+    btn.draggable = true;
     btn.innerHTML = iconHtml + '<span class="game-card-name">' + (config[gameId].name || gameId) + '</span>';
     list.appendChild(btn);
   }
@@ -525,6 +525,7 @@ function renderGameSelect() {
 
 function renderCharacterSelect() {
   var select = document.getElementById("characterSelect");
+  if (!select) return; // 드롭박스는 카드 클릭 방식으로 대체되어 제거됨
   select.innerHTML = '<option value="">캐릭터 선택</option>';
 
   var filtered = appState.characters.filter(function(c) {
@@ -578,9 +579,9 @@ function renderCardGrid() {
 
   if (!_cardHintDismissed) {
     html += '<div class="card-hint-bar" id="cardHintBar">' +
-      '<span class="card-hint-item"><span class="card-hint-icon">👆</span> 클릭 — 보유 토글</span>' +
+      '<span class="card-hint-item"><span class="card-hint-icon">👆</span> 클릭 — 분석 열기</span>' +
       '<span class="card-hint-sep">·</span>' +
-      '<span class="card-hint-item"><span class="card-hint-icon">✌</span> 더블클릭 — 설정</span>' +
+      '<span class="card-hint-item"><span class="card-hint-icon">✌</span> 더블클릭 — 보유 토글</span>' +
       '<span class="card-hint-sep">·</span>' +
       '<span class="card-hint-item"><span class="card-hint-icon">✥</span> 드래그 — 순서 변경</span>' +
       '<button class="card-hint-close" id="cardHintClose">✕</button>' +
@@ -672,7 +673,7 @@ function renderCardGrid() {
   var panel = document.getElementById('resultsPanel');
   panel.innerHTML = html;
 
-  // 일반 카드: 클릭=보유 토글, 더블클릭=설정창
+  // 일반 카드: 클릭=분석 열기, 더블클릭=보유 토글
   var regularCards = panel.querySelectorAll('.char-card');
   for (var j = 0; j < regularCards.length; j++) {
     (function(card) {
@@ -681,11 +682,11 @@ function renderCardGrid() {
       card.addEventListener('click', function(e) {
         if (_cardDragging) return;
         clearTimeout(clickTimer);
-        clickTimer = setTimeout(function() { toggleRosterCharacter(charId); }, 220);
+        clickTimer = setTimeout(function() { onCharacterChange(charId); }, 220);
       });
       card.addEventListener('dblclick', function(e) {
         clearTimeout(clickTimer);
-        openCharacterDetail(charId);
+        toggleRosterCharacter(charId);
       });
     })(regularCards[j]);
   }
@@ -1483,6 +1484,12 @@ function renderResults(result) {
 
   html += '<div class="results-container">';
 
+  // 상단 바: 카드 목록으로 돌아가기(좌) + 캐릭터 설정 톱니바퀴(우)
+  html += '<div class="results-topbar">'
+        + '<button class="results-back-btn" onclick="goBackToCards()">← 목록</button>'
+        + '<button class="results-gear-btn" title="캐릭터 설정" onclick="openCharacterDetail(\'' + character.id + '\')">⚙</button>'
+        + '</div>';
+
   // Verdict Hero: 최종 추천도 + 추천 행동 통합
   var inlineBadge = isOwned
     ? '<span class="verdict-inline verdict-owned">보유중</span>'
@@ -1643,10 +1650,26 @@ function renderResults(result) {
 
 function renderNoMeta(character) {
   document.getElementById("resultsPanel").innerHTML =
+    '<div class="results-container">' +
+    '<div class="results-topbar">' +
+      '<button class="results-back-btn" onclick="goBackToCards()">← 목록</button>' +
+      '<button class="results-gear-btn" title="캐릭터 설정" onclick="openCharacterDetail(\'' + character.id + '\')">⚙</button>' +
+    '</div>' +
     '<div class="results-placeholder">' +
     '<p><strong>' + (character.nameKo || character.name) + '</strong>의 메타 데이터가 아직 등록되지 않았습니다.</p>' +
     '<p class="sub-note">현재 픽업 캐릭터의 메타 분석이 완료되면 자동으로 표시됩니다.</p>' +
-    '</div>';
+    '</div></div>';
+}
+
+// 분석 화면에서 카드 목록으로 돌아가기
+function goBackToCards() {
+  appState.selectedCharacterId = null;
+  appState.evaluationResult = null;
+  if (isCardGridGame(appState.currentGame)) {
+    renderCardGrid();
+  } else {
+    renderPlaceholder("캐릭터를 선택하세요.");
+  }
 }
 
 function renderPlaceholder(message) {
@@ -1666,8 +1689,6 @@ function onGameChange(gameId) {
   if (!gameId) {
     appState.currentGame = null;
     appState.previewMeta = {};
-    document.getElementById("characterSelect").disabled = true;
-    document.getElementById("analyzeBtn").disabled = true;
     document.getElementById("metaUpdateBtn").disabled = true;
     document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
@@ -1682,8 +1703,6 @@ function onGameChange(gameId) {
     appState.banner = null;
     appState.selectedCharacterId = null;
     appState.previewMeta = {};
-    document.getElementById("characterSelect").disabled = true;
-    document.getElementById("analyzeBtn").disabled = true;
     document.getElementById("metaUpdateBtn").disabled = true;
     document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
@@ -3133,6 +3152,18 @@ function saveGameConfig(config) {
   } catch (e) {}
 }
 
+// 게임 목록 순서 재정렬 — 객체 key 삽입 순서가 곧 표시 순서라, 새 순서대로 재구성해 저장한다.
+function reorderGames(orderedIds) {
+  var config = getGameConfig();
+  var next = {};
+  for (var i = 0; i < orderedIds.length; i++) {
+    if (config[orderedIds[i]]) next[orderedIds[i]] = config[orderedIds[i]];
+  }
+  // 혹시 누락된 게임이 있으면 뒤에 보존
+  Object.keys(config).forEach(function(id) { if (!next[id]) next[id] = config[id]; });
+  saveGameConfig(next);
+}
+
 function addGame(name, id) {
   var config = getGameConfig();
   if (config[id]) return false;
@@ -3159,8 +3190,6 @@ function deleteGame(gameId) {
     appState.meta = [];
     appState.banner = null;
     appState.selectedCharacterId = null;
-    document.getElementById('characterSelect').disabled = true;
-    document.getElementById('analyzeBtn').disabled = true;
     document.getElementById('metaUpdateBtn').disabled = true;
     document.getElementById('metaUpdateClaudeCodeBtn').disabled = true;
     document.getElementById('cardSyncBtn').disabled = true;
@@ -3613,8 +3642,6 @@ function init() {
     .then(function(config) {
       appState.config = config;
       renderGameSelect();
-      document.getElementById("characterSelect").disabled = true;
-      document.getElementById("analyzeBtn").disabled = true;
       document.getElementById("metaUpdateBtn").disabled = true;
       document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
@@ -3622,7 +3649,9 @@ function init() {
 
       document.getElementById("addGameBtn").addEventListener("click", function() { openGameConfigModal(null); });
 
-      document.getElementById("gameList").addEventListener("click", function(e) {
+      var gameListEl = document.getElementById("gameList");
+      gameListEl.addEventListener("click", function(e) {
+        if (_gameDragging) return;
         var card = e.target.closest(".game-card");
         if (!card) return;
         var gameId = card.dataset.game;
@@ -3638,6 +3667,46 @@ function init() {
         } else {
           onGameChange(gameId);
         }
+      });
+
+      // 게임 목록 드래그앤드롭 순서 변경 (세로 리스트 — 중점 기준 위/아래 삽입)
+      var gameDragSrc = null;
+      gameListEl.addEventListener("dragstart", function(e) {
+        var card = e.target.closest(".game-card");
+        if (!card) return;
+        gameDragSrc = card;
+        _gameDragging = true;
+        e.dataTransfer.effectAllowed = "move";
+        setTimeout(function() { card.classList.add("game-dragging"); }, 0);
+      });
+      gameListEl.addEventListener("dragover", function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        if (!gameDragSrc) return;
+        var card = e.target.closest(".game-card");
+        if (!card || card === gameDragSrc) return;
+        var rect = card.getBoundingClientRect();
+        if (e.clientY > rect.top + rect.height / 2) {
+          gameListEl.insertBefore(gameDragSrc, card.nextSibling);
+        } else {
+          gameListEl.insertBefore(gameDragSrc, card);
+        }
+      });
+      gameListEl.addEventListener("drop", function(e) {
+        e.preventDefault();
+        if (!gameDragSrc) return;
+        gameDragSrc.classList.remove("game-dragging");
+        var order = Array.prototype.slice.call(gameListEl.querySelectorAll(".game-card"))
+          .map(function(c) { return c.dataset.game; });
+        reorderGames(order);
+        gameDragSrc = null;
+        setTimeout(function() { _gameDragging = false; }, 0);
+        renderGameSelect();
+      });
+      gameListEl.addEventListener("dragend", function() {
+        if (gameDragSrc) gameDragSrc.classList.remove("game-dragging");
+        gameDragSrc = null;
+        setTimeout(function() { _gameDragging = false; }, 0);
       });
 
       document.querySelector(".sidebar-nav").addEventListener("click", function(e) {
@@ -3666,12 +3735,6 @@ function init() {
         }
       });
 
-      document.getElementById("characterSelect").onchange = function() {
-        onCharacterChange(this.value);
-      };
-      document.getElementById("analyzeBtn").onclick = function() {
-        onAnalyzeClick();
-      };
       document.getElementById("metaUpdateBtn").onclick = function() {
         runMetaUpdate();
       };

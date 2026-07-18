@@ -1302,6 +1302,38 @@ select {
   color: var(--text);
 }
 
+/* 데이터 갱신 액션 버튼 (하단, 분석하기 버튼과 동일한 룩) */
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.side-action-btn {
+  width: 100%;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.side-action-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.side-action-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .sidebar-title {
   padding: 16px;
   font-size: 14px;
@@ -1391,6 +1423,10 @@ select {
   background: var(--accent-bg);
   border-color: var(--accent);
   color: var(--text);
+}
+
+.game-card.game-dragging {
+  opacity: 0.4;
 }
 
 .game-card-icon {
@@ -2778,6 +2814,51 @@ select {
 .action-hold .verdict-final { border-left-color: var(--opt); }
 .action-wait .verdict-final { border-left-color: var(--muted); }
 .action-skip .verdict-final { border-left-color: var(--must); }
+
+/* 분석 화면 상단 바: 목록으로 돌아가기 + 설정 톱니바퀴 */
+.results-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.results-back-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.results-back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.results-gear-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.results-gear-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 /* KPI Tile Grid — 6개 핵심 지표 */
 .kpi-grid {
