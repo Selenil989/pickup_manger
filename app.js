@@ -1230,8 +1230,13 @@ function renderGachaGuideSection(meta, guideAccount) {
   }
 
   var GG_ROLE_LABEL = {
-    support: '지원', harmony: '화합', debuffer: '디버퍼', healer: '힐러', tank: '탱커',
-    attack: '강공', stun: '격파', anomaly: '이상', defense: '방어', rupture: '명파'
+    // 공통/개념
+    support: '지원', debuffer: '디버퍼', healer: '힐러', tank: '탱커',
+    // ZZZ
+    attack: '강공', stun: '격파', anomaly: '이상', defense: '방어', rupture: '명파',
+    // HSR (운명)
+    nihility: '공허', erudition: '지식', hunt: '수렵', destruction: '파멸',
+    harmony: '화합', preservation: '보존', abundance: '풍요', remembrance: '기억', elation: '환락'
   };
   function ggRoleLabel(r) { return GG_ROLE_LABEL[r] || r; }
 
@@ -1274,9 +1279,6 @@ function renderGachaGuideSection(meta, guideAccount) {
 
   var html = '';
   html += '<div class="gg-heading">📖 가챠 가이드</div>';
-  if (guideAccount) {
-    html += '<div class="gg-account-note">🧩 내 로스터 기준으로 파츠 보유 여부를 표시했습니다. (아직 <b>다른 파티에서 사용 중인지</b>는 반영하지 않습니다.)</div>';
-  }
 
   // 1. 캐릭터 특징
   var keyFeatures = guide.keyFeatures || [];
@@ -1327,15 +1329,8 @@ function renderGachaGuideSection(meta, guideAccount) {
     for (var i = 0; i < coreP.length; i++) {
       var p = coreP[i];
       if (!p) continue;
-      var coreAcc = guideAccount && guideAccount.corePartners ? guideAccount.corePartners[i] : null;
-      var coreSummary = '';
-      if (coreAcc && (p.characterIds || []).length > 0) {
-        coreSummary = coreAcc.hasAnyOwned
-          ? ' <span class="gg-status gg-st-met">보유</span>'
-          : ' <span class="gg-status gg-st-unmet">없음</span>';
-      }
       html += '<div class="gg-partner-row">';
-      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + coreSummary + '</div>';
+      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
       if (p.description) html += '<div class="gg-partner-desc">' + p.description + '</div>';
       html += '</div>';
     }
@@ -1502,7 +1497,7 @@ function renderResults(result) {
   html += '<div class="final-score verdict-hero-score">' + parseFloat(result.finalScore.toFixed(1)) + '<span class="verdict-hero-score-unit"> / 10</span></div>';
   html += '<div class="verdict-hero-bar-col"><div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:' + finalPct + '%"></div></div></div></div>';
   html += '</div>';
-  html += '<div class="verdict-hero-action"><span>내 계정 기준 투자선</span><span class="verdict-hero-action-arrow">▸</span><span class="action-label">' + (result.investmentTierLabel || '') + '</span></div>';
+  html += '<div class="verdict-final"><span class="verdict-final-label">내 계정 기준 투자선</span><span class="action-label verdict-final-tier">' + (result.investmentTierLabel || '') + '</span></div>';
   if (result.investmentReasons && result.investmentReasons.length > 0) {
     html += '<div class="sub-note">' + result.investmentReasons.join(' · ') + '</div>';
   }
@@ -1527,7 +1522,6 @@ function renderResults(result) {
   html += kpiTile('♻️', '대체 가능성', meta.replacementScore, '',
     '<div class="kpi-tile-caption">높을수록 대체 용이</div>');
   html += kpiTile('❓', '불확실성', uncScore, '');
-  html += kpiTile('🔥', 'FOMO', fomoScore, '', fomoScore >= 7 ? '<div class="kpi-tile-caption is-warn">⚠️ 주의</div>' : '');
   html += '</div>';
 
   // KPI Notes: 불확실 요인 (FOMO 사유는 사용자 요청으로 표시 제외)

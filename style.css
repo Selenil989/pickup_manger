@@ -280,14 +280,17 @@ select {
 }
 
 .result-label {
-  font-size: 13px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+  padding-left: 10px;
+  border-left: 3px solid var(--accent);
   display: flex;
   align-items: center;
   gap: 8px;
+  line-height: 1.2;
 }
 
 .sub-note {
@@ -2745,18 +2748,36 @@ select {
   padding-bottom: 5px;
 }
 
-.verdict-hero-action {
-  margin-top: 12px;
+.verdict-final {
+  margin-top: 14px;
   display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 14px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 13px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+}
+
+.verdict-final-label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--muted);
 }
 
-.verdict-hero-action-arrow {
-  color: var(--accent);
+.verdict-final-tier {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
 }
+
+.action-full .verdict-final { border-left-color: var(--accent); }
+.action-char .verdict-final { border-left-color: var(--high); }
+.action-hold .verdict-final { border-left-color: var(--opt); }
+.action-wait .verdict-final { border-left-color: var(--muted); }
+.action-skip .verdict-final { border-left-color: var(--must); }
 
 /* KPI Tile Grid — 6개 핵심 지표 */
 .kpi-grid {
@@ -2969,12 +2990,15 @@ select {
 }
 
 .gg-req-row {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .gg-req-row:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .gg-req-targets {
@@ -2994,12 +3018,15 @@ select {
 }
 
 .gg-partner-row {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .gg-partner-row:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .gg-partner-names {
