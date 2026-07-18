@@ -1516,11 +1516,14 @@ function renderResults(result) {
   html += '<div class="kpi-grid">';
   html += kpiTile('📈', '메타 성능', meta.metaScore, scoreBadge(meta.metaScore),
     '<div class="kpi-tile-caption confidence-note ' + confClass + '">신뢰도 ' + Math.round(meta.confidence * 100) + '%</div>');
-  html += kpiTile('🏦', '계정 체급', result.accountGrowth, scoreBadge(result.accountGrowth));
-  html += kpiTile('🔮', '미래 가치', meta.futureScore, scoreBadge(meta.futureScore));
+  html += kpiTile('🏦', '계정 체급', result.accountGrowth, scoreBadge(result.accountGrowth),
+    '<div class="kpi-tile-caption">높을수록 내 계정 기여 큼</div>');
+  html += kpiTile('🔮', '미래 가치', meta.futureScore, scoreBadge(meta.futureScore),
+    '<div class="kpi-tile-caption">높을수록 미래에도 가치</div>');
   html += kpiTile('♻️', '대체 가능성', meta.replacementScore, '',
     '<div class="kpi-tile-caption">높을수록 대체 용이</div>');
-  html += kpiTile('❓', '불확실성', uncScore, '');
+  html += kpiTile('❓', '불확실성', uncScore, '',
+    '<div class="kpi-tile-caption">높을수록 판단 보류 권장</div>');
   html += '</div>';
 
   var btRecommended = meta.breakthroughRecommendation.recommendedBreakthrough;
