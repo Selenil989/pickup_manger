@@ -92,7 +92,7 @@
   {
     "id": "ashveil",
     "name": "Ashveil",
-    "nameKo": "",
+    "nameKo": "애쉬베일",
     "gameId": "hsr",
     "rarity": 5,
     "role": "hunt",
@@ -362,7 +362,7 @@
   {
     "id": "evanescia",
     "name": "Evanescia",
-    "nameKo": "",
+    "nameKo": "에바네시아",
     "gameId": "hsr",
     "rarity": 5,
     "role": "elation",
@@ -767,7 +767,7 @@
   {
     "id": "mortenaxblade",
     "name": "Mortenax Blade",
-    "nameKo": "",
+    "nameKo": "천야•블레이드",
     "gameId": "hsr",
     "rarity": 5,
     "role": "nihility",
@@ -1157,7 +1157,7 @@
   {
     "id": "silverwolflv999",
     "name": "Silver Wolf LV.999",
-    "nameKo": "",
+    "nameKo": "은랑 LV.999",
     "gameId": "hsr",
     "rarity": 5,
     "role": "elation",
