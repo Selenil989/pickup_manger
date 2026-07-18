@@ -2860,6 +2860,37 @@ select {
   color: var(--accent);
 }
 
+/* 접이식 상세 섹션 (캐릭터 특징 · 커뮤니티 원문 · 추천/다시생각 · 출처 · 불확실 요인) */
+.gg-collapsible > summary.result-label {
+  border-left: none;
+  padding-left: 0;
+  margin-bottom: 0;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.gg-collapsible[open] > summary.result-label {
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.gg-collapsible > summary.result-label::-webkit-details-marker { display: none; }
+.gg-collapsible > summary.result-label::before {
+  content: '▸';
+  color: var(--accent);
+  font-size: 11px;
+}
+.gg-collapsible[open] > summary.result-label::before { content: '▾'; }
+.gg-collapsible > summary.result-label:hover { color: var(--text); }
+
+.gg-sublabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 12px 0 6px;
+}
+.gg-sublabel-warn { color: var(--must); }
+
 /* KPI Tile Grid — 6개 핵심 지표 */
 .kpi-grid {
   display: grid;

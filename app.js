@@ -1278,167 +1278,156 @@ function renderGachaGuideSection(meta, guideAccount) {
 
   var GG_REQ_TYPE_LABEL = { all: '전원 필요', one_of: '택 1', role: '역할 조건' };
 
-  var html = '';
-  html += '<div class="gg-heading">📖 가챠 가이드</div>';
+  // 각 섹션을 문자열로 따로 담아 반환한다. renderResults가 3단 구조
+  // (결론 → 핵심 근거 → 접힌 상세)로 순서를 제어한다.
+  var parts = {
+    features: '', party: '', coreParts: '', altParts: '',
+    altEquip: '', recommendReconsider: '', sources: ''
+  };
 
-  // 1. 캐릭터 특징
+  // 캐릭터 특징 (상세 — 접기)
   var keyFeatures = guide.keyFeatures || [];
   if (keyFeatures.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">캐릭터 특징</div>';
-    html += '<div class="gg-feature-grid">';
+    var fh = '<details class="result-block gg-collapsible"><summary class="result-label">캐릭터 특징</summary>';
+    fh += '<div class="gg-feature-grid">';
     for (var i = 0; i < keyFeatures.length; i++) {
       var f = keyFeatures[i];
       if (!f) continue;
-      html += '<div class="gg-feature-card">';
-      html += '<div class="gg-feature-title">' + (f.title || '') + '</div>';
-      html += '<div class="gg-feature-desc">' + (f.description || '') + '</div>';
-      html += '</div>';
+      fh += '<div class="gg-feature-card">';
+      fh += '<div class="gg-feature-title">' + (f.title || '') + '</div>';
+      fh += '<div class="gg-feature-desc">' + (f.description || '') + '</div>';
+      fh += '</div>';
     }
-    html += '</div>';
-    html += '</div>';
+    fh += '</div></details>';
+    parts.features = fh;
   }
 
-  // 2. 파티 구성 조건 — 시스템 작동 조건. 고점 추천 파티가 아님을 명시.
+  // 파티 구성 조건 (핵심 — 항상). 시스템 작동 조건이며 고점 추천 파티가 아님을 명시.
   var partyReq = guide.partyRequirements || [];
   if (partyReq.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">파티 구성 조건</div>';
-    html += '<div class="gg-hint">스킬이 정상 작동하기 위한 시스템 조건입니다 — 고점 추천 조합이 아닙니다.</div>';
+    var ph = '<div class="result-block"><div class="result-label">파티 구성 조건</div>';
+    ph += '<div class="gg-hint">스킬이 정상 작동하기 위한 시스템 조건입니다 — 고점 추천 조합이 아닙니다.</div>';
     for (var i = 0; i < partyReq.length; i++) {
       var r = partyReq[i];
       if (!r) continue;
       var reqAcc = guideAccount && guideAccount.partyRequirements ? guideAccount.partyRequirements[i] : null;
-      html += '<div class="gg-req-row">';
-      html += '<span class="badge">' + (GG_REQ_TYPE_LABEL[r.type] || r.type || '조건') + '</span>';
-      if (reqAcc) html += statusBadge(reqAcc.status);
+      ph += '<div class="gg-req-row">';
+      ph += '<span class="badge">' + (GG_REQ_TYPE_LABEL[r.type] || r.type || '조건') + '</span>';
+      if (reqAcc) ph += statusBadge(reqAcc.status);
       var reqNames = ggCharNames(r.characterIds);
       var reqRoles = (r.roles || []).map(ggRoleLabel).join(', ');
-      if (reqNames) html += '<span class="gg-req-targets">' + reqNames + '</span>';
-      if (reqRoles) html += '<span class="gg-req-targets">' + reqRoles + '</span>';
-      if (r.description) html += '<div class="gg-req-desc">' + r.description + '</div>';
-      html += '</div>';
+      if (reqNames) ph += '<span class="gg-req-targets">' + reqNames + '</span>';
+      if (reqRoles) ph += '<span class="gg-req-targets">' + reqRoles + '</span>';
+      if (r.description) ph += '<div class="gg-req-desc">' + r.description + '</div>';
+      ph += '</div>';
     }
-    html += '</div>';
+    ph += '</div>';
+    parts.party = ph;
   }
 
-  // 3. 핵심 파츠 — 시스템 조건과는 별도 블록
+  // 핵심 파츠 (핵심 — 항상)
   var coreP = guide.corePartners || [];
   if (coreP.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">핵심 파츠</div>';
+    var ch = '<div class="result-block"><div class="result-label">핵심 파츠</div>';
     for (var i = 0; i < coreP.length; i++) {
       var p = coreP[i];
       if (!p) continue;
-      html += '<div class="gg-partner-row">';
-      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
-      if (p.description) html += '<div class="gg-partner-desc">' + p.description + '</div>';
-      html += '</div>';
+      ch += '<div class="gg-partner-row">';
+      ch += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
+      if (p.description) ch += '<div class="gg-partner-desc">' + p.description + '</div>';
+      ch += '</div>';
     }
-    html += '</div>';
+    ch += '</div>';
+    parts.coreParts = ch;
   }
 
-  // 4. 대체 및 범용 파츠
+  // 대체 및 범용 파츠 (핵심 — 항상)
   var altP = guide.alternativePartners || [];
   if (altP.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">대체 및 범용 파츠</div>';
+    var ah = '<div class="result-block"><div class="result-label">대체 및 범용 파츠</div>';
     for (var i = 0; i < altP.length; i++) {
       var ap = altP[i];
       if (!ap) continue;
       var apRoles = (ap.roles || []).map(ggRoleLabel).join(', ');
-      html += '<div class="gg-partner-row">';
-      html += '<div class="gg-partner-names">' + (ggCharNames(ap.characterIds) || '(대상 없음)') + (apRoles ? ' <span class="gg-partner-role">' + apRoles + '</span>' : '') + '</div>';
-      if (ap.description) html += '<div class="gg-partner-desc">' + ap.description + '</div>';
-      html += '</div>';
+      ah += '<div class="gg-partner-row">';
+      ah += '<div class="gg-partner-names">' + (ggCharNames(ap.characterIds) || '(대상 없음)') + (apRoles ? ' <span class="gg-partner-role">' + apRoles + '</span>' : '') + '</div>';
+      if (ap.description) ah += '<div class="gg-partner-desc">' + ap.description + '</div>';
+      ah += '</div>';
     }
-    html += '</div>';
+    ah += '</div>';
+    parts.altParts = ah;
   }
 
-  // 5. 대체 장비 — 비어있으면 섹션 숨김
+  // 대체 장비 (상세 — 접기)
   var altEq = guide.alternativeEquipment || [];
   if (altEq.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">대체 장비</div>';
+    var eh = '<details class="result-block gg-collapsible"><summary class="result-label">대체 장비</summary>';
     for (var i = 0; i < altEq.length; i++) {
       var e = altEq[i];
       if (!e) continue;
-      html += '<div class="gg-partner-row">';
-      html += '<div class="gg-partner-names">' + (e.name || '') + '</div>';
-      if (e.description) html += '<div class="gg-partner-desc">' + e.description + '</div>';
-      html += '</div>';
+      eh += '<div class="gg-partner-row">';
+      eh += '<div class="gg-partner-names">' + (e.name || '') + '</div>';
+      if (e.description) eh += '<div class="gg-partner-desc">' + e.description + '</div>';
+      eh += '</div>';
     }
-    html += '</div>';
+    eh += '</details>';
+    parts.altEquip = eh;
   }
 
-  // 6. 이런 계정에 추천 — 계정과 실제 비교하지 않은 일반 조건, 체크리스트로 표시
+  // 이런 계정에 추천 · 다시 생각 (상세 — 접기, 하나의 접이식으로 묶음)
+  // 계정과 직접 비교한 결과가 아닌 일반 조건이므로 상세로 내린다.
   var recFor = guide.recommendedFor || [];
-  if (recFor.length > 0) {
-    html += '<div class="result-block">';
-    html += '<div class="result-label">이런 계정에 추천</div>';
-    html += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다 — 자신의 상황과 비교해보세요.</div>';
-    html += '<ul class="gg-checklist">';
-    for (var i = 0; i < recFor.length; i++) html += '<li>' + recFor[i] + '</li>';
-    html += '</ul>';
-    html += '</div>';
-  }
-
-  // 7. 이런 경우에는 다시 생각 — 경고/재고 영역으로 구분
   var reconsider = guide.reconsiderIf || [];
-  if (reconsider.length > 0) {
-    html += '<div class="result-block gg-warn-block">';
-    html += '<div class="result-label">⚠️ 이런 경우에는 다시 생각</div>';
-    html += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다.</div>';
-    html += '<ul class="gg-checklist gg-checklist-warn">';
-    for (var i = 0; i < reconsider.length; i++) html += '<li>' + reconsider[i] + '</li>';
-    html += '</ul>';
-    html += '</div>';
+  if (recFor.length > 0 || reconsider.length > 0) {
+    var rh = '<details class="result-block gg-collapsible"><summary class="result-label">이런 계정에 추천 · 다시 생각</summary>';
+    rh += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다 — 자신의 상황과 비교해보세요.</div>';
+    if (recFor.length > 0) {
+      rh += '<div class="gg-sublabel">👍 이런 계정에 추천</div><ul class="gg-checklist">';
+      for (var i = 0; i < recFor.length; i++) rh += '<li>' + recFor[i] + '</li>';
+      rh += '</ul>';
+    }
+    if (reconsider.length > 0) {
+      rh += '<div class="gg-sublabel gg-sublabel-warn">⚠️ 이런 경우 다시 생각</div><ul class="gg-checklist gg-checklist-warn">';
+      for (var i = 0; i < reconsider.length; i++) rh += '<li>' + reconsider[i] + '</li>';
+      rh += '</ul>';
+    }
+    rh += '</details>';
+    parts.recommendReconsider = rh;
   }
 
-  // 8. GOOD / BAD — 기존 pullReasons/skipReasons 재사용 + 향후 시너지를 GOOD에 합침.
-  // 가이드가 있는 캐릭터는 여기서만 렌더링하고, renderResults 본문의 기존 두 이유
-  // 블록은 hasGuide가 true일 때 건너뛰어 중복 표시를 막는다(아래 renderResults 참고).
-  var pullReasons = (meta.pullReasons || []).concat(futureSynergyReasons(meta));
-  var skipReasons = meta.skipReasons || [];
-  if (pullReasons.length > 0 || skipReasons.length > 0) {
-    html += '<div class="two-col-grid">';
-    html += '<div class="result-block">';
-    html += '<div class="result-label">👍 뽑아야 할 이유</div>';
-    html += '<ul class="reason-list">';
-    for (var i = 0; i < pullReasons.length; i++) html += '<li>' + pullReasons[i] + '</li>';
-    html += '</ul>';
-    html += '</div>';
-    html += '<div class="result-block">';
-    html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
-    html += '<ul class="reason-list reason-skip">';
-    for (var i = 0; i < skipReasons.length; i++) html += '<li>' + skipReasons[i] + '</li>';
-    html += '</ul>';
-    html += '</div>';
-    html += '</div>';
-  }
-
-  // 9. 출처 — 없으면 섹션 숨김. 공식 자료/커뮤니티 참고 자료 구분은 sources[].name
-  // 텍스트에 이미 반영되어 있으므로(예: "(공식 자료)"/"(참고 가이드 평가)") 그대로 노출.
+  // 출처 (상세 — 접기). 공식/참고 구분은 sources[].name 텍스트에 이미 반영됨.
   var sources = meta.sources || [];
   if (sources.length > 0) {
-    html += '<details class="result-block gg-sources"><summary class="result-label">출처</summary>';
-    html += '<ul class="gg-source-list">';
+    var sh = '<details class="result-block gg-sources gg-collapsible"><summary class="result-label">출처</summary>';
+    sh += '<ul class="gg-source-list">';
     for (var i = 0; i < sources.length; i++) {
       var s = sources[i];
       if (!s) continue;
-      html += '<li>';
+      sh += '<li>';
       if (s.url) {
-        html += '<a href="' + escAttr(s.url) + '" target="_blank" rel="noopener noreferrer">' + (s.name || s.url) + '</a>';
+        sh += '<a href="' + escAttr(s.url) + '" target="_blank" rel="noopener noreferrer">' + (s.name || s.url) + '</a>';
       } else {
-        html += (s.name || '');
+        sh += (s.name || '');
       }
-      html += '</li>';
+      sh += '</li>';
     }
-    html += '</ul>';
-    html += '</details>';
+    sh += '</ul></details>';
+    parts.sources = sh;
   }
 
-  return html;
+  return parts;
+}
+
+// 뽑을 이유/스킵 이유 목록에서 완전 중복(공백 정규화 후 동일)을 제거한다.
+function dedupeReasons(arr) {
+  var seen = {}, out = [];
+  for (var i = 0; i < arr.length; i++) {
+    var key = String(arr[i]).replace(/\s+/g, ' ').trim();
+    if (!key || seen[key]) continue;
+    seen[key] = true;
+    out.push(arr[i]);
+  }
+  return out;
 }
 
 function renderResults(result) {
@@ -1512,12 +1501,15 @@ function renderResults(result) {
   if (fomoScore >= 7) html += '<div class="fomo-warn">⚠️ 불안 과금 주의 — 충분히 고민 후 결정하세요</div>';
   html += '</div>';
 
-  // 가챠 가이드 — meta.gachaGuide가 있는 캐릭터에서만 표시(없으면 빈 문자열이라
-  // 기존 화면과 완전히 동일). 최상단 추천 결과 다음, 세부 점수 카드 이전에 배치.
+  // ── 가챠 가이드 파츠 (부분별로 받아 3단 구조로 배치) ──
+  var gg = renderGachaGuideSection(meta, result.guideAccount);
   var hasGuide = !!meta.gachaGuide;
-  html += renderGachaGuideSection(meta, result.guideAccount);
+  if (hasGuide) html += '<div class="gg-heading">📖 가챠 가이드</div>';
 
-  // KPI 타일 그리드: 메타성능 / 계정체급 / 미래가치 / 대체가능성 / 불확실성 / FOMO
+  // ── Tier 2-a: 계정 맞춤 파츠 (이 앱의 핵심 — 항상 표시) ──
+  html += gg.party + gg.coreParts + gg.altParts;
+
+  // ── Tier 2-b: 숫자 요약 (KPI 타일 + 명함/돌파/전무) ──
   var confClass = meta.confidence >= 0.80 ? 'confidence-high'
                 : meta.confidence >= 0.60 ? 'confidence-mid'
                 : 'confidence-low';
@@ -1531,15 +1523,6 @@ function renderResults(result) {
   html += kpiTile('❓', '불확실성', uncScore, '');
   html += '</div>';
 
-  // KPI Notes: 불확실 요인 (FOMO 사유는 사용자 요청으로 표시 제외)
-  var uncReasons = (meta.uncertainty && meta.uncertainty.reasons) || [];
-  if (uncReasons.length > 0) {
-    html += '<div class="kpi-notes">';
-    html += '<div><strong>불확실 요인</strong> · ' + uncReasons.join(' / ') + '</div>';
-    html += '</div>';
-  }
-
-  // Trio Split: 명함 / 돌파 / 전무
   var btRecommended = meta.breakthroughRecommendation.recommendedBreakthrough;
   html += '<div class="trio-split">';
   html += '<div class="trio-col">';
@@ -1559,89 +1542,62 @@ function renderResults(result) {
   html += '</div>';
   html += '</div>';
 
-  // Two-Col: 뽑아야 할 이유 / 뽑지 말아야 할 이유
-  // gachaGuide가 있는 캐릭터는 이 내용을 가이드 섹션의 "GOOD/BAD"에서 이미
-  // 표시했으므로, 여기서는 gachaGuide가 없을 때만 렌더링해 중복을 막는다.
-  if (!hasGuide) {
-    html += '<div class="two-col-grid">';
-    html += '<div class="result-block">';
-    html += '<div class="result-label">👍 뽑아야 할 이유</div>';
-    html += '<ul class="reason-list">';
-    var pullReasons = (meta.pullReasons || []).concat(futureSynergyReasons(meta));
-    for (var j = 0; j < pullReasons.length; j++) {
-      html += '<li>' + pullReasons[j] + '</li>';
-    }
-    html += '</ul>';
-    html += '</div>';
-    html += '<div class="result-block">';
-    html += '<div class="result-label">👎 뽑지 말아야 할 이유</div>';
-    html += '<ul class="reason-list reason-skip">';
-    var skipReasons = meta.skipReasons || [];
-    for (var k2 = 0; k2 < skipReasons.length; k2++) {
-      html += '<li>' + skipReasons[k2] + '</li>';
-    }
-    html += '</ul>';
-    html += '</div>';
-    html += '</div>';
-  }
-
-  // 커뮤니티 투자 분석 (향후 시너지는 '뽑을 이유'로 이동해 별도 블록 제거)
-  html += '<div class="result-block">';
-  html += '<div class="result-label">커뮤니티 투자 분석</div>';
+  // ── Tier 2-c: 장단점 (정리된 이유만) ──
+  // 위에는 meta가 정리한 뽑을/스킵 이유만 간결하게. 커뮤니티 원문 긍정/부정은
+  // 아래 '커뮤니티 원문' 접이식으로 내려 중복·장황함을 없앤다.
   var commSummary = meta.communitySummary || null;
-  var hasNewComm = commSummary && (commSummary.metaPosition || commSummary.commonEvaluation || commSummary.pros || commSummary.cons);
-  var hasOldComm = commSummary && (commSummary.positive || commSummary.negative || commSummary.commonOpinion);
-  if (hasNewComm) {
-    if (commSummary.metaPosition)     html += '<div class="summary-section"><div class="summary-label">메타 위치</div><div class="summary-text">' + commSummary.metaPosition + '</div></div>';
-    if (commSummary.commonEvaluation) html += '<div class="summary-section"><div class="summary-label">공통 평가</div><div class="summary-text">' + commSummary.commonEvaluation + '</div></div>';
-    if (commSummary.pros && commSummary.pros.length > 0) {
-      html += '<div class="summary-section"><div class="summary-label comm-pos">장점</div><ul class="reason-list">';
-      for (var pi = 0; pi < commSummary.pros.length; pi++) { html += '<li>' + commSummary.pros[pi] + '</li>'; }
-      html += '</ul></div>';
-    }
-    if (commSummary.cons && commSummary.cons.length > 0) {
-      html += '<div class="summary-section"><div class="summary-label comm-neg">단점</div><ul class="reason-list reason-skip">';
-      for (var ci = 0; ci < commSummary.cons.length; ci++) { html += '<li>' + commSummary.cons[ci] + '</li>'; }
-      html += '</ul></div>';
-    }
-    if (commSummary.concerns)      html += '<div class="summary-section"><div class="summary-label comm-note">실전 우려</div><div class="summary-text">' + commSummary.concerns + '</div></div>';
-    if (commSummary.investmentNote) html += '<div class="summary-section"><div class="summary-label">투자 메모</div><div class="summary-text">' + commSummary.investmentNote + '</div></div>';
-  } else if (hasOldComm) {
-    if (commSummary.commonOpinion) html += '<div class="summary-section"><div class="summary-label">공통 의견</div><div class="summary-text">' + commSummary.commonOpinion + '</div></div>';
-    if (commSummary.positive && commSummary.positive.length > 0) {
-      html += '<div class="summary-section"><div class="summary-label comm-pos">긍정</div><ul class="reason-list">';
-      for (var oi = 0; oi < commSummary.positive.length; oi++) { html += '<li>' + commSummary.positive[oi] + '</li>'; }
-      html += '</ul></div>';
-    }
-    if (commSummary.negative && commSummary.negative.length > 0) {
-      html += '<div class="summary-section"><div class="summary-label comm-neg">부정</div><ul class="reason-list reason-skip">';
-      for (var ni = 0; ni < commSummary.negative.length; ni++) { html += '<li>' + commSummary.negative[ni] + '</li>'; }
-      html += '</ul></div>';
-    }
-    if (commSummary.concern) html += '<div class="summary-section"><div class="summary-label comm-note">우려</div><div class="summary-text">' + commSummary.concern + '</div></div>';
-  } else {
-    html += '<p class="no-data">커뮤니티 분석 미등록</p>';
+  var pros = dedupeReasons((meta.pullReasons || []).concat(futureSynergyReasons(meta)));
+  var cons = dedupeReasons((meta.skipReasons || []).slice());
+  if (pros.length > 0 || cons.length > 0) {
+    html += '<div class="two-col-grid">';
+    html += '<div class="result-block"><div class="result-label">👍 뽑아야 할 이유</div><ul class="reason-list">';
+    for (var pj = 0; pj < pros.length; pj++) html += '<li>' + pros[pj] + '</li>';
+    html += '</ul></div>';
+    html += '<div class="result-block"><div class="result-label">👎 뽑지 말아야 할 이유</div><ul class="reason-list reason-skip">';
+    for (var cj = 0; cj < cons.length; cj++) html += '<li>' + cons[cj] + '</li>';
+    html += '</ul></div>';
+    html += '</div>';
   }
-  html += '</div>';
 
-  // Verdict Callout: 최종 판단 문장
-  var _vName    = character.nameKo || character.name;
-  var _vActions = {
-    high_investment: '고투자를 추천합니다', card_weapon: '명함 + 전무를 추천합니다',
-    wait_2w: '2주 대기 후 재평가를 추천합니다', efficient_breakthrough: '효율 돌파를 추천합니다',
-    card_only: '명함 확보를 추천합니다', skip: '이번 픽업 스킵을 추천합니다'
-  };
-  var _vParts   = [_vName + ': ' + (_vActions[action] || '') + '.'];
-  if (result.gaps && result.gaps.fillsRoleGap) _vParts.push('내 계정에 없는 역할을 채워줍니다.');
-  if (result.gaps && result.gaps.fillsElementGap) _vParts.push('내 계정에 없는 속성을 채워줍니다.');
-  if (result.accountGrowth < 5) _vParts.push('내 계정 기여 제한적.');
-  if (meta.replacementScore >= 7) _vParts.push('대체 가능성 높음.');
-  if (isOwned) _vParts.push('이미 보유 중 — 추가 투자를 신중히 검토하세요.');
-  if (fomoScore >= 7) _vParts.push('⚠️ 불안 과금 주의 — 충분히 고민 후 결정하세요.');
-  html += '<div class="result-block verdict-block verdict-callout">';
-  html += '<div class="result-label">📌 최종 판단</div>';
-  html += '<div class="verdict-sentence">' + _vParts.join(' ') + '</div>';
-  html += '</div>';
+  // ── Tier 3: 상세 (접기 — 기본 숨김) ──
+  html += gg.features;
+
+  // 커뮤니티 원문 — 긍정/부정은 위 통합 장단점으로 흡수했고, 여기선 정성 요약만.
+  var commDetail = '';
+  function _csSec(label, cls, text) {
+    return '<div class="summary-section"><div class="summary-label' + (cls ? ' ' + cls : '') + '">' + label + '</div><div class="summary-text">' + text + '</div></div>';
+  }
+  function _csList(label, cls, items, listCls) {
+    var h = '<div class="summary-section"><div class="summary-label' + (cls ? ' ' + cls : '') + '">' + label + '</div><ul class="reason-list' + (listCls ? ' ' + listCls : '') + '">';
+    for (var i = 0; i < items.length; i++) h += '<li>' + items[i] + '</li>';
+    return h + '</ul></div>';
+  }
+  if (commSummary) {
+    if (commSummary.metaPosition)     commDetail += _csSec('메타 위치', '', commSummary.metaPosition);
+    if (commSummary.commonEvaluation) commDetail += _csSec('공통 평가', '', commSummary.commonEvaluation);
+    if (commSummary.commonOpinion)    commDetail += _csSec('공통 의견', '', commSummary.commonOpinion);
+    if (commSummary.pros && commSummary.pros.length)         commDetail += _csList('장점', 'comm-pos', commSummary.pros, '');
+    if (commSummary.positive && commSummary.positive.length) commDetail += _csList('긍정', 'comm-pos', commSummary.positive, '');
+    if (commSummary.cons && commSummary.cons.length)         commDetail += _csList('단점', 'comm-neg', commSummary.cons, 'reason-skip');
+    if (commSummary.negative && commSummary.negative.length) commDetail += _csList('부정', 'comm-neg', commSummary.negative, 'reason-skip');
+    if (commSummary.concerns)         commDetail += _csSec('실전 우려', 'comm-note', commSummary.concerns);
+    if (commSummary.concern)          commDetail += _csSec('우려', 'comm-note', commSummary.concern);
+    if (commSummary.investmentNote)   commDetail += _csSec('투자 메모', '', commSummary.investmentNote);
+  }
+  if (commDetail) {
+    html += '<details class="result-block gg-collapsible"><summary class="result-label">커뮤니티 원문</summary>' + commDetail + '</details>';
+  }
+
+  html += gg.recommendReconsider;
+  html += gg.altEquip;
+  html += gg.sources;
+
+  // 불확실 요인 — 상세로 내려 접어둠
+  var uncReasons = (meta.uncertainty && meta.uncertainty.reasons) || [];
+  if (uncReasons.length > 0) {
+    html += '<details class="result-block gg-collapsible"><summary class="result-label">불확실 요인</summary>';
+    html += '<div class="kpi-notes"><div>' + uncReasons.join(' / ') + '</div></div></details>';
+  }
 
   html += '</div>';
 
