@@ -623,7 +623,107 @@ function checkClaudeCodeAuth() {
 
 // Claude Code에게 넘길 프롬프트. 검색/분석만 지시하고 파일 수정 권한이 아예
 // 없다는 점(WebSearch/WebFetch만 허용됨)을 명시해 역할을 분명히 한다.
-function buildClaudeCodePrompt(gameId, characterId, names, existingEntry) {
+// ── 커뮤니티 본문 직접 수집 (나무위키 + 아카라이브 category=정보) ──────────────
+// 검색을 Claude에게 맡기지 않고, 서버가 한국 커뮤니티 정리글을 직접 긁어 재료로 준다.
+// → 커뮤니티 비중 100%, 한국어 자료 보장. 미지원 게임은 null → Claude WebSearch 폴백.
+const COMMUNITY_SOURCES = {
+  hsr: { arca: 'hkstarrail', namuSuffix: ['(붕괴: 스타레일)', ''] }
+  // zzz/wuwa/endfield는 채널·문서 규칙 확인 후 추가 (그 전엔 WebSearch 폴백)
+};
+const COMMUNITY_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+
+async function commFetch(url) {
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': COMMUNITY_UA } });
+    if (!res.ok) return null;
+    return res.text();
+  } catch (e) { return null; }
+}
+function commStrip(html) {
+  return html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&#91;/g, '[').replace(/&#93;/g, ']')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ').trim();
+}
+// 나무위키 본문에서 성능/평가 구간만 추림 (개요/스토리/여담 제외로 토큰 절약)
+function namuPerfSection(text) {
+  var s = text.search(/(성능|평가)\s*\[편집\]/);
+  if (s === -1) return text.slice(0, 12000);
+  var rest = text.slice(s);
+  var e = rest.search(/(작중 행적|인간관계|여담|둘러보기)\s*\[편집\]/);
+  return (e === -1 ? rest : rest.slice(0, e)).slice(0, 16000);
+}
+// 아카라이브 froala 본문(fr-view)만 추출
+function arcaBody(html) {
+  var s = html.indexOf('fr-view');
+  if (s === -1) return '';
+  var start = html.lastIndexOf('<div', s);
+  var end = html.indexOf('article-tags', s);
+  return commStrip(html.slice(start, end > start ? end : start + 40000));
+}
+// 검색결과에서 정리글 상위 ID 선별 (추천/댓글 + 성능 키워드 가점, 잡담 감점)
+function arcaTopIds(html, limit) {
+  var blocks = html.split('vrow column').slice(1);
+  var rows = [];
+  for (var i = 0; i < blocks.length; i++) {
+    var b = blocks[i];
+    if (/notice/.test(b.slice(0, 40))) continue;
+    var idM = b.match(/href="\/b\/[^\/]+\/(\d+)/);
+    if (!idM) continue;
+    function n(re) { var m = b.match(re); return m ? (parseInt((m[1] || '').replace(/[^\d-]/g, ''), 10) || 0) : 0; }
+    var titleM = b.match(/col-title[^>]*>([\s\S]*?)<\/span>/);
+    var title = titleM ? titleM[1].replace(/<[^>]+>/g, ' ') : '';
+    var rate = n(/col-rate[^>]*>([\s\S]*?)<\/span>/);
+    var cmt = n(/comment-count[^>]*>([\s\S]*?)<\/span>/);
+    var view = n(/col-view[^>]*>([\s\S]*?)<\/span>/);
+    var score = rate * 3 + cmt + view * 0.002;
+    if (/가이드|공략|평가|정리|조합|성능|운영|분석|추천|뽑|투자|리뷰|후기/.test(title)) score += 30;
+    if (/가슴|얼굴|이름|해석|스포|번역|팬아트|짤/.test(title)) score -= 25;
+    rows.push({ id: idM[1], score: score });
+  }
+  rows.sort(function(a, b) { return b.score - a.score; });
+  return rows.slice(0, limit).map(function(r) { return r.id; });
+}
+
+async function collectCommunityText(gameId, names) {
+  var src = COMMUNITY_SOURCES[gameId];
+  if (!src) return null;
+  var koName = names.official || names.nameEn;
+  if (!koName) return null;
+  var out = { namu: '', namuUrl: '', arca: [] };  // arca: [{ text, url }]
+
+  // 1) 나무위키 (성능/평가 섹션) — 채택한 문서의 실제 URL도 기록
+  for (var i = 0; i < src.namuSuffix.length; i++) {
+    var namuUrl = 'https://namu.wiki/w/' + encodeURIComponent(koName + src.namuSuffix[i]);
+    var html = await commFetch(namuUrl);
+    if (html) {
+      var txt = commStrip(html);
+      if (/평가|성능|딜러|파티|조합|광추/.test(txt) && txt.length > 5000) {
+        out.namu = namuPerfSection(txt);
+        out.namuUrl = namuUrl;
+        break;
+      }
+    }
+  }
+
+  // 2) 아카라이브 category=정보 정리글 상위 3개 본문 + 각 글 URL
+  var searchHtml = await commFetch('https://arca.live/b/' + src.arca + '?target=title&keyword=' + encodeURIComponent(koName) + '&category=' + encodeURIComponent('정보'));
+  if (searchHtml) {
+    var ids = arcaTopIds(searchHtml, 3);
+    for (var j = 0; j < ids.length; j++) {
+      var postUrl = 'https://arca.live/b/' + src.arca + '/' + ids[j];
+      var postHtml = await commFetch(postUrl);
+      if (postHtml) {
+        var body = arcaBody(postHtml);
+        if (body.length > 300) out.arca.push({ text: body.slice(0, 1600), url: postUrl });
+      }
+    }
+  }
+  if (!out.namu && out.arca.length === 0) return null;
+  return out;
+}
+
+function buildClaudeCodePrompt(gameId, characterId, names, existingEntry, communityText, charList) {
   const terms = GAME_TERMS[gameId] || { weapon: '전용 무기', breakthrough: '돌파' };
   const nameCandidates = Array.from(new Set(
     [names.official, names.nameEn].concat(names.aliases).filter(Boolean)
@@ -643,7 +743,29 @@ function buildClaudeCodePrompt(gameId, characterId, names, existingEntry) {
       ? ('=== 기존 meta 항목 (참고용 — 그대로 복사하지 말고 최신 자료로 갱신) ===\n' + JSON.stringify(existingEntry, null, 2))
       : '=== 기존 meta 항목 없음 (신규 작성) ===',
     '',
-    '=== 검색 우선순위 ===',
+    // 서버가 미리 긁어온 한국 커뮤니티 본문을 재료로 제공 (있을 때)
+    communityText
+      ? [
+          '=== 제공된 커뮤니티 자료 (이것을 최우선 근거로 사용) ===',
+          '아래는 서버가 직접 수집한 한국 커뮤니티 자료입니다. 이 자료를 우선 분석하세요.',
+          '자료가 현재 시점 여론이므로, 나무위키의 낡은 표현("출시 당시", "최신 캐릭터" 등)에',
+          '휘둘리지 말고 현재 버전 기준으로 판단하세요. 자료가 부족한 부분만 WebSearch로 보완하세요.',
+          '',
+          communityText.namu ? ('[나무위키 성능/평가]  출처 URL: ' + communityText.namuUrl + '\n' + communityText.namu) : '',
+          communityText.arca && communityText.arca.length
+            ? ('\n[아카라이브 정리글]\n' + communityText.arca.map(function(a, i) { return '(' + (i + 1) + ') 출처 URL: ' + a.url + '\n' + a.text; }).join('\n\n'))
+            : '',
+          '',
+          '※ sources 필드에는 위에 표시된 실제 출처 URL(나무위키/아카라이브 주소)을 반드시 사용하세요. URL을 비우거나 지어내지 마세요.'
+        ].join('\n')
+      : '=== 제공된 커뮤니티 자료 없음 → WebSearch/WebFetch로 직접 조사 ===',
+    '',
+    // characterIds에 쓸 실제 캐릭터 목록 (파츠 매핑용)
+    charList
+      ? ('=== 이 게임의 캐릭터 목록 (id: 이름) — partyRequirements/corePartners/alternativePartners 의 characterIds 에는 반드시 이 id만 사용 ===\n' + charList)
+      : '',
+    '',
+    '=== 검색 우선순위 (커뮤니티 자료 부족 시 보완용) ===',
     '1. 아카라이브   2. 디시인사이드   3. Reddit   4. NGA   5. Bilibili',
     '',
     '=== 검색할 내용 ===',
@@ -651,10 +773,8 @@ function buildClaudeCodePrompt(gameId, characterId, names, existingEntry) {
     terms.weapon + ' 가치, ' + terms.breakthrough,
     '',
     '=== 실행 예산 (반드시 준수) ===',
-    'WebSearch/WebFetch 호출은 총 10회 이내로 제한합니다.',
-    '우선순위가 높은 출처(1~2번)부터 조사하고, 그 안에서 유의미한 의견이 반복 확인되면',
-    '나머지 출처는 생략해도 됩니다 — 5개 출처를 전부 조사할 필요는 없습니다.',
-    '10회 이내로 확인한 자료만으로 반드시 최종 JSON을 완성해 반환하세요 (추가 조사를 위해 계속 검색하지 않음).',
+    'WebSearch/WebFetch 호출은 총 6회 이내로 제한합니다. 제공된 커뮤니티 자료가 충분하면 검색 없이 바로 작성하세요.',
+    '확인한 자료만으로 반드시 최종 JSON을 완성해 반환하세요 (추가 조사를 위해 계속 검색하지 않음).',
     '조사량이 적었다면 그만큼 confidence 를 낮추고 uncertainty.score 를 높여서 솔직하게 반영하세요.',
     '',
     '=== 분석 규칙 (반드시 준수) ===',
@@ -687,8 +807,24 @@ function buildClaudeCodePrompt(gameId, characterId, names, existingEntry) {
       communitySummary: { positive: ['문자열 배열'], negative: ['문자열 배열'], commonOpinion: '문자열', concern: '문자열' },
       uncertainty: { score: '0~10', reasons: ['문자열 배열'] },
       fomoRisk: { score: '0~10', reason: '문자열' },
-      recommendation: { pull: 'must_pull|recommended|optional|skip', priority: 'high|medium|low' }
+      recommendation: { pull: 'must_pull|recommended|optional|skip', priority: 'high|medium|low' },
+      gachaGuide: {
+        version: '"1.0"',
+        keyFeatures: [{ title: '항목명(예: 기초 성능, 조합 자유도, 투자 난이도, 공격 방식, 미래 가치)', description: '한줄 결론 + 근거 설명' }],
+        partyRequirements: [{ type: 'all|one_of|role', characterIds: ['위 캐릭터 목록의 id만'], roles: ['역할 조건이면'], description: '스킬 작동에 필요한 시스템 조건 (고점 추천 아님)' }],
+        corePartners: [{ characterIds: ['위 목록 id만'], roles: [], description: '실전 성능에서 핵심으로 꼽히는 파츠' }],
+        alternativePartners: [{ characterIds: ['위 목록 id만'], roles: ['역할'], description: '대체 또는 범용 파츠' }],
+        alternativeEquipment: [{ name: '장비명', description: '사용 가능 이유와 한계' }],
+        recommendedFor: ['이 캐릭터를 추천할 일반적인 계정 조건 (계정 보유 여부 언급 금지)'],
+        reconsiderIf: ['다시 생각해야 할 일반적인 계정 조건']
+      }
     }, null, 2),
+    '',
+    '=== gachaGuide 작성 규칙 ===',
+    '- partyRequirements = 스킬 작동에 필요한 "시스템 조건". corePartners = 실전 "핵심 파츠". 둘을 섞지 말 것.',
+    '- characterIds 에는 위 캐릭터 목록의 실제 id만. 목록에 없으면 characterIds 를 비우고 description 에 이름만 적을 것 (가짜 id 금지).',
+    '- recommendedFor/reconsiderIf 는 일반 조건만. "사용자가 X를 보유함" 같은 계정 판정은 넣지 말 것 (그건 앱이 계산함).',
+    '- 자료에 근거가 없으면 해당 배열을 비우거나 "자료 부족"으로. 지어내지 말 것.',
     '',
     '위 내용을 조사한 뒤, characterId="' + characterId + '" 항목 1개에 대한 위 구조의 JSON만 반환하세요.'
   ].join('\n');
@@ -1078,7 +1214,21 @@ app.post('/api/meta-update-claude-code', async (req, res) => {
       ? (existingMeta.find((m) => m.characterId === characterId) || null)
       : null;
 
-    const prompt = buildClaudeCodePrompt(gameId, characterId, names, existingEntry);
+    // 서버가 한국 커뮤니티 본문을 직접 수집해 재료로 준다 (미지원 게임은 null → WebSearch 폴백)
+    let communityText = null;
+    try { communityText = await collectCommunityText(gameId, names); } catch (err) { communityText = null; }
+    console.log('[Claude Code 메타 갱신] 커뮤니티 자료: %s',
+      communityText ? ('나무위키 ' + (communityText.namu ? communityText.namu.length + '자' : '없음') + ' / 아카라이브 ' + communityText.arca.length + '글') : '없음(WebSearch 폴백)');
+
+    // characterIds 매핑용 캐릭터 목록 (id: 한글명)
+    let charList = null;
+    try {
+      const allChars = loadCharactersFile(gameId);
+      charList = allChars.filter((c) => c.rarity === 5 || c.rarity === 4)
+        .map((c) => c.id + ': ' + (c.nameKo || c.name)).join('\n');
+    } catch (err) { charList = null; }
+
+    const prompt = buildClaudeCodePrompt(gameId, characterId, names, existingEntry, communityText, charList);
 
     const runResult = await runClaudeCode(prompt);
     if (!runResult.ok) {

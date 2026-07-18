@@ -1196,6 +1196,21 @@ function renderRoster() {
 // gachaGuide는 표시 전용이다 — app.js는 계산하지 않는다.
 // 파츠 보유 판단은 evaluationEngine이 계산한 guideAccount로 받아서 표시만 한다.
 // meta.gachaGuide가 없으면 빈 문자열을 반환해 기존 화면과 완전히 동일하게 둔다.
+// 향후 시너지(futureLinks)를 "뽑을 이유(긍정 요인)" 문구로 변환한다.
+// 사용자 요청: 향후 시너지를 별도 섹션이 아니라 긍정 요인에 합쳐서 표시.
+function futureSynergyReasons(meta) {
+  return (meta.futureLinks || []).map(function(fl) {
+    var name = fl.characterId;
+    for (var i = 0; i < appState.characters.length; i++) {
+      if (appState.characters[i].id === fl.characterId) {
+        name = appState.characters[i].nameKo || appState.characters[i].name;
+        break;
+      }
+    }
+    return name + '와 향후 시너지' + (fl.synergy ? ' (' + fl.synergy + ')' : '');
+  });
+}
+
 function renderGachaGuideSection(meta, guideAccount) {
   var guide = meta.gachaGuide;
   if (!guide) return '';
@@ -1384,10 +1399,10 @@ function renderGachaGuideSection(meta, guideAccount) {
     html += '</div>';
   }
 
-  // 8. GOOD / BAD — 새 데이터 없이 기존 pullReasons/skipReasons 재사용.
+  // 8. GOOD / BAD — 기존 pullReasons/skipReasons 재사용 + 향후 시너지를 GOOD에 합침.
   // 가이드가 있는 캐릭터는 여기서만 렌더링하고, renderResults 본문의 기존 두 이유
   // 블록은 hasGuide가 true일 때 건너뛰어 중복 표시를 막는다(아래 renderResults 참고).
-  var pullReasons = meta.pullReasons || [];
+  var pullReasons = (meta.pullReasons || []).concat(futureSynergyReasons(meta));
   var skipReasons = meta.skipReasons || [];
   if (pullReasons.length > 0 || skipReasons.length > 0) {
     html += '<div class="two-col-grid">';
@@ -1515,13 +1530,11 @@ function renderResults(result) {
   html += kpiTile('🔥', 'FOMO', fomoScore, '', fomoScore >= 7 ? '<div class="kpi-tile-caption is-warn">⚠️ 주의</div>' : '');
   html += '</div>';
 
-  // KPI Notes: 불확실 요인 / FOMO 사유 (보조 정보)
+  // KPI Notes: 불확실 요인 (FOMO 사유는 사용자 요청으로 표시 제외)
   var uncReasons = (meta.uncertainty && meta.uncertainty.reasons) || [];
-  var fomoReason = meta.fomoRisk && meta.fomoRisk.reason;
-  if (uncReasons.length > 0 || fomoReason) {
+  if (uncReasons.length > 0) {
     html += '<div class="kpi-notes">';
-    if (uncReasons.length > 0) html += '<div><strong>불확실 요인</strong> · ' + uncReasons.join(' / ') + '</div>';
-    if (fomoReason) html += '<div><strong>FOMO 사유</strong> · ' + fomoReason + '</div>';
+    html += '<div><strong>불확실 요인</strong> · ' + uncReasons.join(' / ') + '</div>';
     html += '</div>';
   }
 
@@ -1553,7 +1566,7 @@ function renderResults(result) {
     html += '<div class="result-block">';
     html += '<div class="result-label">👍 뽑아야 할 이유</div>';
     html += '<ul class="reason-list">';
-    var pullReasons = meta.pullReasons || [];
+    var pullReasons = (meta.pullReasons || []).concat(futureSynergyReasons(meta));
     for (var j = 0; j < pullReasons.length; j++) {
       html += '<li>' + pullReasons[j] + '</li>';
     }
@@ -1571,9 +1584,7 @@ function renderResults(result) {
     html += '</div>';
   }
 
-  // Two-Col: 커뮤니티 투자 분석 / 향후 시너지 캐릭터
-  html += '<div class="two-col-grid">';
-
+  // 커뮤니티 투자 분석 (향후 시너지는 '뽑을 이유'로 이동해 별도 블록 제거)
   html += '<div class="result-block">';
   html += '<div class="result-label">커뮤니티 투자 분석</div>';
   var commSummary = meta.communitySummary || null;
@@ -1610,34 +1621,6 @@ function renderResults(result) {
   } else {
     html += '<p class="no-data">커뮤니티 분석 미등록</p>';
   }
-  html += '</div>';
-
-  html += '<div class="result-block">';
-  html += '<div class="result-label">향후 시너지 캐릭터</div>';
-  var futureLinks = meta.futureLinks || [];
-  if (futureLinks.length === 0) {
-    html += '<p class="no-data">등록된 시너지 없음</p>';
-  } else {
-    for (var k = 0; k < futureLinks.length; k++) {
-      var fl = futureLinks[k];
-      var linkedChar = null;
-      for (var m = 0; m < appState.characters.length; m++) {
-        if (appState.characters[m].id === fl.characterId) {
-          linkedChar = appState.characters[m];
-          break;
-        }
-      }
-      var flName = linkedChar ? linkedChar.name : fl.characterId;
-      var flReleased = linkedChar ? linkedChar.isReleased : false;
-      html += '<div class="future-link">';
-      html += '<div class="future-name">' + flName + (flReleased ? "" : " [출시 예정]") + '</div>';
-      html += '<div class="future-synergy">' + fl.synergy + '</div>';
-      html += '<div class="future-conf">확률 ' + Math.round(fl.confidence * 100) + '%</div>';
-      html += '</div>';
-    }
-  }
-  html += '</div>';
-
   html += '</div>';
 
   // Verdict Callout: 최종 판단 문장
