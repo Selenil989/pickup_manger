@@ -170,6 +170,68 @@ function computeGuideAccount(gachaGuide, userRoster, allCharacters) {
   };
 }
 
+// ── 속성/역할 공백 판단 ────────────────────────────────────────────────────
+// 내 로스터에 이 캐릭터의 역할/속성이 몇 명이나 있는지 세어, 빈자리를 채우는지 본다.
+function computeGaps(character, userRoster, allCharacters) {
+  var chars = (userRoster && userRoster.characters) || [];
+  var idToChar = {};
+  for (var i = 0; i < allCharacters.length; i++) idToChar[allCharacters[i].id] = allCharacters[i];
+  var sameRole = 0, sameElement = 0;
+  for (var j = 0; j < chars.length; j++) {
+    var c = idToChar[chars[j].characterId];
+    if (!c) continue;
+    if (c.role === character.role) sameRole++;
+    if (c.element === character.element) sameElement++;
+  }
+  return {
+    sameRoleCount: sameRole,
+    sameElementCount: sameElement,
+    fillsRoleGap: sameRole === 0,       // 이 역할 보유가 0명 → 역할 공백을 채움
+    fillsElementGap: sameElement === 0  // 이 속성 보유가 0명 → 속성 공백을 채움
+  };
+}
+
+// ── 최종 투자선 판정 (규칙 기반, 6단계) ────────────────────────────────────
+// 재료: 종합점수 + 불확실성 + 전무/돌파 가치 + 핵심 파츠 보유(guideAccount) + 공백(gaps)
+// tier: skip / wait_2w / card_only / card_weapon / efficient_breakthrough / high_investment
+function computeInvestmentTier(meta, finalScore, guideAccount, gaps) {
+  var unc = (meta.uncertainty && meta.uncertainty.score) || 0;
+  var weaponScore = meta.weaponRecommendation ? meta.weaponRecommendation.score : 0;
+  var breakScore = meta.breakthroughRecommendation ? meta.breakthroughRecommendation.score : 0;
+  var reasons = [];
+
+  // guideAccount가 있으면 "필수 파티 조건 미충족" / "핵심 파츠 전무" 여부 확인
+  var partyUnmet = false;
+  if (guideAccount) {
+    var reqs = guideAccount.partyRequirements || [];
+    if (reqs.length > 0) partyUnmet = reqs.some(function(r) { return r.status === 'unmet'; });
+  }
+
+  var tier;
+  if (unc >= 7) { tier = 'wait_2w'; reasons.push('정보가 불확실해 지금은 판단 보류'); }
+  else if (partyUnmet) { tier = 'skip'; reasons.push('작동에 필요한 파티 조건을 못 채움'); }
+  else if (finalScore < 5.5) { tier = 'skip'; reasons.push('종합 점수가 낮음'); }
+  else if (finalScore >= 8.0 && weaponScore >= 7 && breakScore >= 6) { tier = 'high_investment'; reasons.push('종합·전무·돌파 모두 가치가 큼'); }
+  else if (breakScore >= 7 && finalScore >= 6.5) { tier = 'efficient_breakthrough'; reasons.push('돌파 효율이 핵심'); }
+  else if (weaponScore >= 7 && finalScore >= 6.5) { tier = 'card_weapon'; reasons.push('전무 가치가 큼'); }
+  else { tier = 'card_only'; reasons.push('명함으로도 충분'); }
+
+  // 공백 보너스는 근거로만 표시 (tier를 강제로 올리지 않음 — 규칙을 단순·투명하게 유지)
+  if (gaps.fillsRoleGap) reasons.push('내 계정에 없는 역할을 채워줌');
+  if (gaps.fillsElementGap) reasons.push('내 계정에 없는 속성을 채워줌');
+
+  return { tier: tier, reasons: reasons };
+}
+
+var INVESTMENT_TIER_LABEL = {
+  skip: '스킵',
+  wait_2w: '2주 대기',
+  card_only: '명함',
+  card_weapon: '명함 + 전무',
+  efficient_breakthrough: '효율 돌파',
+  high_investment: '고투자'
+};
+
 function evaluate(character, meta, userRoster, allCharacters, banner, config) {
   if (meta === null) {
     return {
@@ -185,6 +247,10 @@ function evaluate(character, meta, userRoster, allCharacters, banner, config) {
   var itemAverageScore = calculateItemAverageScore(meta, config.itemSubWeights);
   var finalScore = calculateFinalScore(character, meta, accountGrowth, itemAverageScore, config);
 
+  var guideAccount = computeGuideAccount(meta.gachaGuide, userRoster, allCharacters);
+  var gaps = computeGaps(character, userRoster, allCharacters);
+  var investmentTier = computeInvestmentTier(meta, finalScore, guideAccount, gaps);
+
   return {
     character: character,
     meta: meta,
@@ -195,6 +261,10 @@ function evaluate(character, meta, userRoster, allCharacters, banner, config) {
     isCurrentPickup: isCurrentPickup(character.id, banner),
     recommendationLabel: getRecommendationLabel(meta.recommendation.pull),
     investmentTypeLabels: (meta.investmentType || []).map(getInvestmentTypeLabel),
-    guideAccount: computeGuideAccount(meta.gachaGuide, userRoster, allCharacters)
+    guideAccount: guideAccount,
+    gaps: gaps,
+    investmentTier: investmentTier.tier,
+    investmentTierLabel: INVESTMENT_TIER_LABEL[investmentTier.tier] || investmentTier.tier,
+    investmentReasons: investmentTier.reasons
   };
 }

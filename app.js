@@ -1455,17 +1455,8 @@ function renderResults(result) {
 
   var uncScore  = (meta.uncertainty && meta.uncertainty.score != null) ? meta.uncertainty.score : 0;
   var fomoScore = (meta.fomoRisk && meta.fomoRisk.score != null) ? meta.fomoRisk.score : 0;
-  var action = (function() {
-    var fs = result.finalScore, ag = result.accountGrowth, rs = meta.replacementScore || 0;
-    var ws = meta.weaponRecommendation ? meta.weaponRecommendation.score : 0;
-    if (fs < 5.5) return 'skip';
-    if (uncScore >= 7) return 'wait';
-    var ww = ws >= 7 && uncScore < 5 && ag >= 6 && rs <= 6;
-    if (fs >= 8.5 && ww && rs <= 4) return 'full';
-    if (fs >= 7.0 && ws >= 7 && uncScore >= 5) return 'hold_weapon';
-    if (fs >= 7.0 && ww) return 'full';
-    return 'char_only';
-  })();
+  // 최종 투자선은 evaluationEngine이 계산한 값을 그대로 쓴다 (app.js는 표시만).
+  var action = result.investmentTier;
 
   function kpiTile(icon, label, score, badgeHtml, captionHtml) {
     var pct = Math.round((score / 10) * 100);
@@ -1486,20 +1477,22 @@ function renderResults(result) {
   var inlineBadge = isOwned
     ? '<span class="verdict-inline verdict-owned">보유중</span>'
     : '<span class="verdict-inline">' + verdictLabel + '</span>';
-  var _aLabels = { full: '명전 추천', hold_weapon: '명함만 확보 후 전무 보류', wait: '2주 대기', char_only: '명함 추천', skip: '스킵' };
-  var _aCss    = { full: 'action-full', hold_weapon: 'action-hold', wait: 'action-wait', char_only: 'action-char', skip: 'action-skip' };
+  var _aCss = {
+    high_investment: 'action-full', card_weapon: 'action-hold', wait_2w: 'action-wait',
+    efficient_breakthrough: 'action-full', card_only: 'action-char', skip: 'action-skip'
+  };
   html += '<div class="result-block verdict-hero pull-' + pullClass + ' ' + (_aCss[action] || '') + '">';
   html += '<div class="verdict-hero-top"><div class="result-label">최종 추천도' + inlineBadge + '</div></div>';
   html += '<div class="verdict-hero-score-row">';
   html += '<div class="final-score verdict-hero-score">' + parseFloat(result.finalScore.toFixed(1)) + '<span class="verdict-hero-score-unit"> / 10</span></div>';
   html += '<div class="verdict-hero-bar-col"><div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:' + finalPct + '%"></div></div></div></div>';
   html += '</div>';
-  html += '<div class="verdict-hero-action"><span>추천 행동</span><span class="verdict-hero-action-arrow">▸</span><span class="action-label">' + (_aLabels[action] || '') + '</span></div>';
+  html += '<div class="verdict-hero-action"><span>내 계정 기준 투자선</span><span class="verdict-hero-action-arrow">▸</span><span class="action-label">' + (result.investmentTierLabel || '') + '</span></div>';
+  if (result.investmentReasons && result.investmentReasons.length > 0) {
+    html += '<div class="sub-note">' + result.investmentReasons.join(' · ') + '</div>';
+  }
   if (result.isCurrentPickup) html += '<div class="pickup-badge">현재 픽업 중</div>';
   if (fomoScore >= 7) html += '<div class="fomo-warn">⚠️ 불안 과금 주의 — 충분히 고민 후 결정하세요</div>';
-  if (action === 'wait' && meta.uncertainty && meta.uncertainty.reasons && meta.uncertainty.reasons.length > 0) {
-    html += '<div class="sub-note">불확실 요인 : ' + meta.uncertainty.reasons.join(' / ') + '</div>';
-  }
   html += '</div>';
 
   // 가챠 가이드 — meta.gachaGuide가 있는 캐릭터에서만 표시(없으면 빈 문자열이라
@@ -1649,8 +1642,14 @@ function renderResults(result) {
 
   // Verdict Callout: 최종 판단 문장
   var _vName    = character.nameKo || character.name;
-  var _vActions = { full: '명전 투자를 추천합니다', hold_weapon: '명함 확보 후 전무는 보류를 추천합니다', wait: '2주 대기 후 재평가를 추천합니다', char_only: '명함 확보를 추천합니다', skip: '이번 픽업 스킵을 추천합니다' };
+  var _vActions = {
+    high_investment: '고투자를 추천합니다', card_weapon: '명함 + 전무를 추천합니다',
+    wait_2w: '2주 대기 후 재평가를 추천합니다', efficient_breakthrough: '효율 돌파를 추천합니다',
+    card_only: '명함 확보를 추천합니다', skip: '이번 픽업 스킵을 추천합니다'
+  };
   var _vParts   = [_vName + ': ' + (_vActions[action] || '') + '.'];
+  if (result.gaps && result.gaps.fillsRoleGap) _vParts.push('내 계정에 없는 역할을 채워줍니다.');
+  if (result.gaps && result.gaps.fillsElementGap) _vParts.push('내 계정에 없는 속성을 채워줍니다.');
   if (result.accountGrowth < 5) _vParts.push('내 계정 기여 제한적.');
   if (meta.replacementScore >= 7) _vParts.push('대체 가능성 높음.');
   if (isOwned) _vParts.push('이미 보유 중 — 추가 투자를 신중히 검토하세요.');
