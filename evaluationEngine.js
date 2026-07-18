@@ -92,6 +92,84 @@ function isCurrentPickup(characterId, banner) {
   return (banner.currentBanners || []).some(function(b) { return b.characterId === characterId; });
 }
 
+// ── 계정 파츠 보유 판단 (프로젝트 심장의 첫 조각) ──────────────────────────
+// gachaGuide에 적힌 파츠 캐릭터를 사용자의 실제 로스터와 대조한다.
+// 이번 단계는 "명시된 characterId 보유 여부"만 본다. 다른 파티에서 사용 중인지,
+// 역할만 같은 캐릭터로 대체 가능한지는 아직 판단하지 않는다(다음 단계).
+function ownedIdSet(userRoster) {
+  var set = {};
+  var chars = (userRoster && userRoster.characters) || [];
+  for (var i = 0; i < chars.length; i++) set[chars[i].characterId] = true;
+  return set;
+}
+
+function splitOwned(characterIds, ownedSet) {
+  var owned = [], missing = [];
+  var ids = characterIds || [];
+  for (var i = 0; i < ids.length; i++) {
+    if (ownedSet[ids[i]]) owned.push(ids[i]); else missing.push(ids[i]);
+  }
+  return { owned: owned, missing: missing };
+}
+
+// 보유 캐릭터 중 지정 역할(role)을 가진 캐릭터가 있는지 (role 타입 조건 판정용)
+function ownedHasRole(roles, ownedSet, allCharacters) {
+  var roleList = roles || [];
+  if (roleList.length === 0) return false;
+  for (var i = 0; i < allCharacters.length; i++) {
+    if (ownedSet[allCharacters[i].id] && roleList.indexOf(allCharacters[i].role) !== -1) return true;
+  }
+  return false;
+}
+
+function computeGuideAccount(gachaGuide, userRoster, allCharacters) {
+  if (!gachaGuide) return null;
+  var ownedSet = ownedIdSet(userRoster);
+
+  var partyRequirements = (gachaGuide.partyRequirements || []).map(function(r) {
+    var split = splitOwned(r.characterIds, ownedSet);
+    var idCount = (r.characterIds || []).length;
+    var roleCount = (r.roles || []).length;
+    var hasRoleMatch = ownedHasRole(r.roles, ownedSet, allCharacters);
+    var status;
+    if (r.type === 'one_of') {
+      if (idCount === 0 && roleCount === 0) status = 'unknown';
+      else status = (split.owned.length > 0 || hasRoleMatch) ? 'met' : 'unmet';
+    } else if (r.type === 'all') {
+      if (idCount === 0) status = 'unknown';
+      else if (split.missing.length === 0) status = 'met';
+      else if (split.owned.length > 0) status = 'partial';
+      else status = 'unmet';
+    } else if (r.type === 'role') {
+      status = roleCount === 0 ? 'unknown' : (hasRoleMatch ? 'met' : 'unmet');
+    } else {
+      status = 'unknown';
+    }
+    return {
+      type: r.type, characterIds: r.characterIds || [], roles: r.roles || [],
+      ownedCharacterIds: split.owned, missingCharacterIds: split.missing,
+      status: status
+    };
+  });
+
+  function partnerBlock(list) {
+    return (list || []).map(function(p) {
+      var split = splitOwned(p.characterIds, ownedSet);
+      return {
+        characterIds: p.characterIds || [], roles: p.roles || [],
+        ownedCharacterIds: split.owned, missingCharacterIds: split.missing,
+        hasAnyOwned: split.owned.length > 0
+      };
+    });
+  }
+
+  return {
+    partyRequirements: partyRequirements,
+    corePartners: partnerBlock(gachaGuide.corePartners),
+    alternativePartners: partnerBlock(gachaGuide.alternativePartners)
+  };
+}
+
 function evaluate(character, meta, userRoster, allCharacters, banner, config) {
   if (meta === null) {
     return {
@@ -116,6 +194,7 @@ function evaluate(character, meta, userRoster, allCharacters, banner, config) {
     finalScore: finalScore,
     isCurrentPickup: isCurrentPickup(character.id, banner),
     recommendationLabel: getRecommendationLabel(meta.recommendation.pull),
-    investmentTypeLabels: (meta.investmentType || []).map(getInvestmentTypeLabel)
+    investmentTypeLabels: (meta.investmentType || []).map(getInvestmentTypeLabel),
+    guideAccount: computeGuideAccount(meta.gachaGuide, userRoster, allCharacters)
   };
 }

@@ -1193,12 +1193,26 @@ function renderRoster() {
   }
 }
 
-// gachaGuide는 표시 전용이다 — 여기서는 아무것도 계산하지 않고, 계정 상태와도
-// 비교하지 않는다(보유 여부/파티 중복/투자선 계산은 이후 evaluationEngine 단계).
+// gachaGuide는 표시 전용이다 — app.js는 계산하지 않는다.
+// 파츠 보유 판단은 evaluationEngine이 계산한 guideAccount로 받아서 표시만 한다.
 // meta.gachaGuide가 없으면 빈 문자열을 반환해 기존 화면과 완전히 동일하게 둔다.
-function renderGachaGuideSection(meta) {
+function renderGachaGuideSection(meta, guideAccount) {
   var guide = meta.gachaGuide;
   if (!guide) return '';
+
+  // guideAccount(evaluationEngine 계산): 이 가이드의 파츠 중 내가 보유한 id 모음.
+  // guideAccount가 없으면(계정 판단 미수행) 뱃지 없이 이름만 표시한다.
+  var ownedMap = {};
+  if (guideAccount) {
+    function collectOwned(blocks) {
+      (blocks || []).forEach(function(b) {
+        (b.ownedCharacterIds || []).forEach(function(id) { ownedMap[id] = true; });
+      });
+    }
+    collectOwned(guideAccount.partyRequirements);
+    collectOwned(guideAccount.corePartners);
+    collectOwned(guideAccount.alternativePartners);
+  }
 
   var GG_ROLE_LABEL = {
     support: '지원', harmony: '화합', debuffer: '디버퍼', healer: '힐러', tank: '탱커',
@@ -1214,17 +1228,40 @@ function renderGachaGuideSection(meta) {
     }
     return id;
   }
+  // 계정 판단이 있으면 캐릭터 이름 옆에 보유/미보유 뱃지를 붙인다.
+  function ggCharTag(id) {
+    var name = ggCharName(id);
+    if (!guideAccount) return name;
+    return ownedMap[id]
+      ? name + '<span class="own-badge own-yes">보유</span>'
+      : name + '<span class="own-badge own-no">미보유</span>';
+  }
   function ggCharNames(ids) {
     if (!ids || ids.length === 0) return '';
-    var names = [];
-    for (var i = 0; i < ids.length; i++) names.push(ggCharName(ids[i]));
-    return names.join(', ');
+    var out = [];
+    for (var i = 0; i < ids.length; i++) out.push(ggCharTag(ids[i]));
+    return out.join(' ');
+  }
+
+  // 파티 조건 충족 상태 뱃지
+  var GG_STATUS = {
+    met:     { t: '조건 충족',   c: 'gg-st-met' },
+    partial: { t: '일부 보유',   c: 'gg-st-partial' },
+    unmet:   { t: '조건 미충족', c: 'gg-st-unmet' },
+    unknown: { t: '확인 불가',   c: 'gg-st-unknown' }
+  };
+  function statusBadge(status) {
+    var s = GG_STATUS[status] || GG_STATUS.unknown;
+    return '<span class="gg-status ' + s.c + '">' + s.t + '</span>';
   }
 
   var GG_REQ_TYPE_LABEL = { all: '전원 필요', one_of: '택 1', role: '역할 조건' };
 
   var html = '';
   html += '<div class="gg-heading">📖 가챠 가이드</div>';
+  if (guideAccount) {
+    html += '<div class="gg-account-note">🧩 내 로스터 기준으로 파츠 보유 여부를 표시했습니다. (아직 <b>다른 파티에서 사용 중인지</b>는 반영하지 않습니다.)</div>';
+  }
 
   // 1. 캐릭터 특징
   var keyFeatures = guide.keyFeatures || [];
@@ -1253,8 +1290,10 @@ function renderGachaGuideSection(meta) {
     for (var i = 0; i < partyReq.length; i++) {
       var r = partyReq[i];
       if (!r) continue;
+      var reqAcc = guideAccount && guideAccount.partyRequirements ? guideAccount.partyRequirements[i] : null;
       html += '<div class="gg-req-row">';
       html += '<span class="badge">' + (GG_REQ_TYPE_LABEL[r.type] || r.type || '조건') + '</span>';
+      if (reqAcc) html += statusBadge(reqAcc.status);
       var reqNames = ggCharNames(r.characterIds);
       var reqRoles = (r.roles || []).map(ggRoleLabel).join(', ');
       if (reqNames) html += '<span class="gg-req-targets">' + reqNames + '</span>';
@@ -1273,8 +1312,15 @@ function renderGachaGuideSection(meta) {
     for (var i = 0; i < coreP.length; i++) {
       var p = coreP[i];
       if (!p) continue;
+      var coreAcc = guideAccount && guideAccount.corePartners ? guideAccount.corePartners[i] : null;
+      var coreSummary = '';
+      if (coreAcc && (p.characterIds || []).length > 0) {
+        coreSummary = coreAcc.hasAnyOwned
+          ? ' <span class="gg-status gg-st-met">보유</span>'
+          : ' <span class="gg-status gg-st-unmet">없음</span>';
+      }
       html += '<div class="gg-partner-row">';
-      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
+      html += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + coreSummary + '</div>';
       if (p.description) html += '<div class="gg-partner-desc">' + p.description + '</div>';
       html += '</div>';
     }
@@ -1459,7 +1505,7 @@ function renderResults(result) {
   // 가챠 가이드 — meta.gachaGuide가 있는 캐릭터에서만 표시(없으면 빈 문자열이라
   // 기존 화면과 완전히 동일). 최상단 추천 결과 다음, 세부 점수 카드 이전에 배치.
   var hasGuide = !!meta.gachaGuide;
-  html += renderGachaGuideSection(meta);
+  html += renderGachaGuideSection(meta, result.guideAccount);
 
   // KPI 타일 그리드: 메타성능 / 계정체급 / 미래가치 / 대체가능성 / 불확실성 / FOMO
   var confClass = meta.confidence >= 0.80 ? 'confidence-high'
