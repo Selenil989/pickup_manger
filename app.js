@@ -61,6 +61,18 @@ var CARD_GRID_CONFIG = {
 // 지원하는 게임 목록 — server.js의 SYNC_HANDLERS와 맞춰서 관리한다.
 var CARD_SYNC_GAMES = ['hsr', 'wuwa', 'endfield'];
 function isCardGridGame(gameId) { return !!CARD_GRID_CONFIG[gameId]; }
+
+// 출시 여부는 releaseDate가 있으면 오늘 날짜와 비교해 동적으로 판단한다.
+// (저장된 isReleased 값은 날짜가 지나도 안 바뀌므로, 출시 예정 딱지가 자동으로 떨어지도록)
+function charIsReleased(dc) {
+  if (dc && dc.releaseDate) {
+    var r = /^\d{8}$/.test(dc.releaseDate)
+      ? dc.releaseDate.slice(0, 4) + '-' + dc.releaseDate.slice(4, 6) + '-' + dc.releaseDate.slice(6)
+      : dc.releaseDate;
+    return r <= new Date().toISOString().slice(0, 10);
+  }
+  return !dc || dc.isReleased !== false;
+}
 var _cardDragging     = false;
 var _gameDragging     = false;
 var _cardHintDismissed = false;
@@ -612,8 +624,8 @@ function renderCardGrid() {
     sortedChars.sort(function(a, b) {
       var da = _charEdits[a.id] ? Object.assign({}, a, _charEdits[a.id]) : a;
       var db = _charEdits[b.id] ? Object.assign({}, b, _charEdits[b.id]) : b;
-      var ga = !da.isReleased ? 0 : (da.releaseDate ? 1 : 2);
-      var gb = !db.isReleased ? 0 : (db.releaseDate ? 1 : 2);
+      var ga = !charIsReleased(da) ? 0 : (da.releaseDate ? 1 : 2);
+      var gb = !charIsReleased(db) ? 0 : (db.releaseDate ? 1 : 2);
       if (ga !== gb) return ga - gb;
       if (ga === 1) {
         var ra = /^\d{8}$/.test(da.releaseDate) ? da.releaseDate.slice(0,4)+'-'+da.releaseDate.slice(4,6)+'-'+da.releaseDate.slice(6) : da.releaseDate;
@@ -661,7 +673,7 @@ function renderCardGrid() {
     if (elementFile) html += '<img class="' + iconCls + '" src="' + imgBase + elementFile + '" alt="">';
     html += '</div></div>';
     if (owned) html += '<div class="char-card-owned-overlay"></div>';
-    if (!dc.isReleased) html += '<span class="char-card-unreleased-badge">출시 예정</span>';
+    if (!charIsReleased(dc)) html += '<span class="char-card-unreleased-badge">출시 예정</span>';
     html += '<div class="char-card-name">' + (dc.nameKo || dc.name) + '</div>';
     html += '</div>';
   }
@@ -800,7 +812,7 @@ function renderCharacterDetailModal() {
   var dis    = d.owned ? '' : ' disabled';
   var disSig = (d.owned && d.hasSignature) ? '' : ' disabled';
 
-  var releaseLabel = char.isReleased
+  var releaseLabel = charIsReleased(char)
     ? '<span class="detail-release detail-release-out">출시</span>'
     : '<span class="detail-release detail-release-pre">출시 예정</span>';
 
@@ -1184,8 +1196,8 @@ function renderRoster() {
 
     var div = document.createElement("div");
     div.className = "roster-item" + (owned ? " owned" : "");
-    div.textContent = (char.nameKo || char.name) + (char.isReleased ? "" : " ✦");
-    div.title = char.isReleased ? "" : "출시 예정";
+    div.textContent = (char.nameKo || char.name) + (charIsReleased(char) ? "" : " ✦");
+    div.title = charIsReleased(char) ? "" : "출시 예정";
     (function(charId) {
       div.onclick = function() { toggleRosterCharacter(charId); };
     })(char.id);
