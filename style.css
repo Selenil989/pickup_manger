@@ -1624,12 +1624,27 @@ select {
   .pass-card-header { border-right: none; border-bottom: 1px solid var(--border); min-width: 0; justify-content: flex-start; }
   .pass-card-body { flex-wrap: wrap; gap: 14px; }
 
-  /* 재화 행: 8칸 고정 그리드 → flex-wrap으로 여러 줄 흐름 (모바일 폭 맞춤).
-     base 정의가 뒤에 나오므로 .currency-page 접두로 구체성을 높여 이긴다. */
-  .currency-page .currency-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px; }
-  .currency-page .currency-name { flex: 1 1 45%; min-width: 0; }
-  .currency-page .currency-input { width: 84px; flex: 0 0 auto; }
-  .currency-page .currency-type-select { min-width: 0; max-width: 96px; }
+  /* 재화 행: 데스크톱 8칸 그리드 → 모바일 2줄 그리드로 재배치.
+     (아이콘 | 이름·입력 | 환산·버튼). base가 뒤에 나오므로 .currency-page 접두로 이긴다. */
+  .currency-page .currency-row {
+    display: grid;
+    grid-template-columns: 34px 1fr auto auto;
+    grid-template-areas:
+      "icon name  name conv"
+      "icon input unit actions";
+    align-items: center;
+    gap: 4px 8px;
+    padding: 12px 14px;
+  }
+  .currency-page .drag-handle,
+  .currency-page .currency-desc { display: none; }   /* 모바일선 숨김(재정렬·중복설명 생략) */
+  .currency-page .currency-icon-wrap { grid-area: icon; align-self: start; margin-top: 3px; }
+  .currency-page .currency-name { grid-area: name; min-width: 0; }
+  .currency-page .currency-input { grid-area: input; width: 100%; }
+  .currency-page .currency-unit { grid-area: unit; }
+  .currency-page .currency-equals { grid-area: conv; justify-self: end; white-space: nowrap; }
+  .currency-page .currency-row-actions { grid-area: actions; justify-self: end; }
+  .currency-page .currency-type-select { max-width: 100%; }
 }
 
 /* ── 32. Currency Page ────────────────────────────────────── */
