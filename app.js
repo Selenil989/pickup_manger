@@ -394,9 +394,8 @@ function setGame(gameId) {
         renderPlaceholder("캐릭터를 선택하고 분석하기를 누르세요.");
       }
 
-      document.getElementById("metaUpdateBtn").disabled = (gameId !== 'zzz');
-      document.getElementById("metaUpdateClaudeCodeBtn").disabled = false;
-      document.getElementById("cardSyncBtn").disabled = (CARD_SYNC_GAMES.indexOf(gameId) === -1);
+      document.getElementById("metaUpdateBtn").disabled = false;
+      document.getElementById("cardSyncBtn").disabled = false;
     })
     .catch(function() {
       renderError("게임 데이터를 불러오지 못했습니다.");
@@ -1667,7 +1666,6 @@ function onGameChange(gameId) {
     appState.currentGame = null;
     appState.previewMeta = {};
     document.getElementById("metaUpdateBtn").disabled = true;
-    document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
     renderPlaceholder("게임을 선택해주세요.");
     return;
@@ -1681,7 +1679,6 @@ function onGameChange(gameId) {
     appState.selectedCharacterId = null;
     appState.previewMeta = {};
     document.getElementById("metaUpdateBtn").disabled = true;
-    document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
     renderPlaceholder("이 게임은 가챠 분석 데이터가 없습니다.\n보유 재화 탭에서 재화를 관리할 수 있습니다.");
     return;
@@ -1706,187 +1703,38 @@ function onAnalyzeClick() {
   }
 }
 
-function runMetaUpdate() {
-  var characterId = appState.selectedCharacterId;
-  var gameId      = appState.currentGame;
-  if (!characterId || gameId !== 'zzz') return;
-
-  var baseMeta = null;
-  for (var i = 0; i < appState.meta.length; i++) {
-    if (appState.meta[i].characterId === characterId) {
-      baseMeta = appState.meta[i];
-      break;
-    }
-  }
-  if (!baseMeta) {
-    alert('메타 데이터가 없는 캐릭터는 업데이트할 수 없습니다.\n먼저 meta.json에 기본 데이터를 등록하세요.');
+// 관리자 버튼 → 대기열(data/pending-tasks.json)에 기록. Claude가 대화 중 읽어서 처리한다.
+function queueAdminTask(type, characterId) {
+  var game = appState.currentGame;
+  if (!game) { alert('게임을 먼저 선택하세요.'); return; }
+  if (type === 'meta' && !characterId) {
+    alert('메타를 채울 캐릭터를 먼저 선택하세요 (카드를 클릭해 분석 화면을 여세요).');
     return;
   }
-
-  var btn = document.getElementById('metaUpdateBtn');
-  btn.disabled    = true;
-  btn.textContent = '분석 중…';
-
-  var character = null;
-  for (var ci = 0; ci < appState.characters.length; ci++) {
-    if (appState.characters[ci].id === characterId) {
-      character = appState.characters[ci];
-      break;
-    }
-  }
-
-  fetch('http://localhost:3001/api/meta-update', {
+  fetch('http://localhost:3001/api/queue-task', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({
-      gameId:           gameId,
-      characterId:      characterId,
-      characterName:    character ? (character.name    || '') : '',
-      characterNameKo:  character ? (character.nameKo  || '') : ''
-    })
+    body:    JSON.stringify({ type: type, game: game, characterId: characterId || null })
   })
   .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (!data.success || !data.preview) {
-      throw new Error(data.error || '서버 오류');
-    }
-    var previewMeta = Object.assign({}, baseMeta, {
-      communitySummary: data.preview.communitySummary,
-      uncertainty:      data.preview.uncertainty,
-      fomoRisk:         data.preview.fomoRisk,
-      _isPreview:       true
-    });
-    appState.previewMeta[characterId] = previewMeta;
-    runAnalysis();
-  })
-  .catch(function(err) {
-    alert('메타 업데이트 실패\n\n' + err.message + '\n\nNode 서버가 실행 중인지 확인하세요.\n실행 방법: node server.js');
-  })
-  .finally(function() {
-    btn.disabled    = false;
-    btn.textContent = '메타 업데이트';
-  });
-}
-
-function runClaudeCodeMetaUpdate() {
-  var characterId = appState.selectedCharacterId;
-  var gameId      = appState.currentGame;
-  if (!characterId || !gameId) return;
-
-  var btn = document.getElementById('metaUpdateClaudeCodeBtn');
-  if (btn.disabled) return; // 실행 중 중복 클릭 방지
-  var originalLabel = btn.textContent;
-  btn.disabled    = true;
-  btn.textContent = 'Claude Code 검색·분석 중...';
-
-  var character = null;
-  for (var ci = 0; ci < appState.characters.length; ci++) {
-    if (appState.characters[ci].id === characterId) {
-      character = appState.characters[ci];
-      break;
-    }
-  }
-
-  fetch('http://localhost:3001/api/meta-update-claude-code', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({
-      gameId:           gameId,
-      characterId:      characterId,
-      characterName:    character ? (character.name   || '') : '',
-      characterNameKo:  character ? (character.nameKo || '') : ''
-    })
-  })
-  .then(function(res) {
-    return res.json().then(function(data) { return { status: res.status, data: data }; });
-  })
-  .then(function(result) {
-    var data = result.data;
-    if (!data.success || !data.meta) {
-      throw new Error(data.error || '서버 오류');
-    }
-
-    // meta.json에 실제로 저장된 항목으로 appState.meta를 갱신 (미리보기 아님)
-    var idx = -1;
-    for (var i = 0; i < appState.meta.length; i++) {
-      if (appState.meta[i].characterId === characterId) { idx = i; break; }
-    }
-    if (idx >= 0) {
-      appState.meta[idx] = data.meta;
+  .then(function(j) {
+    if (j && j.success) {
+      var what = type === 'meta' ? '메타 채우기' : '카드 채우기';
+      alert('✅ 예약됨 — ' + what + ' (대기 ' + j.count + '건)\n다음에 Claude와 대화할 때 처리됩니다.');
     } else {
-      appState.meta.push(data.meta);
+      alert('예약 실패: ' + ((j && j.error) || '알 수 없음'));
     }
-
-    // 기존 OpenRouter 미리보기 상태와 충돌 방지 — 실제 저장된 데이터가 우선이므로
-    // 남아있던 미리보기(_isPreview) 데이터는 제거하고 즉시 재렌더링한다.
-    delete appState.previewMeta[characterId];
-    runAnalysis();
-
-    btn.textContent = '메타 갱신 완료';
   })
-  .catch(function(err) {
-    btn.textContent = originalLabel;
-    alert('Claude Code 메타 갱신 실패\n\n' + err.message);
-  })
-  .finally(function() {
-    btn.disabled = false;
-    setTimeout(function() {
-      if (!btn.disabled) btn.textContent = originalLabel;
-    }, 2000);
+  .catch(function() {
+    alert('예약 실패 — 로컬 서버(3001)가 실행 중인지 확인하세요.\n(배포된 Pages에서는 안 됩니다 — 관리자 로컬에서 하세요.)');
   });
 }
 
-// "카드 데이터 갱신" — 서버가 외부 소스에서 신규 캐릭터/이미지/아이콘/출시일을
-// 자동 수집·저장하면, 프론트는 게임 데이터를 다시 불러와 카드를 재정렬해 보여준다.
-function runCardSync() {
-  var gameId = appState.currentGame;
-  if (!gameId || CARD_SYNC_GAMES.indexOf(gameId) === -1) return;
+// "메타 업데이트" — 지금 보고 있는 캐릭터의 메타를 Claude가 채우도록 예약
+function runMetaUpdate() { queueAdminTask('meta', appState.selectedCharacterId); }
 
-  var btn = document.getElementById('cardSyncBtn');
-  if (btn.disabled) return;
-  var originalLabel = btn.textContent;
-  btn.disabled    = true;
-  btn.textContent = '자료 수집 중...';
-
-  fetch('http://localhost:3001/api/sync-characters', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ gameId: gameId })
-  })
-  .then(function(res) {
-    return res.json().then(function(data) { return { status: res.status, data: data }; });
-  })
-  .then(function(result) {
-    var data = result.data;
-    if (!data.success || !data.report) {
-      throw new Error(data.error || '서버 오류');
-    }
-    var r = data.report;
-
-    // 파일이 갱신됐으므로 localStorage 캐릭터 캐시를 비우고 파일 기준으로 재로딩
-    try { localStorage.removeItem('pickup_manager_characters_' + gameId); } catch (e) {}
-
-    return setGame(gameId).then(function() {
-      btn.textContent = '갱신 완료';
-      alert('카드 데이터 갱신 완료\n\n' +
-        '신규 캐릭터: ' + r.added.length + '명' + (r.added.length ? ' (' + r.added.join(', ') + ')' : '') + '\n' +
-        '이미지 다운로드: ' + r.imagesDownloaded + '개\n' +
-        '아이콘 다운로드: ' + r.iconsDownloaded + '개\n' +
-        '출시일 갱신: ' + r.datesUpdated + '건\n' +
-        '한글명 보충: ' + r.nameKoFilled + '건');
-    });
-  })
-  .catch(function(err) {
-    btn.textContent = originalLabel;
-    alert('카드 데이터 갱신 실패\n\n' + err.message + '\n\nNode 서버가 실행 중인지 확인하세요.\n실행 방법: node server.js');
-  })
-  .finally(function() {
-    btn.disabled = (CARD_SYNC_GAMES.indexOf(appState.currentGame) === -1);
-    setTimeout(function() {
-      if (!btn.disabled) btn.textContent = originalLabel;
-    }, 2000);
-  });
-}
+// "카드 데이터 갱신" — 지금 게임의 빠진 카드를 Claude가 찾아 추가하도록 예약
+function runCardSync() { queueAdminTask('card', null); }
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 10: Currency
@@ -3168,7 +3016,6 @@ function deleteGame(gameId) {
     appState.banner = null;
     appState.selectedCharacterId = null;
     document.getElementById('metaUpdateBtn').disabled = true;
-    document.getElementById('metaUpdateClaudeCodeBtn').disabled = true;
     document.getElementById('cardSyncBtn').disabled = true;
     renderPlaceholder('게임을 선택해주세요.');
   }
@@ -3620,7 +3467,6 @@ function init() {
       appState.config = config;
       renderGameSelect();
       document.getElementById("metaUpdateBtn").disabled = true;
-      document.getElementById("metaUpdateClaudeCodeBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
       renderPlaceholder("게임을 선택해주세요.");
 
@@ -3714,9 +3560,6 @@ function init() {
 
       document.getElementById("metaUpdateBtn").onclick = function() {
         runMetaUpdate();
-      };
-      document.getElementById("metaUpdateClaudeCodeBtn").onclick = function() {
-        runClaudeCodeMetaUpdate();
       };
       document.getElementById("cardSyncBtn").onclick = function() {
         runCardSync();

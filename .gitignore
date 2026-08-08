@@ -22,3 +22,6 @@ tools/import/.cache/
 # Google OAuth client secret 파일 (절대 커밋 금지)
 client_secret_*.json
 *.apps.googleusercontent.com.json
+
+# 관리자 작업 대기열 (로컬 전용)
+data/pending-tasks.json

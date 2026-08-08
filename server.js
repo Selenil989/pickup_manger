@@ -1826,6 +1826,30 @@ app.post('/api/sync-characters', async (req, res) => {
   }
 });
 
+// ── /api/queue-task (관리자 버튼 → 대기열 기록. Claude가 대화 중 읽어서 처리) ──
+// type: 'meta'(특정 캐릭터 메타 채우기) | 'card'(게임의 빠진 카드 찾아 추가)
+app.post('/api/queue-task', (req, res) => {
+  const { type, game, characterId } = req.body || {};
+  if (!type || !game) {
+    return res.status(400).json({ error: 'type, game 필드가 필요합니다.' });
+  }
+  const filePath = path.join(__dirname, 'data', 'pending-tasks.json');
+  try {
+    let tasks = [];
+    if (fs.existsSync(filePath)) {
+      try { tasks = JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (e) { tasks = []; }
+    }
+    if (!Array.isArray(tasks)) tasks = [];
+    tasks.push({ type, game, characterId: characterId || null, requestedAt: new Date().toISOString() });
+    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2), 'utf8');
+    console.log('[대기열] 추가 — %s / %s / %s', type, game, characterId || '(게임전체)');
+    res.json({ success: true, count: tasks.length });
+  } catch (err) {
+    console.error('[대기열 오류]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── /api/save-roster ─────────────────────────────────────────────────────────
 
 app.post('/api/save-roster', (req, res) => {
