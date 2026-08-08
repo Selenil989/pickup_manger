@@ -6,7 +6,9 @@
 var SUPABASE_URL = 'https://fqbpjvycdbicbbshxkyb.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_bXR-gFa8AVTBWAn3nOT4HQ_N_bq7kSI';
 var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카드 갱신 버튼)
-var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// flowType 'implicit': OAuth 리턴 시 토큰을 URL 해시로 바로 받음(code 교환 없음).
+// PKCE(기본)는 모바일 크롬에서 code_verifier 교환이 실패하는 경우가 있어, 모바일 구글 로그인 안정성을 위해 implicit 사용.
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
 
 var origSet = localStorage.setItem.bind(localStorage);
 var syncTimer = null, currentUid = null;
