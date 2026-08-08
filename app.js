@@ -1923,13 +1923,7 @@ function loadPlannerData(gameId) {
   try {
     var raw = localStorage.getItem('pickup_manager_planner_' + gameId);
     var pd  = raw ? JSON.parse(raw) : {};
-    // 빈 계정: 어드민 기준 현재 버전·시작일을 기본값으로 시드 (버전/시작일 둘 다 없을 때만)
-    var def = DEFAULT_PLANNER[gameId];
-    if (def && !pd.version && !pd.startDate) {
-      pd.version   = def.version;
-      pd.startDate = def.startDate;
-    }
-    // migrate from old flat structure
+    // 목표(cur/next)는 개인 데이터 — 구버전 평면 구조에서 마이그레이션
     if (!pd.cur) {
       pd.cur = {
         firstHalf:  { charGoal: parseInt(pd.charGoal)      || 0, weaponGoal: parseInt(pd.weaponGoal)      || 0 },
@@ -1942,11 +1936,26 @@ function loadPlannerData(gameId) {
         secondHalf: { charGoal: 0, weaponGoal: 0 }
       };
     }
-    return plannerMaybeRollover(gameId, pd);
+    // 버전/기간은 공유(어드민) 값 우선 → 없으면 코드 기본값. 게임 공통 사실이라 개인 저장분을 덮어쓴다.
+    var shared = (window.getSharedPlanner && window.getSharedPlanner(gameId)) || null;
+    var def    = DEFAULT_PLANNER[gameId] || {};
+    pd.version   = shared ? shared.version   : (def.version   || '');
+    pd.startDate = shared ? shared.startDate : (def.startDate || '');
+    pd.endDate   = shared ? (shared.endDate || '') : '';
+    // 공유 버전이 바뀌면(어드민이 다음 버전으로 넘김) 개인 목표 이월: cur←next, next 비움
+    if (pd.version && pd._seenVer && pd._seenVer !== pd.version) {
+      pd.cur = pd.next;
+      pd.next = { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
+      pd._seenVer = pd.version;
+      savePlannerData(gameId, pd);
+    } else if (pd.version && !pd._seenVer) {
+      pd._seenVer = pd.version;
+    }
+    return pd;
   } catch(e) {
-    var def = DEFAULT_PLANNER[gameId] || {};
+    var d = DEFAULT_PLANNER[gameId] || {};
     return {
-      version: def.version || '', startDate: def.startDate || '',
+      version: d.version || '', startDate: d.startDate || '', endDate: '',
       cur:  { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } },
       next: { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } }
     };
@@ -2556,6 +2565,7 @@ function bindPlannerEvents(gameId) {
     if (id === 'plannerAdvanceBtn') {
       var pd = loadPlannerData(gameId);
       flushGoalInputs(pd);
+      savePlannerData(gameId, pd);              // 현재 입력한 목표 저장 (목표 이월은 loadPlannerData가 버전변경 감지해 처리)
       var nextVer = plannerNextVersion(pd.version);
       var effEnd  = pd.endDate || plannerAutoEndDate(pd.startDate);
       var newStart = '';
@@ -2564,20 +2574,8 @@ function bindPlannerEvents(gameId) {
         newStart = d.toISOString().slice(0, 10);
       }
       var newEnd  = newStart ? plannerAutoEndDate(newStart) : '';
-      var newPd = {
-        version:   nextVer || pd.version,
-        startDate: newStart || pd.startDate,
-        endDate:   newEnd,
-        cur: {
-          firstHalf:  { charGoal: pd.next.firstHalf.charGoal  || 0, weaponGoal: pd.next.firstHalf.weaponGoal  || 0 },
-          secondHalf: { charGoal: pd.next.secondHalf.charGoal || 0, weaponGoal: pd.next.secondHalf.weaponGoal || 0 }
-        },
-        next: {
-          firstHalf:  { charGoal: 0, weaponGoal: 0 },
-          secondHalf: { charGoal: 0, weaponGoal: 0 }
-        }
-      };
-      savePlannerData(gameId, newPd);
+      // 버전/기간은 공유(어드민) — 전 유저 반영. 각 유저 목표는 다음 로드 때 cur←next 자동 이월.
+      if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, nextVer || pd.version, newStart || pd.startDate, newEnd);
       renderCurrencyPage();
       return;
     }
@@ -3561,8 +3559,8 @@ function openPlannerConfigModal(gameId) {
     if (!eDate && sDate) eDate = plannerAutoEndDate(sDate);
     // 이미 등록된 버전이 있고 종료일이 설정된 경우, 시작일이 비어 있으면 규칙 적용
     if (!sDate && eDate && pd.endDate) sDate = plannerNextDayStr(pd.endDate);
-    var newPd = Object.assign({}, pd, { version: version, startDate: sDate, endDate: eDate });
-    savePlannerData(gameId, newPd);
+    // 버전/기간은 공유 설정(어드민만) — Supabase에 저장돼 전 유저에 반영. 목표는 개인 유지.
+    if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, version, sDate, eDate);
     close();
     renderCurrencyPage();
   };

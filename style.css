@@ -1346,6 +1346,10 @@ select {
 #analysisActions { display: none; }
 body.is-admin #analysisActions { display: flex; }
 
+/* 버전 플래너의 버전/기간 편집(설정·이월)은 어드민만 — 나머지는 공유값 읽기 전용 */
+body:not(.is-admin) .planner-config-btn,
+body:not(.is-admin) .planner-advance-btn { display: none; }
+
 .sidebar-title {
   padding: 16px;
   font-size: 14px;

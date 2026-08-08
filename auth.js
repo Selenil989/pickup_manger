@@ -62,11 +62,35 @@ function domReady(fn) {
   else fn();
 }
 
+// 버전 플래너 공유 설정 — 버전/기간은 게임 공통 사실이라 어드민만 쓰고 전원이 읽는다.
+// pickup_manager_ 접두사가 아니므로 유저별 데이터 동기화 대상이 아니다(전역 캐시).
+var SHARED_PLANNER_KEY = 'shared_planner_cache';
+function fetchSharedPlanner() {
+  return sb.from('shared_planner').select('game,version,start_date,end_date').then(function (r) {
+    if (r.error || !r.data) return;
+    var m = {};
+    r.data.forEach(function (row) { m[row.game] = { version: row.version, startDate: row.start_date, endDate: row.end_date || '' }; });
+    try { origSet(SHARED_PLANNER_KEY, JSON.stringify(m)); } catch (e) {}
+  }, function () {});
+}
+window.getSharedPlanner = function (game) {
+  try { var m = JSON.parse(localStorage.getItem(SHARED_PLANNER_KEY) || '{}'); return m[game] || null; } catch (e) { return null; }
+};
+window.saveSharedPlanner = function (game, version, startDate, endDate) {
+  if (!window.IS_ADMIN) return Promise.resolve();          // 어드민만 (RLS도 이중 방어)
+  var m; try { m = JSON.parse(localStorage.getItem(SHARED_PLANNER_KEY) || '{}'); } catch (e) { m = {}; }
+  m[game] = { version: version, startDate: startDate, endDate: endDate || '' };
+  try { origSet(SHARED_PLANNER_KEY, JSON.stringify(m)); } catch (e) {}
+  return sb.from('shared_planner').upsert({ game: game, version: version, start_date: startDate, end_date: endDate || null, updated_at: new Date().toISOString() })
+    .then(function (r) { if (r.error) console.warn('[shared planner] 저장 실패:', r.error.message); return r; });
+};
+
 function onAuthed(session) {
   if (session.user.id === currentUid) return;   // 같은 계정 재진입은 무시 (중복 init 방지)
   currentUid = session.user.id;
+  window.IS_ADMIN = (session.user.email === ADMIN_EMAIL);
   document.body.classList.toggle('is-admin', session.user.email === ADMIN_EMAIL);
-  loadAccount(currentUid).then(function () {
+  Promise.all([loadAccount(currentUid), fetchSharedPlanner()]).then(function () {
     var gate = document.getElementById('authGate');
     if (gate) gate.style.display = 'none';
     domReady(function () { if (window.appInit) window.appInit(); });
