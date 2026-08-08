@@ -33,7 +33,7 @@ var CHAR_ROLE_LABELS = {
   nihility: '공허', remembrance: '기억', erudition: '지식', hunt: '수렵', destruction: '파멸',
   harmony: '화합', preservation: '보존', abundance: '풍요', elation: '환락',                                  // HSR 운명
   vanguard: '뱅가드', striker: '스트라이커', defender: '디펜더', guard: '가드', caster: '캐스터',             // 엔드필드 클래스
-  sword: '장검', broadblade: '대검', pistol: '권총', gauntlet: '권갑', rectifier: '음율기'                    // 명조 무기
+  sword: '장검', broadblade: '대검', pistols: '권총', gauntlets: '권갑', rectifier: '음율기'                  // 명조 무기
 };
 var CHAR_ELEMENT_LABELS = {
   physical: '물리', fire: '불', ice: '얼음', electric: '전기', ether: '에테르', wind: '바람', lumiflux: '광휘', // 공통/ZZZ
