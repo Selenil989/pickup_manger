@@ -104,29 +104,35 @@ var CURRENCY_CONFIG = {
   zzz: {
     name: '젠레스 존 제로',
     currencies: [
-      { id: 'polychrome',    name: '폴리크롬',          icon: 'assets/icons/zzz/polychrome.png',    rate: 160, desc: '160개 = 1뽑',     note: null, type: 'common'    },
-      { id: 'limitedTicket', name: '암호화 마스터 테이프', icon: 'assets/icons/zzz/limited_ticket.png', rate: 1,   desc: '1개 = 1뽑 (한정)', note: null, type: 'character' }
+      { id: 'monochrome',    name: '모노크롬',          icon: 'assets/icons/zzz/zz1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'polychrome',    name: '폴리크롬',          icon: 'assets/icons/zzz/zz2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'limitedTicket', name: '기밀 마스터 테이프', icon: 'assets/icons/zzz/zz3.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'common'    }
     ]
   },
   hsr: {
     name: '붕괴: 스타레일',
     currencies: [
-      { id: 'jade',        name: '성옥',            icon: 'assets/icons/hsr/jade.png',         rate: 160, desc: '160개 = 1뽑',     note: null, type: 'common'    },
-      { id: 'limitedPass', name: '별의 궤도 특별 패스', icon: 'assets/icons/hsr/limited_pass.png', rate: 1,   desc: '1개 = 1뽑 (한정)', note: null, type: 'character' }
+      { id: 'olddream',    name: '오래된 꿈',        icon: 'assets/icons/hsr/hsr1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common' },
+      { id: 'jade',        name: '성옥',            icon: 'assets/icons/hsr/hsr2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common' },
+      { id: 'limitedPass', name: '별의 궤도 전용티켓', icon: 'assets/icons/hsr/hsr3.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'common' }
     ]
   },
   wuwa: {
     name: '명조: 워더링 웨이브',
     currencies: [
-      { id: 'astrite',     name: '별의 소리',    icon: 'assets/icons/wuwa/astrite.png',      rate: 160, desc: '160개 = 1뽑',     note: null, type: 'common'    },
-      { id: 'limitedTide', name: '금빛 파도 티켓', icon: 'assets/icons/wuwa/limited_tide.png', rate: 1,   desc: '1개 = 1뽑 (한정)', note: null, type: 'character' }
+      { id: 'moonlight',   name: '달빛',          icon: 'assets/icons/wuwa/ww1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'astrite',     name: '별의 소리',      icon: 'assets/icons/wuwa/ww2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'limitedTide', name: '금빛 파도의 무늬', icon: 'assets/icons/wuwa/ww3.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'character' },
+      { id: 'tideRipple',  name: '울린 조수의 무늬', icon: 'assets/icons/wuwa/ww4.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'weapon'    }
     ]
   },
   endfield: {
     name: '아크나이츠: 엔드필드',
     currencies: [
-      { id: 'crystal',       name: '오리지늄',   icon: 'assets/icons/endfield/crystal.png',        rate: 500, desc: '500개 = 1뽑',     note: null, type: 'common'    },
-      { id: 'limitedPermit', name: '채용 허가증', icon: 'assets/icons/endfield/limited_permit.png', rate: 1,   desc: '1개 = 1뽑 (한정)', note: null, type: 'character' }
+      { id: 'derivedOriginium', name: '파생 오리지늄',      icon: 'assets/icons/endfield/ef0.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
+      { id: 'crystal',          name: '오리지늄',          icon: 'assets/icons/endfield/ef1.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
+      { id: 'limitedPermit',    name: '헤드헌팅 채용 허가증', icon: 'assets/icons/endfield/ef2.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'character' },
+      { id: 'armoryToken',      name: '무기고 증표',        icon: 'assets/icons/endfield/ef3.webp', rate: 198, desc: '198개 = 1뽑', note: null, type: 'weapon'    }
     ]
   }
 };
