@@ -944,14 +944,51 @@ function saveCharacterDetail() {
     if (idx !== -1) { roster.characters.splice(idx, 1); }
   }
 
+  _persistAndReanalyze();
+  closeCharacterDetail();
+}
+
+// roster 변경 후 저장 + 로스터/분석/카드 갱신 (모달 저장·인라인 컨트롤 공용)
+function _persistAndReanalyze() {
   saveRoster(appState.currentGame);
   renderRoster();
-  if (appState.selectedCharacterId) {
-    runAnalysis();
-  } else if (isCardGridGame(appState.currentGame)) {
-    renderCardGrid();
+  if (appState.selectedCharacterId) runAnalysis();
+  else if (isCardGridGame(appState.currentGame)) renderCardGrid();
+}
+
+// 분석 top strip 인라인 보유/돌파/전무 컨트롤 — 모달 없이 roster에 즉시 반영.
+function _ownEntry(charId) {
+  var roster = appState.rosters[appState.currentGame];
+  if (!roster) return null;
+  for (var i = 0; i < roster.characters.length; i++) {
+    if (roster.characters[i].characterId === charId) return roster.characters[i];
   }
-  closeCharacterDetail();
+  return null;
+}
+function inlineSetOwned(charId, owned) {
+  if (!appState.rosters[appState.currentGame]) appState.rosters[appState.currentGame] = { characters: [] };
+  var roster = appState.rosters[appState.currentGame];
+  var idx = -1;
+  for (var i = 0; i < roster.characters.length; i++) if (roster.characters[i].characterId === charId) { idx = i; break; }
+  if (owned && idx === -1) {
+    roster.characters.push({ characterId: charId, dupeLevel: 0, weapon: { hasSignature: false, refinement: 1 }, isLeveledUp: false, memo: '' });
+  } else if (!owned && idx !== -1) {
+    roster.characters.splice(idx, 1);
+  }
+  _persistAndReanalyze();
+}
+function inlineSetDupe(charId, level) {
+  var e = _ownEntry(charId);
+  if (!e) return;                 // 미보유 시 무시 (버튼 disabled)
+  e.dupeLevel = level;
+  _persistAndReanalyze();
+}
+function inlineToggleSig(charId) {
+  var e = _ownEntry(charId);
+  if (!e) return;
+  if (!e.weapon) e.weapon = { hasSignature: false, refinement: 1 };
+  e.weapon.hasSignature = !e.weapon.hasSignature;
+  _persistAndReanalyze();
 }
 
 function deleteCharacterFromDetail() {
@@ -1268,7 +1305,9 @@ function futureSynergyReasons(meta) {
 
 function renderGachaGuideSection(meta, guideAccount) {
   var guide = meta.gachaGuide;
-  if (!guide) return '';
+  // gachaGuide가 없어도 parts 객체를 반환해야 renderResults의 gg.party 등이 undefined(→NaN)가 안 된다.
+  var EMPTY_PARTS = { features: '', party: '', coreParts: '', altParts: '', altEquip: '', recommendReconsider: '', sources: '' };
+  if (!guide) return EMPTY_PARTS;
 
   // guideAccount(evaluationEngine 계산): 이 가이드의 파츠 중 내가 보유한 id 모음.
   // guideAccount가 없으면(계정 판단 미수행) 뱃지 없이 이름만 표시한다.
@@ -1497,7 +1536,11 @@ function renderResults(result) {
   var finalPct = Math.round((result.finalScore / 10) * 100);
 
   var roster = appState.rosters[appState.currentGame] || { characters: [] };
-  var isOwned = roster.characters.some(function(e) { return e.characterId === character.id; });
+  var ownEntry = null;
+  for (var _oi = 0; _oi < roster.characters.length; _oi++) {
+    if (roster.characters[_oi].characterId === character.id) { ownEntry = roster.characters[_oi]; break; }
+  }
+  var isOwned = !!ownEntry;
   var verdictLabel = result.finalScore >= 8.5 ? '필수 뽑기'
                    : result.finalScore >= 7.0 ? '추천'
                    : result.finalScore >= 5.5 ? '선택'
@@ -1527,9 +1570,25 @@ function renderResults(result) {
 
   html += '<div class="results-container">';
 
-  // 상단 바: 카드 목록으로 돌아가기(좌) + 캐릭터 설정 톱니바퀴(우)
+  // 상단 바: 목록(좌) + 보유/돌파/전무 인라인 컨트롤(중) + 설정 톱니바퀴(우)
+  // 인라인 컨트롤은 모달 없이 즉시 roster에 반영 → 점수·카드 뱃지 갱신. 미보유 시 돌파/전무는 비활성.
+  var _dup   = ownEntry ? (ownEntry.dupeLevel || 0) : 0;
+  var _sig   = ownEntry && ownEntry.weapon ? ownEntry.weapon.hasSignature : false;
+  var _odis  = ownEntry ? '' : ' disabled';
+  var ownCtl = '<div class="own-ctl">'
+    + '<button class="own-ctl-btn' + (ownEntry ? ' active' : '') + '" onclick="inlineSetOwned(\'' + character.id + '\',' + (ownEntry ? 'false' : 'true') + ')">'
+      + (ownEntry ? '✓ 보유' : '미보유') + '</button>'
+    + '<span class="own-ctl-sep">돌파</span>';
+  for (var _di = 0; _di <= 6; _di++) {
+    ownCtl += '<button class="own-ctl-num' + (_dup === _di ? ' active' : '') + '"' + _odis
+      + ' onclick="inlineSetDupe(\'' + character.id + '\',' + _di + ')">' + _di + '</button>';
+  }
+  ownCtl += '<button class="own-ctl-btn own-ctl-sig' + (_sig ? ' active' : '') + '"' + _odis
+    + ' onclick="inlineToggleSig(\'' + character.id + '\')">전무 ' + (_sig ? '✓' : '✕') + '</button></div>';
+
   html += '<div class="results-topbar">'
         + '<button class="results-back-btn" onclick="goBackToCards()">← 목록</button>'
+        + ownCtl
         + '<button class="results-gear-btn" title="캐릭터 설정" onclick="openCharacterDetail(\'' + character.id + '\')">⚙</button>'
         + '</div>';
 

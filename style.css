@@ -2919,8 +2919,44 @@ body.is-admin #analysisActions { display: flex; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 14px;
 }
+
+/* top strip 인라인 보유/돌파/전무 컨트롤 */
+.own-ctl {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.own-ctl-sep {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 1px 0 6px;
+}
+.own-ctl-btn,
+.own-ctl-num {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.own-ctl-btn { padding: 6px 10px; font-weight: 600; }
+.own-ctl-num { width: 24px; height: 27px; }
+.own-ctl-btn.active,
+.own-ctl-num.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.own-ctl-sig.active { background: #28b296; border-color: #28b296; }
+.own-ctl-btn:disabled,
+.own-ctl-num:disabled { opacity: 0.35; cursor: default; }
+.own-ctl-btn:not(:disabled):hover,
+.own-ctl-num:not(:disabled):hover { border-color: var(--accent); }
 
 .results-back-btn {
   background: var(--surface-2);
