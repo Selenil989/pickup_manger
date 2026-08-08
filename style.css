@@ -2891,6 +2891,59 @@ select {
 }
 .gg-sublabel-warn { color: var(--must); }
 
+/* 로그인 게이트 (Supabase 계정) */
+.auth-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 300px;
+  max-width: 88vw;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.auth-box h1 {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 4px;
+  text-align: center;
+}
+.auth-box input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+.auth-btns { display: flex; gap: 8px; }
+.auth-btns button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+#authLogin { background: var(--accent); color: #fff; }
+#authSignup {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.auth-error { color: var(--must); font-size: 12px; min-height: 16px; }
+
 /* KPI Tile Grid — 6개 핵심 지표 */
 .kpi-grid {
   display: grid;

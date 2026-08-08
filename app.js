@@ -3918,4 +3918,5 @@ function testMonteCarlo() {
   console.log('[MC TEST4] 캐릭터1+무기1 공용270뽑 →', (r4.rate * 100).toFixed(1) + '% (최악 340뽑, 비확정)');
 }
 
-document.addEventListener("DOMContentLoaded", function() { init(); testPlannerCalcInvariant(); testMonteCarlo(); });
+window.appInit = init; // 로그인 성공 후 auth.js가 호출 (미로그인 시 앱 미초기화)
+document.addEventListener("DOMContentLoaded", function() { testPlannerCalcInvariant(); testMonteCarlo(); });

@@ -50,6 +50,7 @@
         <div class="sidebar-footer">
           <button class="sidebar-footer-btn" onclick="exportPersonalSettings()">저장</button>
           <button class="sidebar-footer-btn" onclick="importPersonalSettings()">불러오기</button>
+          <button class="sidebar-footer-btn" id="logoutBtn">로그아웃</button>
         </div>
 
       </aside>
@@ -92,7 +93,23 @@
     <!-- Pass Edit Modal -->
     <div id="passEditModal" style="display:none;"></div>
 
-    <!-- Scripts: engine first, then app -->
+    <!-- Login gate (Supabase 계정) -->
+    <div id="authGate" class="auth-gate">
+      <form id="authForm" class="auth-box">
+        <h1>가챠 투자 분석기</h1>
+        <input id="authEmail" type="email" placeholder="이메일" autocomplete="username" required>
+        <input id="authPassword" type="password" placeholder="비밀번호" autocomplete="current-password" required>
+        <div class="auth-btns">
+          <button type="submit" id="authLogin">로그인</button>
+          <button type="button" id="authSignup">가입</button>
+        </div>
+        <div id="authError" class="auth-error"></div>
+      </form>
+    </div>
+
+    <!-- Scripts: supabase auth first, then engine, then app -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
     <script src="evaluationEngine.js"></script>
     <script src="app.js"></script>
   </body>
