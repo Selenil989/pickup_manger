@@ -1611,9 +1611,25 @@ select {
     z-index: 999;
     background: rgba(0, 0, 0, 0.5);
   }
-  /* 본문 상단이 햄버거 버튼에 가리지 않도록 */
-  #resultsPanel,
-  .currency-page { padding-top: 56px; }
+  /* 본문 상단이 햄버거 버튼에 가리지 않도록 (id 선택자로 뒤의 base padding을 이김) */
+  #resultsPanel { padding-top: 56px; }
+  #currencyPage { padding-top: 56px; }
+
+  /* 보유 재화 헤더: 제목/패스카드를 세로로 쌓아 가로 넘침 방지.
+     .pass-card base가 뒤에 나오므로 구체적 선택자(.pass-cards .pass-card)로 이긴다. */
+  .currency-header-top { flex-direction: column; align-items: stretch; }
+  .currency-header-info { padding-left: 48px; }   /* 제목이 햄버거 버튼을 피하도록 */
+  .pass-cards { flex-wrap: wrap; gap: 12px; max-width: none; }
+  .pass-cards .pass-card { flex: 1 1 100%; min-width: 0; flex-direction: column; }
+  .pass-card-header { border-right: none; border-bottom: 1px solid var(--border); min-width: 0; justify-content: flex-start; }
+  .pass-card-body { flex-wrap: wrap; gap: 14px; }
+
+  /* 재화 행: 8칸 고정 그리드 → flex-wrap으로 여러 줄 흐름 (모바일 폭 맞춤).
+     base 정의가 뒤에 나오므로 .currency-page 접두로 구체성을 높여 이긴다. */
+  .currency-page .currency-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px; }
+  .currency-page .currency-name { flex: 1 1 45%; min-width: 0; }
+  .currency-page .currency-input { width: 84px; flex: 0 0 auto; }
+  .currency-page .currency-type-select { min-width: 0; max-width: 96px; }
 }
 
 /* ── 32. Currency Page ────────────────────────────────────── */
