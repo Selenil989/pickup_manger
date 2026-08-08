@@ -6851,10 +6851,10 @@
       "synergy",
       "collection"
     ],
-    "metaScore": 7,
+    "metaScore": 9.5,
     "futureScore": 6,
-    "replacementScore": 4,
-    "confidence": 0.75,
+    "replacementScore": 2,
+    "confidence": 0.85,
     "futureLinks": [
       {
         "characterId": "archer",
@@ -6870,13 +6870,13 @@
       }
     ],
     "characterRecommendation": {
-      "score": 7.5,
+      "score": 8,
       "priority": "high",
       "reason": "게임8·프리드웬 확인: E0 명함만으로 아처 서포터형(저투자)과 독립 메인딜러형 양쪽 운용이 가능. 아처 편성 시 최대 SP +2(5→7), 공격력 150%·양자 저항 관통(약 15~20%) 공유, 협공 SP 회복 등 전용 시너지가 명함 단계에서 전부 열린다. 이번 콜라보 기간 로그인만으로 아처를 무료 선택할 수 있어(플레이포럼·디스이즈게임 확인) 시너지 파트너 확보 장벽까지 낮은 상태. 아처를 쓰(거나 무료로 받)는 계정이면 명함 우선순위가 높다."
     },
     "breakthroughRecommendation": {
-      "score": 6,
-      "priority": "medium",
+      "score": 7.5,
+      "priority": "high",
       "reason": "게임8 확인: 메인딜러형은 E1이 '섀도우 젬' 지속 강화스킬을 여는 핵심 분기점, 서포터형은 E2가 파티 스킬 피해를 올려 최적 정지점. 성능 상승폭은 실재하나, 콜라보 캐릭터는 특수 배너라 천장 미보장·픽뚫(off-banner) 위험이 커 돌파 수직투자는 비용/리스크가 크다. 애정·고인챈트 목적이 아니면 E0에서 멈추고 전광을 우선하는 편이 가성비라는 시각이 지배적."
     },
     "weaponRecommendation": {
@@ -6919,6 +6919,16 @@
       {
         "name": "플레이포럼 4.4 Fate 2차 콜라보·무료 배포(길가메시/아처) 안내",
         "url": "https://www.playforum.net/news/articleView.html?idxno=634796",
+        "weight": 0.7
+      },
+      {
+        "name": "prydwen 티어 T0 (Apex characters, Support DPS, MoC view)",
+        "url": "https://www.prydwen.gg/star-rail/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "game8 티어 SS (Overall / DPS / Support / Endgame)",
+        "url": "https://game8.co/games/Honkai-Star-Rail/archives/409604",
         "weight": 0.7
       }
     ],
@@ -7074,7 +7084,8 @@
         "특수 콜라보 배너의 천장 미보장·픽뚫 리스크를 감당하기 어려운 계정 — 돌파/전광 수직투자는 특히 신중",
         "아처를 쓰지 않고 SP 공급 서포터(스파클 등) 풀도 빈약한 경우 — 체급·자유도 급감"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -7083,23 +7094,23 @@
       "synergy",
       "collection"
     ],
-    "metaScore": 6.5,
+    "metaScore": 9.5,
     "futureScore": 5.5,
-    "replacementScore": 5.5,
-    "confidence": 0.48,
+    "replacementScore": 4,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 3,
-      "priority": "low",
+      "score": 8,
+      "priority": "high",
       "reason": "로그인 이벤트로 전 유저에게 무료 배포(콜라보~4.6 종료, vortexgaming·beebom·thephrasemaker 교차 확인)되므로 명함 확보 목적의 가챠 지출은 불필요하다. 기간 내 로그인만 하면 무조건 획득되며, 콜라보 특성상 리런이 없으니 '반드시 무료 수령'이 핵심. 다만 성능 자체는 세이버 동반 시에만 준수하고 단독으로는 mid-tier substitute 평가라, 무과금으로 받아 쓰는 것 이상의 명함 가치는 낮음."
     },
     "breakthroughRecommendation": {
-      "score": 5,
+      "score": 5.5,
       "priority": "medium",
       "reason": "리크 기준 E1(팀 방어력 무시 + 공격력 25% + 에너지 회복 개선)이 '메타적으로 좋은 정지점'으로 평가되고 E2는 스킬 피해 30% 증가의 딜 상향(enjoygm·thephrasemaker). 그러나 성흔은 명함과 달리 유료 콜라보 배너를 돌려야 하고 리런이 없어 비용·리스크가 크며, E0 단독은 파워크립에 밀린다는 평가가 있다. 세이버를 보유했거나 애정캐인 경우에 한해 E1 정도를 고려."
     },
     "weaponRecommendation": {
-      "score": 6,
+      "score": 6.5,
       "priority": "medium",
       "reason": "전용광추(리크 명칭 'I Am As You Behold')는 공18%·에너지회복10%에 필살기 피해 최대 60%, 팀 전체 극치 피해 25% 버프로 세이버 파티까지 강화(enjoygm·thephrasemaker 2개 출처 확인). 명함이 무료 배포라 사실상 유료 투자 포인트가 광추에 집중되며, 세이버 듀얼캐리를 굴리는 유저에게는 가장 체감이 큰 투자. 단 캐릭터 체급이 최상위가 아니고 베타 수치라 세이버 미보유·무과금 유저에겐 우선순위 낮음."
     },
@@ -7137,6 +7148,21 @@
       {
         "name": "thephrasemaker 길가메시 리크 V3 — 성능 평가/조기 인상",
         "url": "https://thephrasemaker.com/2026/06/02/honkai-star-rail-gilgamesh-leaks-v3-updated-explained-kit-analysis-early-impressions/",
+        "weight": 0.7
+      },
+      {
+        "name": "prydwen 티어 T0.5 (Apex characters, Support DPS, MoC view)",
+        "url": "https://www.prydwen.gg/star-rail/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "game8 티어 S+ (Overall / DPS); SS (Apocalyptic Shadow)",
+        "url": "https://game8.co/games/Honkai-Star-Rail/archives/409604",
+        "weight": 0.7
+      },
+      {
+        "name": "game8(char page) 티어 5성 번개 파멸(Destruction) 딜러/서브딜러; AS SS",
+        "url": "https://game8.co/games/Honkai-Star-Rail/archives/601941",
         "weight": 0.7
       }
     ],
@@ -7320,6 +7346,7 @@
         "V3 베타 너프로 세이버 시너지·수치가 흔들리는 중 — 출시 확정 전 유료 투자 판단은 보류 권장",
         "이미 완성된 상위 딜러 팀이 있어 파티 슬롯 여유가 없는 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   }
 ]

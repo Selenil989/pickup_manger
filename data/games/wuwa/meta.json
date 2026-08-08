@@ -3454,24 +3454,24 @@
       "future",
       "synergy"
     ],
-    "metaScore": 9,
+    "metaScore": 9.5,
     "futureScore": 8.5,
-    "replacementScore": 3,
-    "confidence": 0.72,
+    "replacementScore": 4,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 8.5,
+      "score": 8,
       "priority": "high",
       "reason": "Game8 기준 서포터/심계 SS 티어, '3.X 필수픽(must-pull)'로 평가. 0돌(명함)만으로도 히유키+루실라(서리), 양양·현령+치사(인멸) 등 주요 이상효과(음성상태) 파티에서 즉시 최상급 성능을 내는 만능 서포터라 진입 장벽이 낮다. 단 감스고/루리웹 교차 확인상 성능이 '이상효과 파티 보유 여부'에 크게 좌우되며, 일반 힐 수요만 있으면 파수인/벨리나로 충분하므로 이상효과 파티를 운용·계획하는 계정에 한해 가치가 극대화된다."
     },
     "breakthroughRecommendation": {
-      "score": 6.5,
-      "priority": "medium",
+      "score": 3.5,
+      "priority": "low",
       "reason": "1돌(S1)은 버프 조건 완화·경직 면역·지속 향상으로 에이메스(불꽃 버스트)·젠니(회절 프래즐)까지 파티를 확장(Game8 'amazing' 평가)하며, 루리웹 후기 기준 히유키·양양 메인 유저에겐 '1돌 이상 필수에 가까움'. 다만 같은 후기에서 '1돌은 사실상 2·3돌로 거쳐가는 돌파'라는 시각도 존재. 2돌(S2)은 음성상태 부여 캐릭터에 +50% 크뎀을 주나 '소모형' 버프라 소모가 없는 치사 등엔 미적용되는 한계가 있다. 0돌로도 경쟁력이 충분해 우선순위는 전용무기 > 1돌 > 2돌."
     },
     "weaponRecommendation": {
-      "score": 6,
-      "priority": "medium",
+      "score": 4.5,
+      "priority": "low",
       "reason": "전용무기(Firstlight's Herald)가 최적 스탯과 파티 전체 공버프를 제공하지만, Game8/감스고 교차 확인상 Variation(4성) 등 저가 대체 증폭기로도 서포터 역할 수행이 가능하다. 서포터 특성상 필수라기보다 최적화·미적 만족 목적이 크며, ER(에너지 충전, 목표 약 260%) 스탯 확보가 무기 선택보다 우선한다."
     },
     "pullReasons": [
@@ -3509,6 +3509,21 @@
         "name": "아카라이브 명조 채널",
         "url": "https://arca.live/b/wutheringwaves",
         "weight": 0.55
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 A",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -3636,7 +3651,8 @@
         "카르티시아 등 HP계수·비이상효과 딜러 위주 계정 — 증폭 시너지 제한",
         "전용무기·1돌 등 추가 투자 여력이 없고 0돌 서포터 슬롯이 이미 충분한 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -3645,24 +3661,24 @@
       "meta",
       "future"
     ],
-    "metaScore": 9,
+    "metaScore": 9.5,
     "futureScore": 8.5,
-    "replacementScore": 3,
+    "replacementScore": 2,
     "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 8.5,
+      "score": 8,
       "priority": "high",
       "reason": "출시(3.5) 직후 SS급 최상위 하이퍼캐리로 확인. game8·prydwen 공통으로 '2.5 이후 최고 암흑(인멸) 딜러'로 평가되며, 국내 기사에서도 인멸 메인 딜러가 현재 카멜리아·플로로·양양 3명뿐이라 희소성이 크다. 만크(100% 크확) 설계로 전용무기 없이도 크뎀을 확보해 명함만으로 즉시 전력화된다는 점이 명함 가치를 높인다. 다만 온필드 하이퍼캐리라 조작 부담이 있고 치사 의존도가 커, 이미 인멸 딜러를 보유한 계정에는 우선순위가 낮아질 수 있다."
     },
     "breakthroughRecommendation": {
-      "score": 6.5,
-      "priority": "medium",
+      "score": 7.5,
+      "priority": "high",
       "reason": "game8 확인: S0~S2도 준수한 기본 성능이며, S3가 핵심 분기점 — '공명 해방 175% 증폭 + 암흑 스택 3개 추가'로 치사 의존을 사실상 제거해 파티 자유도를 크게 올린다. S6은 강공격 DMG 40%와 추가 그림자 공격을 더하는 최상위 노드. 다만 명함(S0) 체급만으로 현 메타 최상위권이라 대다수 유저에겐 S0로 충분하고, 돌파는 '치사가 없거나 극한 화력을 원하는' 애정·고예산 계정의 선택지다."
     },
     "weaponRecommendation": {
-      "score": 7.5,
-      "priority": "high",
+      "score": 6.5,
+      "priority": "medium",
       "reason": "전용무기(창천의 맹세/Azure Oath)는 크확·크뎀 강화와 강공격 DMG 버프 중심으로, game8은 BiS로 명시하고 국내 기사·Vortex Gaming은 '메인 딜러 전무는 고민 없이 추천'이라 평가. 다만 Vortex 지적대로 무기 자체 밸류는 '보통' 수준이고 방무 옵션은 이미 충분한 방무와 겹쳐 과잉일 수 있어, 창천의 창세·붉은 봄 등 5성 대체재나 저예산 4성(루밍글로스 등)으로도 상당 부분 커버된다. 그럼에도 본체 성능과 결합 시 화력 극대화 폭이 커 명함과 함께라면 동반 추천."
     },
     "pullReasons": [
@@ -3707,6 +3723,21 @@
         "name": "prydwen 양양·현령 빌드 가이드",
         "url": "https://www.prydwen.gg/wuthering-waves/characters/yangyang-xuanling",
         "weight": 0.8
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 S",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -3853,7 +3884,8 @@
         "치사 미보유 — 의존도가 높아 잠재력을 절반만 발휘",
         "퀵스왑·짧은 등장 위주 플레이를 선호하는 경우 (온필드 강제와 상성 나쁨)"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -3862,10 +3894,10 @@
       "synergy",
       "future"
     ],
-    "metaScore": 7.5,
+    "metaScore": 9.5,
     "futureScore": 7.5,
-    "replacementScore": 5,
-    "confidence": 0.72,
+    "replacementScore": 2,
+    "confidence": 0.85,
     "futureLinks": [
       {
         "characterId": "hiyuki",
@@ -3885,17 +3917,17 @@
       }
     ],
     "characterRecommendation": {
-      "score": 7.5,
+      "score": 8,
       "priority": "high",
       "reason": "다음뉴스·게임톡 교차확인: '명함만으로도 충분히 제 역할을 수행'하며, 히유키 보유자에게는 '필수 픽업'으로 평가됨. 공명 효율이 거의 필요 없고 5성 중 가장 단순한 사이클을 가져 세팅 부담이 낮아, 투자 진입 장벽이 매우 낮은 서포터. 다만 자체 화력은 낮은 순수 서포터이므로 궁합 딜러(히유키/시그리카/갈브레나/플로로)를 보유한 계정에 한해 가치가 극대화됨."
     },
     "breakthroughRecommendation": {
-      "score": 4,
-      "priority": "low",
+      "score": 5.5,
+      "priority": "medium",
       "reason": "다음뉴스·게임톡: '2돌파가 핵심 구간이나 이후 효율은 평범'. 아카라이브/에펨코리아 확인: 2돌은 1돌 대비 팀 DPR을 약 8.27% 올려주는 데 그쳐 '가성비가 낮다'는 평가가 지배적. 1돌은 경면 편의성+치명타, 2돌은 서포터 성능, 3돌은 사이클 단축+자체 딜 상승. 최애캐가 아니라면 명함 수준에서 멈추기를 권장하는 것이 커뮤니티 다수 의견."
     },
     "weaponRecommendation": {
-      "score": 5,
+      "score": 6.5,
       "priority": "medium",
       "reason": "전용무기 Freeze Frame(공격력 24% 증가, 응결 찰과상 부여 시 응결 피해 보너스, 팀 공격력 버프)은 고점을 올려주는 가치 있는 옵션이나, 게임톡·다음뉴스 공통으로 '파티 완성이 목표라면 불필요한 선택적 투자'로 평가. 범우주적 파문 등 상시 5성 리코더로도 무난히 역할 수행 가능해 필수도는 낮음."
     },
@@ -3939,6 +3971,26 @@
         "name": "wuthering.gg 루실라 빌드/조합 정보",
         "url": "https://wuthering.gg/characters/lucilla",
         "weight": 0.65
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuwa.uk 티어 S",
+        "url": "https://wuwa.uk/articles/tier-list-2026",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 S",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -4082,7 +4134,8 @@
         "메인 딜러나 자체 화력이 높은 캐릭터를 원하는 경우 — 온필드 체류가 짧은 순수 서포터",
         "돌파·전무 고점 투자로 큰 이득을 기대하는 경우 — 스케일링이 약해 명함 대비 체감이 작음"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -4091,24 +4144,24 @@
       "meta",
       "collection"
     ],
-    "metaScore": 7.5,
+    "metaScore": 8,
     "futureScore": 5.5,
-    "replacementScore": 5.5,
-    "confidence": 0.72,
+    "replacementScore": 4,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 7.5,
-      "priority": "high",
+      "score": 6,
+      "priority": "medium",
       "reason": "회절 권총 최초 메인 딜러이자 game8 기준 종합 S(전탑 SS) 티어. 넓은 범위와 견인 능력으로 다수전에서 쾌적하다는 평이 다수(game8·루리웹 확인). 무엇보다 전용 파트너 레베카가 무료 배포 캐릭터로 제공되어 루시 명함(S0) 단독 획득만으로 핵심 해킹 파티가 즉시 완성됨 — 진입 장벽이 낮다. 다만 성능 자체는 '무난히 좋은' 준수한 체급으로 최상위 딜러(카르티시아/플로로급)는 아니며(루리웹: 에이메스/루크/시그리카/히유키급), 픽업의 실질 동력은 성능보다 '콜라보 한정 복각 미보장'이라는 점을 인지할 것."
     },
     "breakthroughRecommendation": {
-      "score": 6,
+      "score": 5.5,
       "priority": "medium",
       "reason": "게임8 기준 S1(선딜/피격경직 제거) '좋음', S2(강공격 데미지 약 2배) '매우 좋음', S3 권장 정지선, S6 '최상위 강화'로 평가. 루리웹은 0~3돌은 우수하나 4돌 이후 가치가 급감한다고 명시. 즉 S2가 최대 분기점이고 S3까지가 가성비 구간. 다만 콜라보 한정이라 복각 미보장 → 정수/돌파 보강 기회가 이번뿐일 수 있어 애정 유저라면 지금 확보가 유일한 창구. 순수 성능만 보면 S0로도 콘텐츠 소화 가능하므로 돌파 우선순위는 명함·전용무기 다음."
     },
     "weaponRecommendation": {
-      "score": 8,
-      "priority": "high",
+      "score": 6.5,
+      "priority": "medium",
       "reason": "전용무기 스펙트럴 트리거는 공격력·회절 피증·강공격 데미지·방어 무시가 루시 사이클에 맞춤 설계되어 있음. 루리웹 확인: 상시 무기 대비 약 20% 우위, 재련당 약 20%씩 격차 확대(5재련 시 1재련과 80% 차이). 루시는 전무 의존도가 큰 캐릭터라 명함만 뽑고 전무를 빠뜨리면 체감 성능이 기대보다 확연히 낮아짐 — 뽑는다면 명함+전무를 함께 확보하는 것이 커뮤니티 다수 의견."
     },
     "pullReasons": [
@@ -4147,6 +4200,26 @@
         "name": "게임톡 - 루시 '픽뚫났지만 그래도 사랑한다' (커뮤니티 애정/수집 반응)",
         "url": "https://www.gametoc.co.kr/news/articleView.html?idxno=109058",
         "weight": 0.45
+      },
+      {
+        "name": "game8 티어 S",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuwa.uk 티어 S",
+        "url": "https://wuwa.uk/articles/tier-list-2026",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 B",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -4281,7 +4354,8 @@
         "전용무기 확보가 어려운 경우 — 명함만으로는 체감 성능이 기대보다 낮음",
         "순수 메타 효율만 따지는 경우 — 체급이 '필수'까지는 아니며, 복각 리스크를 감수할 애정/수집 동기가 없다면 보류"
       ]
-    }
+    },
+    "communityTier": "S"
   },
   {
     "version": "1.0",
@@ -4290,10 +4364,10 @@
       "meta",
       "future"
     ],
-    "metaScore": 9,
+    "metaScore": 9.5,
     "futureScore": 7.5,
-    "replacementScore": 3.5,
-    "confidence": 0.8,
+    "replacementScore": 2,
+    "confidence": 0.85,
     "futureLinks": [
       {
         "characterId": "lucilla",
@@ -4306,13 +4380,13 @@
       "reason": "나무위키·아카라이브·인벤 교차 확인: 3.3 버전 최상위 티어(SS) 응결 메인 딜러이자 카를로타 이후 첫 프리미엄 응결 딜러. '뉴비는 메인딜러 없으면 히유키를 뽑으라'는 반응이 커뮤니티에서 반복 확인됨. 0돌(명함)에서도 이중 형태 전투·시간정지 강타·서리(이상효과) 제어 등 핵심 메커니즘이 완비되어 명함만으로도 최상위 딜러로 기능. 다만 최고 화력은 린네·치사 같은 이상효과 서포터와 전용무기를 요구해, 딜러 슬롯이 이미 포화인 계정에는 필수도가 낮아짐."
     },
     "breakthroughRecommendation": {
-      "score": 6.5,
-      "priority": "medium",
+      "score": 7.5,
+      "priority": "high",
       "reason": "보텍스게이밍·인벤 확인: 0돌+전용무기가 기본 권장선, 2돌이 편의성·사이클 관점의 무난한 정지점. 3돌에서 '서리 발동 시 이상효과 피해 배율 급상승'으로 딜량이 비약적으로 오르는 것이 핵심 분기점이며, 풀돌(6돌)은 크리티컬 피해 대폭 강화로 압도적. 즉 돌파 가치 자체는 크지만 0돌 성능이 이미 완결형이라 필수는 아님. 고점을 노리는 하드코어 유저라면 3돌, 일반 유저는 0~2돌 권장."
     },
     "weaponRecommendation": {
-      "score": 8,
-      "priority": "high",
+      "score": 6.5,
+      "priority": "medium",
       "reason": "게임8·프리드웬·보텍스 교차 확인: 전용무기 '서린 불꽃(프로스트번)'이 명확한 최상급 무기로, 응결 피해·공명 해방 피해·서리 침식 피해를 동시에 증폭해 대체 무기와 성능차가 큼('큰 격차'로 반복 표현). 전용 미보유 시 상시 5성 검이나 4성으로 대체 가능하나 특화 옵션 부재로 체감 하락이 뚜렷. 캐릭터 자체가 최상위 딜러라 명함+전용 동시 투자 가성비가 좋은 편."
     },
     "pullReasons": [
@@ -4352,6 +4426,26 @@
         "name": "프리드웬(prydwen) - Hiyuki Build Guide",
         "url": "https://www.prydwen.gg/wuthering-waves/characters/hiyuki",
         "weight": 0.65
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "prydwen 티어 T0",
+        "url": "https://www.prydwen.gg/wuthering-waves/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 S",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -4525,7 +4619,8 @@
         "전용무기(서린 불꽃) 확보가 어려운 경우 — 대체 무기와 성능차가 크게 벌어짐",
         "린네·치사 등 핵심 이상효과 서포터가 없어 최고점 조합 구성이 어려운 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -4535,14 +4630,14 @@
       "synergy",
       "future"
     ],
-    "metaScore": 7.5,
+    "metaScore": 9.5,
     "futureScore": 7.5,
-    "replacementScore": 4,
-    "confidence": 0.72,
+    "replacementScore": 2,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 6.5,
-      "priority": "medium",
+      "score": 8,
+      "priority": "high",
       "reason": "해외 티어(프리드웬·game8)는 SS급 서브 딜러로 평가하나, 한국 커뮤니티(게임톡·아카라이브)는 '필수급은 아니다'로 수렴한다. 불꽃(Fusion Burst)과 조율(Tune Strain) 두 아키타입 모두의 전용 서포터라 니치 안에서는 최고 가성비지만, 에이메스나 루크 같은 해당 아키타입 메인 딜러가 없으면 가치가 급감한다. 명함(0돌)만으로도 파티 파츠 기능은 충분해 진입 장벽은 낮다."
     },
     "breakthroughRecommendation": {
@@ -4551,7 +4646,7 @@
       "reason": "해외 가이드 기준 S2(2돌)가 '대부분 유저의 권장 정지점'으로, 모드별 버프가 강화되고 게임톡도 2돌을 '필드에 서 있기만 해도 높은 버프 + 본인 딜 상승'의 체감 최대 구간으로 본다. 아카라이브 후기에서 3돌은 사이클 압축이 크게 느껴진다는 평이 있으나, 게임톡은 '특별한 애정 없으면 무리할 필요 없음'으로 정리한다. 서포터 특성상 돌파는 필수보다 QoL·고점용이므로 투자 우선순위는 중간."
     },
     "weaponRecommendation": {
-      "score": 5.5,
+      "score": 6.5,
       "priority": "medium",
       "reason": "전용 무기(Forged Dwarf Star 계열)는 공명 해방 피해 증가와 파티 공격력 버프로 본인 메커니즘과 시너지가 좋아 파티 고점을 노린다면 추천된다. 다만 프리드웬 기준 현악의 명수(Stringmaster)·Lethean Elegy·Cosmic Ripples 등 근접한 대체 옵션이 존재하고, 게임톡도 '순수 파티 파츠 용도라면 전무는 필수 아님'으로 평가한다. 고점을 원할 때만 medium."
     },
@@ -4601,6 +4696,26 @@
       {
         "name": "Game8 — Denia Best Builds and Teams (Tier: ToA SS / WhiWa S)",
         "url": "https://game8.co/games/Wuthering-Waves/archives/585681",
+        "weight": 0.7
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "prydwen 티어 T0",
+        "url": "https://www.prydwen.gg/wuthering-waves/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 A",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
         "weight": 0.7
       }
     ],
@@ -4739,7 +4854,8 @@
         "이미 린네+모니에 조합이 충분히 강력하고 재화가 부족한 경우 — 커뮤니티도 '필수급 아님'으로 평가",
         "곧 출시될 컬래버(사이버펑크) 등 다른 픽업을 우선하고 싶은 경우 — 재화 경쟁상 픽업을 미루는 것도 유효"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -4749,24 +4865,24 @@
       "meta",
       "collection"
     ],
-    "metaScore": 7.5,
+    "metaScore": 8,
     "futureScore": 6.5,
-    "replacementScore": 5,
-    "confidence": 0.78,
+    "replacementScore": 4,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 8,
-      "priority": "high",
+      "score": 6,
+      "priority": "medium",
       "reason": "무료 배포임에도 '한정 5성 서브딜러와 비교해도 부족함이 없다'(게임톡)는 평가가 지배적이라 명함(무돌) 가치 자체가 매우 높다. 실제 운용도 아카라이브 가계산 기준 '무돌이 가장 효율적'이라 base 상태가 곧 최적 구간이다. 받을 수 있는 상황이라면 최우선으로 확보할 만하다. 다만 v3.4 무료 배포 기간(약 2026-07-09)이 이미 종료돼 현재는 정상 입수 경로가 없다는 점(복각 일정 미발표)을 반드시 감안해야 한다."
     },
     "breakthroughRecommendation": {
-      "score": 3,
-      "priority": "low",
+      "score": 5.5,
+      "priority": "medium",
       "reason": "아카라이브 돌파 가계산과 게임톡 평가가 공통적으로 '무돌이 가장 효율적, 돌파까지 노릴 필요는 없다'로 수렴한다. S2에서 파티 공격력 등 체급 상승, S3부터 메인딜러급 딜을 기대할 수 있으나, 레베카의 핵심 역할이 딜러가 아니라 빠른 협주 수급과 버프 제공이라 돌파 가성비가 낮다. 게다가 콜라보 무료 배포 캐릭터 특성상 공명 사슬(돌파) 확보 경로 자체가 제한적·불투명하다."
     },
     "weaponRecommendation": {
-      "score": 4,
-      "priority": "low",
+      "score": 6.5,
+      "priority": "medium",
       "reason": "게임톡·아카라이브 공통 평가: 전용 무기(Skull Thrasher)는 필수가 아니며 상시 무기(Phasic Homogenizer, Spectrum Blaster, Static Mist 등)로 충분히 대체 가능하다. 전용 무기는 개인 딜과 파티 고점을 높여주지만 '반드시 확보해야 하는 수준은 아니다'로 정리된다. 서브딜러·버퍼 역할 특성상 무기 투자 우선순위가 낮다."
     },
     "pullReasons": [
@@ -4804,6 +4920,26 @@
         "name": "나무위키 - 레베카(명조: 워더링 웨이브) 스킬/기본 정보",
         "url": "https://namu.wiki/w/%EB%A0%88%EB%B2%A0%EC%B9%B4(%EB%AA%85%EC%A1%B0:%20%EC%9B%8C%EB%8D%94%EB%A7%81%20%EC%9B%A8%EC%9D%B4%EB%B8%8C)",
         "weight": 0.6
+      },
+      {
+        "name": "game8 티어 S",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuwa.uk 티어 S",
+        "url": "https://wuwa.uk/articles/tier-list-2026",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 A",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 A",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -4930,7 +5066,8 @@
         "강공격 기반 메인 딜러가 없어 버프를 받아줄 대상이 마땅치 않은 경우",
         "돌파나 전용 무기에 유료 자원을 투자할 계획인 경우 — 효율이 낮아 권장되지 않음"
       ]
-    }
+    },
+    "communityTier": "S"
   },
   {
     "version": "1.0",
@@ -4938,10 +5075,10 @@
     "investmentType": [
       "meta"
     ],
-    "metaScore": 8.5,
+    "metaScore": 9.5,
     "futureScore": 7.5,
-    "replacementScore": 3.5,
-    "confidence": 0.7,
+    "replacementScore": 2,
+    "confidence": 0.85,
     "futureLinks": [],
     "characterRecommendation": {
       "score": 8,
@@ -4949,8 +5086,8 @@
       "reason": "루리웹·보텍스게이밍 확인: 명함(S0)만으로 완전 기능하는 에코 스킬 피해 하이퍼캐리. 고점 기준 에이메스와 동급 딜로 평가되며, 컷신 없이 광역 프리딜을 연타로 넣는 편의성까지 갖춰 저투자 진입 가치가 매우 높다."
     },
     "breakthroughRecommendation": {
-      "score": 5,
-      "priority": "medium",
+      "score": 7.5,
+      "priority": "high",
       "reason": "명함 완성형이라 돌파 수직투자 우선순위는 낮음. 정수는 고점 딜을 끌어올리나 명함 대비 체감이 하이퍼캐리 특성상 상대적으로 작아, 애정캐가 아니면 명함에서 멈추는 편이 가성비."
     },
     "weaponRecommendation": {
@@ -4983,6 +5120,21 @@
         "name": "gamsgo 명조 3.2 픽업 총정리",
         "url": "https://www.gamsgo.com/ko/blog/%EB%AA%85%EC%A1%B0-3-2-%ED%94%BD%EC%97%85",
         "weight": 0.65
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Wuthering-Waves/archives/454729",
+        "weight": 0.7
+      },
+      {
+        "name": "wuthering.gg 티어 S",
+        "url": "https://wuthering.gg/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "rankedmeta 티어 S",
+        "url": "https://rankedmeta.com/wuthering-waves/character-tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -5085,7 +5237,8 @@
         "'구원'/협주 파트너 풀이 빈약한 경우",
         "이미 에이메스 등 동일 협주 딜러가 충실한 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",

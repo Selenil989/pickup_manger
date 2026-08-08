@@ -1924,10 +1924,10 @@
       "meta",
       "synergy"
     ],
-    "metaScore": 8,
+    "metaScore": 9.5,
     "futureScore": 8,
-    "replacementScore": 3,
-    "confidence": 0.65,
+    "replacementScore": 4,
+    "confidence": 0.72,
     "futureLinks": [],
     "characterRecommendation": {
       "score": 8,
@@ -1935,12 +1935,12 @@
       "reason": "Prydwen·Game8 확인: SP 배터리 + Heat 취약/약화 부여 + 팀 전체 Link 제공 + Heat 인플릭션 피딩까지 겸하는 이중역할 서포터. 서포터 특성상 명함(E0)만으로 팀 기여가 완결되어 저투자 가치가 높다."
     },
     "breakthroughRecommendation": {
-      "score": 4,
-      "priority": "low",
+      "score": 5.5,
+      "priority": "medium",
       "reason": "버퍼/배터리형이라 돌파로 인한 딜 상승 체감이 딜러보다 작다. 명함으로 핵심 유틸이 전부 열리므로 수직투자 우선순위 낮음."
     },
     "weaponRecommendation": {
-      "score": 5,
+      "score": 6.5,
       "priority": "medium",
       "reason": "전용무기 Blessing of Lustrous Carmine이 BiS이나, F2P 대체(Beacon of Duty)로도 기능. 서포터라 무기 의존도가 낮아 후순위."
     },
@@ -1969,6 +1969,16 @@
         "name": "TheGamer Camille Heat Vanguard build",
         "url": "https://www.thegamer.com/arknights-endfield-camille-weapons-teams-gear-upgrade-skills/",
         "weight": 0.6
+      },
+      {
+        "name": "prydwen 티어 T0",
+        "url": "https://www.prydwen.gg/arknights-endfield/tier-list",
+        "weight": 0.7
+      },
+      {
+        "name": "game8 티어 SS",
+        "url": "https://game8.co/games/Arknights-Endfield/archives/530563",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -2066,7 +2076,8 @@
         "Heat 캐리가 없는 계정 — 시너지 반감",
         "이미 상위 SP 서포터가 충실한 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
@@ -2075,23 +2086,23 @@
       "meta",
       "synergy"
     ],
-    "metaScore": 9,
+    "metaScore": 9.5,
     "futureScore": 8,
-    "replacementScore": 3,
-    "confidence": 0.65,
+    "replacementScore": 2,
+    "confidence": 0.72,
     "futureLinks": [],
     "characterRecommendation": {
-      "score": 8.5,
+      "score": 8,
       "priority": "high",
       "reason": "Prydwen·Game8 티어 확인: SS티어 Nature 캐스터. Array Arcana로 INT(부식 DPS)/WILL(군집·제어 서포터) 두 역할을 오가는 최고 유연성 유닛으로, 명함(E0)만으로도 계정에 큰 가치를 제공한다."
     },
     "breakthroughRecommendation": {
-      "score": 5,
+      "score": 5.5,
       "priority": "medium",
       "reason": "빌드 의존형이라 돌파보다 스탯 방향(INT/WILL) 확정과 기어가 우선. 정수는 고점을 올리나 우선순위는 캐릭터·빌드 세팅 뒤."
     },
     "weaponRecommendation": {
-      "score": 6,
+      "score": 6.5,
       "priority": "medium",
       "reason": "전용무기가 선택한 폼의 고점을 끌어올리나, 초기엔 폼 확정과 반응 파트너(냉기 계열) 세팅이 더 중요. 전무는 중간 우선순위."
     },
@@ -2120,6 +2131,11 @@
         "name": "Topuplist Is Arcane Worth Pulling (1.4)",
         "url": "https://topuplist.com/blogs/detail/is-arcane-li-zhiyan-worth-pulling-arknights-endfield",
         "weight": 0.65
+      },
+      {
+        "name": "prydwen 티어 T0",
+        "url": "https://www.prydwen.gg/arknights-endfield/tier-list",
+        "weight": 0.7
       }
     ],
     "communitySummary": {
@@ -2220,7 +2236,8 @@
         "빌드를 한 방향으로 확정·세팅할 여건이 안 되는 초보 계정",
         "이미 상위 캐스터/부식 딜러가 충실한 경우"
       ]
-    }
+    },
+    "communityTier": "SS"
   },
   {
     "version": "1.0",
