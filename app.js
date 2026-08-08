@@ -2217,7 +2217,7 @@ function testPlannerCalcInvariant() {
     p2,
     { cur:  { firstHalf:{charGoal:1,weaponGoal:1}, secondHalf:{charGoal:0,weaponGoal:0} },
       next: { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} } },
-    0, 120);  // charNeed=max(0,90-50)=40, weaponNeed=max(0,80-20)=60 → 총100, 공용400 충분
+    0, 100);  // charNeed=max(0,90-50)=40, weaponNeed=max(0,80-20)=60 → 총100, 공용400 충분
 
   console.log(allPass ? '[planner] 모든 계산 검증 통과' : '[planner] 계산 검증 실패 항목 있음');
   return !!allPass;
