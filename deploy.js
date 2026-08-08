@@ -14,7 +14,9 @@ html = html.replace(/\?v=\d+/g, '?v=' + v);
 fs.writeFileSync('index.html', html);
 
 const msg = (process.argv.slice(2).join(' ') || 'chore: deploy') + ' (v' + v + ')';
-execSync('git add -A', { stdio: 'inherit' });
+// -u: 추적 중인 파일의 변경만 스테이징 (새 untracked 파일/시크릿을 실수로 담지 않도록).
+// 새 파일을 배포에 포함하려면 먼저 git add 로 명시적으로 추가할 것.
+execSync('git add -u', { stdio: 'inherit' });
 execSync('git commit -F -', { input: msg, stdio: ['pipe', 'inherit', 'inherit'] });
 execSync('git push origin master', { stdio: 'inherit' });
 console.log('✅ 배포 완료: v' + v);
