@@ -1570,6 +1570,52 @@ select {
   height: 100%;
 }
 
+/* ── 31b. 모바일 — 사이드바 서랍(drawer) ──────────────────── */
+.menu-toggle,
+.nav-backdrop { display: none; }
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.5);
+  }
+  .app-layout.nav-open .sidebar { transform: none; }
+  .app-layout.nav-open .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  /* 본문 상단이 햄버거 버튼에 가리지 않도록 */
+  #resultsPanel,
+  .currency-page { padding-top: 56px; }
+}
+
 /* ── 32. Currency Page ────────────────────────────────────── */
 
 .currency-page {

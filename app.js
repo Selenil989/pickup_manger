@@ -3925,4 +3925,15 @@ function testMonteCarlo() {
 }
 
 window.appInit = init; // 로그인 성공 후 auth.js가 호출 (미로그인 시 앱 미초기화)
-document.addEventListener("DOMContentLoaded", function() { testPlannerCalcInvariant(); testMonteCarlo(); });
+document.addEventListener("DOMContentLoaded", function() {
+  testPlannerCalcInvariant(); testMonteCarlo();
+  // 모바일 사이드바 서랍 토글
+  var al = document.querySelector('.app-layout');
+  var mt = document.getElementById('menuToggle');
+  var bd = document.getElementById('navBackdrop');
+  function closeNav() { if (al) al.classList.remove('nav-open'); }
+  if (mt && al) mt.addEventListener('click', function() { al.classList.toggle('nav-open'); });
+  if (bd) bd.addEventListener('click', closeNav);
+  var gl = document.getElementById('gameList'); if (gl) gl.addEventListener('click', closeNav);
+  var sn = document.querySelector('.sidebar-nav'); if (sn) sn.addEventListener('click', closeNav);
+});
