@@ -1909,10 +1909,26 @@ function refreshPitySummary(gameId) {
 
 // ── Planner helpers ───────────────────────────────────────────
 
+// 버전 플래너 기본값 (어드민 계정 기준 현재 버전/시작일).
+// 신규·빈 계정은 이 값으로 시작하고, plannerMaybeRollover가 버전 종료 시 다음 버전으로 자동 이월한다.
+// 값이 실제와 달라지면 여기만 갱신하면 전 계정 기본값이 바뀐다(어드민이 관리).
+var DEFAULT_PLANNER = {
+  hsr:      { version: '4.4', startDate: '2026-07-15' },
+  zzz:      { version: '3.1', startDate: '2026-07-29' },
+  wuwa:     { version: '3.5', startDate: '2026-07-10' },
+  endfield: { version: '1.4', startDate: '2026-07-16' }
+};
+
 function loadPlannerData(gameId) {
   try {
     var raw = localStorage.getItem('pickup_manager_planner_' + gameId);
     var pd  = raw ? JSON.parse(raw) : {};
+    // 빈 계정: 어드민 기준 현재 버전·시작일을 기본값으로 시드 (버전/시작일 둘 다 없을 때만)
+    var def = DEFAULT_PLANNER[gameId];
+    if (def && !pd.version && !pd.startDate) {
+      pd.version   = def.version;
+      pd.startDate = def.startDate;
+    }
     // migrate from old flat structure
     if (!pd.cur) {
       pd.cur = {
@@ -1928,7 +1944,9 @@ function loadPlannerData(gameId) {
     }
     return plannerMaybeRollover(gameId, pd);
   } catch(e) {
+    var def = DEFAULT_PLANNER[gameId] || {};
     return {
+      version: def.version || '', startDate: def.startDate || '',
       cur:  { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } },
       next: { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } }
     };
