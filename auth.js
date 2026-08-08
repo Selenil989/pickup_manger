@@ -90,7 +90,8 @@ function onAuthed(session) {
   currentUid = session.user.id;
   window.IS_ADMIN = (session.user.email === ADMIN_EMAIL);
   document.body.classList.toggle('is-admin', session.user.email === ADMIN_EMAIL);
-  Promise.all([loadAccount(currentUid), fetchSharedPlanner()]).then(function () {
+  fetchSharedPlanner();   // 병렬, fire-and-forget — 실패/지연해도 로그인은 막지 않음(코드 기본값 폴백)
+  loadAccount(currentUid).then(function () {
     var gate = document.getElementById('authGate');
     if (gate) gate.style.display = 'none';
     domReady(function () { if (window.appInit) window.appInit(); });
