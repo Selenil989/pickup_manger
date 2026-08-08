@@ -1404,9 +1404,9 @@
     "element": "quantum",
     "specialElement": null,
     "image": "tohsakarin.png",
-    "basePerformance": null,
+    "basePerformance": 5,
     "releaseDate": "2026-07-24",
-    "isReleased": false,
+    "isReleased": true,
     "version": ""
   },
   {
@@ -1419,9 +1419,9 @@
     "element": "thunder",
     "specialElement": null,
     "image": "gilgamesh.png",
-    "basePerformance": null,
+    "basePerformance": 5,
     "releaseDate": "2026-07-24",
-    "isReleased": false,
+    "isReleased": true,
     "version": ""
   },
   {
