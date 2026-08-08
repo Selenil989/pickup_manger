@@ -27,8 +27,20 @@ var _editIsCreate = false;
 
 var CHAR_ROLES    = ['attack', 'stun', 'anomaly', 'support', 'defense', 'rupture'];
 var CHAR_ELEMENTS = ['physical', 'fire', 'ice', 'electric', 'ether', 'wind'];
-var CHAR_ROLE_LABELS    = { attack: '강공', stun: '격파', anomaly: '이상', support: '지원', defense: '방어', rupture: '명파' };
-var CHAR_ELEMENT_LABELS = { physical: '물리', fire: '불', ice: '얼음', electric: '전기', ether: '에테르', wind: '바람' };
+// 라벨은 전 게임 공통(키가 게임별로 달라 충돌 없음). 실제 옵션 목록은 편집 모달에서 현재 게임 데이터로 파생한다.
+var CHAR_ROLE_LABELS = {
+  attack: '강공', stun: '격파', anomaly: '이상', support: '지원', defense: '방어', rupture: '명파',           // ZZZ 특성
+  nihility: '공허', remembrance: '기억', erudition: '지식', hunt: '수렵', destruction: '파멸',
+  harmony: '화합', preservation: '보존', abundance: '풍요', elation: '환락',                                  // HSR 운명
+  vanguard: '뱅가드', striker: '스트라이커', defender: '디펜더', guard: '가드', caster: '캐스터',             // 엔드필드 클래스
+  sword: '장검', broadblade: '대검', pistol: '권총', gauntlet: '권갑', rectifier: '음율기'                    // 명조 무기
+};
+var CHAR_ELEMENT_LABELS = {
+  physical: '물리', fire: '불', ice: '얼음', electric: '전기', ether: '에테르', wind: '바람', lumiflux: '광휘', // 공통/ZZZ
+  thunder: '번개', quantum: '양자', imaginary: '허수',                                                        // HSR
+  aero: '기류', glacio: '냉기', fusion: '작열', havoc: '파멸', electro: '전도', spectro: '회절',              // 명조
+  nature: '자연'                                                                                              // 엔드필드
+};
 
 // ── Game Meta (icon colors & abbreviations) ───────────────────────────────────
 
@@ -984,6 +996,7 @@ function openCharacterEdit(charId) {
     image:          cur.image || '',
     rarity:         cur.rarity || 5,
     role:           cur.role || '',
+    weaponType:     cur.weaponType || '',
     element:        cur.element || '',
     specialElement: cur.specialElement || '',
     releaseDate:    cur.releaseDate || '',
@@ -999,7 +1012,7 @@ function openCharacterCreate() {
   _editIsCreate = true;
   _editDraft = {
     id: '', name: '', nameKo: '', image: '',
-    rarity: 5, role: 'attack', element: 'physical',
+    rarity: 5, role: '', weaponType: '', element: '',
     specialElement: '', releaseDate: '', releaseOrder: null, isReleased: true
   };
   renderCharacterEditModal();
@@ -1010,14 +1023,30 @@ function renderCharacterEditModal() {
   var d        = _editDraft;
   var isCreate = _editIsCreate;
 
-  var roleOpts = '<option value="">-</option>';
-  for (var r = 0; r < CHAR_ROLES.length; r++) {
-    roleOpts += '<option value="' + CHAR_ROLES[r] + '"' + (d.role === CHAR_ROLES[r] ? ' selected' : '') + '>' + (CHAR_ROLE_LABELS[CHAR_ROLES[r]] || CHAR_ROLES[r]) + '</option>';
+  // 게임별 포지션 필드: 명조는 role이 없어 weaponType(무기)을 편집한다.
+  var _rf      = (CARD_GRID_CONFIG[appState.currentGame] || {}).roleField || 'role';
+  var posValue = _rf === 'weaponType' ? (d.weaponType || '') : (d.role || '');
+  var posLabel = _rf === 'weaponType' ? '무기' : '역할';
+
+  // ZZZ 전용 하드코딩 대신 현재 게임 데이터에서 실제 값을 파생. 편집 중인 값은 항상 포함해 유실을 막는다.
+  function _distinctVals(field, keep) {
+    var seen = {}, out = [];
+    for (var i = 0; i < appState.characters.length; i++) {
+      var v = appState.characters[i][field];
+      if (v && !seen[v]) { seen[v] = 1; out.push(v); }
+    }
+    if (keep && !seen[keep]) out.push(keep);
+    return out.sort();
   }
-  var elemOpts = '<option value="">-</option>';
-  for (var e = 0; e < CHAR_ELEMENTS.length; e++) {
-    elemOpts += '<option value="' + CHAR_ELEMENTS[e] + '"' + (d.element === CHAR_ELEMENTS[e] ? ' selected' : '') + '>' + (CHAR_ELEMENT_LABELS[CHAR_ELEMENTS[e]] || CHAR_ELEMENTS[e]) + '</option>';
+  function _selOpts(vals, sel, labels) {
+    var h = '<option value="">-</option>';
+    for (var i = 0; i < vals.length; i++) {
+      h += '<option value="' + vals[i] + '"' + (sel === vals[i] ? ' selected' : '') + '>' + (labels[vals[i]] || vals[i]) + '</option>';
+    }
+    return h;
   }
+  var roleOpts = _selOpts(_distinctVals(_rf, posValue), posValue, CHAR_ROLE_LABELS);
+  var elemOpts = _selOpts(_distinctVals('element', d.element), d.element, CHAR_ELEMENT_LABELS);
 
   var topSection = isCreate
     ? '<div class="edit-row"><label class="edit-label">ID <span class="edit-required">*</span></label>' +
@@ -1046,7 +1075,7 @@ function renderCharacterEditModal() {
     '<option value="5"' + (d.rarity === 5 ? ' selected' : '') + '>S (5성)</option>' +
     '<option value="4"' + (d.rarity === 4 ? ' selected' : '') + '>A (4성)</option>' +
     '</select></div>' +
-    '<div class="edit-row"><label class="edit-label">역할</label>' +
+    '<div class="edit-row"><label class="edit-label">' + posLabel + '</label>' +
     '<select class="edit-select" id="edit-role">' + roleOpts + '</select></div>' +
     '<div class="edit-row"><label class="edit-label">속성</label>' +
     '<select class="edit-select" id="edit-element">' + elemOpts + '</select></div>' +
@@ -1117,13 +1146,15 @@ function saveCharacterEdit() {
     nameKo:         gv('edit-nameKo'),
     image:          gv('edit-image'),
     rarity:         parseInt(gv('edit-rarity')) || 5,
-    role:           gv('edit-role') || null,
     element:        gv('edit-element') || null,
     specialElement: gv('edit-specialElement') || null,
     releaseDate:    gv('edit-releaseDate'),
     releaseOrder:   parseInt(gv('edit-releaseOrder')) || null,
     isReleased:     _editDraft.isReleased
   };
+  // 포지션 값은 게임별 필드에 저장 (명조=weaponType, 그 외=role)
+  var _saveRf = (CARD_GRID_CONFIG[appState.currentGame] || {}).roleField || 'role';
+  updates[_saveRf] = gv('edit-role') || null;
 
   if (_editIsCreate) {
     var newChar = Object.assign({ id: _editDraft.id, gameId: appState.currentGame, basePerformance: null }, updates);
@@ -1160,7 +1191,7 @@ function downloadCharactersPreview() {
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href = url;
-  a.download = 'zzz.characters.json';
+  a.download = appState.currentGame + '.characters.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

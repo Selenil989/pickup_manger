@@ -1916,5 +1916,407 @@
       "pull": "recommended",
       "priority": "high"
     }
+  },
+  {
+    "version": "1.0",
+    "characterId": "camille",
+    "investmentType": [
+      "meta",
+      "synergy"
+    ],
+    "metaScore": 8,
+    "futureScore": 8,
+    "replacementScore": 3,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "Prydwen·Game8 확인: SP 배터리 + Heat 취약/약화 부여 + 팀 전체 Link 제공 + Heat 인플릭션 피딩까지 겸하는 이중역할 서포터. 서포터 특성상 명함(E0)만으로 팀 기여가 완결되어 저투자 가치가 높다."
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "버퍼/배터리형이라 돌파로 인한 딜 상승 체감이 딜러보다 작다. 명함으로 핵심 유틸이 전부 열리므로 수직투자 우선순위 낮음."
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "전용무기 Blessing of Lustrous Carmine이 BiS이나, F2P 대체(Beacon of Duty)로도 기능. 서포터라 무기 의존도가 낮아 후순위."
+    },
+    "pullReasons": [
+      "Heat 캐리(라에바테인 등)를 크게 끌어올리는 최상급 서포터 — 팀 전체 Link+SP 배터리 유틸이 범용적(Prydwen)",
+      "서포터라 명함(E0)만으로 완결 — 저투자 가치 최상급",
+      "Heat 취약·약화 부여로 캐리 딜을 구조적으로 증폭"
+    ],
+    "skipReasons": [
+      "Heat 캐리(라에바테인 등)가 없으면 시너지 반감 — 계정 구성 의존",
+      "이미 상위 SP 서포터가 충실하면 역할 중복",
+      "버퍼형이라 돌파/전무 수직투자 가성비 낮음"
+    ],
+    "sources": [
+      {
+        "name": "Prydwen Camille Best Build Guide",
+        "url": "https://www.prydwen.gg/arknights-endfield/characters/camille",
+        "weight": 0.8
+      },
+      {
+        "name": "Game8 Camille Best Builds and Weapons",
+        "url": "https://game8.co/games/Arknights-Endfield/archives/601890",
+        "weight": 0.75
+      },
+      {
+        "name": "TheGamer Camille Heat Vanguard build",
+        "url": "https://www.thegamer.com/arknights-endfield-camille-weapons-teams-gear-upgrade-skills/",
+        "weight": 0.6
+      }
+    ],
+    "communitySummary": {
+      "positive": [
+        "Heat 캐리 팀을 크게 강화하는 최상급 이중역할 서포터(Prydwen)",
+        "SP 배터리 + 팀 Link + Heat 취약/약화의 폭넓은 유틸",
+        "명함(E0)만으로 팀 기여 완결"
+      ],
+      "negative": [
+        "Heat 캐리 의존 — 라에바테인 등이 없으면 시너지 반감",
+        "상위 SP 서포터 보유 시 역할 중복"
+      ],
+      "commonOpinion": "1.3 기준 S티어 서포터로, Heat 캐리를 굴리는 계정에는 사실상 필수급 배터리/버퍼라는 평가. 서포터라 저투자로 제 몫을 다한다.",
+      "concern": "엔드필드 커뮤니티 데이터가 아직 얕고, Heat 캐리 유무에 가치가 크게 좌우된다."
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "엔드필드는 신생 게임이라 장기 메타·상향 데이터 축적이 부족",
+        "Heat 캐리 파워크립에 따라 서포터 가치가 변동 가능"
+      ]
+    },
+    "fomoRisk": {
+      "score": 5,
+      "reason": "한정 6성이나 후속 배너에서 오프레이트로 자주 등장(Arcane 1.4에서 오프레이트 확인). 미확보 시 재획득 창구가 있어 긴급도는 중간."
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    },
+    "officialSummary": {
+      "sourceSummary": "Prydwen·Game8·TheGamer 성능/빌드 평가 기반",
+      "skillSummary": "Heat 취약·약화를 부여하고 팀 전체 Link와 SP를 공급하는 Heat 폴암 뱅가드. 딜과 유틸을 겸하나 본질은 캐리 증폭형 서포터.",
+      "synergySummary": "라에바테인 등 Heat 캐리와 최상 시너지. Heat 인플릭션 피딩으로 캐리의 반응 딜을 극대화한다."
+    },
+    "gachaGuide": {
+      "version": "1.0",
+      "keyFeatures": [
+        {
+          "title": "기초 성능",
+          "description": "SP 배터리 + Heat 취약/약화 + 팀 Link를 겸하는 이중역할 서포터. 단일 스킬 로테로 다중 Link 스택을 안정 유지하는 최초 유닛."
+        },
+        {
+          "title": "조합 자유도",
+          "description": "Heat 캐리(라에바테인 등)와 결합 시 진가. 캐리가 없으면 유틸은 남지만 시너지가 반감된다."
+        },
+        {
+          "title": "투자 난이도",
+          "description": "서포터라 명함(E0)에서 핵심 유틸 완결. 전무는 BiS이나 F2P 대체 가능, 후순위."
+        }
+      ],
+      "partyRequirements": [
+        {
+          "type": "one_of",
+          "characterIds": [
+            "laevatain"
+          ],
+          "roles": [
+            "Heat 캐리"
+          ],
+          "description": "Heat 취약/인플릭션 피딩을 받아줄 Heat 메인딜러가 있어야 시너지가 완성된다."
+        }
+      ],
+      "corePartners": [
+        {
+          "characterIds": [
+            "laevatain"
+          ],
+          "roles": [
+            "Heat 메인딜러"
+          ],
+          "description": "라에바테인 팀에 대한 기여가 가장 크며, 기존 조합 대비 유의미한 상승을 준다(Game8)."
+        }
+      ],
+      "alternativePartners": [
+        {
+          "characterIds": [],
+          "roles": [
+            "Heat 계열 딜러"
+          ],
+          "description": "기타 Heat 캐리와도 호환. 팀의 Heat 축을 강화하는 방향으로 편성."
+        }
+      ],
+      "alternativeEquipment": [
+        {
+          "name": "Beacon of Duty (F2P 대체 무기) / Frontiers 기어",
+          "description": "전용무기 미보유 시 Beacon of Duty로 대체 가능. Frontiers 기어 세트가 서포터 코어."
+        }
+      ],
+      "recommendedFor": [
+        "라에바테인 등 Heat 캐리를 보유했거나 육성 중인 계정",
+        "SP 공급/팀 버프 서포터가 부족한 계정"
+      ],
+      "reconsiderIf": [
+        "Heat 캐리가 없는 계정 — 시너지 반감",
+        "이미 상위 SP 서포터가 충실한 경우"
+      ]
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "arcane",
+    "investmentType": [
+      "meta",
+      "synergy"
+    ],
+    "metaScore": 9,
+    "futureScore": 8,
+    "replacementScore": 3,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8.5,
+      "priority": "high",
+      "reason": "Prydwen·Game8 티어 확인: SS티어 Nature 캐스터. Array Arcana로 INT(부식 DPS)/WILL(군집·제어 서포터) 두 역할을 오가는 최고 유연성 유닛으로, 명함(E0)만으로도 계정에 큰 가치를 제공한다."
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "빌드 의존형이라 돌파보다 스탯 방향(INT/WILL) 확정과 기어가 우선. 정수는 고점을 올리나 우선순위는 캐릭터·빌드 세팅 뒤."
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전용무기가 선택한 폼의 고점을 끌어올리나, 초기엔 폼 확정과 반응 파트너(냉기 계열) 세팅이 더 중요. 전무는 중간 우선순위."
+    },
+    "pullReasons": [
+      "SS티어 Nature 캐스터 — DPS/서포터 양쪽 최상위 유연성(Prydwen·Game8)",
+      "INT 폼 Gloompurge의 광역 부식으로 팀 전체 저항 관통 제공 — 파티 딜 구조적 상승",
+      "오프레이트 6성 풀이 강력(미브·카밀)해 픽뚫해도 최근 한정 획득 가능 → 배너 리스크 완화"
+    ],
+    "skipReasons": [
+      "빌드 의존이 커 INT/WILL 중 하나에 집중·기어 세팅을 못 하면 애매해짐",
+      "INT 고점은 냉기 인에이블러(Xaihi·Tangtang)가 있어야 반응 딜이 산다 — 계정 의존",
+      "이미 상위 캐스터/부식 딜러가 충실하면 우선순위 하락"
+    ],
+    "sources": [
+      {
+        "name": "Prydwen Arcane Best Build Guide",
+        "url": "https://www.prydwen.gg/arknights-endfield/characters/arcane",
+        "weight": 0.8
+      },
+      {
+        "name": "Game8 Endfield Tier List (Aug 2026)",
+        "url": "https://game8.co/games/Arknights-Endfield/archives/530563",
+        "weight": 0.75
+      },
+      {
+        "name": "Topuplist Is Arcane Worth Pulling (1.4)",
+        "url": "https://topuplist.com/blogs/detail/is-arcane-li-zhiyan-worth-pulling-arknights-endfield",
+        "weight": 0.65
+      }
+    ],
+    "communitySummary": {
+      "positive": [
+        "SS티어 — DPS·서포터 양쪽에서 최상위 가치(Game8)",
+        "INT 폼 광역 부식으로 팀 전체 저항 관통 제공",
+        "오프레이트 풀(미브·카밀)이 강해 배너 픽뚫 리스크가 낮음"
+      ],
+      "negative": [
+        "빌드 의존이 커 스탯/기어 방향을 확정해야 함",
+        "INT 고점은 냉기 인에이블러 필요",
+        "캐스터/부식 딜러 중복 시 우선순위 하락"
+      ],
+      "commonOpinion": "1.4 헤드라이너이자 현 SS티어 최상위권. 유연성이 강점이지만 그만큼 빌드를 확정해서 굴려야 제값을 한다는 평가가 지배적.",
+      "concern": "신생 게임 특성상 장기 데이터가 얕고, 빌드 자유도가 곧 입문 장벽으로 작용해 초보 계정에서는 활용 편차가 크다."
+    },
+    "uncertainty": {
+      "score": 5,
+      "reasons": [
+        "엔드필드 신생 게임 — 상위 콘텐츠 장기 메타·상향 데이터 부족",
+        "빌드(INT/WILL) 및 냉기 파트너 유무에 따라 실전 체급 편차가 큼"
+      ]
+    },
+    "fomoRisk": {
+      "score": 6,
+      "reason": "1.4 한정 6성이나 오프레이트 풀이 강력해 픽뚫 손실이 상대적으로 작음. 다만 SS급 유연 딜러/서포터라 놓치면 아쉬움은 큰 편."
+    },
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    },
+    "officialSummary": {
+      "sourceSummary": "Prydwen·Game8 티어 및 Topuplist 픽업 가이드 기반",
+      "skillSummary": "Array Arcana로 INT(부식 DPS)/WILL(군집·제어 서포터) 두 폼을 스탯에 따라 오가는 Nature 캐스터. 광역 부식(Gloompurge)으로 저항을 깎아 팀 딜을 올린다.",
+      "synergySummary": "INT 폼은 냉기 인에이블러(Xaihi·Tangtang)와 반응 시너지가 크고, WILL 폼은 하이퍼캐리에게 예술 취약을 뿌려 딜을 증폭한다."
+    },
+    "gachaGuide": {
+      "version": "1.0",
+      "keyFeatures": [
+        {
+          "title": "기초 성능",
+          "description": "스탯에 따라 INT(부식 DPS)/WILL(제어 서포터)로 정체성이 갈리는 SS티어 Nature 캐스터. 유연성이 최대 강점."
+        },
+        {
+          "title": "조합 자유도",
+          "description": "INT 고점은 냉기 인에이블러(Xaihi·Tangtang)와의 반응이 핵심. WILL 폼은 하이퍼캐리 보조로 범용."
+        },
+        {
+          "title": "투자 난이도",
+          "description": "빌드 의존형 — INT/WILL 중 하나로 스탯·기어를 확정해야 제값. 명함으로도 큰 가치나 세팅 이해가 필요."
+        }
+      ],
+      "partyRequirements": [
+        {
+          "type": "one_of",
+          "characterIds": [
+            "xaihi",
+            "tangtang"
+          ],
+          "roles": [
+            "냉기 인에이블러"
+          ],
+          "description": "INT 부식 딜 고점은 적에게 2속성 반응을 걸어줄 냉기 파트너가 있어야 산다(WILL 서포터 운용 시 완화)."
+        }
+      ],
+      "corePartners": [
+        {
+          "characterIds": [
+            "xaihi",
+            "tangtang"
+          ],
+          "roles": [
+            "냉기 인에이블러"
+          ],
+          "description": "Xaihi·Tangtang 등 냉기 파트너로 Nature 반응 딜을 극대화하는 정석 INT 조합."
+        }
+      ],
+      "alternativePartners": [
+        {
+          "characterIds": [],
+          "roles": [
+            "하이퍼캐리"
+          ],
+          "description": "WILL 폼 운용 시 예술 취약을 받아줄 임의의 하이퍼캐리와 편성."
+        }
+      ],
+      "alternativeEquipment": [
+        {
+          "name": "범용 캐스터 무기 / 기어 세트",
+          "description": "전용무기 미보유 시 선택한 폼(INT/WILL)에 맞는 범용 옵션으로 대체. 폼 확정이 무기보다 우선."
+        }
+      ],
+      "recommendedFor": [
+        "Xaihi·Tangtang 등 냉기 파트너를 보유한 계정",
+        "유연한 딜러/서포터 겸용 유닛이 필요한 계정"
+      ],
+      "reconsiderIf": [
+        "빌드를 한 방향으로 확정·세팅할 여건이 안 되는 초보 계정",
+        "이미 상위 캐스터/부식 딜러가 충실한 경우"
+      ]
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "liino",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 6,
+    "futureScore": 6,
+    "replacementScore": 5,
+    "confidence": 0.3,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "미출시(엔드필드 v1.4) 캐릭터로 정식 성능 데이터가 없다. 베타/리크 기준 잠정 평가이며 출시 후 재산정 필요."
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "미출시 — 돌파 가치 판단 보류. 출시 후 실측 필요."
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "미출시 — 전용무기 성능 미확정."
+    },
+    "pullReasons": [
+      "전기 서포터 신규 6성 — 출시 직후라 실측 데이터 축적 필요",
+      "신규 5성 픽업 — 계정 역할 공백을 채울 가능성(출시 후 확인 필요)"
+    ],
+    "skipReasons": [
+      "미출시 — 정식 성능·조합 데이터 없음, 베타 수치는 출시 시 변동 가능",
+      "지금 판단하기엔 정보가 부족 → 출시 후 2주 관망 권장"
+    ],
+    "sources": [
+      {
+        "name": "game8 명조/엔드필드 예정 캐릭터",
+        "url": "https://game8.co",
+        "weight": 0.4
+      }
+    ],
+    "communitySummary": {
+      "positive": [
+        "신규 픽업 후보"
+      ],
+      "negative": [
+        "미출시로 정식 데이터 부재",
+        "베타/리크 기반이라 신뢰도 낮음"
+      ],
+      "commonOpinion": "아직 출시 전이라 정식 평가가 불가능. 리크 기준 잠정치이며 출시 후 커뮤니티 검증이 필요하다.",
+      "concern": "베타 수치와 실제 성능의 괴리 가능성이 커 현시점 투자 판단은 위험하다."
+    },
+    "uncertainty": {
+      "score": 8,
+      "reasons": [
+        "미출시 — 정식 성능/조합 데이터 부재",
+        "베타·리크 기반이라 출시 시 수치·평가 변동 가능성 큼",
+        "한국 커뮤니티 실측 데이터 미축적"
+      ]
+    },
+    "fomoRisk": {
+      "score": 4,
+      "reason": "미출시라 FOMO 판단 자체가 이르다. 출시 후 성능 확인 뒤 결정 권장."
+    },
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    },
+    "officialSummary": {
+      "sourceSummary": "출시 전 리크/공지 기반 잠정",
+      "skillSummary": "electric/서포터 엔드필드 v1.4 신규 5성. 정식 스킬 상세는 출시 후 확정.",
+      "synergySummary": "조합 시너지는 출시 후 실측 필요."
+    },
+    "gachaGuide": {
+      "version": "1.0",
+      "keyFeatures": [
+        {
+          "title": "기초 성능",
+          "description": "미출시 — 베타/리크 기준 잠정. 출시 후 재작성 예정."
+        },
+        {
+          "title": "투자 난이도",
+          "description": "정식 데이터 부재로 현시점 판단 보류 권장."
+        }
+      ],
+      "partyRequirements": [],
+      "corePartners": [],
+      "alternativePartners": [],
+      "alternativeEquipment": [],
+      "recommendedFor": [
+        "출시 후 성능을 확인하고 결정하려는 계정"
+      ],
+      "reconsiderIf": [
+        "미출시 상태에서 확정 투자를 원하는 경우 — 2주 관망 권장"
+      ]
+    }
   }
 ]
