@@ -2942,6 +2942,23 @@ select {
   color: var(--muted);
   border: 1px solid var(--border);
 }
+.auth-google {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #202124;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.auth-google:hover { background: #f1f1f3; }
+.auth-or {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  margin: 2px 0;
+}
 .auth-error { color: var(--must); font-size: 12px; min-height: 16px; }
 
 /* KPI Tile Grid — 6개 핵심 지표 */

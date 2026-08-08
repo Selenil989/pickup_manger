@@ -80,6 +80,12 @@ domReady(function () {
         else if (!r.data.session) showError('가입됨 — 이메일 확인 후 로그인하세요.');
       });
   });
+  var g = document.getElementById('authGoogle');
+  if (g) g.addEventListener('click', function () {
+    showError('');
+    sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href } })
+      .then(function (r) { if (r.error) showError(r.error.message); });
+  });
   var lo = document.getElementById('logoutBtn');
   if (lo) lo.addEventListener('click', function () { sb.auth.signOut().then(function () { location.reload(); }); });
 });
