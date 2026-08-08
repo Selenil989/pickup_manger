@@ -52,6 +52,7 @@ body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 16px;
   min-height: 100vh;
+  zoom: 0.8;   /* 전체 UI를 80%로 축소 (데스크톱·모바일 공통) */
 }
 
 /* ── 4. App Header ────────────────────────────────────────── */
@@ -1259,7 +1260,7 @@ select {
 
 .app-layout {
   display: flex;
-  height: 100vh;
+  height: 125vh;   /* body zoom:0.8 보정 → 125vh × 0.8 = 화면 꽉 채움 */
   overflow: hidden;
 }
 
@@ -1645,6 +1646,16 @@ select {
   .currency-page .currency-equals { grid-area: conv; justify-self: end; white-space: nowrap; }
   .currency-page .currency-row-actions { grid-area: actions; justify-self: end; }
   .currency-page .currency-type-select { max-width: 100%; }
+
+  /* 월정액 날짜 배지를 헤더 맨 위로 */
+  .currency-header-top .mp-badge { order: -1; margin-left: 0; align-self: stretch; justify-content: center; }
+
+  /* 플래너 좌우 분할(달성분석 2 : 과금 1 = 비대칭) → 모바일선 세로 스택 */
+  .planner-bottom-row { flex-direction: column; }
+  .planner-bottom-row .planner-group--full,
+  .planner-bottom-row .planner-group--half:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  .planner-top-row { flex-direction: column; }
+  .planner-top-row .planner-group--half:first-child { border-right: none; border-bottom: 1px solid var(--border); }
 }
 
 /* ── 32. Currency Page ────────────────────────────────────── */
