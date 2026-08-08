@@ -92,91 +92,6 @@
   },
   {
     "version": "1.0",
-    "characterId": "remiel",
-    "investmentType": [
-      "future",
-      "synergy"
-    ],
-    "metaScore": 8.5,
-    "futureScore": 9.5,
-    "replacementScore": 5,
-    "confidence": 0.7,
-    "futureLinks": [
-      {
-        "characterId": "velina",
-        "synergy": "Wind Core",
-        "confidence": 0.9
-      }
-    ],
-    "characterRecommendation": {
-      "score": 8,
-      "priority": "high",
-      "reason": "벨리나와 핵심 시너지"
-    },
-    "breakthroughRecommendation": {
-      "score": 4,
-      "priority": "low",
-      "reason": "돌파 효율 미검증"
-    },
-    "weaponRecommendation": {
-      "score": 6,
-      "priority": "medium",
-      "reason": "서포터 전무 효율 보통"
-    },
-    "pullReasons": [
-      "벨리나 보유 시 필수 파츠",
-      "바람 계열 서포터 공백 해소"
-    ],
-    "skipReasons": [
-      "벨리나 미보유 시 단독 가치 낮음",
-      "미출시 캐릭터로 실성능 미검증"
-    ],
-    "sources": [
-      {
-        "name": "아카라이브",
-        "weight": 0.5
-      },
-      {
-        "name": "레딧",
-        "weight": 0.5
-      }
-    ],
-    "officialSummary": {
-      "sourceSummary": "공식 스킬 설명 및 PV 일부 확인",
-      "skillSummary": "바람 계열 서포터. 벨리나와 코어 시너지 중심 설계.",
-      "synergySummary": "벨리나와 세트로 운용 시 최대 효율"
-    },
-    "communitySummary": {
-      "positive": [
-        "벨리나 보유 시 필수급",
-        "바람 서포터 공백 해소"
-      ],
-      "negative": [
-        "벨리나 없으면 단독 가치 낮음",
-        "실성능 미검증"
-      ],
-      "commonOpinion": "벨리나 보유자에게만 강하게 추천",
-      "concern": "미출시 캐릭터 — 실성능 및 구체 스킬 미확정"
-    },
-    "uncertainty": {
-      "score": 8,
-      "reasons": [
-        "미출시 캐릭터 실성능 미검증",
-        "스킬 세부 사항 미확정",
-        "벨리나 출시 여부에 종속"
-      ]
-    },
-    "fomoRisk": {
-      "score": 6,
-      "reason": "벨리나 픽업 시기에 맞춰 동반 과금 유도 심리 주의"
-    },
-    "recommendation": {
-      "pull": "optional",
-      "priority": "medium"
-    }
-  },
-  {
-    "version": "1.0",
     "characterId": "miyabi",
     "investmentType": [
       "meta"
@@ -3742,7 +3657,7 @@
   },
   {
     "version": "1.0",
-    "characterId": "remielledan",
+    "characterId": "remiell",
     "investmentType": [
       "meta",
       "future",

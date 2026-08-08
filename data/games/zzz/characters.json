@@ -792,7 +792,7 @@
   {
     "id": "remiell",
     "gameId": "zzz",
-    "basePerformance": null,
+    "basePerformance": 5,
     "name": "레미엘",
     "nameKo": "레미엘",
     "image": "레미엘.webp",
@@ -800,21 +800,6 @@
     "role": "anomaly",
     "element": "physical",
     "specialElement": "REMIELL",
-    "releaseDate": "",
-    "releaseOrder": null,
-    "isReleased": false
-  },
-  {
-    "id": "remielledan",
-    "gameId": "zzz",
-    "basePerformance": 5,
-    "name": "Remielle Dan",
-    "nameKo": "레미엘 단",
-    "image": "remielledan.png",
-    "rarity": 5,
-    "role": "anomaly",
-    "element": "lumiflux",
-    "specialElement": null,
     "releaseDate": "2026-07-29",
     "releaseOrder": null,
     "isReleased": true
