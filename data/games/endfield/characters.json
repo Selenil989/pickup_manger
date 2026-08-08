@@ -403,5 +403,50 @@
     "releaseDate": "2026-04-17",
     "isReleased": true,
     "version": ""
+  },
+  {
+    "id": "camille",
+    "name": "Camille",
+    "nameKo": "카밀",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "vanguard",
+    "element": "fire",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": 5,
+    "releaseDate": "2026-06-25",
+    "isReleased": true,
+    "version": ""
+  },
+  {
+    "id": "arcane",
+    "name": "Arcane",
+    "nameKo": "아케인",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "caster",
+    "element": "nature",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": 5,
+    "releaseDate": "2026-07-16",
+    "isReleased": true,
+    "version": ""
+  },
+  {
+    "id": "liino",
+    "name": "Liino",
+    "nameKo": "리이노",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "support",
+    "element": "electric",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-08-09",
+    "isReleased": false,
+    "version": ""
   }
 ]

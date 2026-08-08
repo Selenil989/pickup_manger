@@ -777,7 +777,7 @@
   {
     "id": "norma",
     "gameId": "zzz",
-    "basePerformance": null,
+    "basePerformance": 5,
     "name": "노르마",
     "nameKo": "노르마",
     "image": "노르마.webp",
@@ -785,9 +785,9 @@
     "role": "stun",
     "element": "fire",
     "specialElement": null,
-    "releaseDate": "20260708",
+    "releaseDate": "2026-07-08",
     "releaseOrder": null,
-    "isReleased": false
+    "isReleased": true
   },
   {
     "id": "remiell",
@@ -801,6 +801,36 @@
     "element": "physical",
     "specialElement": "REMIELL",
     "releaseDate": "",
+    "releaseOrder": null,
+    "isReleased": false
+  },
+  {
+    "id": "remielledan",
+    "gameId": "zzz",
+    "basePerformance": 5,
+    "name": "Remielle Dan",
+    "nameKo": "레미엘 단",
+    "image": "",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "lumiflux",
+    "specialElement": null,
+    "releaseDate": "2026-07-29",
+    "releaseOrder": null,
+    "isReleased": true
+  },
+  {
+    "id": "sigrid",
+    "gameId": "zzz",
+    "basePerformance": null,
+    "name": "Sigrid",
+    "nameKo": "시그리드",
+    "image": "",
+    "rarity": 5,
+    "role": "attack",
+    "element": "ice",
+    "specialElement": null,
+    "releaseDate": "2026-08-19",
     "releaseOrder": null,
     "isReleased": false
   }

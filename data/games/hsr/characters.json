@@ -1423,5 +1423,20 @@
     "releaseDate": "2026-07-24",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "robinsummeretto",
+    "name": "Robin • Summeretto",
+    "nameKo": "로빈 • 서머레토",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "remembrance",
+    "element": "wind",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-08-25",
+    "isReleased": false,
+    "version": ""
   }
 ]
