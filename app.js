@@ -601,7 +601,7 @@ function renderCardGrid() {
   var roster = appState.rosters[gameId] || { characters: [] };
   var ownedMap = {};
   for (var o = 0; o < roster.characters.length; o++) {
-    ownedMap[roster.characters[o].characterId] = true;
+    ownedMap[roster.characters[o].characterId] = roster.characters[o];  // 돌파/전무 뱃지용 전체 엔트리
   }
 
   var html = '';
@@ -683,14 +683,20 @@ function renderCardGrid() {
       html += '<div class="char-card-image char-card-no-img"></div>';
     }
     var iconCls = 'char-card-icon' + (cfg.iconBackdrop ? ' char-card-icon--backdrop' : '');
+    // 좌상단 스택: [랭크(ZZZ만)] → [출시예정] → [돌파] → [전무] 순. 랭크 없으면 출시예정이 최상단.
     html += '<div class="char-card-icons"><div class="char-card-icons-left">';
     if (rarityFile) html += '<img class="' + iconCls + '" src="' + imgBase + rarityFile + '" alt="">';
+    if (!charIsReleased(dc)) html += '<span class="card-badge card-badge--upcoming">출시 예정</span>';
+    if (owned) {
+      var oe = ownedMap[char.id];
+      html += '<span class="card-badge card-badge--dupe">' + ((oe.dupeLevel || 0) > 0 ? oe.dupeLevel + '돌' : '명함') + '</span>';
+      if (oe.weapon && oe.weapon.hasSignature) html += '<span class="card-badge card-badge--weapon">전무</span>';
+    }
     html += '</div><div class="char-card-icons-right">';
     if (roleFile) html += '<img class="' + iconCls + '" src="' + imgBase + roleFile + '" alt="">';
     if (elementFile) html += '<img class="' + iconCls + '" src="' + imgBase + elementFile + '" alt="">';
     html += '</div></div>';
     if (owned) html += '<div class="char-card-owned-overlay"></div>';
-    if (!charIsReleased(dc)) html += '<span class="char-card-unreleased-badge">출시 예정</span>';
     html += '<div class="char-card-name">' + (dc.nameKo || dc.name) + '</div>';
     html += '</div>';
   }

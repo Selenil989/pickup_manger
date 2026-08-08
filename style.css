@@ -578,6 +578,13 @@ select {
   pointer-events: none;
 }
 
+.char-card-icons-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
 .char-card-icons-right {
   display: flex;
   flex-direction: column;
@@ -830,20 +837,20 @@ select {
   background: rgba(255, 77, 109, 0.20);
 }
 
-.char-card-unreleased-badge {
-  position: absolute;
-  top: 28px;
-  left: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 10px;
-  background: rgba(255, 210, 77, 0.85);
-  color: #3a2800;
-  pointer-events: none;
-  z-index: 3;
+/* 좌상단 상태 뱃지 (출시예정/돌파/전무) — icons-left 안에서 세로로 쌓임. 공통 스타일 + 색상 구분 */
+.card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 9px;
   white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
 }
+.card-badge--upcoming { background: rgba(255, 210, 77, 0.9);  color: #3a2800; }
+.card-badge--dupe     { background: rgba(123, 108, 255, 0.92); color: #fff; }
+.card-badge--weapon   { background: rgba(40, 178, 150, 0.92);  color: #fff; }
 
 .detail-gear-btn {
   margin-right: 0;
