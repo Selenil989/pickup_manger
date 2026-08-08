@@ -5,6 +5,7 @@
 //          로그인 시 이전 계정 데이터를 비우고 그 계정 것만 복원 → 계정 전환 시 데이터 유출 방지.
 var SUPABASE_URL = 'https://fqbpjvycdbicbbshxkyb.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_bXR-gFa8AVTBWAn3nOT4HQ_N_bq7kSI';
+var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카드 갱신 버튼)
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var origSet = localStorage.setItem.bind(localStorage);
@@ -64,6 +65,7 @@ function domReady(fn) {
 function onAuthed(session) {
   if (session.user.id === currentUid) return;   // 같은 계정 재진입은 무시 (중복 init 방지)
   currentUid = session.user.id;
+  document.body.classList.toggle('is-admin', session.user.email === ADMIN_EMAIL);
   loadAccount(currentUid).then(function () {
     var gate = document.getElementById('authGate');
     if (gate) gate.style.display = 'none';
@@ -103,5 +105,5 @@ domReady(function () {
 // 로드 시 저장된 세션이 있으면 INITIAL_SESSION, 로그인하면 SIGNED_IN 이벤트로 진입
 sb.auth.onAuthStateChange(function (evt, session) {
   if (session) onAuthed(session);
-  else if (evt === 'SIGNED_OUT') { currentUid = null; clearPickupKeys(); }
+  else if (evt === 'SIGNED_OUT') { currentUid = null; clearPickupKeys(); document.body.classList.remove('is-admin'); }
 });

@@ -1335,6 +1335,10 @@ select {
   cursor: default;
 }
 
+/* 관리자 전용 — 메타/카드 갱신 버튼은 관리자 계정에서만 보임 */
+#analysisActions { display: none; }
+body.is-admin #analysisActions { display: flex; }
+
 .sidebar-title {
   padding: 16px;
   font-size: 14px;
