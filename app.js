@@ -2723,9 +2723,17 @@ function toLocalYMD(d) {
   return y + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
 }
 
+// 게임 일일 리셋 05:00 기준의 '오늘'. 00:00~04:59는 아직 전날로 취급 → 하루 차감이 자정이 아닌 05:00에 일어난다.
+var PASS_RESET_HOUR = 5;
+function passResetToday() {
+  var d = new Date(Date.now() - PASS_RESET_HOUR * 3600000);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
 function calcMonthlyPassDays(endDateStr) {
   if (!endDateStr) return null;
-  var today = new Date(); today.setHours(0,0,0,0);
+  var today = passResetToday();
   var end   = new Date(endDateStr); end.setHours(0,0,0,0);
   return Math.ceil((end - today) / 86400000);
 }
@@ -2977,7 +2985,7 @@ function renderCurrencyPage() {
     mpBtn.addEventListener('click', function() {
       var gid     = this.dataset.game;
       var endDate = loadMonthlyPassEndDate(gid);
-      var base    = new Date(); base.setHours(0,0,0,0);
+      var base    = passResetToday();
       if (endDate) {
         var d = new Date(endDate); d.setHours(0,0,0,0);
         base = d;
