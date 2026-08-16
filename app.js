@@ -81,7 +81,7 @@ function charIsReleased(dc) {
     var r = /^\d{8}$/.test(dc.releaseDate)
       ? dc.releaseDate.slice(0, 4) + '-' + dc.releaseDate.slice(4, 6) + '-' + dc.releaseDate.slice(6)
       : dc.releaseDate;
-    return r <= new Date().toISOString().slice(0, 10);
+    return r <= toLocalYMD(new Date());
   }
   return !dc || dc.isReleased !== false;
 }
@@ -331,7 +331,7 @@ function exportPersonalSettings() {
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href     = url;
-  a.download = 'pickup_settings_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = 'pickup_settings_' + toLocalYMD(new Date()) + '.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2001,7 +2001,7 @@ function plannerAutoEndDate(startStr) {
   var d = new Date(startStr);
   if (isNaN(d.getTime())) return '';
   d.setDate(d.getDate() + 42);
-  return d.toISOString().slice(0, 10);
+  return toLocalYMD(d);
 }
 
 function plannerNextVersion(vStr) {
@@ -2571,7 +2571,7 @@ function bindPlannerEvents(gameId) {
       var newStart = '';
       if (effEnd) {
         var d = new Date(effEnd); d.setDate(d.getDate() + 1);
-        newStart = d.toISOString().slice(0, 10);
+        newStart = toLocalYMD(d);
       }
       var newEnd  = newStart ? plannerAutoEndDate(newStart) : '';
       // 버전/기간은 공유(어드민) — 전 유저 반영. 각 유저 목표는 다음 로드 때 cur←next 자동 이월.
@@ -2714,6 +2714,13 @@ function loadMonthlyPassEndDate(gameId) {
 
 function saveMonthlyPassEndDate(gameId, dateStr) {
   try { localStorage.setItem('pickup_manager_monthly_pass_' + gameId, dateStr); } catch(e) {}
+}
+
+// 로컬 타임존 기준 YYYY-MM-DD. toISOString()은 UTC로 변환돼 KST(UTC+9)에선 하루 밀리는
+// 버그가 있어(예: +30일이 D-29로 저장됨) 로컬 날짜 문자열을 직접 만든다.
+function toLocalYMD(d) {
+  var y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
+  return y + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
 }
 
 function calcMonthlyPassDays(endDateStr) {
@@ -2976,7 +2983,7 @@ function renderCurrencyPage() {
         base = d;
       }
       base.setDate(base.getDate() + 30);
-      var newEnd = base.toISOString().slice(0, 10);
+      var newEnd = toLocalYMD(base);
       saveMonthlyPassEndDate(gid, newEnd);
       var days  = calcMonthlyPassDays(newEnd);
       var label = days <= 0 ? '만료' : 'D-' + days;
@@ -3485,7 +3492,7 @@ function openGachaConfigModal(gameId) {
 function plannerNextDayStr(dateStr) {
   if (!dateStr) return '';
   var d = new Date(dateStr); d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0, 10);
+  return toLocalYMD(d);
 }
 
 function openPlannerConfigModal(gameId) {
