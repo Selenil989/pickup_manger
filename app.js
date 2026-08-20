@@ -1986,7 +1986,7 @@ function plannerMaybeRollover(gameId, pd) {
     if (!nextVer) break;
 
     pd.version   = nextVer;
-    pd.startDate = plannerNextDayStr(effEnd);
+    pd.startDate = effEnd;          // 다음 버전 시작일 = 이전 종료일(같은 날)
     pd.endDate   = '';
     pd.cur  = pd.next || { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
     pd.next = { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
@@ -2397,7 +2397,7 @@ function renderPlannerSummaryHtml(pd) {
   var autoEnd   = (startDate && !endDate) ? plannerAutoEndDate(startDate) : '';
   var effEnd    = endDate || autoEnd;
   var nextVer   = plannerNextVersion(pd.version);
-  var nextStart = effEnd ? plannerNextDayStr(effEnd) : '';
+  var nextStart = effEnd || '';   // 다음 버전 시작일 = 현재 버전 종료일(같은 날)
   var nextEnd   = nextStart ? plannerAutoEndDate(nextStart) : '';
   var dd        = plannerDDay(effEnd);
 
@@ -2568,11 +2568,7 @@ function bindPlannerEvents(gameId) {
       savePlannerData(gameId, pd);              // 현재 입력한 목표 저장 (목표 이월은 loadPlannerData가 버전변경 감지해 처리)
       var nextVer = plannerNextVersion(pd.version);
       var effEnd  = pd.endDate || plannerAutoEndDate(pd.startDate);
-      var newStart = '';
-      if (effEnd) {
-        var d = new Date(effEnd); d.setDate(d.getDate() + 1);
-        newStart = toLocalYMD(d);
-      }
+      var newStart = effEnd || '';   // 다음 버전 시작일 = 현재 버전 종료일(같은 날)
       var newEnd  = newStart ? plannerAutoEndDate(newStart) : '';
       // 버전/기간은 공유(어드민) — 전 유저 반영. 각 유저 목표는 다음 로드 때 cur←next 자동 이월.
       if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, nextVer || pd.version, newStart || pd.startDate, newEnd);
@@ -3497,24 +3493,18 @@ function openGachaConfigModal(gameId) {
   };
 }
 
-function plannerNextDayStr(dateStr) {
-  if (!dateStr) return '';
-  var d = new Date(dateStr); d.setDate(d.getDate() + 1);
-  return toLocalYMD(d);
-}
-
 function openPlannerConfigModal(gameId) {
   var pd    = loadPlannerData(gameId);
   var modal = document.getElementById('currencyConfigModal');
 
   var startDate = pd.startDate || '';
   var endDate   = pd.endDate   || '';
-  // 이미 등록된 버전이 있고 종료일이 설정된 경우 → 시작일을 종료일+1로 맞춤
-  var nextStart = endDate ? plannerNextDayStr(endDate) : '';
+  // 다음 버전 시작일 = 현재 버전 종료일(같은 날)
+  var nextStart = endDate || '';
 
   function calcHints(sVal, eVal) {
     var autoEndHint  = (sVal && !eVal) ? '자동 종료일: ' + plannerAutoEndDate(sVal) : '';
-    var nextStartHint = eVal ? '다음 버전 시작일: ' + plannerNextDayStr(eVal) : '';
+    var nextStartHint = eVal ? '다음 버전 시작일: ' + eVal : '';
     return { autoEndHint: autoEndHint, nextStartHint: nextStartHint };
   }
 
@@ -3572,8 +3562,8 @@ function openPlannerConfigModal(gameId) {
     var sDate    = document.getElementById('pcfStartDate').value;
     var eDate    = document.getElementById('pcfEndDate').value;
     if (!eDate && sDate) eDate = plannerAutoEndDate(sDate);
-    // 이미 등록된 버전이 있고 종료일이 설정된 경우, 시작일이 비어 있으면 규칙 적용
-    if (!sDate && eDate && pd.endDate) sDate = plannerNextDayStr(pd.endDate);
+    // 시작일이 비어 있으면 이전 버전 종료일(같은 날)로 보정
+    if (!sDate && eDate && pd.endDate) sDate = pd.endDate;
     // 버전/기간은 공유 설정(어드민만) — Supabase에 저장돼 전 유저에 반영. 목표는 개인 유지.
     if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, version, sDate, eDate);
     close();
