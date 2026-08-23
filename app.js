@@ -148,9 +148,9 @@ var CURRENCY_CONFIG = {
     name: '아크나이츠: 엔드필드',
     currencies: [
       { id: 'derivedOriginium', name: '파생 오리지늄',      icon: 'assets/icons/endfield/ef0.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
-      { id: 'crystal',          name: '오리지늄',          icon: 'assets/icons/endfield/ef1.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
+      { id: 'crystal',          name: '오로베릴',          icon: 'assets/icons/endfield/ef1.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
       { id: 'limitedPermit',    name: '헤드헌팅 채용 허가증', icon: 'assets/icons/endfield/ef2.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'character' },
-      { id: 'armoryToken',      name: '무기고 증표',        icon: 'assets/icons/endfield/ef3.webp', rate: 198, desc: '198개 = 1뽑', note: null, type: 'weapon'    }
+      { id: 'armoryToken',      name: '무기고 증표',        icon: 'assets/icons/endfield/ef3.webp', rate: 198, desc: '198개 = 1뽑', note: null, type: 'weapon', pullValue: 594 }
     ]
   },
   nte: {
@@ -2895,13 +2895,20 @@ function renderLedgerModal() {
   // 게임마다 프리미엄 재화 rate가 다르므로(환석 160, 엔드필드 오리지늄 500 …) 그 게임 재화
   // config에서 기준 rate = 가장 큰 rate를 뽑아 환산: delta × (기준rate / 재화rate).
   // rate는 코드 정본(CURRENCY_CONFIG) 우선, 없는 커스텀 재화만 사용자 config로 보충.
-  var _rate = {};
+  var _rate = {}, _pullVal = {};
   [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
-    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) { if (_rate[c.id] == null) _rate[c.id] = c.rate || 1; });
+    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) {
+      if (_rate[c.id] == null) { _rate[c.id] = c.rate || 1; if (c.pullValue != null) _pullVal[c.id] = c.pullValue; }
+    });
   });
   var _baseRate = 1;
   Object.keys(_rate).forEach(function(k) { if (_rate[k] > _baseRate) _baseRate = _rate[k]; });
-  function _toJaehwa(e) { var r = _rate[e.currency] || _baseRate; return Math.round(e.delta * (_baseRate / r)); }
+  // pv = 이 재화 "1뽑의 재화 가치"(기본=baseRate). 무기고 증표처럼 뽑 가치가 다른 재화만 pullValue로 지정.
+  function _toJaehwa(e) {
+    var r  = _rate[e.currency] || _baseRate;
+    var pv = _pullVal[e.currency] != null ? _pullVal[e.currency] : _baseRate;
+    return Math.round(e.delta * (pv / r));
+  }
 
   // 이 달 획득/소모 — 재화 환산으로 통일(뽑기권 포함)해 아래 무료 획득 집계와 단위를 맞춤
   var gained = 0, spent = 0;
