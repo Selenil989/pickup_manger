@@ -7348,5 +7348,53 @@
       ]
     },
     "communityTier": "SS"
+  },
+  {
+    "version": "",
+    "characterId": "aventurinewaves",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8.5,
+    "futureScore": 8.5,
+    "replacementScore": 7,
+    "confidence": 0.5,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "양자·환락 신규 5성(9/12 픽업 예정) — 여름 한정 어벤츄린 변형"
+    },
+    "breakthroughRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "출시 전 정보 잠정"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전용 광추 권장(잠정)"
+    },
+    "pullReasons": [
+      "신규 한정 5성(양자/환락)",
+      "여름 한정 디자인"
+    ],
+    "skipReasons": [
+      "출시 전 성능 미확정 — 확인 후 결정 권장"
+    ],
+    "sources": [
+      {
+        "name": "나무위키",
+        "weight": 1
+      },
+      {
+        "name": "인벤",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
   }
 ]

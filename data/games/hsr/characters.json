@@ -1438,5 +1438,20 @@
     "releaseDate": "2026-08-25",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "aventurinewaves",
+    "name": "Aventurine • Waves",
+    "nameKo": "어벤츄린·웨이브",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "elation",
+    "element": "quantum",
+    "specialElement": null,
+    "image": "aventurinewaves.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-09-12",
+    "isReleased": false,
+    "version": ""
   }
 ]
