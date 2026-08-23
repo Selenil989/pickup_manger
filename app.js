@@ -3003,7 +3003,7 @@ function renderLedgerPage() {
       + '<span class="lcal-date">' + day + '</span>'
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
-      + (ag && ag.paid ? '<span class="lcal-paid">₩</span>' : '')
+      + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
       + '</div>';
   }
 
