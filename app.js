@@ -4198,9 +4198,11 @@ function init() {
 
         if (currentTab === "currency") {
           _currencyTab = gameId;
+          appState.currentGame = gameId;  // 다른 탭과 게임 동기화(탭 전환 시 옛 게임으로 덮이는 것 방지)
           renderCurrencyPage();
         } else if (currentTab === "ledger") {
           _currencyTab = gameId;
+          appState.currentGame = gameId;
           renderLedgerPage();
         } else {
           onGameChange(gameId);
