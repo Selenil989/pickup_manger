@@ -2992,8 +2992,8 @@ function renderLedgerPage() {
     var cls = 'lcal-cell' + (ag ? ' lcal-has' : '') + (_ledgerDay === ymd ? ' lcal-sel' : '') + (todayYmd === ymd ? ' lcal-today' : '') + (col === 0 ? ' lcal-sun' : col === 6 ? ' lcal-sat' : '');
     cells += '<div class="' + cls + '" data-ymd="' + ymd + '">'
       + '<span class="lcal-date">' + day + '</span>'
-      + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ledgerAbbr(ag.gain) + '</span>' : '')
-      + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ledgerAbbr(ag.spend) + '</span>' : '')
+      + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
+      + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-paid">₩</span>' : '')
       + '</div>';
   }
