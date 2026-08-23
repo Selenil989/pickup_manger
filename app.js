@@ -3048,19 +3048,33 @@ function renderLedgerPage() {
   var verMarks = {};    // 'YYYY-MM-DD' -> 버전 문자열
   var curVerInfo = null;
   if (pd.version && pd.startDate && !isNaN(new Date(pd.startDate).getTime())) {
+    // 현재 버전 실제 종료일(관리자 지정 endDate 우선). 버전 주기 = 실제 길이 → 42일 고정 가정 제거
+    // (엔드필드 1.4는 7/16~9/2 = 48일이라 +42로 추정하면 다음 버전 시작이 어긋남)
+    var _curEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
+    var _period = Math.round((new Date(_curEnd) - new Date(pd.startDate)) / 86400000);
+    if (!(_period > 0)) _period = 42;
+    var _addDays = function(ymd, n) { var d = new Date(ymd); d.setDate(d.getDate() + n); return toLocalYMD(d); };
+    // 앞으로: 현재→다음 경계는 실제 종료일, 그 이후는 실제 주기로 추정
     var _v = pd.version, _s = pd.startDate;
-    for (var _f = 0; _f < 12 && _v && _s; _f++) { verMarks[_s] = _v; var _ns = plannerAutoEndDate(_s), _nv = plannerNextVersion(_v); if (!_ns || !_nv) break; _v = _nv; _s = _ns; }
+    for (var _f = 0; _f < 12 && _v && _s; _f++) {
+      verMarks[_s] = _v;
+      var _ns = (_s === pd.startDate) ? _curEnd : _addDays(_s, _period);
+      var _nv = plannerNextVersion(_v);
+      if (!_ns || !_nv) break;
+      _v = _nv; _s = _ns;
+    }
+    // 뒤로: 같은 실제 주기로 소급
     var _pv = pd.version, _ps = pd.startDate;
     for (var _b = 0; _b < 12; _b++) {
       var _pp = _pv.split('.'), _mi = parseInt(_pp[1] || 0);
       if (_mi <= 0) break;
-      var _pdt = new Date(_ps); _pdt.setDate(_pdt.getDate() - 42); _ps = toLocalYMD(_pdt);
+      _ps = _addDays(_ps, -_period);
       _pv = parseInt(_pp[0] || 0) + '.' + (_mi - 1);
       verMarks[_ps] = _pv;
     }
     var _st = new Date(pd.startDate); _st.setHours(0, 0, 0, 0);
     var _td2 = new Date(); _td2.setHours(0, 0, 0, 0);
-    curVerInfo = { ver: pd.version, start: pd.startDate, end: pd.endDate || plannerAutoEndDate(pd.startDate), dplus: Math.round((_td2 - _st) / 86400000), next: plannerNextVersion(pd.version) };
+    curVerInfo = { ver: pd.version, start: pd.startDate, end: _curEnd, dplus: Math.round((_td2 - _st) / 86400000), next: plannerNextVersion(pd.version) };
   }
   // 날짜 → 그 날의 버전, 버전 → 은은한 배경색
   var verBounds = Object.keys(verMarks).sort().map(function(k) { return { d: k, v: verMarks[k] }; });
