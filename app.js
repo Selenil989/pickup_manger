@@ -3148,6 +3148,7 @@ function renderLedgerPage() {
     '  <button class="ledger-nav-btn" id="lpPrev" title="이전 달">◀</button>',
     '  <span class="ledger-cal-title">' + y + '년 ' + m + '월</span>',
     '  <button class="ledger-nav-btn" id="lpNext" title="다음 달">▶</button>',
+    '  <a class="ledger-sched-link" href="https://www.subgamecals.com/" target="_blank" rel="noopener noreferrer" title="서브컬쳐 게임 일정 (새 탭에서 열림)">📅 게임 일정 ↗</a>',
     '</div>',
     verBanner,
     schedHtml,

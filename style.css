@@ -2152,7 +2152,11 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .ledger-cal, .ledger-cal-head { max-width: 1040px; margin-left: auto; margin-right: auto; }
 .ledger-price-summary, .ledger-day-head, .ledger-list, .ledger-page-footer { max-width: 780px; margin-left: auto; margin-right: auto; }
 .ledger-page .ledger-list { max-height: none; }
-.ledger-cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.ledger-cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; position: relative; }
+/* 외부 일정 사이트(subgamecals) 새 탭 링크 — 헤더 우측 고정 */
+.ledger-sched-link { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 12.5px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
+.ledger-sched-link:hover { border-color: var(--accent, #6d5efc); color: var(--text); background: rgba(109,94,252,.12); }
+@media (max-width: 768px) { .ledger-sched-link { position: static; transform: none; display: inline-flex; margin: 8px auto 0; } .ledger-cal-head { flex-wrap: wrap; } }
 .ledger-cal-title { font-size: 17px; font-weight: 800; min-width: 120px; text-align: center; }
 .ledger-cal { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: 12px; padding: 8px; margin-bottom: 14px; }
 .lcal-wd { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
