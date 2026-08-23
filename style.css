@@ -2115,6 +2115,11 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   cursor: pointer; font-size: 13px; padding: 2px 5px; border-radius: 4px; line-height: 1;
 }
 .ledger-memo-btn:hover { color: var(--accent); background: var(--border); }
+.ledger-del-btn {
+  border: none; background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 12px; padding: 2px 5px; border-radius: 4px; line-height: 1;
+}
+.ledger-del-btn:hover { color: #e5484d; background: var(--border); }
 
 /* ── 34. Currency Type Selector ───────────────────────────── */
 
