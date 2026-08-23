@@ -2776,17 +2776,6 @@ function savePassEditModal(gameId, type) {
   renderCurrencyPage();
 }
 
-function fitPassCardText() {
-  document.querySelectorAll('.pass-card-value').forEach(function(el) {
-    var size = 14;
-    el.style.fontSize = size + 'px';
-    while (el.scrollWidth > el.offsetWidth && size > 9) {
-      size -= 0.5;
-      el.style.fontSize = size + 'px';
-    }
-  });
-}
-
 function closePassEditModal() {
   var modal = document.getElementById('passEditModal');
   modal.style.display = 'none';
@@ -3764,9 +3753,6 @@ function renderCurrencyPage() {
       openPassEditModal(this.dataset.game, this.dataset.type);
     });
   });
-
-  // 패스 카드 텍스트 자동 축소
-  requestAnimationFrame(fitPassCardText);
 
   // 월정액 +30일
   var mpBtn = document.getElementById('mpAddBtn');

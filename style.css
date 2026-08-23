@@ -1823,29 +1823,29 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   border-radius: 8px;
   overflow: hidden;
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  flex-direction: column;   /* 세로 정렬 (제목→구성→환산) */
+  position: relative;
 }
 
 .pass-card-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-right: 1px solid var(--border);
+  justify-content: flex-start;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
   background: rgba(123, 108, 255, 0.05);
   flex-shrink: 0;
-  min-width: 56px;
 }
 
 .pass-card-edit-btn {
-  margin: 0 10px;
-  flex-shrink: 0;
-  align-self: center;
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  margin: 0;
 }
 
 .pass-card-title {
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--accent);
   white-space: nowrap;
@@ -1858,42 +1858,38 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .pass-cost-note { font-size: var(--fs-xs); color: var(--muted); flex-basis: 100%; margin-top: 4px; }
 
 .pass-card-body {
-  padding: 10px 18px;
+  padding: 9px 14px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 28px;
+  flex-direction: column;   /* 구성/환산 세로 스택 */
+  gap: 7px;
   flex: 1;
   min-width: 0;
 }
 
 .pass-card-row {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.pass-card-row:first-child {
-  flex: 1;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
   min-width: 0;
 }
 
-.pass-card-row--end {
-  flex-shrink: 0;
-}
-
 .pass-card-label {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-2xs);
   color: var(--muted);
   white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 30px;
 }
 
 .pass-card-value {
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
+  word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
 .pass-conversion {
