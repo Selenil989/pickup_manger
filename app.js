@@ -2896,6 +2896,32 @@ function renderLedgerModal() {
     if (e.type === 'auto') { if (e.delta > 0) gained += e.delta; else spent += -e.delta; }
   });
 
+  // 유료(가격 있음)/무료(가격 없음) 집계 — 월/연은 둘 다, 총합은 유료만
+  var curYear = _ledgerMonth ? _ledgerMonth.slice(0, 4) : '';
+  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달
+  var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
+  var tPaid = 0, tPaidN = 0;              // 전체(유료만)
+  all.forEach(function(e) {
+    var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
+    if (e.price != null) {
+      tPaid += e.price; tPaidN++;
+      if (inYear) { yPaid += e.price; yPaidN++; }
+      if (inMonth) { mPaid += e.price; mPaidN++; }
+    } else {
+      if (inYear) yFree++;
+      if (inMonth) mFree++;
+    }
+  });
+  function _paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
+  function _freeHtml(n) { return '<span class="lps-free">무료 ' + n + '건</span>'; }
+  var priceSummary = all.length ? [
+    '<div class="ledger-price-summary">',
+    '  <div class="lps-row"><span class="lps-label">이 달</span>' + _paidHtml(mPaid, mPaidN) + _freeHtml(mFree) + '</div>',
+    '  <div class="lps-row"><span class="lps-label">' + curYear + '년</span>' + _paidHtml(yPaid, yPaidN) + _freeHtml(yFree) + '</div>',
+    '  <div class="lps-row lps-total"><span class="lps-label">총합</span>' + _paidHtml(tPaid, tPaidN) + '</div>',
+    '</div>'
+  ].join('') : '';
+
   // 월 네비게이션 (◀ 이전 달 / ▶ 다음 달, 기록 있는 달끼리 이동)
   var curIdx  = _ledgerMonth ? monthsPresent.indexOf(_ledgerMonth) : -1;
   var olderYM = curIdx >= 0 && curIdx < monthsPresent.length - 1 ? monthsPresent[curIdx + 1] : null;  // 더 과거
@@ -2913,7 +2939,9 @@ function renderLedgerModal() {
       return '<div class="ledger-row ledger-row--memo">'
         + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
         + '<span class="ledger-memo-mark">📝</span>'
-        + '<span class="ledger-memo-text">' + ledgerEsc(e.memo) + '</span>'
+        + '<span class="ledger-memo-text">' + ledgerEsc(e.memo)
+          + (e.price != null ? '<span class="ledger-price"> · ' + e.price.toLocaleString() + '원</span>' : '')
+          + '</span>'
         + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모 수정">✎</button>'
         + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
         + '</div>';
@@ -2927,7 +2955,12 @@ function renderLedgerModal() {
       + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
       + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
       + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
-      + (e.memo ? '<span class="ledger-memo-text ledger-memo-inline">' + ledgerEsc(e.memo) + '</span>' : '')
+      + ((e.memo || e.price != null)
+          ? '<span class="ledger-memo-text ledger-memo-inline">'
+            + (e.memo ? ledgerEsc(e.memo) : '')
+            + (e.price != null ? '<span class="ledger-price">' + (e.memo ? ' · ' : '') + e.price.toLocaleString() + '원</span>' : '')
+            + '</span>'
+          : '')
       + '</div>';
   }).join('') : '<div class="ledger-empty">아직 기록이 없습니다. 재화 수량을 바꾸면 여기에 자동으로 남습니다.</div>';
 
@@ -2943,6 +2976,7 @@ function renderLedgerModal() {
     '      <span class="ledger-sum ledger-sum--gain">획득 +' + gained.toLocaleString() + '</span>',
     '      <span class="ledger-sum ledger-sum--spend">소모 −' + spent.toLocaleString() + '</span>',
     '    </div>',
+    priceSummary,
     '    <div class="ledger-list">' + rows + '</div>',
     '    <div class="detail-footer">',
     '      <button class="detail-btn-save" id="ledgerCloseBtn">닫기</button>',
@@ -2977,11 +3011,45 @@ function ledgerSetMemo(ts) {
   var e = null;
   for (var i = 0; i < arr.length; i++) if (arr[i].ts === ts) { e = arr[i]; break; }
   if (!e) return;
-  var t = prompt('메모', e.memo || '');
-  if (t == null) return;
-  e.memo = t.trim();
-  saveLedger(_ledgerGame, arr);
-  renderLedgerModal();
+
+  var wrap = document.createElement('div');
+  wrap.className = 'char-detail-overlay ledger-memo-overlay';
+  wrap.innerHTML = [
+    '<div class="char-detail-panel ledger-memo-editor">',
+    '  <div class="detail-header"><span class="detail-header-name">메모 · 가격</span>',
+    '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
+    '  <div class="ledger-memo-fields">',
+    '    <label class="ledger-memo-field"><span>메모</span>',
+    '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(e.memo || '') + '" placeholder="예: 월정액 결제"></label>',
+    '    <label class="ledger-memo-field"><span>가격 (원)</span>',
+    '      <input type="text" inputmode="numeric" id="ledgerMemoPrice" value="' + (e.price != null ? e.price : '') + '" placeholder="선택 · 비우면 표시 안 함"></label>',
+    '  </div>',
+    '  <div class="detail-footer">',
+    '    <button class="detail-btn-save" id="ledgerMemoSave">저장</button>',
+    '  </div>',
+    '</div>'
+  ].join('');
+  document.body.appendChild(wrap);
+  function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }
+  wrap.addEventListener('click', function(ev) { if (ev.target === wrap) close(); });
+  wrap.querySelector('[data-act="cancel"]').addEventListener('click', close);
+  document.getElementById('ledgerMemoSave').addEventListener('click', function() {
+    var memo = document.getElementById('ledgerMemoText').value.trim();
+    var praw = document.getElementById('ledgerMemoPrice').value.replace(/[^0-9]/g, '');
+    var a2 = loadLedger(_ledgerGame);
+    for (var j = 0; j < a2.length; j++) {
+      if (a2[j].ts === ts) {
+        a2[j].memo = memo;
+        var pv = parseInt(praw, 10);
+        if (praw !== '' && !isNaN(pv) && pv > 0) a2[j].price = pv; else delete a2[j].price;
+        break;
+      }
+    }
+    saveLedger(_ledgerGame, a2);
+    close();
+    renderLedgerModal();
+  });
+  var _mt = document.getElementById('ledgerMemoText'); if (_mt) _mt.focus();
 }
 
 function saveCurrencyItem(gameId, curId, val) {
