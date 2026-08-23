@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가챠 투자 분석기</title>
-    <link rel="stylesheet" href="style.css?v=20260823182906">
+    <link rel="stylesheet" href="style.css?v=20260823183949">
   </head>
   <body>
     <div class="app-layout">
@@ -30,6 +30,7 @@
         <nav class="sidebar-nav">
           <button class="nav-tab active" data-tab="analysis">가챠 분석</button>
           <button class="nav-tab" data-tab="currency">보유 재화</button>
+          <button class="nav-tab" data-tab="ledger">내역</button>
         </nav>
 
         <!-- Analysis side content (hidden when currency tab is active) -->
@@ -82,6 +83,13 @@
           </div>
         </div>
 
+        <!-- Tab: 거래 내역 (달력) -->
+        <div id="tabLedger" class="tab-page" style="display:none;">
+          <div id="ledgerPage" class="ledger-page">
+            <!-- populated by renderLedgerPage() -->
+          </div>
+        </div>
+
       </main>
     </div>
 
@@ -124,8 +132,8 @@
 
     <!-- Scripts: supabase auth first, then engine, then app -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js?v=20260823182906"></script>
-    <script src="evaluationEngine.js?v=20260823182906"></script>
-    <script src="app.js?v=20260823182906"></script>
+    <script src="auth.js?v=20260823183949"></script>
+    <script src="evaluationEngine.js?v=20260823183949"></script>
+    <script src="app.js?v=20260823183949"></script>
   </body>
 </html>

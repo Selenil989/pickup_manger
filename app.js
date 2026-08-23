@@ -2843,6 +2843,7 @@ function currencyName(gameId, curId) {
 
 var _ledgerGame = null;
 var _ledgerMonth = null;  // 보고 있는 월 'YYYY-MM' (null이면 최신 월)
+var _ledgerDay = null;    // 달력에서 선택한 날 'YYYY-MM-DD' (null이면 월 전체)
 
 function openLedgerModal(gameId) {
   _ledgerGame = gameId;
@@ -2864,7 +2865,179 @@ function ledgerYMLabel(ym) {
 }
 function ledgerGoMonth(ym) {
   _ledgerMonth = ym;
-  renderLedgerModal();
+  _ledgerDay = null;
+  ledgerRerender();
+}
+
+// 활성 뷰(내역 탭 or 모달)를 다시 그림
+function ledgerRerender() {
+  var tab = document.getElementById('tabLedger');
+  if (tab && tab.style.display !== 'none') renderLedgerPage();
+  else renderLedgerModal();
+}
+
+function ledgerYMD(ts) {
+  var d = new Date(ts), p = function(n){ return n < 10 ? '0' + n : '' + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+// 'YYYY-MM' 을 delta개월 이동
+function ymShift(ym, delta) {
+  var d = new Date(parseInt(ym.slice(0, 4), 10), parseInt(ym.slice(5, 7), 10) - 1 + delta, 1);
+  var mm = d.getMonth() + 1;
+  return d.getFullYear() + '-' + (mm < 10 ? '0' : '') + mm;
+}
+// 게임별 재화→재화(기준재화) 환산 함수 반환. rate + pullValue(뽑 가치) 반영.
+function ledgerRates(gameId) {
+  var rate = {}, pullVal = {};
+  [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
+    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) {
+      if (rate[c.id] == null) { rate[c.id] = c.rate || 1; if (c.pullValue != null) pullVal[c.id] = c.pullValue; }
+    });
+  });
+  var baseRate = 1;
+  Object.keys(rate).forEach(function(k) { if (rate[k] > baseRate) baseRate = rate[k]; });
+  return function(e) {
+    var r = rate[e.currency] || baseRate;
+    var pv = pullVal[e.currency] != null ? pullVal[e.currency] : baseRate;
+    return Math.round(e.delta * (pv / r));
+  };
+}
+// 큰 수 축약 (달력 셀용)
+function ledgerAbbr(n) {
+  var a = Math.abs(n);
+  if (a >= 10000) return Math.round(n / 1000) + 'k';
+  if (a >= 1000)  return (n / 1000).toFixed(1) + 'k';
+  return '' + n;
+}
+// 원장 한 줄 HTML (auto / memo 공용) — 모달·페이지 공용
+function ledgerRowHtml(gameId, e) {
+  if (e.type === 'memo') {
+    return '<div class="ledger-row ledger-row--memo">'
+      + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
+      + '<span class="ledger-memo-mark">📝</span>'
+      + '<span class="ledger-memo-text">' + ledgerEsc(e.memo)
+        + (e.price != null ? '<span class="ledger-price"> · ' + e.price.toLocaleString() + '원</span>' : '')
+        + '</span>'
+      + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모 수정">✎</button>'
+      + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
+      + '</div>';
+  }
+  var sign = e.delta > 0 ? '+' : '';
+  var cls  = e.delta > 0 ? 'ledger-gain' : 'ledger-spend';
+  return '<div class="ledger-row">'
+    + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
+    + '<span class="ledger-cur">' + ledgerEsc(currencyName(gameId, e.currency)) + '</span>'
+    + '<span class="ledger-delta ' + cls + '">' + sign + e.delta.toLocaleString() + '</span>'
+    + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
+    + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
+    + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
+    + ((e.memo || e.price != null)
+        ? '<span class="ledger-memo-text ledger-memo-inline">'
+          + (e.memo ? ledgerEsc(e.memo) : '')
+          + (e.price != null ? '<span class="ledger-price">' + (e.memo ? ' · ' : '') + e.price.toLocaleString() + '원</span>' : '')
+          + '</span>'
+        : '')
+    + '</div>';
+}
+function ledgerSelectDay(ymd) {
+  _ledgerDay = (_ledgerDay === ymd) ? null : ymd;  // 같은 날 다시 누르면 해제(월 전체)
+  renderLedgerPage();
+}
+
+function renderLedgerPage() {
+  var gameId = _currencyTab || appState.currentGame;
+  _ledgerGame = gameId;
+  var page = document.getElementById('ledgerPage');
+  if (!page) return;
+  if (!gameId) { page.innerHTML = '<div class="ledger-empty">게임을 선택하세요.</div>'; return; }
+
+  var all = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });
+  var toJaehwa = ledgerRates(gameId);
+  if (!_ledgerMonth) {
+    var mp = [], sm = {};
+    all.forEach(function(e) { var ym = ledgerYM(e.ts); if (!sm[ym]) { sm[ym] = true; mp.push(ym); } });
+    _ledgerMonth = mp[0] || ledgerYM(new Date().getTime());
+  }
+  var y = parseInt(_ledgerMonth.slice(0, 4), 10), m = parseInt(_ledgerMonth.slice(5, 7), 10);
+
+  var monthEntries = all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; });
+  var dayAgg = {}, mGain = 0, mSpend = 0;
+  monthEntries.forEach(function(e) {
+    var d = ledgerYMD(e.ts);
+    if (!dayAgg[d]) dayAgg[d] = { gain: 0, spend: 0, paid: 0 };
+    if (e.type === 'auto') { var v = toJaehwa(e); if (v > 0) { dayAgg[d].gain += v; mGain += v; } else { dayAgg[d].spend += -v; mSpend += -v; } }
+    if (e.price != null) dayAgg[d].paid += e.price;
+  });
+
+  // 유료/무료 집계 (월/연/총)
+  var curYear = _ledgerMonth.slice(0, 4);
+  var mPaid = 0, mPaidN = 0, mFree = 0, yPaid = 0, yPaidN = 0, yFree = 0, tPaid = 0, tPaidN = 0;
+  all.forEach(function(e) {
+    var ym = ledgerYM(e.ts), iy = ym.slice(0, 4) === curYear, im = ym === _ledgerMonth;
+    if (e.price != null) { tPaid += e.price; tPaidN++; if (iy) { yPaid += e.price; yPaidN++; } if (im) { mPaid += e.price; mPaidN++; } }
+    else if (e.type === 'auto' && e.delta > 0) { var v = toJaehwa(e); if (iy) yFree += v; if (im) mFree += v; }
+  });
+
+  // 달력 셀
+  var firstWd = new Date(y, m - 1, 1).getDay();
+  var daysIn = new Date(y, m, 0).getDate();
+  var todayYmd = ledgerYMD(new Date().getTime());
+  var wd = ['일', '월', '화', '수', '목', '금', '토'];
+  var cells = '';
+  for (var i = 0; i < firstWd; i++) cells += '<div class="lcal-cell lcal-blank"></div>';
+  for (var day = 1; day <= daysIn; day++) {
+    var ymd = _ledgerMonth + '-' + (day < 10 ? '0' : '') + day;
+    var ag = dayAgg[ymd];
+    var col = (firstWd + day - 1) % 7;
+    var cls = 'lcal-cell' + (ag ? ' lcal-has' : '') + (_ledgerDay === ymd ? ' lcal-sel' : '') + (todayYmd === ymd ? ' lcal-today' : '') + (col === 0 ? ' lcal-sun' : col === 6 ? ' lcal-sat' : '');
+    cells += '<div class="' + cls + '" data-ymd="' + ymd + '">'
+      + '<span class="lcal-date">' + day + '</span>'
+      + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ledgerAbbr(ag.gain) + '</span>' : '')
+      + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ledgerAbbr(ag.spend) + '</span>' : '')
+      + (ag && ag.paid ? '<span class="lcal-paid">₩</span>' : '')
+      + '</div>';
+  }
+
+  var listEntries = _ledgerDay ? monthEntries.filter(function(e) { return ledgerYMD(e.ts) === _ledgerDay; }) : monthEntries;
+  var rows = listEntries.length ? listEntries.map(function(e) { return ledgerRowHtml(gameId, e); }).join('')
+    : '<div class="ledger-empty">' + (_ledgerDay ? '이 날 기록이 없습니다.' : '이 달 기록이 없습니다. 재화 수량을 바꾸면 자동으로 남습니다.') + '</div>';
+  var dayLabel = _ledgerDay ? (parseInt(_ledgerDay.slice(5, 7), 10) + '월 ' + parseInt(_ledgerDay.slice(8, 10), 10) + '일') : '이 달 전체';
+  var dGain = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].gain : mGain;
+  var dSpend = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].spend : mSpend;
+
+  function paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
+  function freeHtml(amt) { return '<span class="lps-free">무료 획득 <b>' + amt.toLocaleString() + '</b></span>'; }
+
+  page.innerHTML = [
+    '<div class="ledger-cal-head">',
+    '  <button class="ledger-nav-btn" id="lpPrev" title="이전 달">◀</button>',
+    '  <span class="ledger-cal-title">' + y + '년 ' + m + '월</span>',
+    '  <button class="ledger-nav-btn" id="lpNext" title="다음 달">▶</button>',
+    '</div>',
+    '<div class="ledger-cal">',
+    '  <div class="lcal-wd">' + wd.map(function(w, ix) { return '<span' + (ix === 0 ? ' class="lcal-sun"' : ix === 6 ? ' class="lcal-sat"' : '') + '>' + w + '</span>'; }).join('') + '</div>',
+    '  <div class="lcal-grid">' + cells + '</div>',
+    '</div>',
+    '<div class="ledger-price-summary">',
+    '  <div class="lps-row"><span class="lps-label">이 달</span>' + paidHtml(mPaid, mPaidN) + freeHtml(mFree) + '</div>',
+    '  <div class="lps-row"><span class="lps-label">' + curYear + '년</span>' + paidHtml(yPaid, yPaidN) + freeHtml(yFree) + '</div>',
+    '  <div class="lps-row lps-total"><span class="lps-label">총합</span>' + paidHtml(tPaid, tPaidN) + '</div>',
+    '</div>',
+    '<div class="ledger-day-head"><span class="ledger-day-title">' + dayLabel + '</span>',
+    '  <span class="ledger-day-sum"><span class="ledger-sum--gain">획득 +' + dGain.toLocaleString() + '</span> <span class="ledger-sum--spend">소모 −' + dSpend.toLocaleString() + '</span></span>',
+    '</div>',
+    '<div class="ledger-list">' + rows + '</div>',
+    '<div class="ledger-page-footer"><button class="detail-btn-cancel" id="lpAddMemo">＋ 메모 추가</button></div>'
+  ].join('');
+
+  document.getElementById('lpPrev').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, -1)); });
+  document.getElementById('lpNext').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, 1)); });
+  var addb = document.getElementById('lpAddMemo'); if (addb) addb.addEventListener('click', ledgerAddMemo);
+  page.querySelectorAll('.lcal-cell:not(.lcal-blank)').forEach(function(c) {
+    c.addEventListener('click', function() { if (this.dataset.ymd) ledgerSelectDay(this.dataset.ymd); });
+  });
+  page.querySelectorAll('.ledger-memo-btn').forEach(function(b) { b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); }); });
+  page.querySelectorAll('.ledger-del-btn').forEach(function(b) { b.addEventListener('click', function() { ledgerDelete(parseInt(this.dataset.ts, 10)); }); });
 }
 
 function closeLedgerModal() {
@@ -3028,7 +3201,7 @@ function ledgerDelete(ts) {
   if (!confirm('이 내역을 삭제할까요? (되돌릴 수 없음)')) return;
   var arr = loadLedger(_ledgerGame).filter(function(e) { return e.ts !== ts; });
   saveLedger(_ledgerGame, arr);
-  renderLedgerModal();
+  ledgerRerender();
 }
 
 function ledgerSetMemo(ts) {
@@ -3090,7 +3263,7 @@ function _openMemoEditor(ts, memo, price) {
     }
     saveLedger(_ledgerGame, a2);
     close();
-    renderLedgerModal();
+    ledgerRerender();
   });
   var _mt = document.getElementById('ledgerMemoText'); if (_mt) _mt.focus();
 }
@@ -3217,9 +3390,13 @@ function renderCurrencyPage() {
     btn.addEventListener('click', function() { openCurrencyConfigModal(this.dataset.game, null); });
   });
 
-  // 거래 내역(영수증)
+  // 거래 내역 → 내역 탭으로 전환 (모달 대신 달력 페이지)
   page.querySelectorAll('.ledger-open-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { openLedgerModal(this.dataset.game); });
+    btn.addEventListener('click', function() {
+      _currencyTab = this.dataset.game;
+      var lt = document.querySelector('.nav-tab[data-tab="ledger"]');
+      if (lt) lt.click();
+    });
   });
 
   // 재화 행 편집/삭제
@@ -4025,12 +4202,16 @@ function init() {
         btn.classList.add("active");
         document.getElementById("tabAnalysis").style.display  = tab === "analysis"  ? "" : "none";
         document.getElementById("tabCurrency").style.display  = tab === "currency"  ? "" : "none";
+        document.getElementById("tabLedger").style.display    = tab === "ledger"    ? "" : "none";
         document.getElementById("analysisSideContent").style.display = tab === "analysis" ? "" : "none";
 
         if (tab === "currency") {
           // 가챠 분석에서 보고 있던 게임을 재화 탭에도 반영
           if (appState.currentGame) _currencyTab = appState.currentGame;
           renderCurrencyPage();
+        } else if (tab === "ledger") {
+          if (appState.currentGame) _currencyTab = appState.currentGame;
+          renderLedgerPage();
         } else if (tab === "analysis") {
           // 재화 탭에서 보고 있던 게임을 가챠 분석에도 반영
           var syncGame = _currencyTab || appState.currentGame;

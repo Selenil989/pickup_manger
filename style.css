@@ -2132,6 +2132,37 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   background: rgba(255,255,255,.04); color: var(--text); font-size: 14px;
 }
 .ledger-memo-field input:focus { outline: none; border-color: var(--accent, #6d5efc); }
+
+/* 내역 탭 — 달력 페이지 */
+.ledger-page { padding: 16px; max-width: 640px; margin: 0 auto; }
+.ledger-page .ledger-list { max-height: none; }
+.ledger-cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.ledger-cal-title { font-size: 17px; font-weight: 800; min-width: 120px; text-align: center; }
+.ledger-cal { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: 12px; padding: 8px; margin-bottom: 14px; }
+.lcal-wd { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
+.lcal-wd span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 4px 0; }
+.lcal-wd .lcal-sun { color: #e5686d; }
+.lcal-wd .lcal-sat { color: #5b9ce5; }
+.lcal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.lcal-cell { min-height: 52px; border-radius: 8px; padding: 4px 3px; display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; border: 1px solid transparent; background: rgba(255,255,255,.015); }
+.lcal-cell.lcal-blank { background: none; cursor: default; }
+.lcal-cell.lcal-has { background: rgba(255,255,255,.045); }
+.lcal-cell:hover:not(.lcal-blank) { border-color: var(--border); }
+.lcal-cell.lcal-sel { border-color: var(--accent, #6d5efc); background: rgba(109,94,252,.18); }
+.lcal-cell.lcal-today .lcal-date { color: var(--accent, #8b7cff); font-weight: 800; }
+.lcal-date { font-size: 12px; font-weight: 600; }
+.lcal-sun .lcal-date { color: #e5686d; }
+.lcal-sat .lcal-date { color: #5b9ce5; }
+.lcal-amt { font-size: 10px; font-weight: 700; line-height: 1.15; white-space: nowrap; }
+.lcal-gain { color: #3ecf8e; }
+.lcal-spend { color: #e5686d; }
+.lcal-paid { font-size: 9px; color: #e5a34d; font-weight: 800; }
+.ledger-day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 6px 2px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.ledger-day-title { font-size: 14px; font-weight: 700; }
+.ledger-day-sum { font-size: 12px; font-weight: 700; }
+.ledger-day-sum .ledger-sum--gain { color: #3ecf8e; }
+.ledger-day-sum .ledger-sum--spend { color: #e5484d; margin-left: 8px; }
+.ledger-page-footer { margin-top: 12px; display: flex; justify-content: center; }
 .ledger-row {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   padding: 7px 16px; font-size: 13px;
