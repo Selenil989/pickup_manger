@@ -2133,8 +2133,9 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 }
 .ledger-memo-field input:focus { outline: none; border-color: var(--accent, #6d5efc); }
 
-/* 내역 탭 — 달력 페이지 */
-.ledger-page { padding: 16px; max-width: 640px; margin: 0 auto; }
+/* 내역 탭 — 달력 페이지 (탭 영역 폭·높이를 꽉 채우고 자체 스크롤) */
+.ledger-page { height: 100%; overflow-y: auto; padding: 20px 24px; box-sizing: border-box; background: var(--bg); }
+.ledger-cal, .ledger-cal-head, .ledger-price-summary, .ledger-day-head, .ledger-list, .ledger-page-footer { max-width: 1100px; margin-left: auto; margin-right: auto; }
 .ledger-page .ledger-list { max-height: none; }
 .ledger-cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
 .ledger-cal-title { font-size: 17px; font-weight: 800; min-width: 120px; text-align: center; }
@@ -2143,17 +2144,17 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lcal-wd span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 4px 0; }
 .lcal-wd .lcal-sun { color: #e5686d; }
 .lcal-wd .lcal-sat { color: #5b9ce5; }
-.lcal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-.lcal-cell { min-height: 52px; border-radius: 8px; padding: 4px 3px; display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; border: 1px solid transparent; background: rgba(255,255,255,.015); }
+.lcal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.lcal-cell { min-height: 74px; border-radius: 9px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; border: 1px solid transparent; background: rgba(255,255,255,.015); }
 .lcal-cell.lcal-blank { background: none; cursor: default; }
 .lcal-cell.lcal-has { background: rgba(255,255,255,.045); }
 .lcal-cell:hover:not(.lcal-blank) { border-color: var(--border); }
 .lcal-cell.lcal-sel { border-color: var(--accent, #6d5efc); background: rgba(109,94,252,.18); }
 .lcal-cell.lcal-today .lcal-date { color: var(--accent, #8b7cff); font-weight: 800; }
-.lcal-date { font-size: 12px; font-weight: 600; }
+.lcal-date { font-size: 13px; font-weight: 600; }
 .lcal-sun .lcal-date { color: #e5686d; }
 .lcal-sat .lcal-date { color: #5b9ce5; }
-.lcal-amt { font-size: 10px; font-weight: 700; line-height: 1.15; white-space: nowrap; }
+.lcal-amt { font-size: 11px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .lcal-gain { color: #3ecf8e; }
 .lcal-spend { color: #e5686d; }
 .lcal-paid { font-size: 9px; color: #e5a34d; font-weight: 800; }
