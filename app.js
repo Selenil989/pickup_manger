@@ -2931,12 +2931,15 @@ function ledgerRowHtml(gameId, e) {
     + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
     + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
     + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
-    + ((e.memo || e.price != null)
-        ? '<span class="ledger-memo-text ledger-memo-inline">'
-          + (e.memo ? ledgerEsc(e.memo) : '')
-          + (e.price != null ? '<span class="ledger-price">' + (e.memo ? ' · ' : '') + e.price.toLocaleString() + '원</span>' : '')
-          + '</span>'
-        : '')
+    + (function() {
+        var split = (e.freeDelta != null && e.freeDelta !== e.delta);
+        if (!e.memo && e.price == null && !split) return '';
+        var s = '<span class="ledger-memo-text ledger-memo-inline">';
+        if (split) s += '<span class="ledger-split-tag">무료 ' + e.freeDelta.toLocaleString() + ' · 유료 ' + (e.delta - e.freeDelta).toLocaleString() + '</span>';
+        if (e.memo) s += (split ? ' ' : '') + ledgerEsc(e.memo);
+        if (e.price != null) s += '<span class="ledger-price">' + ((e.memo || split) ? ' · ' : '') + e.price.toLocaleString() + '원</span>';
+        return s + '</span>';
+      })()
     + '</div>';
 }
 function ledgerSelectDay(ymd) {
@@ -2975,8 +2978,13 @@ function renderLedgerPage() {
   var mPaid = 0, mPaidN = 0, mFree = 0, yPaid = 0, yPaidN = 0, yFree = 0, tPaid = 0, tPaidN = 0;
   all.forEach(function(e) {
     var ym = ledgerYM(e.ts), iy = ym.slice(0, 4) === curYear, im = ym === _ledgerMonth;
+    // 유료: 직접 입력한 가격(원)
     if (e.price != null) { tPaid += e.price; tPaidN++; if (iy) { yPaid += e.price; yPaidN++; } if (im) { mPaid += e.price; mPaidN++; } }
-    else if (e.type === 'auto' && e.delta > 0) { var v = toJaehwa(e); if (iy) yFree += v; if (im) mFree += v; }
+    // 무료 획득: 분할됐으면 무료분(freeDelta)만, 아니면 (가격 없는) 전체 획득
+    if (e.type === 'auto' && e.delta > 0) {
+      var freeAmt = (e.freeDelta != null) ? e.freeDelta : (e.price != null ? 0 : e.delta);
+      if (freeAmt > 0) { var v = toJaehwa({ currency: e.currency, delta: freeAmt }); if (iy) yFree += v; if (im) mFree += v; }
+    }
   });
 
   // 달력 셀
@@ -3210,17 +3218,37 @@ function ledgerSetMemo(ts) {
   var e = null;
   for (var i = 0; i < arr.length; i++) if (arr[i].ts === ts) { e = arr[i]; break; }
   if (!e) return;
-  _openMemoEditor(e.ts, e.memo, e.price);
+  _openMemoEditor(e);
 }
 
-// 새 독립 메모 항목 추가 (가격 선택 — 넣으면 유료 기록)
-function ledgerAddMemo() {
-  _openMemoEditor(null, '', null);
-}
+// 새 독립 메모 항목 추가
+function ledgerAddMemo() { _openMemoEditor(null); }
 
-// ts=null이면 새 메모 생성, 아니면 해당 항목 편집
-function _openMemoEditor(ts, memo, price) {
-  var isNew = ts == null;
+// entry=null이면 새 메모 생성, 아니면 해당 항목 편집.
+// auto 획득 항목은 무료/유료 분할(무료분만 무료 재화로 집계) 입력을 제공한다.
+var LEDGER_QUICK_AMTS = [[119000, '트럭'], [65000, '반트럭'], [12000, '패스'], [5900, '월정액']];
+function _openMemoEditor(entry) {
+  var isNew  = !entry;
+  var isAuto = !!(entry && entry.type === 'auto' && entry.delta > 0);
+  var memo   = entry ? (entry.memo || '') : '';
+  var price  = entry ? entry.price : null;
+  var delta  = isAuto ? entry.delta : 0;
+  var freeD  = isAuto ? (entry.freeDelta != null ? entry.freeDelta : delta) : 0;
+
+  var quickBtns = LEDGER_QUICK_AMTS.map(function(q) {
+    return '<button type="button" class="ledger-quick-btn" data-amt="' + q[0] + '">' + q[0].toLocaleString() + '원<em>' + q[1] + '</em></button>';
+  }).join('');
+  var splitHtml = isAuto ? [
+    '  <div class="ledger-split">',
+    '    <div class="ledger-split-title">획득 +' + delta.toLocaleString() + ' 나누기 (개수)</div>',
+    '    <div class="ledger-split-row">',
+    '      <label>무료 <input type="text" inputmode="numeric" id="ledgerFreeDelta" value="' + freeD + '"></label>',
+    '      <span>유료 <b id="ledgerPaidDelta">' + (delta - freeD) + '</b></span>',
+    '    </div>',
+    '    <div class="ledger-split-note">무료분만 무료 재화 획득으로 집계됩니다. 유료분 결제 금액은 위 \'가격\'에 직접 입력하세요.</div>',
+    '  </div>'
+  ].join('') : '';
+
   var wrap = document.createElement('div');
   wrap.className = 'char-detail-overlay ledger-memo-overlay';
   wrap.innerHTML = [
@@ -3229,9 +3257,11 @@ function _openMemoEditor(ts, memo, price) {
     '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
     '  <div class="ledger-memo-fields">',
     '    <label class="ledger-memo-field"><span>메모</span>',
-    '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo || '') + '" placeholder="예: 월정액 결제"></label>',
+    '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo) + '" placeholder="예: 월정액 결제"></label>',
     '    <label class="ledger-memo-field"><span>가격 (원)</span>',
     '      <input type="text" inputmode="numeric" id="ledgerMemoPrice" value="' + (price != null ? price : '') + '" placeholder="선택 · 비우면 표시 안 함"></label>',
+    '    <div class="ledger-quick-amts">' + quickBtns + '</div>',
+    splitHtml,
     '  </div>',
     '  <div class="detail-footer">',
     '    <button class="detail-btn-save" id="ledgerMemoSave">저장</button>',
@@ -3242,22 +3272,41 @@ function _openMemoEditor(ts, memo, price) {
   function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }
   wrap.addEventListener('click', function(ev) { if (ev.target === wrap) close(); });
   wrap.querySelector('[data-act="cancel"]').addEventListener('click', close);
+  wrap.querySelectorAll('.ledger-quick-btn').forEach(function(b) {
+    b.addEventListener('click', function() { document.getElementById('ledgerMemoPrice').value = this.dataset.amt; });
+  });
+  if (isAuto) {
+    document.getElementById('ledgerFreeDelta').addEventListener('input', function() {
+      var v = parseInt(this.value.replace(/[^0-9]/g, ''), 10);
+      if (isNaN(v)) v = 0;
+      v = Math.max(0, Math.min(delta, v));
+      document.getElementById('ledgerPaidDelta').textContent = (delta - v);
+    });
+  }
   document.getElementById('ledgerMemoSave').addEventListener('click', function() {
     var m = document.getElementById('ledgerMemoText').value.trim();
     var praw = document.getElementById('ledgerMemoPrice').value.replace(/[^0-9]/g, '');
     var pv = parseInt(praw, 10);
     var hasPrice = praw !== '' && !isNaN(pv) && pv > 0;
-    if (isNew && !m && !hasPrice) { close(); return; }  // 둘 다 비면 생성 안 함
+    var freeVal = null;
+    if (isAuto) {
+      var fraw = document.getElementById('ledgerFreeDelta').value.replace(/[^0-9]/g, '');
+      if (fraw === '') freeVal = delta;
+      else { var fv = parseInt(fraw, 10); freeVal = isNaN(fv) ? delta : Math.max(0, Math.min(delta, fv)); }
+    }
+    if (isNew && !m && !hasPrice) { close(); return; }
     var a2 = loadLedger(_ledgerGame);
     if (isNew) {
-      var entry = { ts: Date.now(), type: 'memo', memo: m };
-      if (hasPrice) entry.price = pv;
-      a2.push(entry);
+      var ne = { ts: Date.now(), type: 'memo', memo: m };
+      if (hasPrice) ne.price = pv;
+      a2.push(ne);
     } else {
       for (var j = 0; j < a2.length; j++) {
-        if (a2[j].ts === ts) {
+        if (a2[j].ts === entry.ts) {
           a2[j].memo = m;
           if (hasPrice) a2[j].price = pv; else delete a2[j].price;
+          if (isAuto && freeVal != null && freeVal !== delta) a2[j].freeDelta = freeVal;
+          else if (isAuto) delete a2[j].freeDelta;
           break;
         }
       }
