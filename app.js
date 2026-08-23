@@ -2762,6 +2762,126 @@ function loadCurrencyData(gameId) {
   }
 }
 
+// ── 재화 거래 내역(영수증) 원장 ── append-only, pickup_manager_ 접두사 → 계정별 Supabase 동기화(영구)
+function loadLedger(gameId) {
+  try { var raw = localStorage.getItem('pickup_manager_ledger_' + gameId); return raw ? JSON.parse(raw) : []; }
+  catch (e) { return []; }
+}
+function saveLedger(gameId, arr) {
+  try { localStorage.setItem('pickup_manager_ledger_' + gameId, JSON.stringify(arr)); } catch (e) {}
+}
+function appendLedger(gameId, entry) {
+  var arr = loadLedger(gameId);
+  arr.push(entry);
+  saveLedger(gameId, arr);
+}
+// 재화 id → 표시 이름
+function currencyName(gameId, curId) {
+  var cfg = getGameConfig()[gameId];
+  if (cfg) { for (var i = 0; i < cfg.currencies.length; i++) if (cfg.currencies[i].id === curId) return cfg.currencies[i].name; }
+  return curId || '';
+}
+
+var _ledgerGame = null;
+
+function openLedgerModal(gameId) {
+  _ledgerGame = gameId;
+  renderLedgerModal();
+  document.getElementById('ledgerModal').style.display = 'block';
+}
+
+function closeLedgerModal() {
+  var m = document.getElementById('ledgerModal');
+  if (m) { m.style.display = 'none'; m.innerHTML = ''; }
+}
+
+function ledgerFmtDate(ts) {
+  var d = new Date(ts), p = function(n) { return n < 10 ? '0' + n : '' + n; };
+  return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+function ledgerEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderLedgerModal() {
+  var gameId  = _ledgerGame;
+  var entries = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });  // 최신순
+  var gained = 0, spent = 0;
+  entries.forEach(function(e) {
+    if (e.type === 'auto') { if (e.delta > 0) gained += e.delta; else spent += -e.delta; }
+  });
+
+  var rows = entries.length ? entries.map(function(e) {
+    if (e.type === 'memo') {
+      return '<div class="ledger-row ledger-row--memo">'
+        + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
+        + '<span class="ledger-memo-mark">📝</span>'
+        + '<span class="ledger-memo-text">' + ledgerEsc(e.memo) + '</span>'
+        + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모 수정">✎</button>'
+        + '</div>';
+    }
+    var sign = e.delta > 0 ? '+' : '';
+    var cls  = e.delta > 0 ? 'ledger-gain' : 'ledger-spend';
+    return '<div class="ledger-row">'
+      + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
+      + '<span class="ledger-cur">' + ledgerEsc(currencyName(gameId, e.currency)) + '</span>'
+      + '<span class="ledger-delta ' + cls + '">' + sign + e.delta.toLocaleString() + '</span>'
+      + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
+      + (e.memo ? '<span class="ledger-memo-text ledger-memo-inline">' + ledgerEsc(e.memo) + '</span>' : '')
+      + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모">' + (e.memo ? '💬' : '＋') + '</button>'
+      + '</div>';
+  }).join('') : '<div class="ledger-empty">아직 기록이 없습니다. 재화 수량을 바꾸면 여기에 자동으로 남습니다.</div>';
+
+  document.getElementById('ledgerModal').innerHTML = [
+    '<div class="char-detail-overlay" id="ledgerOverlay">',
+    '  <div class="char-detail-panel ledger-panel">',
+    '    <div class="detail-header">',
+    '      <span class="detail-header-name">거래 내역 (영수증)</span>',
+    '      <button class="detail-close-btn" id="ledgerCloseX">✕</button>',
+    '    </div>',
+    '    <div class="ledger-summary">',
+    '      <span class="ledger-sum ledger-sum--gain">획득 +' + gained.toLocaleString() + '</span>',
+    '      <span class="ledger-sum ledger-sum--spend">소모 −' + spent.toLocaleString() + '</span>',
+    '    </div>',
+    '    <div class="ledger-list">' + rows + '</div>',
+    '    <div class="detail-footer">',
+    '      <button class="detail-btn-cancel" id="ledgerAddMemoBtn">＋ 메모 추가</button>',
+    '      <button class="detail-btn-save" id="ledgerCloseBtn">닫기</button>',
+    '    </div>',
+    '  </div>',
+    '</div>'
+  ].join('');
+
+  document.getElementById('ledgerOverlay').addEventListener('click', function(e) { if (e.target === this) closeLedgerModal(); });
+  document.getElementById('ledgerCloseX').addEventListener('click', closeLedgerModal);
+  document.getElementById('ledgerCloseBtn').addEventListener('click', closeLedgerModal);
+  document.getElementById('ledgerAddMemoBtn').addEventListener('click', ledgerAddMemo);
+  document.getElementById('ledgerModal').querySelectorAll('.ledger-memo-btn').forEach(function(b) {
+    b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); });
+  });
+}
+
+function ledgerAddMemo() {
+  var t = prompt('메모 추가 (예: 월정액 결제, 아케론 확정 지름)');
+  if (t == null) return;
+  t = t.trim();
+  if (!t) return;
+  appendLedger(_ledgerGame, { ts: Date.now(), type: 'memo', memo: t });
+  renderLedgerModal();
+}
+
+function ledgerSetMemo(ts) {
+  var arr = loadLedger(_ledgerGame);
+  var e = null;
+  for (var i = 0; i < arr.length; i++) if (arr[i].ts === ts) { e = arr[i]; break; }
+  if (!e) return;
+  var t = prompt('메모', e.memo || '');
+  if (t == null) return;
+  e.memo = t.trim();
+  saveLedger(_ledgerGame, arr);
+  renderLedgerModal();
+}
+
 function saveCurrencyItem(gameId, curId, val) {
   try {
     var data = loadCurrencyData(gameId);
@@ -2868,6 +2988,7 @@ function renderCurrencyPage() {
     '</div>',
     '<div class="currency-add-row">',
     '  <button class="currency-add-btn" data-game="' + activeGame + '">+ 재화 추가</button>',
+    '  <button class="ledger-open-btn" data-game="' + activeGame + '">📋 내역</button>',
     '</div>',
     '<div class="currency-total">',
     '  <span>총 예상 뽑기</span>',
@@ -2881,6 +3002,11 @@ function renderCurrencyPage() {
   // 재화 추가
   page.querySelectorAll('.currency-add-btn').forEach(function(btn) {
     btn.addEventListener('click', function() { openCurrencyConfigModal(this.dataset.game, null); });
+  });
+
+  // 거래 내역(영수증)
+  page.querySelectorAll('.ledger-open-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { openLedgerModal(this.dataset.game); });
   });
 
   // 재화 행 편집/삭제
@@ -2926,6 +3052,7 @@ function renderCurrencyPage() {
 
   page.querySelectorAll('.currency-input').forEach(function(input) {
     input.addEventListener('focus', function() {
+      this._ledgerBefore = parseCurrencyInput(this.value);   // 편집 전 값(원장 델타용)
       var raw = this.value.replace(/,/g, '');
       this.value = raw || '';
       var el = this;
@@ -2936,6 +3063,14 @@ function renderCurrencyPage() {
     input.addEventListener('blur', function() {
       var num = parseCurrencyInput(this.value);
       this.value = num.toLocaleString();
+      // 원장 자동 기록: 편집 전후 변동분(±)이 있으면 한 줄 남김
+      if (this._ledgerBefore != null && num !== this._ledgerBefore) {
+        appendLedger(this.dataset.game, {
+          ts: Date.now(), type: 'auto', currency: this.dataset.id,
+          delta: num - this._ledgerBefore, balanceAfter: num, memo: ''
+        });
+        this._ledgerBefore = num;
+      }
     });
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') this.blur();
