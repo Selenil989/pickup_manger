@@ -2157,7 +2157,9 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lcal-cell.lcal-has { background: rgba(255,255,255,.045); }
 .lcal-cell:hover:not(.lcal-blank) { border-color: var(--border); }
 .lcal-cell.lcal-sel { border-color: var(--accent, #6d5efc); background: rgba(109,94,252,.18); }
-.lcal-cell.lcal-today .lcal-date { color: var(--accent, #8b7cff); font-weight: 800; }
+.lcal-cell.lcal-today { border-color: var(--accent, #6d5efc); }
+.lcal-cell.lcal-today .lcal-date { color: #fff; font-weight: 800; background: var(--accent, #6d5efc); border-radius: 999px; min-width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 0 0 3px rgba(109,94,252,.25); }
+.lcal-cell.lcal-today.lcal-sun .lcal-date, .lcal-cell.lcal-today.lcal-sat .lcal-date { color: #fff; }
 .lcal-date { font-size: 16px; font-weight: 600; }
 .lcal-sun .lcal-date { color: #e5686d; }
 .lcal-sat .lcal-date { color: #5b9ce5; }

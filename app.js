@@ -2340,7 +2340,7 @@ function renderPlannerCalcCards(curPhases, nextPhases, totalPhases, curSim, next
         '</div>',
         '<div class="pacc-col-right">',
         '<span class="pacc-row-owned">보유 <strong>' + owned + '</strong></span>',
-        '<span class="pacc-row-rate">달성 ' + rateVal + '</span>',
+        '<span class="pacc-row-rate">확률 ' + rateVal + '</span>',
         '</div>'
       ].join('');
     }
@@ -2359,7 +2359,7 @@ function renderPlannerCalcCards(curPhases, nextPhases, totalPhases, curSim, next
       '<span class="pacc-total-sf ' + (totalOk ? 'pacc-ok' : 'pacc-lack') + '">',
       totalOk ? '총 부족 없음' : '총 부족 <strong>' + phases.totalShortfall + '</strong>회',
       '</span>',
-      '<div class="pacc-total-rate"><span class="pacc-total-rate-lbl">총 달성 확률 ' + tipIcon + '</span><strong class="' + (totalOk ? 'pacc-ok' : 'pacc-lack') + '">' + totalRateStr + '</strong></div>',
+      '<div class="pacc-total-rate"><span class="pacc-total-rate-lbl">실제 성공 확률(참고) ' + tipIcon + '</span><strong class="' + (totalOk ? 'pacc-ok' : 'pacc-lack') + '">' + totalRateStr + '</strong></div>',
       '</div>',
       '</div>',
       '</div>'
