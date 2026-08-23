@@ -197,11 +197,27 @@ function loadGachaRules(gameId) {
     .catch(function() { return null; });
 }
 
+// 배포 버전(index.html의 app.js?v=…)을 읽어 데이터 fetch에 붙인다.
+// 배포할 때마다 값이 바뀌므로, 카드 데이터(characters/meta/banner)가 배포 즉시
+// 자동 갱신되고(브라우저 캐시 무효화), 배포 사이엔 캐시를 재사용한다.
+function assetVersion() {
+  try {
+    var ss = document.getElementsByTagName('script');
+    for (var i = 0; i < ss.length; i++) {
+      var m = (ss[i].src || '').match(/[?&]v=(\d+)/);
+      if (m) return m[1];
+    }
+  } catch (e) {}
+  return '';
+}
+
 function loadGameData(gameId) {
+  var v = assetVersion();
+  var q = v ? '?v=' + v : '';
   return Promise.all([
-    fetch("data/games/" + gameId + "/characters.json").then(function(res) { return res.json(); }),
-    fetch("data/games/" + gameId + "/meta.json").then(function(res) { return res.json(); }),
-    fetch("data/games/" + gameId + "/banner.json").then(function(res) { return res.json(); })
+    fetch("data/games/" + gameId + "/characters.json" + q).then(function(res) { return res.json(); }),
+    fetch("data/games/" + gameId + "/meta.json" + q).then(function(res) { return res.json(); }),
+    fetch("data/games/" + gameId + "/banner.json" + q).then(function(res) { return res.json(); })
   ])
     .then(function(results) {
       return { characters: results[0], meta: results[1], banner: results[2] };
