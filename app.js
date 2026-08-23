@@ -2907,13 +2907,14 @@ function renderLedgerModal() {
       tPaid += e.price; tPaidN++;
       if (inYear) { yPaid += e.price; yPaidN++; }
       if (inMonth) { mPaid += e.price; mPaidN++; }
-    } else {
-      if (inYear) yFree++;
-      if (inMonth) mFree++;
+    } else if (e.type === 'auto' && e.delta > 0) {
+      // 무료 획득: 가격 없는 자동 획득분의 재화 합
+      if (inYear) yFree += e.delta;
+      if (inMonth) mFree += e.delta;
     }
   });
   function _paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
-  function _freeHtml(n) { return '<span class="lps-free">무료 ' + n + '건</span>'; }
+  function _freeHtml(amt) { return '<span class="lps-free">무료 획득 <b>' + amt.toLocaleString() + '</b></span>'; }
   var priceSummary = all.length ? [
     '<div class="ledger-price-summary">',
     '  <div class="lps-row"><span class="lps-label">이 달</span>' + _paidHtml(mPaid, mPaidN) + _freeHtml(mFree) + '</div>',
