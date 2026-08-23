@@ -3018,7 +3018,7 @@ function openCalBadgeMenu(gameId, ymd) {
     + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">' + dayLabel + ' 일정 뱃지</div></div>'
     + '<button class="detail-close-btn" id="cbmClose">✕</button></div>'
     + '<div class="detail-body" style="gap:10px;"><div class="calbadge-grid">' + chips + '</div>'
-    + '<p style="font-size:11px;color:var(--muted);margin:2px 0 0;">칩을 눌러 켜고/끄세요 · 여러 개 선택 가능</p></div>'
+    + '<p style="font-size: var(--fs-xs);color:var(--muted);margin:2px 0 0;">칩을 눌러 켜고/끄세요 · 여러 개 선택 가능</p></div>'
     + '</div></div>';
   modal.style.display = 'block';
   var close = function() { modal.style.display = 'none'; modal.innerHTML = ''; renderLedgerPage(); };
@@ -4015,7 +4015,7 @@ function openGameConfigModal() {
       var meta = GAME_META[gid] || { iconText: gid.slice(0, 2).toUpperCase(), iconBg: '#1a1a2e', iconColor: 'var(--muted)' };
       var d = dim || 32;
       var op = opacity ? 'opacity:' + opacity + ';' : '';
-      return '<span style="width:' + d + 'px;height:' + d + 'px;border-radius:6px;background:' + meta.iconBg + ';color:' + meta.iconColor + ';font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;' + op + '">' + meta.iconText + '</span>';
+      return '<span style="width:' + d + 'px;height:' + d + 'px;border-radius:6px;background:' + meta.iconBg + ';color:' + meta.iconColor + ';font-size: var(--fs-2xs);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;' + op + '">' + meta.iconText + '</span>';
     };
 
     var registeredHtml = Object.keys(config).map(function(gid) {
@@ -4025,26 +4025,26 @@ function openGameConfigModal() {
         '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">',
         iconBox(gid),
         '  <div style="flex:1;min-width:0;">',
-        '    <div style="font-size:13px;">' + escAttr(game.name) + '</div>',
-        '    <div style="font-size:10px;color:var(--muted);margin-top:2px;">ID: ' + gid + ' &nbsp;·&nbsp; 캐릭터 천장 ' + gacha.charPity + ' / 무기 천장 ' + gacha.weaponPity + '</div>',
+        '    <div style="font-size: var(--fs-base);">' + escAttr(game.name) + '</div>',
+        '    <div style="font-size: var(--fs-2xs);color:var(--muted);margin-top:2px;">ID: ' + gid + ' &nbsp;·&nbsp; 캐릭터 천장 ' + gacha.charPity + ' / 무기 천장 ' + gacha.weaponPity + '</div>',
         '  </div>',
-        '  <button class="detail-btn-cancel gcm-gacha"  data-game="' + gid + '" style="font-size:11px;padding:3px 9px;" title="천장 설정">⚙</button>',
-        '  <button class="detail-btn-cancel gcm-rename" data-game="' + gid + '" style="font-size:11px;padding:3px 9px;">이름</button>',
-        '  <button class="detail-btn-cancel gcm-remove" data-game="' + gid + '" style="font-size:11px;padding:3px 9px;color:var(--must);border-color:var(--must);">제거</button>',
+        '  <button class="detail-btn-cancel gcm-gacha"  data-game="' + gid + '" style="font-size: var(--fs-xs);padding:3px 9px;" title="천장 설정">⚙</button>',
+        '  <button class="detail-btn-cancel gcm-rename" data-game="' + gid + '" style="font-size: var(--fs-xs);padding:3px 9px;">이름</button>',
+        '  <button class="detail-btn-cancel gcm-remove" data-game="' + gid + '" style="font-size: var(--fs-xs);padding:3px 9px;color:var(--must);border-color:var(--must);">제거</button>',
         '</div>'
       ].join('');
-    }).join('') || '<p style="font-size:13px;color:var(--muted);padding:8px 0;">등록된 게임이 없습니다.</p>';
+    }).join('') || '<p style="font-size: var(--fs-base);color:var(--muted);padding:8px 0;">등록된 게임이 없습니다.</p>';
 
     var removedBuiltin = builtinIds.filter(function(gid) { return !config[gid]; });
     var restoreHtml = removedBuiltin.length ? [
-      '<div style="padding:12px 0 6px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;">제거된 기본 게임</div>',
+      '<div style="padding:12px 0 6px;font-size: var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;">제거된 기본 게임</div>',
       removedBuiltin.map(function(gid) {
         var name = (CURRENCY_CONFIG[gid] && CURRENCY_CONFIG[gid].name) || gid;
         return [
           '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">',
           iconBox(gid, 32, '0.45'),
-          '  <span style="flex:1;font-size:13px;color:var(--muted);">' + name + '</span>',
-          '  <button class="detail-btn-save gcm-restore" data-game="' + gid + '" style="font-size:11px;padding:3px 9px;">복원</button>',
+          '  <span style="flex:1;font-size: var(--fs-base);color:var(--muted);">' + name + '</span>',
+          '  <button class="detail-btn-save gcm-restore" data-game="' + gid + '" style="font-size: var(--fs-xs);padding:3px 9px;">복원</button>',
           '</div>'
         ].join('');
       }).join('')
@@ -4058,11 +4058,11 @@ function openGameConfigModal() {
       '      <button class="detail-close-btn" id="gcmClose">✕</button>',
       '    </div>',
       '    <div style="padding:0 20px 4px;max-height:65vh;overflow-y:auto;">',
-      '      <div style="padding:12px 0 6px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">등록된 게임</div>',
+      '      <div style="padding:12px 0 6px;font-size: var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">등록된 게임</div>',
       '      <div>' + registeredHtml + '</div>',
       restoreHtml,
       '      <div style="padding:14px 0 12px;margin-top:6px;border-top:1px solid var(--border);">',
-      '        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">새 게임 추가</div>',
+      '        <div style="font-size: var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">새 게임 추가</div>',
       '        <div style="display:flex;gap:8px;margin-bottom:6px;">',
       '          <input class="edit-input" id="gcmNewName" type="text" placeholder="게임 이름" style="flex:1;" />',
       '        </div>',
@@ -4070,7 +4070,7 @@ function openGameConfigModal() {
       '          <input class="edit-input" id="gcmNewId" type="text" placeholder="게임 ID (영문/숫자/_)  예: nte" style="flex:1;" />',
       '          <button class="detail-btn-save" id="gcmAddNew" style="white-space:nowrap;flex-shrink:0;">추가</button>',
       '        </div>',
-      '        <div style="font-size:10px;color:var(--muted);margin-top:6px;">ID 미입력 시 자동 생성 &nbsp;·&nbsp; 아이콘: assets/icons/{ID}/icon.png</div>',
+      '        <div style="font-size: var(--fs-2xs);color:var(--muted);margin-top:6px;">ID 미입력 시 자동 생성 &nbsp;·&nbsp; 아이콘: assets/icons/{ID}/icon.png</div>',
       '      </div>',
       '    </div>',
       '  </div>',
@@ -4182,11 +4182,11 @@ function openCurrencyConfigModal(gameId, curId) {
     '        <label class="edit-label">아이콘 파일명</label>',
     '        <input class="edit-input" id="ccIconName" type="text" placeholder="예: polychrome  또는  icon.webp" value="' + escAttr(iconFile) + '" />',
     '      </div>',
-    '      <div style="font-size:10px;color:var(--muted);padding:0 0 2px 0;">→ assets/icons/' + gameId + '/{파일명}  &nbsp;(.png / .webp 모두 지원, 확장자 미입력 시 .png)</div>',
+    '      <div style="font-size: var(--fs-2xs);color:var(--muted);padding:0 0 2px 0;">→ assets/icons/' + gameId + '/{파일명}  &nbsp;(.png / .webp 모두 지원, 확장자 미입력 시 .png)</div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">환산 비율</label>',
     '        <input class="edit-input" id="ccRate" type="number" min="1" step="1" placeholder="예: 160" value="' + (cur ? cur.rate : '') + '" style="max-width:90px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">개 = 1뽑</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">개 = 1뽑</span>',
     '      </div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">메모 (선택)</label>',
@@ -4252,32 +4252,32 @@ function openGachaConfigModal(gameId) {
     '      <button class="detail-close-btn" id="gcaClose">✕</button>',
     '    </div>',
     '    <div class="detail-body" style="gap:12px;">',
-    '      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">천장</div>',
+    '      <div style="font-size: var(--fs-2xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">천장</div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">캐릭터 천장</label>',
     '        <input class="edit-input" id="gcaCharPity" type="number" min="1" step="1" value="' + gacha.charPity + '" style="max-width:80px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">뽑</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑</span>',
     '      </div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">무기 천장</label>',
     '        <input class="edit-input" id="gcaWeaponPity" type="number" min="1" step="1" value="' + gacha.weaponPity + '" style="max-width:80px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">뽑</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑</span>',
     '      </div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">1뽑 재화 비용</label>',
     '        <input class="edit-input" id="gcaPullCost" type="number" min="1" step="1" value="' + gacha.pullCost + '" style="max-width:80px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">개</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">개</span>',
     '      </div>',
-    '      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:2px;">과금 계산</div>',
+    '      <div style="font-size: var(--fs-2xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:2px;">과금 계산</div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">1트럭 가격</label>',
     '        <input class="edit-input" id="gcaPkgPrice" type="number" min="0" step="1000" value="' + (gacha.packagePrice || '') + '" placeholder="예: 119000" style="max-width:110px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">원</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">원</span>',
     '      </div>',
     '      <div class="edit-row">',
     '        <label class="edit-label">1트럭 뽑기</label>',
     '        <input class="edit-input" id="gcaPkgPulls" type="number" min="1" step="1" value="' + (gacha.packagePulls || '') + '" placeholder="예: 50" style="max-width:110px;" />',
-    '        <span style="font-size:13px;color:var(--muted);">회</span>',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">회</span>',
     '      </div>',
     '    </div>',
     '    <div class="detail-footer">',
@@ -4347,9 +4347,9 @@ function openPlannerConfigModal(gameId) {
     '        <label class="edit-label">전반 기간(일)</label>',
     '        <input class="edit-input" id="pcfFirstHalf" type="number" min="1" step="1" value="' + (parseInt(pd.firstHalfDays) || 21) + '" style="max-width:100px;" />',
     '      </div>',
-    '      <p id="pcfHalfHint"    style="font-size:11px;color:var(--muted);margin:0;">후반 = 버전 종료일까지 나머지 (기본 전반 21일 = 3주)</p>',
-    '      <p id="pcfAutoHint"    style="font-size:11px;color:var(--muted);margin:0;">' + initialHints.autoEndHint + '</p>',
-    '      <p id="pcfNextHint"    style="font-size:11px;color:var(--acc,#7b68ee);margin:0;">' + initialHints.nextStartHint + '</p>',
+    '      <p id="pcfHalfHint"    style="font-size: var(--fs-xs);color:var(--muted);margin:0;">후반 = 버전 종료일까지 나머지 (기본 전반 21일 = 3주)</p>',
+    '      <p id="pcfAutoHint"    style="font-size: var(--fs-xs);color:var(--muted);margin:0;">' + initialHints.autoEndHint + '</p>',
+    '      <p id="pcfNextHint"    style="font-size: var(--fs-xs);color:var(--acc,#7b68ee);margin:0;">' + initialHints.nextStartHint + '</p>',
     '    </div>',
     '    <div class="detail-footer">',
     '      <button class="detail-btn-cancel" id="pcfCancelBtn">취소</button>',
