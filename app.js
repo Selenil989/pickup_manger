@@ -2891,23 +2891,10 @@ function renderLedgerModal() {
   if (!_ledgerMonth || monthsPresent.indexOf(_ledgerMonth) === -1) _ledgerMonth = monthsPresent[0] || null;
 
   var entries = _ledgerMonth ? all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; }) : [];
-  var gained = 0, spent = 0;
-  entries.forEach(function(e) {
-    if (e.type === 'auto') { if (e.delta > 0) gained += e.delta; else spent += -e.delta; }
-  });
-
-  // 유료(가격 있음)/무료(가격 없음) 집계 — 월/연은 둘 다, 총합은 유료만
-  var curYear = _ledgerMonth ? _ledgerMonth.slice(0, 4) : '';
-  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달 (mFree = 무료 획득 재화 환산)
-  var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
-  var tPaid = 0, tPaidN = 0;              // 전체(유료만)
-  // 재화 환산: 뽑기권(rate=1 등)도 프리미엄 재화 단위로 맞춘다. 게임마다 프리미엄 재화의
-  // rate가 다르므로(환석/이상수정 160, 엔드필드 오리지늄 500 …) 그 게임 재화 config에서
-  // 기준 rate = 가장 큰 rate를 뽑아 쓴다. 환산량 = delta × (기준rate / 재화rate)
-  //   nte:      환석(160)→×1,   주사위(1)→×160
-  //   endfield: 오리지늄(500)→×1, 허가증(1)→×500
-  // rate는 코드 정본(CURRENCY_CONFIG)을 권위로 쓰고, 거기 없는 커스텀 재화만 사용자 config로 보충.
-  // (사용자 저장 config의 rate가 부정확해도 환산이 틀어지지 않게)
+  // 재화 환산 헬퍼 (요약·집계 공용): 뽑기권(rate=1 등)도 프리미엄 재화 단위로 맞춘다.
+  // 게임마다 프리미엄 재화 rate가 다르므로(환석 160, 엔드필드 오리지늄 500 …) 그 게임 재화
+  // config에서 기준 rate = 가장 큰 rate를 뽑아 환산: delta × (기준rate / 재화rate).
+  // rate는 코드 정본(CURRENCY_CONFIG) 우선, 없는 커스텀 재화만 사용자 config로 보충.
   var _rate = {};
   [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
     if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) { if (_rate[c.id] == null) _rate[c.id] = c.rate || 1; });
@@ -2915,6 +2902,18 @@ function renderLedgerModal() {
   var _baseRate = 1;
   Object.keys(_rate).forEach(function(k) { if (_rate[k] > _baseRate) _baseRate = _rate[k]; });
   function _toJaehwa(e) { var r = _rate[e.currency] || _baseRate; return Math.round(e.delta * (_baseRate / r)); }
+
+  // 이 달 획득/소모 — 재화 환산으로 통일(뽑기권 포함)해 아래 무료 획득 집계와 단위를 맞춤
+  var gained = 0, spent = 0;
+  entries.forEach(function(e) {
+    if (e.type === 'auto') { var _v = _toJaehwa(e); if (_v > 0) gained += _v; else spent += -_v; }
+  });
+
+  // 유료(가격 있음)/무료(가격 없음) 집계 — 월/연은 둘 다, 총합은 유료만
+  var curYear = _ledgerMonth ? _ledgerMonth.slice(0, 4) : '';
+  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달 (mFree = 무료 획득 재화 환산)
+  var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
+  var tPaid = 0, tPaidN = 0;              // 전체(유료만)
   all.forEach(function(e) {
     var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
     if (e.price != null) {
