@@ -3150,11 +3150,11 @@ function renderLedgerPage() {
     '  <button class="ledger-nav-btn" id="lpNext" title="다음 달">▶</button>',
     '</div>',
     verBanner,
+    schedHtml,
     '<div class="ledger-cal">',
     '  <div class="lcal-wd">' + wd.map(function(w, ix) { return '<span' + (ix === 0 ? ' class="lcal-sun"' : ix === 6 ? ' class="lcal-sat"' : '') + '>' + w + '</span>'; }).join('') + '</div>',
     '  <div class="lcal-grid">' + cells + '</div>',
     '</div>',
-    schedHtml,
     '<div class="ledger-price-summary">',
     '  <div class="lps-row"><span class="lps-label">이 달</span>' + paidHtml(mPaid, mPaidN) + freeHtml(mFree) + '</div>',
     '  <div class="lps-row"><span class="lps-label">' + curYear + '년</span>' + paidHtml(yPaid, yPaidN) + freeHtml(yFree) + '</div>',
@@ -4437,7 +4437,15 @@ function init() {
         rosterList.parentNode.classList.toggle('scroll-top', rosterList.scrollTop > 8);
       });
 
-      return syncRosterFromFile();
+      return syncRosterFromFile().then(function() {
+        // 브라우저 진입 시 게임 목록 최상단 게임을 기본 선택(보유 캐릭터 탭)
+        var firstCard = document.querySelector("#gameList .game-card");
+        if (firstCard) {
+          document.querySelectorAll(".game-card").forEach(function(c) { c.classList.remove("active"); });
+          firstCard.classList.add("active");
+          onGameChange(firstCard.dataset.game);
+        }
+      });
     })
     .catch(function() {
       renderError("설정 파일을 불러오지 못했습니다. 페이지를 새로고침해주세요.");

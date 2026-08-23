@@ -2192,7 +2192,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lvb-main { font-weight: 700; }
 .lvb-next { color: var(--muted); margin-left: auto; font-weight: 600; }
 .ledger-ver-banner .lvb-edit { margin-left: 8px; font-size: 15px; }
-.ledger-day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 6px 2px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.ledger-day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 6px auto; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .ledger-day-title { font-size: 14px; font-weight: 700; }
 .ledger-day-sum { font-size: 12px; font-weight: 700; }
 .ledger-day-sum .ledger-sum--gain { color: #3ecf8e; }
