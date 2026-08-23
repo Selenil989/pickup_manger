@@ -3006,6 +3006,11 @@ function renderLedgerPage() {
     var _td2 = new Date(); _td2.setHours(0, 0, 0, 0);
     curVerInfo = { ver: pd.version, start: pd.startDate, end: pd.endDate || plannerAutoEndDate(pd.startDate), dplus: Math.round((_td2 - _st) / 86400000), next: plannerNextVersion(pd.version) };
   }
+  // 날짜 → 그 날의 버전, 버전 → 은은한 배경색
+  var verBounds = Object.keys(verMarks).sort().map(function(k) { return { d: k, v: verMarks[k] }; });
+  function verForDay(ymd) { var f = null; for (var i = 0; i < verBounds.length; i++) { if (verBounds[i].d <= ymd) f = verBounds[i].v; else break; } return f; }
+  var VER_COLORS = ['rgba(109,94,252,.13)', 'rgba(76,150,120,.13)', 'rgba(201,140,66,.12)', 'rgba(88,150,220,.13)', 'rgba(201,95,125,.12)', 'rgba(120,126,150,.14)'];
+  function verColor(v) { if (!v) return ''; var p = v.split('.'); return VER_COLORS[(parseInt(p[0] || 0) * 10 + parseInt(p[1] || 0)) % VER_COLORS.length]; }
 
   // 달력 셀
   var firstWd = new Date(y, m - 1, 1).getDay();
@@ -3019,7 +3024,8 @@ function renderLedgerPage() {
     var ag = dayAgg[ymd];
     var col = (firstWd + day - 1) % 7;
     var cls = 'lcal-cell' + (ag ? ' lcal-has' : '') + (_ledgerDay === ymd ? ' lcal-sel' : '') + (todayYmd === ymd ? ' lcal-today' : '') + (col === 0 ? ' lcal-sun' : col === 6 ? ' lcal-sat' : '');
-    cells += '<div class="' + cls + '" data-ymd="' + ymd + '">'
+    var vbg = verColor(verForDay(ymd));
+    cells += '<div class="' + cls + '" data-ymd="' + ymd + '"' + (vbg ? ' style="background:' + vbg + '"' : '') + '>'
       + '<span class="lcal-date">' + day + '</span>'
       + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + '</span>' : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
@@ -3043,6 +3049,7 @@ function renderLedgerPage() {
     '  <span class="lvb-badge">v' + curVerInfo.ver + '</span>',
     '  <span class="lvb-main">현재 버전 · ' + curVerInfo.start + ' 시작' + (curVerInfo.dplus >= 0 ? ' · D+' + curVerInfo.dplus : '') + '</span>',
     (curVerInfo.next && curVerInfo.end ? '  <span class="lvb-next">다음 v' + curVerInfo.next + ' · ' + curVerInfo.end + '</span>' : ''),
+    '  <button class="planner-config-btn lvb-edit" id="lvbEditVer" title="버전 편집(관리자)">⚙</button>',
     '</div>'
   ].join('') : '';
 
@@ -3071,6 +3078,7 @@ function renderLedgerPage() {
 
   document.getElementById('lpPrev').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, -1)); });
   document.getElementById('lpNext').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, 1)); });
+  var _lvbE = document.getElementById('lvbEditVer'); if (_lvbE) _lvbE.addEventListener('click', function() { openPlannerConfigModal(gameId); });
   var addb = document.getElementById('lpAddMemo'); if (addb) addb.addEventListener('click', ledgerAddMemo);
   page.querySelectorAll('.lcal-cell:not(.lcal-blank)').forEach(function(c) {
     c.addEventListener('click', function() { if (this.dataset.ymd) ledgerSelectDay(this.dataset.ymd); });
