@@ -2829,7 +2829,7 @@ function renderLedgerModal() {
       + '<span class="ledger-delta ' + cls + '">' + sign + e.delta.toLocaleString() + '</span>'
       + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
       + (e.memo ? '<span class="ledger-memo-text ledger-memo-inline">' + ledgerEsc(e.memo) + '</span>' : '')
-      + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모">' + (e.memo ? '💬' : '＋') + '</button>'
+      + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
       + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
       + '</div>';
   }).join('') : '<div class="ledger-empty">아직 기록이 없습니다. 재화 수량을 바꾸면 여기에 자동으로 남습니다.</div>';
@@ -2847,7 +2847,6 @@ function renderLedgerModal() {
     '    </div>',
     '    <div class="ledger-list">' + rows + '</div>',
     '    <div class="detail-footer">',
-    '      <button class="detail-btn-cancel" id="ledgerAddMemoBtn">＋ 메모 추가</button>',
     '      <button class="detail-btn-save" id="ledgerCloseBtn">닫기</button>',
     '    </div>',
     '  </div>',
@@ -2857,7 +2856,6 @@ function renderLedgerModal() {
   document.getElementById('ledgerOverlay').addEventListener('click', function(e) { if (e.target === this) closeLedgerModal(); });
   document.getElementById('ledgerCloseX').addEventListener('click', closeLedgerModal);
   document.getElementById('ledgerCloseBtn').addEventListener('click', closeLedgerModal);
-  document.getElementById('ledgerAddMemoBtn').addEventListener('click', ledgerAddMemo);
   document.getElementById('ledgerModal').querySelectorAll('.ledger-memo-btn').forEach(function(b) {
     b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); });
   });
@@ -2870,15 +2868,6 @@ function ledgerDelete(ts) {
   if (!confirm('이 내역을 삭제할까요? (되돌릴 수 없음)')) return;
   var arr = loadLedger(_ledgerGame).filter(function(e) { return e.ts !== ts; });
   saveLedger(_ledgerGame, arr);
-  renderLedgerModal();
-}
-
-function ledgerAddMemo() {
-  var t = prompt('메모 추가 (예: 월정액 결제, 아케론 확정 지름)');
-  if (t == null) return;
-  t = t.trim();
-  if (!t) return;
-  appendLedger(_ledgerGame, { ts: Date.now(), type: 'memo', memo: t });
   renderLedgerModal();
 }
 
