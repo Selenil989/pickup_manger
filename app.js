@@ -2906,12 +2906,14 @@ function renderLedgerModal() {
   // 기준 rate = 가장 큰 rate를 뽑아 쓴다. 환산량 = delta × (기준rate / 재화rate)
   //   nte:      환석(160)→×1,   주사위(1)→×160
   //   endfield: 오리지늄(500)→×1, 허가증(1)→×500
-  var _lcfg = getGameConfig()[gameId];
+  // rate는 코드 정본(CURRENCY_CONFIG)을 권위로 쓰고, 거기 없는 커스텀 재화만 사용자 config로 보충.
+  // (사용자 저장 config의 rate가 부정확해도 환산이 틀어지지 않게)
   var _rate = {};
-  var _baseRate = 1;
-  if (_lcfg && _lcfg.currencies) _lcfg.currencies.forEach(function(c) {
-    var r = c.rate || 1; _rate[c.id] = r; if (r > _baseRate) _baseRate = r;
+  [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
+    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) { if (_rate[c.id] == null) _rate[c.id] = c.rate || 1; });
   });
+  var _baseRate = 1;
+  Object.keys(_rate).forEach(function(k) { if (_rate[k] > _baseRate) _baseRate = _rate[k]; });
   function _toJaehwa(e) { var r = _rate[e.currency] || _baseRate; return Math.round(e.delta * (_baseRate / r)); }
   all.forEach(function(e) {
     var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
