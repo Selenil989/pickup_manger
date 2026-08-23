@@ -165,11 +165,11 @@ var CURRENCY_CONFIG = {
 };
 
 var GACHA_CONFIG = {
-  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 },
-  hsr:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 },
-  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 },
-  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 },
-  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 }
+  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 },
+  hsr:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 },
+  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 },
+  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 130000, packagePulls: 50 },
+  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 }
 };
 
 // 뽑기 원가 — 깡트럭 뽑당 원 + 평균 명함/전무 뽑수(기댓값). 엔드필드는 재화 구조가 달라
@@ -1960,6 +1960,9 @@ function calcPitySummary(gameId) {
     weaponPulls:        totalWeapon,
     charPity:           gacha.charPity,
     weaponPity:         gacha.weaponPity,
+    // 목표·부족·과금 계산은 평균 기댓값(charAvg/weaponAvg) 기준으로 — 천장(최악)이 아닌 현실 기댓값
+    charAvg:            (PULL_COST[gameId] && PULL_COST[gameId].charAvg)   || gacha.charPity,
+    weaponAvg:          (PULL_COST[gameId] && PULL_COST[gameId].weaponAvg) || gacha.weaponPity,
     charPityCount:      gacha.charPity   > 0 ? (totalChar   / gacha.charPity).toFixed(2)   : '0.00',
     weaponPityCount:    gacha.weaponPity > 0 ? (totalWeapon / gacha.weaponPity).toFixed(2) : '0.00'
   };
@@ -2101,8 +2104,8 @@ function calcPlannerPhases(pd, pity) {
     var wGoal = Math.max(0, parseInt(ph.data.weaponGoal) || 0);
     totalCharGoalCount   += cGoal;
     totalWeaponGoalCount += wGoal;
-    var cReq  = cGoal * pity.charPity;
-    var wReq  = wGoal * pity.weaponPity;
+    var cReq  = cGoal * (pity.charAvg   || pity.charPity);
+    var wReq  = wGoal * (pity.weaponAvg || pity.weaponPity);
 
     // 캐릭터 전용 재화 먼저 소비
     var cFromSpec   = Math.min(charSpecRemain, cReq);
@@ -2157,8 +2160,8 @@ function calcSingleVersionPhases(halfDataList, startPity) {
     var wGoal = Math.max(0, parseInt(halfData.weaponGoal) || 0);
     totalCharGoalCount   += cGoal;
     totalWeaponGoalCount += wGoal;
-    var cReq = cGoal * (startPity.charPity   || 1);
-    var wReq = wGoal * (startPity.weaponPity || 1);
+    var cReq = cGoal * (startPity.charAvg   || startPity.charPity   || 1);
+    var wReq = wGoal * (startPity.weaponAvg || startPity.weaponPity || 1);
 
     var cFromSpec   = Math.min(charSpecRemain, cReq);
     charSpecRemain -= cFromSpec;
@@ -2193,7 +2196,9 @@ function calcSingleVersionPhases(halfDataList, startPity) {
       characterOnlyPulls: charSpecRemain,
       weaponOnlyPulls:    weaponSpecRemain,
       charPity:           startPity.charPity,
-      weaponPity:         startPity.weaponPity
+      weaponPity:         startPity.weaponPity,
+      charAvg:            startPity.charAvg,
+      weaponAvg:          startPity.weaponAvg
     }
   };
 }
@@ -2711,31 +2716,10 @@ function renderPassCards(gameId) {
       '</div>'
     ].join('');
   }
-  function costCard() {
-    var c = PULL_COST[gameId];
-    if (!c) return '';
-    var r1k = function(n) { return Math.round(n / 1000) * 1000; };
-    var won = function(n) { return '약 ' + r1k(n).toLocaleString() + '원'; };
-    var charCost = c.charAvg * c.won, wpCost = c.weaponAvg * c.won;
-    var sumPulls = c.sumAvg != null ? c.sumAvg : (c.charAvg + c.weaponAvg);
-    var sumCost = sumPulls * c.won;
-    return [
-      '<div class="pass-card pass-card--cost">',
-      '  <div class="pass-card-header"><span class="pass-card-title">뽑기 원가</span><span class="pass-cost-per">깡트럭 뽑당 ' + c.won.toLocaleString() + '원</span></div>',
-      '  <div class="pass-card-body">',
-      '    <div class="pass-card-row"><span class="pass-card-label">명함 ~' + c.charAvg + '뽑</span><span class="pass-card-value">' + won(charCost) + '</span></div>',
-      '    <div class="pass-card-row"><span class="pass-card-label">전무 ~' + c.weaponAvg + '뽑</span><span class="pass-card-value">' + won(wpCost) + '</span></div>',
-      '    <div class="pass-card-row pass-card-row--end"><span class="pass-card-label">명전 합계 ~' + sumPulls + '뽑</span><span class="pass-card-value pass-conversion">' + won(sumCost) + '</span></div>',
-      (c.note ? '    <div class="pass-cost-note">' + c.note + '</div>' : ''),
-      '  </div>',
-      '</div>'
-    ].join('');
-  }
   return [
     '<div class="pass-cards">',
     card('월정액', 'monthly'),
     card('버전 패스', 'regular'),
-    costCard(),
     '</div>'
   ].join('');
 }
