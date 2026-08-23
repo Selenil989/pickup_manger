@@ -2898,9 +2898,16 @@ function renderLedgerModal() {
 
   // 유료(가격 있음)/무료(가격 없음) 집계 — 월/연은 둘 다, 총합은 유료만
   var curYear = _ledgerMonth ? _ledgerMonth.slice(0, 4) : '';
-  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달
+  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달 (mFree = 무료 획득 재화 환산)
   var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
   var tPaid = 0, tPaidN = 0;              // 전체(유료만)
+  // 재화 환산: 뽑기권(rate=1 등)도 프리미엄 재화(뽑기당 pullCost개) 단위로 맞춘다.
+  //   1개당 재화 = pullCost / rate  (환석 rate=160 → ×1, 뽑기권 rate=1 → ×pullCost)
+  var _lcfg = getGameConfig()[gameId];
+  var _rate = {};
+  if (_lcfg && _lcfg.currencies) _lcfg.currencies.forEach(function(c) { _rate[c.id] = c.rate || 1; });
+  var _pullCost = (typeof GACHA_CONFIG !== 'undefined' && GACHA_CONFIG[gameId] && GACHA_CONFIG[gameId].pullCost) || 160;
+  function _toJaehwa(e) { var r = _rate[e.currency] || _pullCost; return Math.round(e.delta * (_pullCost / r)); }
   all.forEach(function(e) {
     var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
     if (e.price != null) {
@@ -2908,9 +2915,10 @@ function renderLedgerModal() {
       if (inYear) { yPaid += e.price; yPaidN++; }
       if (inMonth) { mPaid += e.price; mPaidN++; }
     } else if (e.type === 'auto' && e.delta > 0) {
-      // 무료 획득: 가격 없는 자동 획득분의 재화 합
-      if (inYear) yFree += e.delta;
-      if (inMonth) mFree += e.delta;
+      // 무료 획득: 가격 없는 자동 획득분을 재화(환석 단위)로 환산해 합산
+      var _jv = _toJaehwa(e);
+      if (inYear) yFree += _jv;
+      if (inMonth) mFree += _jv;
     }
   });
   function _paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
