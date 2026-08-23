@@ -2992,7 +2992,8 @@ function renderLedgerModal() {
     '    </div>',
     priceSummary,
     '    <div class="ledger-list">' + rows + '</div>',
-    '    <div class="detail-footer">',
+    '    <div class="detail-footer ledger-footer">',
+    '      <button class="detail-btn-cancel" id="ledgerAddMemoBtn">＋ 메모 추가</button>',
     '      <button class="detail-btn-save" id="ledgerCloseBtn">닫기</button>',
     '    </div>',
     '  </div>',
@@ -3002,6 +3003,8 @@ function renderLedgerModal() {
   document.getElementById('ledgerOverlay').addEventListener('click', function(e) { if (e.target === this) closeLedgerModal(); });
   document.getElementById('ledgerCloseX').addEventListener('click', closeLedgerModal);
   document.getElementById('ledgerCloseBtn').addEventListener('click', closeLedgerModal);
+  var _addBtn = document.getElementById('ledgerAddMemoBtn');
+  if (_addBtn) _addBtn.addEventListener('click', ledgerAddMemo);
   var _older = document.getElementById('ledgerOlder'), _newer = document.getElementById('ledgerNewer');
   if (_older && _older.dataset.ym) _older.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
   if (_newer && _newer.dataset.ym) _newer.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
@@ -3025,18 +3028,28 @@ function ledgerSetMemo(ts) {
   var e = null;
   for (var i = 0; i < arr.length; i++) if (arr[i].ts === ts) { e = arr[i]; break; }
   if (!e) return;
+  _openMemoEditor(e.ts, e.memo, e.price);
+}
 
+// 새 독립 메모 항목 추가 (가격 선택 — 넣으면 유료 기록)
+function ledgerAddMemo() {
+  _openMemoEditor(null, '', null);
+}
+
+// ts=null이면 새 메모 생성, 아니면 해당 항목 편집
+function _openMemoEditor(ts, memo, price) {
+  var isNew = ts == null;
   var wrap = document.createElement('div');
   wrap.className = 'char-detail-overlay ledger-memo-overlay';
   wrap.innerHTML = [
     '<div class="char-detail-panel ledger-memo-editor">',
-    '  <div class="detail-header"><span class="detail-header-name">메모 · 가격</span>',
+    '  <div class="detail-header"><span class="detail-header-name">' + (isNew ? '메모 추가' : '메모 · 가격') + '</span>',
     '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
     '  <div class="ledger-memo-fields">',
     '    <label class="ledger-memo-field"><span>메모</span>',
-    '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(e.memo || '') + '" placeholder="예: 월정액 결제"></label>',
+    '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo || '') + '" placeholder="예: 월정액 결제"></label>',
     '    <label class="ledger-memo-field"><span>가격 (원)</span>',
-    '      <input type="text" inputmode="numeric" id="ledgerMemoPrice" value="' + (e.price != null ? e.price : '') + '" placeholder="선택 · 비우면 표시 안 함"></label>',
+    '      <input type="text" inputmode="numeric" id="ledgerMemoPrice" value="' + (price != null ? price : '') + '" placeholder="선택 · 비우면 표시 안 함"></label>',
     '  </div>',
     '  <div class="detail-footer">',
     '    <button class="detail-btn-save" id="ledgerMemoSave">저장</button>',
@@ -3048,15 +3061,23 @@ function ledgerSetMemo(ts) {
   wrap.addEventListener('click', function(ev) { if (ev.target === wrap) close(); });
   wrap.querySelector('[data-act="cancel"]').addEventListener('click', close);
   document.getElementById('ledgerMemoSave').addEventListener('click', function() {
-    var memo = document.getElementById('ledgerMemoText').value.trim();
+    var m = document.getElementById('ledgerMemoText').value.trim();
     var praw = document.getElementById('ledgerMemoPrice').value.replace(/[^0-9]/g, '');
+    var pv = parseInt(praw, 10);
+    var hasPrice = praw !== '' && !isNaN(pv) && pv > 0;
+    if (isNew && !m && !hasPrice) { close(); return; }  // 둘 다 비면 생성 안 함
     var a2 = loadLedger(_ledgerGame);
-    for (var j = 0; j < a2.length; j++) {
-      if (a2[j].ts === ts) {
-        a2[j].memo = memo;
-        var pv = parseInt(praw, 10);
-        if (praw !== '' && !isNaN(pv) && pv > 0) a2[j].price = pv; else delete a2[j].price;
-        break;
+    if (isNew) {
+      var entry = { ts: Date.now(), type: 'memo', memo: m };
+      if (hasPrice) entry.price = pv;
+      a2.push(entry);
+    } else {
+      for (var j = 0; j < a2.length; j++) {
+        if (a2[j].ts === ts) {
+          a2[j].memo = m;
+          if (hasPrice) a2[j].price = pv; else delete a2[j].price;
+          break;
+        }
       }
     }
     saveLedger(_ledgerGame, a2);
