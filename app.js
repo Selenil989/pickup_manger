@@ -3178,7 +3178,7 @@ function renderLedgerPage() {
       + '<span class="lcal-date">' + day + '</span>'
       + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + ' 전반</span>' : '')
       + (halfStart[ymd] ? '<span class="lcal-ver lcal-ver-half">후반</span>' : '')
-      + (calBadges[ymd] ? (Array.isArray(calBadges[ymd]) ? calBadges[ymd] : [calBadges[ymd]]).map(function(tid) { var t = CAL_BADGE_MAP[tid]; return t ? '<span class="lcal-badge-ev" style="--cbc:' + t.color + '">' + t.icon + '<b>' + (t.short || t.label) + '</b></span>' : ''; }).join('') : '')
+      + (calBadges[ymd] ? (Array.isArray(calBadges[ymd]) ? calBadges[ymd] : [calBadges[ymd]]).map(function(tid) { var t = CAL_BADGE_MAP[tid]; return t ? '<span class="lcal-badge-ev" style="--cbc:' + t.color + '">' + t.icon + '<b>' + t.label + '</b></span>' : ''; }).join('') : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
