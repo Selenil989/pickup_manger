@@ -3025,7 +3025,25 @@ function renderLedgerPage() {
   var verBounds = Object.keys(verMarks).sort().map(function(k) { return { d: k, v: verMarks[k] }; });
   function verForDay(ymd) { var f = null; for (var i = 0; i < verBounds.length; i++) { if (verBounds[i].d <= ymd) f = verBounds[i].v; else break; } return f; }
   var VER_COLORS = ['rgba(109,94,252,.13)', 'rgba(76,150,120,.13)', 'rgba(201,140,66,.12)', 'rgba(88,150,220,.13)', 'rgba(201,95,125,.12)', 'rgba(120,126,150,.14)'];
-  function verColor(v) { if (!v) return ''; var p = v.split('.'); return VER_COLORS[(parseInt(p[0] || 0) * 10 + parseInt(p[1] || 0)) % VER_COLORS.length]; }
+  var VER_COLORS_SOLID = ['#6d5efc', '#3ea877', '#c98c42', '#4f8fdc', '#d15d7d', '#7a7e96'];
+  function _verIdx(v) { var p = String(v).split('.'); return (parseInt(p[0] || 0) * 10 + parseInt(p[1] || 0)) % VER_COLORS.length; }
+  function verColor(v) { return v ? VER_COLORS[_verIdx(v)] : ''; }
+  function verColorSolid(v) { return v ? VER_COLORS_SOLID[_verIdx(v)] : ''; }
+
+  // 버전 전반/후반 분할 — 전반 = 시작~시작+전반기간(기본 21일=3주), 후반 = 나머지.
+  // (6주 버전 → 3주+3주, 5주 버전 → 3주+2주가 자동으로 됨)
+  var firstHalfDays = (pd.firstHalfDays && pd.firstHalfDays > 0) ? pd.firstHalfDays : 21;
+  function ledgerMd(ymd) { return ymd ? (parseInt(ymd.slice(5, 7), 10) + '/' + parseInt(ymd.slice(8, 10), 10)) : ''; }
+  var verSchedule = [];  // {ver, start, end, mid}
+  for (var _vi = 0; _vi < verBounds.length; _vi++) {
+    var _vs = verBounds[_vi].d;
+    var _ve = (_vi + 1 < verBounds.length) ? verBounds[_vi + 1].d : plannerAutoEndDate(_vs);
+    var _vm = new Date(_vs); _vm.setDate(_vm.getDate() + firstHalfDays); _vm = toLocalYMD(_vm);
+    if (_ve && _vm > _ve) _vm = _ve;
+    verSchedule.push({ ver: verBounds[_vi].v, start: _vs, end: _ve, mid: _vm });
+  }
+  var halfStart = {};  // 후반 시작일 → '후반' (달력 배지)
+  verSchedule.forEach(function(vp) { if (vp.mid && vp.mid !== vp.start) halfStart[vp.mid] = '후반'; });
 
   // 달력 셀
   var firstWd = new Date(y, m - 1, 1).getDay();
@@ -3042,7 +3060,8 @@ function renderLedgerPage() {
     var vbg = verColor(verForDay(ymd));
     cells += '<div class="' + cls + '" data-ymd="' + ymd + '"' + (vbg ? ' style="background:' + vbg + '"' : '') + '>'
       + '<span class="lcal-date">' + day + '</span>'
-      + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + '</span>' : '')
+      + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + ' 전반</span>' : '')
+      + (halfStart[ymd] ? '<span class="lcal-ver lcal-ver-half">후반</span>' : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
@@ -3068,6 +3087,21 @@ function renderLedgerPage() {
     '</div>'
   ].join('') : '';
 
+  // 이 달에 걸치는 버전 일정 범례 (달 넘어가는 일정도 시작~종료로 명확히)
+  var monthStartYmd = _ledgerMonth + '-01';
+  var monthEndYmd = _ledgerMonth + '-' + (daysIn < 10 ? '0' : '') + daysIn;
+  var schedRows = verSchedule.filter(function(vp) { return vp.start <= monthEndYmd && vp.end >= monthStartYmd; })
+    .map(function(vp) {
+      var col = verColorSolid(vp.ver) || 'rgba(255,255,255,.2)';
+      var isCur = curVerInfo && vp.ver === curVerInfo.ver;
+      return '<div class="lsch-row' + (isCur ? ' lsch-row--cur' : '') + '">'
+        + '<span class="lsch-badge" style="background:' + col + '">v' + vp.ver + '</span>'
+        + '<span class="lsch-ph"><b>전반</b> ' + ledgerMd(vp.start) + '~' + ledgerMd(vp.mid) + '</span>'
+        + '<span class="lsch-ph lsch-ph2"><b>후반</b> ' + ledgerMd(vp.mid) + '~' + ledgerMd(vp.end) + '</span>'
+        + '</div>';
+    }).join('');
+  var schedHtml = schedRows ? '<div class="ledger-sched"><div class="ledger-sched-title">이 달 버전 일정</div>' + schedRows + '</div>' : '';
+
   page.innerHTML = [
     '<div class="ledger-cal-head">',
     '  <button class="ledger-nav-btn" id="lpPrev" title="이전 달">◀</button>',
@@ -3079,6 +3113,7 @@ function renderLedgerPage() {
     '  <div class="lcal-wd">' + wd.map(function(w, ix) { return '<span' + (ix === 0 ? ' class="lcal-sun"' : ix === 6 ? ' class="lcal-sat"' : '') + '>' + w + '</span>'; }).join('') + '</div>',
     '  <div class="lcal-grid">' + cells + '</div>',
     '</div>',
+    schedHtml,
     '<div class="ledger-price-summary">',
     '  <div class="lps-row"><span class="lps-label">이 달</span>' + paidHtml(mPaid, mPaidN) + freeHtml(mFree) + '</div>',
     '  <div class="lps-row"><span class="lps-label">' + curYear + '년</span>' + paidHtml(yPaid, yPaidN) + freeHtml(yFree) + '</div>',
