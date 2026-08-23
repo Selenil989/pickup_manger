@@ -110,6 +110,10 @@ var DEFAULT_PASS_DATA = {
   endfield: {
     monthly: { composition: '오리지오메트리 12 + 오로베릴 6,000', conversion: '13.8뽑' },
     regular: { composition: '오리지오메트리 총 36 + 무기고 티켓 2,400', conversion: '캐릭터 5.4뽑 + 무기 약 10뽑' }
+  },
+  nte: {
+    monthly: { composition: '이상수정 300 + 2,700 (매일 90×30)', conversion: '18.75뽑' },
+    regular: { composition: '환석 680 + 무기 선택권 (추정)',        conversion: '약 9뽑'   }
   }
 };
 
@@ -1926,7 +1930,8 @@ var DEFAULT_PLANNER = {
   hsr:      { version: '4.4', startDate: '2026-07-15' },
   zzz:      { version: '3.1', startDate: '2026-07-29' },
   wuwa:     { version: '3.5', startDate: '2026-07-10' },
-  endfield: { version: '1.4', startDate: '2026-07-16' }
+  endfield: { version: '1.4', startDate: '2026-07-16' },
+  nte:      { version: '1.3', startDate: '2026-08-19' }
 };
 
 function loadPlannerData(gameId) {
