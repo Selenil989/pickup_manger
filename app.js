@@ -29,7 +29,7 @@ var CHAR_ROLES    = ['attack', 'stun', 'anomaly', 'support', 'defense', 'rupture
 var CHAR_ELEMENTS = ['physical', 'fire', 'ice', 'electric', 'ether', 'wind'];
 // 라벨은 전 게임 공통(키가 게임별로 달라 충돌 없음). 실제 옵션 목록은 편집 모달에서 현재 게임 데이터로 파생한다.
 var CHAR_ROLE_LABELS = {
-  attack: '강공', stun: '격파', anomaly: '이상', support: '지원', defense: '방어', rupture: '명파',           // ZZZ 특성
+  attack: '강공', stun: '격파', anomaly: '이상', support: '지원', defense: '방어', rupture: '명파', armorer: '단조', // ZZZ 특성
   nihility: '공허', remembrance: '기억', erudition: '지식', hunt: '수렵', destruction: '파멸',
   harmony: '화합', preservation: '보존', abundance: '풍요', elation: '환락',                                  // HSR 운명
   vanguard: '뱅가드', striker: '스트라이커', defender: '디펜더', guard: '가드', caster: '캐스터',             // 엔드필드 클래스

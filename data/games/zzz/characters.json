@@ -818,5 +818,35 @@
     "releaseDate": "2026-08-19",
     "releaseOrder": null,
     "isReleased": false
+  },
+  {
+    "id": "claret_flint",
+    "gameId": "zzz",
+    "basePerformance": null,
+    "name": "Claret Flint",
+    "nameKo": "클라렛·플린트",
+    "image": "클라렛.webp",
+    "rarity": 5,
+    "role": "armorer",
+    "element": "electric",
+    "specialElement": null,
+    "releaseDate": "2026-09-09",
+    "releaseOrder": null,
+    "isReleased": false
+  },
+  {
+    "id": "roxy",
+    "gameId": "zzz",
+    "basePerformance": null,
+    "name": "Roxy",
+    "nameKo": "록시",
+    "image": "록시.webp",
+    "rarity": 5,
+    "role": "stun",
+    "element": "wind",
+    "specialElement": null,
+    "releaseDate": "2026-09-09",
+    "releaseOrder": null,
+    "isReleased": false
   }
 ]
