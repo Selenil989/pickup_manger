@@ -1346,6 +1346,14 @@ select {
 #analysisActions { display: none; }
 body.is-admin #analysisActions { display: flex; }
 
+/* 사이드바 총 과금액 (항상 표시) */
+.sidebar-spend { margin: 8px 16px 6px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 9px; background: rgba(255,255,255,.02); }
+.ssp-title { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.ssp-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; padding: 1px 0; }
+.ssp-row > span { color: var(--muted); }
+.ssp-row b { color: #e5a34d; font-weight: 800; }
+.ssp-row--month b { color: var(--text); }
+
 /* 버전 플래너의 버전/기간 편집(설정·이월)은 어드민만 — 나머지는 공유값 읽기 전용 */
 body:not(.is-admin) .planner-config-btn,
 body:not(.is-admin) .planner-advance-btn { display: none; }

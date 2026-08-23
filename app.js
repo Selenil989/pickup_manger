@@ -2889,6 +2889,7 @@ function ledgerRerender() {
   var tab = document.getElementById('tabLedger');
   if (tab && tab.style.display !== 'none') renderLedgerPage();
   else renderLedgerModal();
+  renderSidebarSpend();  // 과금액 갱신
 }
 
 function ledgerYMD(ts) {
@@ -2960,6 +2961,31 @@ function ledgerRowHtml(gameId, e) {
 function ledgerSelectDay(ymd) {
   _ledgerDay = (_ledgerDay === ymd) ? null : ymd;  // 같은 날 다시 누르면 해제(월 전체)
   renderLedgerPage();
+}
+
+// 사이드바 총 과금액 (전 게임 합산, 올해·이번 달) — 보유 캐릭터 탭에 표시
+function renderSidebarSpend() {
+  var el = document.getElementById('sidebarSpend');
+  if (!el) return;
+  var year = String(new Date().getFullYear());
+  var curYm = ledgerYM(new Date().getTime());
+  var yearSum = 0, monthSum = 0;
+  try {
+    Object.keys(getGameConfig()).forEach(function(g) {
+      loadLedger(g).forEach(function(e) {
+        if (e.price != null) {
+          var eym = ledgerYM(e.ts);
+          if (eym.slice(0, 4) === year) yearSum += e.price;
+          if (eym === curYm) monthSum += e.price;
+        }
+      });
+    });
+  } catch (e) {}
+  el.innerHTML = [
+    '<div class="ssp-title">💳 총 과금액</div>',
+    '<div class="ssp-row"><span>' + year + '년</span><b>' + yearSum.toLocaleString() + '원</b></div>',
+    '<div class="ssp-row ssp-row--month"><span>이번 달</span><b>' + monthSum.toLocaleString() + '원</b></div>'
+  ].join('');
 }
 
 function renderLedgerPage() {
@@ -4347,6 +4373,9 @@ function init() {
         document.getElementById("tabCurrency").style.display  = tab === "currency"  ? "" : "none";
         document.getElementById("tabLedger").style.display    = tab === "ledger"    ? "" : "none";
         document.getElementById("analysisSideContent").style.display = tab === "analysis" ? "" : "none";
+        // 과금액은 항상 표시(모든 탭), 카드 데이터 갱신은 보유 캐릭터 탭만(관리자)
+        document.getElementById("analysisActions").style.display = (tab === "analysis" && !!window.IS_ADMIN) ? "flex" : "none";
+        renderSidebarSpend();
 
         if (tab === "currency") {
           // 가챠 분석에서 보고 있던 게임을 재화 탭에도 반영
@@ -4373,6 +4402,9 @@ function init() {
       document.getElementById("cardSyncBtn").onclick = function() {
         runCardSync();
       };
+      // 초기: 과금액 표시(항상) + 카드 데이터 갱신은 보유 캐릭터 탭(관리자)만
+      renderSidebarSpend();
+      document.getElementById("analysisActions").style.display = window.IS_ADMIN ? "flex" : "none";
 
       var rosterList = document.getElementById('rosterList');
       rosterList.addEventListener('scroll', function() {
