@@ -2488,6 +2488,19 @@ function renderPlannerSummaryHtml(pd) {
     ].join('');
   }
 
+  // 전반/후반 실제 날짜 구간 (전반 기간 = pd.firstHalfDays, 기본 21일)
+  var firstHalfDays = (pd.firstHalfDays && pd.firstHalfDays > 0) ? pd.firstHalfDays : 21;
+  function _md(x) { return x ? x.slice(5).replace('-', '/') : '?'; }
+  function halfSchedHtml(s, e) {
+    if (!s) return '';
+    var mid = new Date(s); mid.setDate(mid.getDate() + firstHalfDays); mid = toLocalYMD(mid);
+    if (e && mid > e) mid = e;
+    return '<div class="planner-half-sched">'
+         + '<span class="phs-first">전반 ' + _md(s) + '~' + _md(mid) + '</span>'
+         + '<span class="phs-second">후반 ' + _md(mid) + '~' + _md(e || '') + '</span>'
+         + '</div>';
+  }
+
   function goalInputs(domPfx, halfData) {
     return [
       '<div class="planner-sum-inputs">',
@@ -2516,6 +2529,7 @@ function renderPlannerSummaryHtml(pd) {
     '</div>',
     '<div class="planner-sum-card-goal">',
     '<div class="planner-sum-goal-section-label">현재 버전 목표</div>',
+    halfSchedHtml(startDate, effEnd),
     halfToggle('Cur', _plannerCurOpen, _plannerCurHalf),
     _plannerCurOpen ? goalInputs('Cur', curHalfData) : '',
     '</div>',
@@ -2536,6 +2550,7 @@ function renderPlannerSummaryHtml(pd) {
     '</div>',
     '<div class="planner-sum-card-goal">',
     '<div class="planner-sum-goal-section-label">다음 버전 목표</div>',
+    halfSchedHtml(nextStart, nextEnd),
     halfToggle('Next', _plannerNextOpen, _plannerNextHalf),
     _plannerNextOpen ? goalInputs('Next', nextHalfData) : '',
     '</div>',
@@ -4239,6 +4254,11 @@ function openPlannerConfigModal(gameId) {
     '        <label class="edit-label">종료일</label>',
     '        <input class="edit-input" id="pcfEndDate" type="date" value="' + escAttr(endDate) + '" />',
     '      </div>',
+    '      <div class="edit-row">',
+    '        <label class="edit-label">전반 기간(일)</label>',
+    '        <input class="edit-input" id="pcfFirstHalf" type="number" min="1" step="1" value="' + (parseInt(pd.firstHalfDays) || 21) + '" style="max-width:100px;" />',
+    '      </div>',
+    '      <p id="pcfHalfHint"    style="font-size:11px;color:var(--muted);margin:0;">후반 = 버전 종료일까지 나머지 (기본 전반 21일 = 3주)</p>',
     '      <p id="pcfAutoHint"    style="font-size:11px;color:var(--muted);margin:0;">' + initialHints.autoEndHint + '</p>',
     '      <p id="pcfNextHint"    style="font-size:11px;color:var(--acc,#7b68ee);margin:0;">' + initialHints.nextStartHint + '</p>',
     '    </div>',
@@ -4275,6 +4295,12 @@ function openPlannerConfigModal(gameId) {
     if (!sDate && eDate && pd.endDate) sDate = pd.endDate;
     // 버전/기간은 공유 설정(어드민만) — Supabase에 저장돼 전 유저에 반영. 목표는 개인 유지.
     if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, version, sDate, eDate);
+    // 전반 기간은 개인 플래너 blob에 저장(pickup_manager_ 접두사라 계정 동기화). 기본 21일.
+    var fhd = parseInt(document.getElementById('pcfFirstHalf').value) || 21;
+    if (fhd < 1) fhd = 21;
+    var pdNow = loadPlannerData(gameId);
+    pdNow.firstHalfDays = fhd;
+    savePlannerData(gameId, pdNow);
     close();
     renderCurrencyPage();
   };

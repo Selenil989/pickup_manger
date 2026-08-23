@@ -2743,6 +2743,18 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 }
 
 /* --- 전반/후반 토글 --- */
+/* 전반/후반 실제 날짜 구간 (버전 플래너) */
+.planner-half-sched {
+  display: flex;
+  gap: 8px;
+  margin: 2px 0 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.planner-half-sched span { flex: 1; }
+.planner-half-sched .phs-first  { color: var(--accent); }
+.planner-half-sched .phs-second { color: #e5a34d; }
+
 .planner-half-toggle {
   display: flex;
   gap: 4px;
