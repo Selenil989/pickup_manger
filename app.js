@@ -48,7 +48,8 @@ var GAME_META = {
   zzz:      { iconText: 'ZZ', iconBg: '#1a0f2e', iconColor: '#fbbf24' },
   hsr:      { iconText: 'SR', iconBg: '#1a1040', iconColor: '#a78bfa' },
   wuwa:     { iconText: 'WW', iconBg: '#0a1f1a', iconColor: '#34d399' },
-  endfield: { iconText: 'EF', iconBg: '#0d1f0a', iconColor: '#4ade80' }
+  endfield: { iconText: 'EF', iconBg: '#0d1f0a', iconColor: '#4ade80' },
+  nte:      { iconText: 'NE', iconBg: '#0f1a2e', iconColor: '#60a5fa' }
 };
 
 // ── Currency ──────────────────────────────────────────────────────────────────
@@ -145,6 +146,15 @@ var CURRENCY_CONFIG = {
       { id: 'crystal',          name: '오리지늄',          icon: 'assets/icons/endfield/ef1.webp', rate: 500, desc: '500개 = 1뽑', note: null, type: 'common'    },
       { id: 'limitedPermit',    name: '헤드헌팅 채용 허가증', icon: 'assets/icons/endfield/ef2.webp', rate: 1,   desc: '1개 = 1뽑',   note: null, type: 'character' },
       { id: 'armoryToken',      name: '무기고 증표',        icon: 'assets/icons/endfield/ef3.webp', rate: 198, desc: '198개 = 1뽑', note: null, type: 'weapon'    }
+    ]
+  },
+  nte: {
+    name: '이환',
+    currencies: [
+      { id: 'nteCur1', name: '환석',   icon: 'assets/icons/nte/nte1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'nteCur2', name: '폴리환석', icon: 'assets/icons/nte/nte2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'nteCur3', name: '한정 주사위', icon: 'assets/icons/nte/nte3.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'character' },
+      { id: 'nteCur4', name: '트라이키',   icon: 'assets/icons/nte/nte4.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'weapon'    }
     ]
   }
 };
@@ -3222,12 +3232,22 @@ function renderCurrencyPage() {
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 11: Game Config Management
 
+// 사용자가 명시적으로 삭제한 "기본 게임" id 목록 (자동 병합에서 제외해 삭제 의도 존중)
+function loadDeletedDefaults() {
+  try { var raw = localStorage.getItem('pickup_manager_deleted_defaults'); return raw ? JSON.parse(raw) : []; }
+  catch (e) { return []; }
+}
+
 function getGameConfig() {
-  try {
-    var raw = localStorage.getItem('pickup_manager_game_config');
-    if (raw) return JSON.parse(raw);
-  } catch (e) {}
-  return JSON.parse(JSON.stringify(CURRENCY_CONFIG));
+  var stored = null;
+  try { var raw = localStorage.getItem('pickup_manager_game_config'); if (raw) stored = JSON.parse(raw); } catch (e) {}
+  if (!stored) return JSON.parse(JSON.stringify(CURRENCY_CONFIG));  // 신규 계정: 전체 기본값
+  // 저장된 설정에 없는 기본 게임을 복원(병합) — 단, 사용자가 삭제한 기본 게임은 제외.
+  var deleted = loadDeletedDefaults();
+  Object.keys(CURRENCY_CONFIG).forEach(function(gid) {
+    if (!stored[gid] && deleted.indexOf(gid) === -1) stored[gid] = JSON.parse(JSON.stringify(CURRENCY_CONFIG[gid]));
+  });
+  return stored;
 }
 
 function saveGameConfig(config) {
@@ -3251,8 +3271,13 @@ function reorderGames(orderedIds) {
 function addGame(name, id) {
   var config = getGameConfig();
   if (config[id]) return false;
-  config[id] = { name: name, isCustom: true, currencies: [] };
+  // id가 기본 게임이면 기본 통화까지 복원, 아니면 빈 커스텀
+  config[id] = CURRENCY_CONFIG[id] ? JSON.parse(JSON.stringify(CURRENCY_CONFIG[id])) : { name: name, isCustom: true, currencies: [] };
   saveGameConfig(config);
+  // 삭제 목록에서 제거(다시 추가했으므로)
+  var del = loadDeletedDefaults();
+  var i = del.indexOf(id);
+  if (i !== -1) { del.splice(i, 1); try { localStorage.setItem('pickup_manager_deleted_defaults', JSON.stringify(del)); } catch (e) {} }
   return true;
 }
 
@@ -3267,6 +3292,11 @@ function deleteGame(gameId) {
   var config = getGameConfig();
   delete config[gameId];
   saveGameConfig(config);
+  // 기본 게임을 삭제하면 자동 병합에서 제외되도록 기록(삭제 의도 존중 — 커스텀 게임은 기록 안 함)
+  if (CURRENCY_CONFIG[gameId]) {
+    var del = loadDeletedDefaults();
+    if (del.indexOf(gameId) === -1) { del.push(gameId); try { localStorage.setItem('pickup_manager_deleted_defaults', JSON.stringify(del)); } catch (e) {} }
+  }
   try { localStorage.removeItem('pickup_manager_currency_' + gameId); } catch (e) {}
   if (appState.currentGame === gameId) {
     appState.currentGame = null;
