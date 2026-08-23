@@ -401,7 +401,18 @@ function setGame(gameId) {
   return loadGameData(gameId)
     .then(function(data) {
       var savedChars = loadCharactersFromLocalStorage(gameId);
-      appState.characters = savedChars && savedChars.length > 0 ? savedChars : data.characters;
+      if (savedChars && savedChars.length > 0) {
+        // 저장된 목록(사용자 편집·순서)을 유지하되, 소스(characters.json)에 새로 추가된
+        // 캐릭터를 병합한다. 안 그러면 게임 데이터에 캐릭터를 추가해도 기존 사용자에겐 안 보임.
+        var _seen = {};
+        for (var _si = 0; _si < savedChars.length; _si++) _seen[savedChars[_si].id] = true;
+        for (var _di = 0; _di < data.characters.length; _di++) {
+          if (!_seen[data.characters[_di].id]) savedChars.push(data.characters[_di]);
+        }
+        appState.characters = savedChars;
+      } else {
+        appState.characters = data.characters;
+      }
       appState.meta = data.meta;
       appState.banner = data.banner;
 
