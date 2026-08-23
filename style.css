@@ -2116,7 +2116,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   padding: 8px 16px; border-bottom: 1px solid var(--border); font-size: 12.5px;
 }
 .lps-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.lps-label { width: 40px; color: var(--muted); font-weight: 600; flex: none; }
+.lps-label { width: 48px; color: var(--muted); font-weight: 600; flex: none; white-space: nowrap; }
 .lps-paid b { color: #e5a34d; }
 .lps-paid em { color: var(--muted); font-style: normal; font-size: 11px; }
 .lps-free { color: var(--muted); }
