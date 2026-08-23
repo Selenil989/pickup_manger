@@ -3242,10 +3242,10 @@ function _openMemoEditor(entry) {
     '  <div class="ledger-split">',
     '    <div class="ledger-split-title">획득 +' + delta.toLocaleString() + ' 나누기 (개수)</div>',
     '    <div class="ledger-split-row">',
-    '      <label>무료 <input type="text" inputmode="numeric" id="ledgerFreeDelta" value="' + freeD + '"></label>',
-    '      <span>유료 <b id="ledgerPaidDelta">' + (delta - freeD) + '</b></span>',
+    '      <label>유료 <input type="text" inputmode="numeric" id="ledgerSplitPaid" value="' + (delta - freeD) + '"></label>',
+    '      <span>무료 <b id="ledgerSplitFree">' + freeD + '</b></span>',
     '    </div>',
-    '    <div class="ledger-split-note">무료분만 무료 재화 획득으로 집계됩니다. 유료분 결제 금액은 위 \'가격\'에 직접 입력하세요.</div>',
+    '    <div class="ledger-split-note">유료분은 재화 환산하지 않습니다(결제 금액은 위 \'가격\'에 입력). 무료분만 무료 재화 획득으로 집계됩니다.</div>',
     '  </div>'
   ].join('') : '';
 
@@ -3276,11 +3276,11 @@ function _openMemoEditor(entry) {
     b.addEventListener('click', function() { document.getElementById('ledgerMemoPrice').value = this.dataset.amt; });
   });
   if (isAuto) {
-    document.getElementById('ledgerFreeDelta').addEventListener('input', function() {
+    document.getElementById('ledgerSplitPaid').addEventListener('input', function() {
       var v = parseInt(this.value.replace(/[^0-9]/g, ''), 10);
       if (isNaN(v)) v = 0;
       v = Math.max(0, Math.min(delta, v));
-      document.getElementById('ledgerPaidDelta').textContent = (delta - v);
+      document.getElementById('ledgerSplitFree').textContent = (delta - v);
     });
   }
   document.getElementById('ledgerMemoSave').addEventListener('click', function() {
@@ -3290,9 +3290,9 @@ function _openMemoEditor(entry) {
     var hasPrice = praw !== '' && !isNaN(pv) && pv > 0;
     var freeVal = null;
     if (isAuto) {
-      var fraw = document.getElementById('ledgerFreeDelta').value.replace(/[^0-9]/g, '');
-      if (fraw === '') freeVal = delta;
-      else { var fv = parseInt(fraw, 10); freeVal = isNaN(fv) ? delta : Math.max(0, Math.min(delta, fv)); }
+      var praw2 = document.getElementById('ledgerSplitPaid').value.replace(/[^0-9]/g, '');
+      var paidCount = (praw2 === '' || isNaN(parseInt(praw2, 10))) ? 0 : Math.max(0, Math.min(delta, parseInt(praw2, 10)));
+      freeVal = delta - paidCount;  // 무료분 = 전체 − 유료 입력
     }
     if (isNew && !m && !hasPrice) { close(); return; }
     var a2 = loadLedger(_ledgerGame);
