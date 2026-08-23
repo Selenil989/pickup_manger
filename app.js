@@ -2828,9 +2828,9 @@ function renderLedgerModal() {
       + '<span class="ledger-cur">' + ledgerEsc(currencyName(gameId, e.currency)) + '</span>'
       + '<span class="ledger-delta ' + cls + '">' + sign + e.delta.toLocaleString() + '</span>'
       + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
-      + (e.memo ? '<span class="ledger-memo-text ledger-memo-inline">' + ledgerEsc(e.memo) + '</span>' : '')
       + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
       + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
+      + (e.memo ? '<span class="ledger-memo-text ledger-memo-inline">' + ledgerEsc(e.memo) + '</span>' : '')
       + '</div>';
   }).join('') : '<div class="ledger-empty">아직 기록이 없습니다. 재화 수량을 바꾸면 여기에 자동으로 남습니다.</div>';
 
