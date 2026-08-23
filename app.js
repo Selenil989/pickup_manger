@@ -418,14 +418,25 @@ function setGame(gameId) {
     .then(function(data) {
       var savedChars = loadCharactersFromLocalStorage(gameId);
       if (savedChars && savedChars.length > 0) {
-        // 저장된 목록(사용자 편집·순서)을 유지하되, 소스(characters.json)에 새로 추가된
-        // 캐릭터를 병합한다. 안 그러면 게임 데이터에 캐릭터를 추가해도 기존 사용자에겐 안 보임.
-        var _seen = {};
-        for (var _si = 0; _si < savedChars.length; _si++) _seen[savedChars[_si].id] = true;
-        for (var _di = 0; _di < data.characters.length; _di++) {
-          if (!_seen[data.characters[_di].id]) savedChars.push(data.characters[_di]);
+        // source(characters.json)를 정본으로 삼아 병합한다:
+        //  - source에 있는 캐릭터는 source 최신값 사용 → 이름·속성 정정이 항상 반영됨
+        //    (안 그러면 캐시된 옛 이름[예: 잔코우]이 계속 남음)
+        //  - 사용자가 순서를 바꿨을 수 있으니 저장 목록의 순서를 유지
+        //  - source에 없는(사용자가 직접 만든) 캐릭터만 저장본 그대로 보존
+        //  - source에 새로 추가된 캐릭터는 뒤에 append
+        var _srcById = {};
+        for (var _i = 0; _i < data.characters.length; _i++) _srcById[data.characters[_i].id] = data.characters[_i];
+        var _used = {};
+        var _merged = [];
+        for (var _j = 0; _j < savedChars.length; _j++) {
+          var _sc = savedChars[_j];
+          if (_srcById[_sc.id]) { _merged.push(_srcById[_sc.id]); _used[_sc.id] = true; }
+          else if (!_used[_sc.id]) { _merged.push(_sc); _used[_sc.id] = true; }  // 사용자 생성 캐릭터
         }
-        appState.characters = savedChars;
+        for (var _k = 0; _k < data.characters.length; _k++) {
+          if (!_used[data.characters[_k].id]) { _merged.push(data.characters[_k]); _used[data.characters[_k].id] = true; }
+        }
+        appState.characters = _merged;
       } else {
         appState.characters = data.characters;
       }
