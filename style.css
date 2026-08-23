@@ -1883,7 +1883,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 }
 
 .pass-card-value {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text);
   white-space: normal;
