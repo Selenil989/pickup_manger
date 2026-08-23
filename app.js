@@ -701,8 +701,8 @@ function renderCardGrid() {
     var orderMap = {};
     for (var oi = 0; oi < _charCustomOrder.length; oi++) orderMap[_charCustomOrder[oi]] = oi;
     sortedChars.sort(function(a, b) {
-      var ia = orderMap[a.id] !== undefined ? orderMap[a.id] : 99999;
-      var ib = orderMap[b.id] !== undefined ? orderMap[b.id] : 99999;
+      var ia = orderMap[a.id] !== undefined ? orderMap[a.id] : -1;  // 커스텀 순서에 없는 신규 캐릭터는 최상단
+      var ib = orderMap[b.id] !== undefined ? orderMap[b.id] : -1;
       return ia - ib;
     });
   } else {
