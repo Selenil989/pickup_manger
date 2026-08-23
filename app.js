@@ -2901,13 +2901,18 @@ function renderLedgerModal() {
   var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달 (mFree = 무료 획득 재화 환산)
   var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
   var tPaid = 0, tPaidN = 0;              // 전체(유료만)
-  // 재화 환산: 뽑기권(rate=1 등)도 프리미엄 재화(뽑기당 pullCost개) 단위로 맞춘다.
-  //   1개당 재화 = pullCost / rate  (환석 rate=160 → ×1, 뽑기권 rate=1 → ×pullCost)
+  // 재화 환산: 뽑기권(rate=1 등)도 프리미엄 재화 단위로 맞춘다. 게임마다 프리미엄 재화의
+  // rate가 다르므로(환석/이상수정 160, 엔드필드 오리지늄 500 …) 그 게임 재화 config에서
+  // 기준 rate = 가장 큰 rate를 뽑아 쓴다. 환산량 = delta × (기준rate / 재화rate)
+  //   nte:      환석(160)→×1,   주사위(1)→×160
+  //   endfield: 오리지늄(500)→×1, 허가증(1)→×500
   var _lcfg = getGameConfig()[gameId];
   var _rate = {};
-  if (_lcfg && _lcfg.currencies) _lcfg.currencies.forEach(function(c) { _rate[c.id] = c.rate || 1; });
-  var _pullCost = (typeof GACHA_CONFIG !== 'undefined' && GACHA_CONFIG[gameId] && GACHA_CONFIG[gameId].pullCost) || 160;
-  function _toJaehwa(e) { var r = _rate[e.currency] || _pullCost; return Math.round(e.delta * (_pullCost / r)); }
+  var _baseRate = 1;
+  if (_lcfg && _lcfg.currencies) _lcfg.currencies.forEach(function(c) {
+    var r = c.rate || 1; _rate[c.id] = r; if (r > _baseRate) _baseRate = r;
+  });
+  function _toJaehwa(e) { var r = _rate[e.currency] || _baseRate; return Math.round(e.delta * (_baseRate / r)); }
   all.forEach(function(e) {
     var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
     if (e.price != null) {
