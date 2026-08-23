@@ -2183,6 +2183,15 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lcal-ver { font-size: 10px; font-weight: 800; color: #b9aeff; background: rgba(139,124,255,.18); padding: 0 5px; border-radius: 5px; line-height: 1.5; }
 .lcal-ver-cur { background: var(--accent, #6d5efc); color: #fff; }
 .lcal-ver-half { color: #e5a34d; background: rgba(229,163,77,.18); }
+/* 커스텀 일정 뱃지 (달력 셀 — 더블클릭 추가, 색상·아이콘 구분) */
+.lcal-badge-ev { display: inline-flex; align-items: center; gap: 2px; font-size: 9.5px; font-weight: 800; color: var(--cbc); background: rgba(255,255,255,.05); border: 1px solid var(--cbc); padding: 0 4px; border-radius: 5px; line-height: 1.5; white-space: nowrap; }
+.lcal-badge-ev b { font-weight: 800; }
+/* 뱃지 선택 팝업 칩 */
+.calbadge-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.calbadge-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--cbc); background: transparent; color: var(--cbc); cursor: pointer; font-size: 13px; font-weight: 700; transition: background .12s, color .12s; }
+.calbadge-chip:hover { background: rgba(255,255,255,.06); }
+.calbadge-chip--on { background: var(--cbc); color: #fff; }
+.calbadge-ic { font-size: 13px; line-height: 1; }
 /* 이 달 버전 일정 범례 */
 .ledger-sched { max-width: 1040px; margin: 0 auto 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.02); }
 .ledger-sched-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }

@@ -2859,6 +2859,15 @@ function loadLedger(gameId) {
 function saveLedger(gameId, arr) {
   try { localStorage.setItem('pickup_manager_ledger_' + gameId, JSON.stringify(arr)); } catch (e) {}
 }
+
+// 달력 날짜별 커스텀 뱃지 — 더블클릭으로 추가/편집. 개인 저장(pickup_manager_ 접두사 → 계정 동기화).
+function loadCalBadges(gameId) {
+  try { var raw = localStorage.getItem('pickup_manager_calbadge_' + gameId); return raw ? JSON.parse(raw) : {}; }
+  catch (e) { return {}; }
+}
+function saveCalBadges(gameId, obj) {
+  try { localStorage.setItem('pickup_manager_calbadge_' + gameId, JSON.stringify(obj)); } catch (e) {}
+}
 function appendLedger(gameId, entry) {
   var arr = loadLedger(gameId);
   arr.push(entry);
@@ -2874,6 +2883,19 @@ function currencyName(gameId, curId) {
 var _ledgerGame = null;
 var _ledgerMonth = null;  // 보고 있는 월 'YYYY-MM' (null이면 최신 월)
 var _ledgerDay = null;    // 달력에서 선택한 날 'YYYY-MM-DD' (null이면 월 전체)
+
+// 달력 커스텀 일정 뱃지 타입 (subgamecals 스타일 — 색상·아이콘으로 구분). 더블클릭으로 추가.
+var CAL_BADGE_TYPES = [
+  { id: 'pickup',  label: '픽업',           short: '픽업',    icon: '★',  color: '#e5486d' },
+  { id: 'update',  label: '업데이트',        short: '업데이트', icon: '⚡', color: '#e5a34d' },
+  { id: 'stream',  label: '공식방송',        short: '방송',    icon: '📺', color: '#40c4d6' },
+  { id: 'event',   label: '이벤트',          short: '이벤트',  icon: '🎉', color: '#3ea877' },
+  { id: 'offline', label: '오프라인 이벤트', short: '오프라인', icon: '📍', color: '#8b7cff' },
+  { id: 'release', label: '출시',            short: '출시',    icon: '🚀', color: '#c98c42' }
+];
+var CAL_BADGE_MAP = {};
+CAL_BADGE_TYPES.forEach(function(t) { CAL_BADGE_MAP[t.id] = t; });
+var _calClickTimer = null, _calClickYmd = null;  // 단일/더블 클릭 판별
 
 function openLedgerModal(gameId) {
   _ledgerGame = gameId;
@@ -2976,6 +2998,44 @@ function ledgerRowHtml(gameId, e) {
 function ledgerSelectDay(ymd) {
   _ledgerDay = (_ledgerDay === ymd) ? null : ymd;  // 같은 날 다시 누르면 해제(월 전체)
   renderLedgerPage();
+}
+
+// 달력 날짜 더블클릭 → 일정 뱃지 유형 선택(여러 개 토글 가능)
+function openCalBadgeMenu(gameId, ymd) {
+  var modal = document.getElementById('ledgerModal');
+  if (!modal) return;
+  var dayLabel = parseInt(ymd.slice(5, 7), 10) + '월 ' + parseInt(ymd.slice(8, 10), 10) + '일';
+  function curArr() { var a = loadCalBadges(gameId)[ymd]; if (!Array.isArray(a)) a = a ? [a] : []; return a; }
+  var cur = curArr();
+  var chips = CAL_BADGE_TYPES.map(function(t) {
+    var on = cur.indexOf(t.id) !== -1;
+    return '<button class="calbadge-chip' + (on ? ' calbadge-chip--on' : '') + '" data-type="' + t.id + '" style="--cbc:' + t.color + '">'
+      + '<span class="calbadge-ic">' + t.icon + '</span>' + t.label + '</button>';
+  }).join('');
+  modal.innerHTML =
+    '<div class="char-detail-overlay" id="cbmOverlay">'
+    + '<div class="char-detail-panel" style="width:320px;">'
+    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">' + dayLabel + ' 일정 뱃지</div></div>'
+    + '<button class="detail-close-btn" id="cbmClose">✕</button></div>'
+    + '<div class="detail-body" style="gap:10px;"><div class="calbadge-grid">' + chips + '</div>'
+    + '<p style="font-size:11px;color:var(--muted);margin:2px 0 0;">칩을 눌러 켜고/끄세요 · 여러 개 선택 가능</p></div>'
+    + '</div></div>';
+  modal.style.display = 'block';
+  var close = function() { modal.style.display = 'none'; modal.innerHTML = ''; renderLedgerPage(); };
+  document.getElementById('cbmClose').onclick = close;
+  document.getElementById('cbmOverlay').onclick = function(e) { if (e.target === this) close(); };
+  modal.querySelectorAll('.calbadge-chip').forEach(function(btn) {
+    btn.onclick = function() {
+      var type = this.dataset.type;
+      var all = loadCalBadges(gameId);
+      var arr = curArr();
+      var i = arr.indexOf(type);
+      if (i === -1) arr.push(type); else arr.splice(i, 1);
+      if (arr.length) all[ymd] = arr; else delete all[ymd];
+      saveCalBadges(gameId, all);
+      this.classList.toggle('calbadge-chip--on');
+    };
+  });
 }
 
 // 사이드바 총 과금액 (전 게임 합산, 올해·이번 달) — 보유 캐릭터 탭에 표시
@@ -3105,6 +3165,7 @@ function renderLedgerPage() {
   var daysIn = new Date(y, m, 0).getDate();
   var todayYmd = ledgerYMD(new Date().getTime());
   var wd = ['일', '월', '화', '수', '목', '금', '토'];
+  var calBadges = loadCalBadges(gameId);   // 날짜별 커스텀 일정 뱃지(더블클릭)
   var cells = '';
   for (var i = 0; i < firstWd; i++) cells += '<div class="lcal-cell lcal-blank"></div>';
   for (var day = 1; day <= daysIn; day++) {
@@ -3117,6 +3178,7 @@ function renderLedgerPage() {
       + '<span class="lcal-date">' + day + '</span>'
       + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + ' 전반</span>' : '')
       + (halfStart[ymd] ? '<span class="lcal-ver lcal-ver-half">후반</span>' : '')
+      + (calBadges[ymd] ? (Array.isArray(calBadges[ymd]) ? calBadges[ymd] : [calBadges[ymd]]).map(function(tid) { var t = CAL_BADGE_MAP[tid]; return t ? '<span class="lcal-badge-ev" style="--cbc:' + t.color + '">' + t.icon + '<b>' + (t.short || t.label) + '</b></span>' : ''; }).join('') : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
@@ -3186,8 +3248,20 @@ function renderLedgerPage() {
   document.getElementById('lpNext').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, 1)); });
   var _lvbE = document.getElementById('lvbEditVer'); if (_lvbE) _lvbE.addEventListener('click', function() { openPlannerConfigModal(gameId); });
   var addb = document.getElementById('lpAddMemo'); if (addb) addb.addEventListener('click', ledgerAddMemo);
+  // 단일클릭=날짜 선택, 더블클릭=일정 뱃지. 단일클릭은 재렌더로 셀을 교체하므로
+  // 네이티브 dblclick이 안 잡힌다 → 단일클릭을 살짝 지연시켜 수동 판별.
   page.querySelectorAll('.lcal-cell:not(.lcal-blank)').forEach(function(c) {
-    c.addEventListener('click', function() { if (this.dataset.ymd) ledgerSelectDay(this.dataset.ymd); });
+    c.addEventListener('click', function() {
+      var ymd = this.dataset.ymd; if (!ymd) return;
+      if (_calClickTimer && _calClickYmd === ymd) {              // 두 번째 클릭 → 더블클릭
+        clearTimeout(_calClickTimer); _calClickTimer = null; _calClickYmd = null;
+        openCalBadgeMenu(_ledgerGame, ymd);
+        return;
+      }
+      if (_calClickTimer) clearTimeout(_calClickTimer);
+      _calClickYmd = ymd;
+      _calClickTimer = setTimeout(function() { _calClickTimer = null; _calClickYmd = null; ledgerSelectDay(ymd); }, 240);
+    });
   });
   page.querySelectorAll('.ledger-memo-btn').forEach(function(b) { b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); }); });
   page.querySelectorAll('.ledger-del-btn').forEach(function(b) { b.addEventListener('click', function() { ledgerDelete(parseInt(this.dataset.ts, 10)); }); });
