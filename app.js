@@ -151,10 +151,10 @@ var CURRENCY_CONFIG = {
   nte: {
     name: '이환',
     currencies: [
-      { id: 'nteCur1', name: '환석',   icon: 'assets/icons/nte/nte1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
-      { id: 'nteCur2', name: '폴리환석', icon: 'assets/icons/nte/nte2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
-      { id: 'nteCur3', name: '한정 주사위', icon: 'assets/icons/nte/nte3.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'character' },
-      { id: 'nteCur4', name: '트라이키',   icon: 'assets/icons/nte/nte4.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'weapon'    }
+      { id: 'nteCur1', name: '이상수정',   icon: 'assets/icons/nte/nte1.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'nteCur2', name: '환석',       icon: 'assets/icons/nte/nte2.webp', rate: 160, desc: '160개 = 1뽑', note: null, type: 'common'    },
+      { id: 'nteCur3', name: '진실의 주사위', icon: 'assets/icons/nte/nte3.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'character' },
+      { id: 'nteCur4', name: '삼중 열쇠',   icon: 'assets/icons/nte/nte4.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'weapon'    }
     ]
   }
 };
