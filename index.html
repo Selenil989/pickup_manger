@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가챠 투자 분석기</title>
-    <link rel="stylesheet" href="style.css?v=20260823191100">
+    <link rel="stylesheet" href="style.css?v=20260823191850">
   </head>
   <body>
     <div class="app-layout">
@@ -28,9 +28,9 @@
 
         <!-- Nav tabs -->
         <nav class="sidebar-nav">
-          <button class="nav-tab active" data-tab="analysis">가챠 분석</button>
+          <button class="nav-tab active" data-tab="analysis">보유 캐릭터</button>
           <button class="nav-tab" data-tab="currency">보유 재화</button>
-          <button class="nav-tab" data-tab="ledger">내역</button>
+          <button class="nav-tab" data-tab="ledger">캘린더</button>
         </nav>
 
         <!-- Analysis side content (hidden when currency tab is active) -->
@@ -47,7 +47,7 @@
         </div>
         <!-- Data update actions (moved to bottom) -->
         <div id="analysisActions" class="sidebar-actions">
-          <button id="metaUpdateBtn" class="side-action-btn" disabled>메타 업데이트</button>
+          <button id="metaUpdateBtn" class="side-action-btn" disabled style="display:none">메타 업데이트</button>
           <button id="cardSyncBtn" class="side-action-btn" disabled>카드 데이터 갱신</button>
         </div>
         <!-- Personal settings save/load -->
@@ -132,8 +132,8 @@
 
     <!-- Scripts: supabase auth first, then engine, then app -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js?v=20260823191100"></script>
-    <script src="evaluationEngine.js?v=20260823191100"></script>
-    <script src="app.js?v=20260823191100"></script>
+    <script src="auth.js?v=20260823191850"></script>
+    <script src="evaluationEngine.js?v=20260823191850"></script>
+    <script src="app.js?v=20260823191850"></script>
   </body>
 </html>

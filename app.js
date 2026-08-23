@@ -666,7 +666,7 @@ function renderCardGrid() {
 
   if (!_cardHintDismissed) {
     html += '<div class="card-hint-bar" id="cardHintBar">' +
-      '<span class="card-hint-item"><span class="card-hint-icon">👆</span> 클릭 — 분석 열기</span>' +
+      '<span class="card-hint-item"><span class="card-hint-icon">👆</span> 클릭 — 보유 편집</span>' +
       '<span class="card-hint-sep">·</span>' +
       '<span class="card-hint-item"><span class="card-hint-icon">✌</span> 더블클릭 — 보유 토글</span>' +
       '<span class="card-hint-sep">·</span>' +
@@ -775,7 +775,7 @@ function renderCardGrid() {
       card.addEventListener('click', function(e) {
         if (_cardDragging) return;
         clearTimeout(clickTimer);
-        clickTimer = setTimeout(function() { onCharacterChange(charId); }, 220);
+        clickTimer = setTimeout(function() { openCharacterDetail(charId); }, 220);
       });
       card.addEventListener('dblclick', function(e) {
         clearTimeout(clickTimer);
