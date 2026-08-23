@@ -2946,6 +2946,7 @@ function ledgerSelectDay(ymd) {
 
 function renderLedgerPage() {
   var gameId = _currencyTab || appState.currentGame;
+  if (gameId !== _ledgerGame) { _ledgerMonth = null; _ledgerDay = null; }  // 게임 바뀌면 최신 월로
   _ledgerGame = gameId;
   var page = document.getElementById('ledgerPage');
   if (!page) return;
@@ -4149,6 +4150,9 @@ function init() {
         if (currentTab === "currency") {
           _currencyTab = gameId;
           renderCurrencyPage();
+        } else if (currentTab === "ledger") {
+          _currencyTab = gameId;
+          renderLedgerPage();
         } else {
           onGameChange(gameId);
         }
