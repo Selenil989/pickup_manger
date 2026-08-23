@@ -448,5 +448,35 @@
     "releaseDate": "2026-08-09",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "typhoeus",
+    "name": "Typhoeus",
+    "nameKo": "티프로스",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "striker",
+    "element": "nature",
+    "specialElement": null,
+    "image": "typhoeus.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-09-02",
+    "isReleased": false,
+    "version": "1.5"
+  },
+  {
+    "id": "purrchena",
+    "name": "Purrchena",
+    "nameKo": "푸치나",
+    "gameId": "endfield",
+    "rarity": 5,
+    "role": "defender",
+    "element": "physical",
+    "specialElement": null,
+    "image": "purrchena.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-09-02",
+    "isReleased": false,
+    "version": "1.5"
   }
 ]
