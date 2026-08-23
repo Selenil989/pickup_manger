@@ -172,6 +172,16 @@ var GACHA_CONFIG = {
   nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 0, packagePulls: 0 }
 };
 
+// 뽑기 원가 — 깡트럭 뽑당 원 + 평균 명함/전무 뽑수(기댓값). 엔드필드는 재화 구조가 달라
+// 뽑당 원가가 조금 높고, 전무는 대부분 부산물로 충당돼 실질 합계(sumAvg)를 따로 둔다.
+var PULL_COST = {
+  hsr:      { won: 2356, charAvg: 94, weaponAvg: 65 },
+  zzz:      { won: 2356, charAvg: 94, weaponAvg: 65 },
+  wuwa:     { won: 2356, charAvg: 87, weaponAvg: 55 },
+  nte:      { won: 2356, charAvg: 70, weaponAvg: 60 },
+  endfield: { won: 2600, charAvg: 79, weaponAvg: 56, sumAvg: 86, note: '전무는 대부분 부산물로 충당' }
+};
+
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 1: Utilities
 
@@ -2701,10 +2711,31 @@ function renderPassCards(gameId) {
       '</div>'
     ].join('');
   }
+  function costCard() {
+    var c = PULL_COST[gameId];
+    if (!c) return '';
+    var r1k = function(n) { return Math.round(n / 1000) * 1000; };
+    var won = function(n) { return '약 ' + r1k(n).toLocaleString() + '원'; };
+    var charCost = c.charAvg * c.won, wpCost = c.weaponAvg * c.won;
+    var sumPulls = c.sumAvg != null ? c.sumAvg : (c.charAvg + c.weaponAvg);
+    var sumCost = sumPulls * c.won;
+    return [
+      '<div class="pass-card pass-card--cost">',
+      '  <div class="pass-card-header"><span class="pass-card-title">뽑기 원가</span><span class="pass-cost-per">깡트럭 뽑당 ' + c.won.toLocaleString() + '원</span></div>',
+      '  <div class="pass-card-body">',
+      '    <div class="pass-card-row"><span class="pass-card-label">명함 ~' + c.charAvg + '뽑</span><span class="pass-card-value">' + won(charCost) + '</span></div>',
+      '    <div class="pass-card-row"><span class="pass-card-label">전무 ~' + c.weaponAvg + '뽑</span><span class="pass-card-value">' + won(wpCost) + '</span></div>',
+      '    <div class="pass-card-row pass-card-row--end"><span class="pass-card-label">명전 합계 ~' + sumPulls + '뽑</span><span class="pass-card-value pass-conversion">' + won(sumCost) + '</span></div>',
+      (c.note ? '    <div class="pass-cost-note">' + c.note + '</div>' : ''),
+      '  </div>',
+      '</div>'
+    ].join('');
+  }
   return [
     '<div class="pass-cards">',
     card('월정액', 'monthly'),
     card('버전 패스', 'regular'),
+    costCard(),
     '</div>'
   ].join('');
 }
