@@ -2842,11 +2842,29 @@ function currencyName(gameId, curId) {
 }
 
 var _ledgerGame = null;
+var _ledgerMonth = null;  // 보고 있는 월 'YYYY-MM' (null이면 최신 월)
 
 function openLedgerModal(gameId) {
   _ledgerGame = gameId;
+  _ledgerMonth = null;  // 열 때마다 최신 월부터
   renderLedgerModal();
   document.getElementById('ledgerModal').style.display = 'block';
+}
+
+// ts → 'YYYY-MM'
+function ledgerYM(ts) {
+  var d = new Date(ts);
+  var m = d.getMonth() + 1;
+  return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m;
+}
+// 'YYYY-MM' → '2026년 8월'
+function ledgerYMLabel(ym) {
+  var p = ym.split('-');
+  return p[0] + '년 ' + parseInt(p[1], 10) + '월';
+}
+function ledgerGoMonth(ym) {
+  _ledgerMonth = ym;
+  renderLedgerModal();
 }
 
 function closeLedgerModal() {
@@ -2864,11 +2882,31 @@ function ledgerEsc(s) {
 
 function renderLedgerModal() {
   var gameId  = _ledgerGame;
-  var entries = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });  // 최신순
+  var all = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });  // 최신순
+
+  // 월별로 나누기: 존재하는 월 목록(최신순) + 현재 보는 월 결정
+  var monthsPresent = [];
+  var seenM = {};
+  all.forEach(function(e) { var ym = ledgerYM(e.ts); if (!seenM[ym]) { seenM[ym] = true; monthsPresent.push(ym); } });
+  if (!_ledgerMonth || monthsPresent.indexOf(_ledgerMonth) === -1) _ledgerMonth = monthsPresent[0] || null;
+
+  var entries = _ledgerMonth ? all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; }) : [];
   var gained = 0, spent = 0;
   entries.forEach(function(e) {
     if (e.type === 'auto') { if (e.delta > 0) gained += e.delta; else spent += -e.delta; }
   });
+
+  // 월 네비게이션 (◀ 이전 달 / ▶ 다음 달, 기록 있는 달끼리 이동)
+  var curIdx  = _ledgerMonth ? monthsPresent.indexOf(_ledgerMonth) : -1;
+  var olderYM = curIdx >= 0 && curIdx < monthsPresent.length - 1 ? monthsPresent[curIdx + 1] : null;  // 더 과거
+  var newerYM = curIdx > 0 ? monthsPresent[curIdx - 1] : null;                                        // 더 최근
+  var monthNav = _ledgerMonth ? [
+    '<div class="ledger-monthnav">',
+    '  <button class="ledger-nav-btn" id="ledgerOlder"' + (olderYM ? ' data-ym="' + olderYM + '"' : ' disabled') + ' title="이전 달">◀</button>',
+    '  <span class="ledger-month-label">' + ledgerYMLabel(_ledgerMonth) + ' <span class="ledger-month-count">· ' + entries.length + '건</span></span>',
+    '  <button class="ledger-nav-btn" id="ledgerNewer"' + (newerYM ? ' data-ym="' + newerYM + '"' : ' disabled') + ' title="다음 달">▶</button>',
+    '</div>'
+  ].join('') : '';
 
   var rows = entries.length ? entries.map(function(e) {
     if (e.type === 'memo') {
@@ -2900,6 +2938,7 @@ function renderLedgerModal() {
     '      <span class="detail-header-name">거래 내역 (영수증)</span>',
     '      <button class="detail-close-btn" id="ledgerCloseX">✕</button>',
     '    </div>',
+    monthNav,
     '    <div class="ledger-summary">',
     '      <span class="ledger-sum ledger-sum--gain">획득 +' + gained.toLocaleString() + '</span>',
     '      <span class="ledger-sum ledger-sum--spend">소모 −' + spent.toLocaleString() + '</span>',
@@ -2915,6 +2954,9 @@ function renderLedgerModal() {
   document.getElementById('ledgerOverlay').addEventListener('click', function(e) { if (e.target === this) closeLedgerModal(); });
   document.getElementById('ledgerCloseX').addEventListener('click', closeLedgerModal);
   document.getElementById('ledgerCloseBtn').addEventListener('click', closeLedgerModal);
+  var _older = document.getElementById('ledgerOlder'), _newer = document.getElementById('ledgerNewer');
+  if (_older && _older.dataset.ym) _older.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
+  if (_newer && _newer.dataset.ym) _newer.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
   document.getElementById('ledgerModal').querySelectorAll('.ledger-memo-btn').forEach(function(b) {
     b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); });
   });
