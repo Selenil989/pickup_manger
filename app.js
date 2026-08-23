@@ -69,7 +69,7 @@ var CARD_GRID_CONFIG = {
   hsr:      { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true },
   wuwa:     { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, roleField: 'weaponType', excludeNamePattern: /^Rover:/i },
   endfield: { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, excludeNamePattern: /^Endministrator/i },
-  nte:      { iconExt: '.svg',  rarityIcon: false, minRarity: 5, iconBackdrop: true }
+  nte:      { iconExt: '.svg',  rarityIcon: false, minRarity: 4, iconBackdrop: true, roleField: '_noRoleIcon' }
 };
 // 서버 /api/sync-characters 가 자동 동기화(신규 캐릭터/이미지/아이콘/출시일)를
 // 지원하는 게임 목록 — server.js의 SYNC_HANDLERS와 맞춰서 관리한다.

@@ -2,137 +2,1018 @@
   {
     "version": "1.0",
     "characterId": "nanally",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 9.3,
-    "futureScore": 9.0,
+    "futureScore": 9,
     "replacementScore": 8.5,
     "confidence": 0.8,
-    "futureLinks": [{ "characterId": "jiuyuan" }],
-    "characterRecommendation": { "score": 9, "priority": "high", "reason": "영속 T0 령 메인딜러 — 출시 이후 최강 DPS 유지" },
-    "breakthroughRecommendation": { "score": 7, "priority": "medium", "reason": "명함으로도 강하나 고점은 돌파에서" },
-    "weaponRecommendation": { "score": 8, "priority": "high", "reason": "전용 아크 딜 상승폭 큼" },
-    "pullReasons": ["게임 최상위 메인딜러", "령 팀의 기준점", "장기간 대체 불가"],
-    "skipReasons": ["이미 강한 메인딜러 다수 보유 시"],
-    "sources": [{ "name": "HN게임가이드", "weight": 1 }, { "name": "인벤", "weight": 1 }],
-    "recommendation": { "pull": "recommended", "priority": "high" }
+    "futureLinks": [
+      {
+        "characterId": "jiuyuan"
+      }
+    ],
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "영속 T0 령 메인딜러 — 출시 이후 최강 DPS 유지"
+    },
+    "breakthroughRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "명함으로도 강하나 고점은 돌파에서"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "전용 아크 딜 상승폭 큼"
+    },
+    "pullReasons": [
+      "게임 최상위 메인딜러",
+      "령 팀의 기준점",
+      "장기간 대체 불가"
+    ],
+    "skipReasons": [
+      "이미 강한 메인딜러 다수 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "HN게임가이드",
+        "weight": 1
+      },
+      {
+        "name": "인벤",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
   },
   {
     "version": "1.2",
     "characterId": "shinku",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 9.2,
-    "futureScore": 9.0,
+    "futureScore": 9,
     "replacementScore": 8.2,
     "confidence": 0.75,
-    "futureLinks": [{ "characterId": "hathor" }],
-    "characterRecommendation": { "score": 9, "priority": "high", "reason": "빛 속성 최상위 메인딜러 — 적염 해방 강화 폭딜" },
-    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "명함 기준 완성형, 돌파는 여유 시" },
-    "weaponRecommendation": { "score": 8, "priority": "high", "reason": "전용 아크로 딜 사이클 완성" },
-    "pullReasons": ["빛 딜러 최고점", "단일·광역 모두 강함", "스키아/하토르 조합 시너지"],
-    "skipReasons": ["빛 딜러 라인 이미 보유 시"],
-    "sources": [{ "name": "인벤", "weight": 1 }, { "name": "Alkapa", "weight": 1 }],
-    "recommendation": { "pull": "recommended", "priority": "high" }
+    "futureLinks": [
+      {
+        "characterId": "hathor"
+      }
+    ],
+    "characterRecommendation": {
+      "score": 9,
+      "priority": "high",
+      "reason": "빛 속성 최상위 메인딜러 — 적염 해방 강화 폭딜"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "명함 기준 완성형, 돌파는 여유 시"
+    },
+    "weaponRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "전용 아크로 딜 사이클 완성"
+    },
+    "pullReasons": [
+      "빛 딜러 최고점",
+      "단일·광역 모두 강함",
+      "스키아/하토르 조합 시너지"
+    ],
+    "skipReasons": [
+      "빛 딜러 라인 이미 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤",
+        "weight": 1
+      },
+      {
+        "name": "Alkapa",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
   },
   {
     "version": "1.3",
     "characterId": "zankou",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 8.7,
     "futureScore": 8.6,
     "replacementScore": 7.5,
     "confidence": 0.7,
     "futureLinks": [],
-    "characterRecommendation": { "score": 8, "priority": "high", "reason": "1.3 신규 주 속성 딜러 — 스코치 반응 지속 피해 컨셉" },
-    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "고돌파 부담되면 서브딜로도 충분히 활용" },
-    "weaponRecommendation": { "score": 7, "priority": "medium", "reason": "전용 아크 권장, 대체 여지 있음" },
-    "pullReasons": ["현재(1.3) 픽업", "주 속성 딜러 라인업 강화", "메인·서브딜 유연"],
-    "skipReasons": ["고돌파 요구 시 가성비 하락", "주 속성 딜러 보유 시"],
-    "sources": [{ "name": "게임플", "weight": 1 }, { "name": "gamsgo", "weight": 1 }],
-    "recommendation": { "pull": "recommended", "priority": "high" }
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "1.3 신규 주 속성 딜러 — 스코치 반응 지속 피해 컨셉"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "고돌파 부담되면 서브딜로도 충분히 활용"
+    },
+    "weaponRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "전용 아크 권장, 대체 여지 있음"
+    },
+    "pullReasons": [
+      "현재(1.3) 픽업",
+      "주 속성 딜러 라인업 강화",
+      "메인·서브딜 유연"
+    ],
+    "skipReasons": [
+      "고돌파 요구 시 가성비 하락",
+      "주 속성 딜러 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "게임플",
+        "weight": 1
+      },
+      {
+        "name": "gamsgo",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
   },
   {
     "version": "1.2",
     "characterId": "iroi",
-    "investmentType": ["synergy"],
+    "investmentType": [
+      "synergy"
+    ],
     "metaScore": 8.3,
     "futureScore": 8.4,
-    "replacementScore": 8.0,
+    "replacementScore": 8,
     "confidence": 0.75,
     "futureLinks": [],
-    "characterRecommendation": { "score": 8, "priority": "high", "reason": "게임 내 최고 힐러 — 범용 생존 지원" },
-    "breakthroughRecommendation": { "score": 4, "priority": "low", "reason": "명함으로 역할 완수, 돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 5, "priority": "low", "reason": "무기 우선순위 낮음" },
-    "pullReasons": ["최고 힐러 — 고난도 콘텐츠 안정감", "속성 무관 범용"],
-    "skipReasons": ["힐러 부족 없으면 후순위"],
-    "sources": [{ "name": "PC Gamer", "weight": 1 }, { "name": "인벤", "weight": 1 }],
-    "recommendation": { "pull": "optional", "priority": "medium" }
+    "characterRecommendation": {
+      "score": 8,
+      "priority": "high",
+      "reason": "게임 내 최고 힐러 — 범용 생존 지원"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "명함으로 역할 완수, 돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 우선순위 낮음"
+    },
+    "pullReasons": [
+      "최고 힐러 — 고난도 콘텐츠 안정감",
+      "속성 무관 범용"
+    ],
+    "skipReasons": [
+      "힐러 부족 없으면 후순위"
+    ],
+    "sources": [
+      {
+        "name": "PC Gamer",
+        "weight": 1
+      },
+      {
+        "name": "인벤",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
   },
   {
     "version": "1.0",
     "characterId": "jiuyuan",
-    "investmentType": ["meta", "synergy"],
+    "investmentType": [
+      "meta",
+      "synergy"
+    ],
     "metaScore": 8.4,
     "futureScore": 8.2,
-    "replacementScore": 6.0,
+    "replacementScore": 6,
     "confidence": 0.7,
-    "futureLinks": [{ "characterId": "nanally" }],
-    "characterRecommendation": { "score": 7, "priority": "medium", "reason": "상시 배너 최강 딜러 + 령 내성감소로 나날리 연계" },
-    "breakthroughRecommendation": { "score": 6, "priority": "medium", "reason": "상시라 돌파 누적 용이" },
-    "weaponRecommendation": { "score": 6, "priority": "medium", "reason": "전용 아크 권장" },
-    "pullReasons": ["상시 최강 버스트 딜러", "나날리 령 팀 시너지"],
-    "skipReasons": ["상시 배너라 급하지 않음 — 한정 우선"],
-    "sources": [{ "name": "Vortex Gaming", "weight": 1 }, { "name": "나무위키", "weight": 1 }],
-    "recommendation": { "pull": "optional", "priority": "medium" }
+    "futureLinks": [
+      {
+        "characterId": "nanally"
+      }
+    ],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "medium",
+      "reason": "상시 배너 최강 딜러 + 령 내성감소로 나날리 연계"
+    },
+    "breakthroughRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "상시라 돌파 누적 용이"
+    },
+    "weaponRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "전용 아크 권장"
+    },
+    "pullReasons": [
+      "상시 최강 버스트 딜러",
+      "나날리 령 팀 시너지"
+    ],
+    "skipReasons": [
+      "상시 배너라 급하지 않음 — 한정 우선"
+    ],
+    "sources": [
+      {
+        "name": "Vortex Gaming",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
   },
   {
     "version": "1.0",
     "characterId": "fadia",
-    "investmentType": ["synergy"],
+    "investmentType": [
+      "synergy"
+    ],
     "metaScore": 7.3,
     "futureScore": 7.2,
     "replacementScore": 5.5,
     "confidence": 0.65,
     "futureLinks": [],
-    "characterRecommendation": { "score": 6, "priority": "medium", "reason": "혼 속성 탱커/서포터 — 상시 선택 캐릭터" },
-    "breakthroughRecommendation": { "score": 4, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 4, "priority": "low", "reason": "무기 후순위" },
-    "pullReasons": ["탱커/유틸 공백 시 유용", "상시 선택으로 확보 용이"],
-    "skipReasons": ["딜러 우선인 계정은 후순위"],
-    "sources": [{ "name": "리세리스트", "weight": 1 }],
-    "recommendation": { "pull": "optional", "priority": "low" }
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "혼 속성 탱커/서포터 — 상시 선택 캐릭터"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "탱커/유틸 공백 시 유용",
+      "상시 선택으로 확보 용이"
+    ],
+    "skipReasons": [
+      "딜러 우선인 계정은 후순위"
+    ],
+    "sources": [
+      {
+        "name": "리세리스트",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
   },
   {
     "version": "1.0",
     "characterId": "hathor",
-    "investmentType": ["synergy"],
+    "investmentType": [
+      "synergy"
+    ],
     "metaScore": 7.2,
     "futureScore": 7.3,
     "replacementScore": 5.5,
     "confidence": 0.65,
-    "futureLinks": [{ "characterId": "shinku" }],
-    "characterRecommendation": { "score": 6, "priority": "medium", "reason": "상 속성 바이크 폭발 서브딜러 — 상시 선택" },
-    "breakthroughRecommendation": { "score": 4, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 5, "priority": "low", "reason": "무기 후순위" },
-    "pullReasons": ["서브딜 보강", "신쿠 조합 시너지", "상시 확보 용이"],
-    "skipReasons": ["메인딜러 우선 시 후순위"],
-    "sources": [{ "name": "HN게임가이드", "weight": 1 }],
-    "recommendation": { "pull": "optional", "priority": "low" }
+    "futureLinks": [
+      {
+        "characterId": "shinku"
+      }
+    ],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "상 속성 바이크 폭발 서브딜러 — 상시 선택"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "서브딜 보강",
+      "신쿠 조합 시너지",
+      "상시 확보 용이"
+    ],
+    "skipReasons": [
+      "메인딜러 우선 시 후순위"
+    ],
+    "sources": [
+      {
+        "name": "HN게임가이드",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
   },
   {
     "version": "1.0",
     "characterId": "baicang",
-    "investmentType": ["meta"],
+    "investmentType": [
+      "meta"
+    ],
     "metaScore": 6.8,
     "futureScore": 6.8,
-    "replacementScore": 5.0,
+    "replacementScore": 5,
     "confidence": 0.6,
     "futureLinks": [],
-    "characterRecommendation": { "score": 6, "priority": "medium", "reason": "주 속성 메인딜러 — 상시 선택 캐릭터" },
-    "breakthroughRecommendation": { "score": 4, "priority": "low", "reason": "돌파 효율 낮음" },
-    "weaponRecommendation": { "score": 5, "priority": "low", "reason": "무기 후순위" },
-    "pullReasons": ["주 속성 딜러 공백 시", "상시 확보 용이"],
-    "skipReasons": ["잔코우 등 상위 주 딜러 보유 시"],
-    "sources": [{ "name": "리세리스트", "weight": 1 }],
-    "recommendation": { "pull": "optional", "priority": "low" }
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "주 속성 메인딜러 — 상시 선택 캐릭터"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "주 속성 딜러 공백 시",
+      "상시 확보 용이"
+    ],
+    "skipReasons": [
+      "잔코우 등 상위 주 딜러 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "리세리스트",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "sakiri",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 8.3,
+    "futureScore": 8.2,
+    "replacementScore": 7.5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "게임 내 최고 수치 공격력 버프 + 방깎 — 딜러 무관 범용 버퍼"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "범용 최상위 버퍼",
+      "어느 메인딜러와도 시너지"
+    ],
+    "skipReasons": [
+      "버퍼 이미 충분 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.1",
+    "characterId": "lacrimosa",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8.2,
+    "futureScore": 8,
+    "replacementScore": 7,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "암 속성 메인딜러 (1.1 한정) — 강력한 단일 화력"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "암 딜러 라인 핵심",
+      "한정 캐릭터"
+    ],
+    "skipReasons": [
+      "암 딜러 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "skia",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 4.5,
+    "futureScore": 4.5,
+    "replacementScore": 3,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "상 속성 메인딜러 — 저티어, 상위 딜러로 대체"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "상 속성 공백 시 임시"
+    ],
+    "skipReasons": [
+      "상위 딜러 보유 시 불필요"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "mint",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 4,
+    "futureScore": 4,
+    "replacementScore": 3,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 3,
+      "priority": "low",
+      "reason": "령 속성 메인딜러 — 저티어"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "령 입문용"
+    ],
+    "skipReasons": [
+      "나나리 등 상위 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "haniel",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 6.5,
+    "futureScore": 6.5,
+    "replacementScore": 5,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 5,
+      "priority": "medium",
+      "reason": "혼 속성 버퍼 — 준수한 서포트"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "혼 팀 버퍼"
+    ],
+    "skipReasons": [
+      "사키리 등 상위 버퍼 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "edgar",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 4.5,
+    "futureScore": 4.5,
+    "replacementScore": 3.5,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "빛 속성 힐러 — 저티어 힐러"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "힐러 공백 시"
+    ],
+    "skipReasons": [
+      "일로이 보유 시 불필요"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "adler",
+    "investmentType": [
+      "synergy"
+    ],
+    "metaScore": 5,
+    "futureScore": 5,
+    "replacementScore": 3.5,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "주 속성 쉴드 서포터"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "생존 보조 필요 시"
+    ],
+    "skipReasons": [
+      "딜러 우선 계정은 후순위"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "hotori",
+    "investmentType": [
+      "meta",
+      "synergy"
+    ],
+    "metaScore": 7,
+    "futureScore": 7,
+    "replacementScore": 5.5,
+    "confidence": 0.65,
+    "futureLinks": [
+      {
+        "characterId": "nanally"
+      }
+    ],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "빛 속성 서브딜러 — 스킬 기록·재생, 나나리 연계 화력 보조 (1.0 한정)"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "나나리 빛·령 연계",
+      "서브딜 보강"
+    ],
+    "skipReasons": [
+      "메인딜러 우선 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "daffodil",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8.2,
+    "futureScore": 8,
+    "replacementScore": 7.5,
+    "confidence": 0.75,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 7,
+      "priority": "high",
+      "reason": "유일 암 속성·유일 브레이커 서브딜러 — 범용 브레이크"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "유일 브레이커로 범용성 높음",
+      "암 팀 핵심"
+    ],
+    "skipReasons": [
+      "브레이크 불필요한 조합"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "high"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "umitsuki",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 4.5,
+    "futureScore": 4.5,
+    "replacementScore": 3,
+    "confidence": 0.6,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "혼 속성 서브딜러 — 저티어"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "혼 팀 임시"
+    ],
+    "skipReasons": [
+      "상위 서브딜 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "low"
+    }
+  },
+  {
+    "version": "1.1",
+    "characterId": "chaos",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 7.4,
+    "replacementScore": 6,
+    "confidence": 0.65,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "상 속성 이능력 딜러 — 레모라 강화 (1.1 한정)"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "상 딜러 라인 강화",
+      "한정 캐릭터"
+    ],
+    "skipReasons": [
+      "상 딜러 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.3",
+    "characterId": "linko",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 8,
+    "futureScore": 8,
+    "replacementScore": 7,
+    "confidence": 0.5,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "1.3 후반 신규 령 속성 딜러 — 출시 예정(정보 잠정)"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "1.3 신규 한정",
+      "령 팀 보강"
+    ],
+    "skipReasons": [
+      "출시 후 평가 확인 권장"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "recommended",
+      "priority": "medium"
+    }
+  },
+  {
+    "version": "1.0",
+    "characterId": "chiz",
+    "investmentType": [
+      "meta"
+    ],
+    "metaScore": 7.5,
+    "futureScore": 7.3,
+    "replacementScore": 6,
+    "confidence": 0.7,
+    "futureLinks": [],
+    "characterRecommendation": {
+      "score": 6,
+      "priority": "medium",
+      "reason": "빛 속성 메인딜러 — 배포 캐릭터(무배포 풀돌파 가능)"
+    },
+    "breakthroughRecommendation": {
+      "score": 4,
+      "priority": "low",
+      "reason": "돌파 효율 낮음 — 명함 우선"
+    },
+    "weaponRecommendation": {
+      "score": 5,
+      "priority": "low",
+      "reason": "무기 후순위"
+    },
+    "pullReasons": [
+      "무료 배포로 풀돌파 가능",
+      "빛 입문 딜러"
+    ],
+    "skipReasons": [
+      "상위 빛 딜러 보유 시"
+    ],
+    "sources": [
+      {
+        "name": "인벤 티어표",
+        "weight": 1
+      },
+      {
+        "name": "나무위키",
+        "weight": 1
+      }
+    ],
+    "recommendation": {
+      "pull": "optional",
+      "priority": "medium"
+    }
   }
 ]
