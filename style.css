@@ -1816,8 +1816,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 }
 
 .pass-card {
-  flex: 0 1 45%;
-  min-width: 200px;
+  flex: 1 1 0;              /* 가용 폭을 꽉 채워 넓게 */
+  min-width: 240px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -1886,8 +1886,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text);
-  white-space: normal;
-  word-break: break-word;
+  white-space: nowrap;      /* 한 줄 유지(세로로 안 늘어나게) */
   flex: 1;
   min-width: 0;
 }
