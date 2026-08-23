@@ -2987,6 +2987,26 @@ function renderLedgerPage() {
     }
   });
 
+  // 버전 캘린더: 현재 버전 + 앞뒤 버전 시작일(42일 주기)을 날짜별로 마킹
+  var pd = loadPlannerData(gameId);
+  var verMarks = {};    // 'YYYY-MM-DD' -> 버전 문자열
+  var curVerInfo = null;
+  if (pd.version && pd.startDate && !isNaN(new Date(pd.startDate).getTime())) {
+    var _v = pd.version, _s = pd.startDate;
+    for (var _f = 0; _f < 12 && _v && _s; _f++) { verMarks[_s] = _v; var _ns = plannerAutoEndDate(_s), _nv = plannerNextVersion(_v); if (!_ns || !_nv) break; _v = _nv; _s = _ns; }
+    var _pv = pd.version, _ps = pd.startDate;
+    for (var _b = 0; _b < 12; _b++) {
+      var _pp = _pv.split('.'), _mi = parseInt(_pp[1] || 0);
+      if (_mi <= 0) break;
+      var _pdt = new Date(_ps); _pdt.setDate(_pdt.getDate() - 42); _ps = toLocalYMD(_pdt);
+      _pv = parseInt(_pp[0] || 0) + '.' + (_mi - 1);
+      verMarks[_ps] = _pv;
+    }
+    var _st = new Date(pd.startDate); _st.setHours(0, 0, 0, 0);
+    var _td2 = new Date(); _td2.setHours(0, 0, 0, 0);
+    curVerInfo = { ver: pd.version, start: pd.startDate, end: pd.endDate || plannerAutoEndDate(pd.startDate), dplus: Math.round((_td2 - _st) / 86400000), next: plannerNextVersion(pd.version) };
+  }
+
   // 달력 셀
   var firstWd = new Date(y, m - 1, 1).getDay();
   var daysIn = new Date(y, m, 0).getDate();
@@ -3001,6 +3021,7 @@ function renderLedgerPage() {
     var cls = 'lcal-cell' + (ag ? ' lcal-has' : '') + (_ledgerDay === ymd ? ' lcal-sel' : '') + (todayYmd === ymd ? ' lcal-today' : '') + (col === 0 ? ' lcal-sun' : col === 6 ? ' lcal-sat' : '');
     cells += '<div class="' + cls + '" data-ymd="' + ymd + '">'
       + '<span class="lcal-date">' + day + '</span>'
+      + (verMarks[ymd] ? '<span class="lcal-ver' + (curVerInfo && verMarks[ymd] === curVerInfo.ver ? ' lcal-ver-cur' : '') + '">v' + verMarks[ymd] + '</span>' : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
@@ -3017,12 +3038,21 @@ function renderLedgerPage() {
   function paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
   function freeHtml(amt) { return '<span class="lps-free">무료 획득 <b>' + amt.toLocaleString() + '</b></span>'; }
 
+  var verBanner = curVerInfo ? [
+    '<div class="ledger-ver-banner">',
+    '  <span class="lvb-badge">v' + curVerInfo.ver + '</span>',
+    '  <span class="lvb-main">현재 버전 · ' + curVerInfo.start + ' 시작' + (curVerInfo.dplus >= 0 ? ' · D+' + curVerInfo.dplus : '') + '</span>',
+    (curVerInfo.next && curVerInfo.end ? '  <span class="lvb-next">다음 v' + curVerInfo.next + ' · ' + curVerInfo.end + '</span>' : ''),
+    '</div>'
+  ].join('') : '';
+
   page.innerHTML = [
     '<div class="ledger-cal-head">',
     '  <button class="ledger-nav-btn" id="lpPrev" title="이전 달">◀</button>',
     '  <span class="ledger-cal-title">' + y + '년 ' + m + '월</span>',
     '  <button class="ledger-nav-btn" id="lpNext" title="다음 달">▶</button>',
     '</div>',
+    verBanner,
     '<div class="ledger-cal">',
     '  <div class="lcal-wd">' + wd.map(function(w, ix) { return '<span' + (ix === 0 ? ' class="lcal-sun"' : ix === 6 ? ' class="lcal-sat"' : '') + '>' + w + '</span>'; }).join('') + '</div>',
     '  <div class="lcal-grid">' + cells + '</div>',

@@ -2160,6 +2160,13 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lcal-spend { color: #e5686d; }
 .lcal-paid { font-size: 12px; color: #e5a34d; font-weight: 800; }
 .lcal-wd span { font-size: 13px; }
+.lcal-ver { font-size: 10px; font-weight: 800; color: #b9aeff; background: rgba(139,124,255,.18); padding: 0 5px; border-radius: 5px; line-height: 1.5; }
+.lcal-ver-cur { background: var(--accent, #6d5efc); color: #fff; }
+/* 버전 배너 (상단 현재 버전) */
+.ledger-ver-banner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 1040px; margin: 0 auto 12px; padding: 9px 14px; border: 1px solid var(--border); border-radius: 10px; background: rgba(139,124,255,.08); font-size: 13px; }
+.lvb-badge { background: var(--accent, #6d5efc); color: #fff; font-weight: 800; padding: 2px 10px; border-radius: 6px; }
+.lvb-main { font-weight: 700; }
+.lvb-next { color: var(--muted); margin-left: auto; font-weight: 600; }
 .ledger-day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 6px 2px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .ledger-day-title { font-size: 14px; font-weight: 700; }
 .ledger-day-sum { font-size: 12px; font-weight: 700; }
