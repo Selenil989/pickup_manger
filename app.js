@@ -418,20 +418,25 @@ function setGame(gameId) {
     .then(function(data) {
       var savedChars = loadCharactersFromLocalStorage(gameId);
       if (savedChars && savedChars.length > 0) {
-        // source(characters.json)를 정본으로 삼아 병합한다:
-        //  - source에 있는 캐릭터는 source 최신값 사용 → 이름·속성 정정이 항상 반영됨
-        //    (안 그러면 캐시된 옛 이름[예: 잔코우]이 계속 남음)
-        //  - 사용자가 순서를 바꿨을 수 있으니 저장 목록의 순서를 유지
-        //  - source에 없는(사용자가 직접 만든) 캐릭터만 저장본 그대로 보존
-        //  - source에 새로 추가된 캐릭터는 뒤에 append
+        // 저장 목록(순서·사용자 생성)을 유지하며 source(characters.json)와 병합한다.
+        // 게임별로 정본이 다르다:
+        //  - 동기화 게임(CARD_SYNC_GAMES: hsr/wuwa/endfield)은 "카드 데이터 갱신"으로
+        //    localStorage에 최신 데이터가 들어오므로 localStorage를 정본으로 유지한다.
+        //    (여기서 source로 덮으면 동기화된 이름/이미지가 리포 값으로 되돌아가 깨진다)
+        //  - 비동기 게임(nte/zzz)은 리포 source가 정본 → 기존 캐릭터도 source 최신값으로
+        //    대체해 이름·속성 정정(예: 잔코우→잔홍)이 캐시된 사용자에게도 반영되게 한다.
+        // 두 경우 모두: source에 새로 추가된 캐릭터는 append, 사용자 생성 캐릭터는 보존.
+        var _sourceWins = CARD_SYNC_GAMES.indexOf(gameId) === -1;
         var _srcById = {};
         for (var _i = 0; _i < data.characters.length; _i++) _srcById[data.characters[_i].id] = data.characters[_i];
         var _used = {};
         var _merged = [];
         for (var _j = 0; _j < savedChars.length; _j++) {
           var _sc = savedChars[_j];
-          if (_srcById[_sc.id]) { _merged.push(_srcById[_sc.id]); _used[_sc.id] = true; }
-          else if (!_used[_sc.id]) { _merged.push(_sc); _used[_sc.id] = true; }  // 사용자 생성 캐릭터
+          if (_used[_sc.id]) continue;
+          if (_srcById[_sc.id]) { _merged.push(_sourceWins ? _srcById[_sc.id] : _sc); }
+          else { _merged.push(_sc); }  // 사용자 생성 캐릭터
+          _used[_sc.id] = true;
         }
         for (var _k = 0; _k < data.characters.length; _k++) {
           if (!_used[data.characters[_k].id]) { _merged.push(data.characters[_k]); _used[data.characters[_k].id] = true; }
