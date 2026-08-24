@@ -666,6 +666,7 @@ function renderCardGrid() {
   var gameId  = appState.currentGame;
   var cfg     = CARD_GRID_CONFIG[gameId] || CARD_GRID_CONFIG.zzz;
   var imgBase = 'assets/images/' + gameId + '/';
+  var _av = assetVersion(); var imgQ = _av ? '?v=' + _av : '';   // 배포 버전으로 이미지 캐시버스팅(교체 시 즉시 반영)
   var roster = appState.rosters[gameId] || { characters: [] };
   var ownedMap = {};
   for (var o = 0; o < roster.characters.length; o++) {
@@ -746,7 +747,7 @@ function renderCardGrid() {
 
     html += '<div class="char-card' + (owned ? ' owned' : '') + '" draggable="true" data-char-id="' + char.id + '">';
     if (dc.image) {
-      html += '<img class="char-card-image" src="' + imgBase + dc.image + '" alt="' + dc.name + '" loading="lazy">';
+      html += '<img class="char-card-image" src="' + imgBase + dc.image + imgQ + '" alt="' + dc.name + '" loading="lazy">';
     } else {
       html += '<div class="char-card-image char-card-no-img"></div>';
     }
