@@ -419,6 +419,102 @@ function importPersonalSettings() {
   input.click();
 }
 
+// ── Claude 판정용 내보내기 ─────────────────────────────────────────────────────
+// 이 사이트는 정적(GitHub Pages)이라 서버 엔드포인트/토큰이 없음 → 지시서 예비안대로
+// "현재 계정 데이터를 JSON으로 클립보드 복사"로 구현. 개인정보(계정/이메일/결제수단) 미포함 —
+// 게임별 버전·잔고·구독·최근 로그·총 과금액만. 이 JSON을 Claude에 붙여넣어 판정받는다.
+function buildClaudeExport(fullHistory) {
+  var cfg = getGameConfig();
+  var now = new Date();
+  var cutoff = fullHistory ? 0 : (now.getTime() - 90 * 86400000);
+  var year = String(now.getFullYear());
+  var curYm = ledgerYM(now.getTime());
+
+  var games = {}, logs = [], yearSum = 0, monthSum = 0, minTs = now.getTime();
+
+  Object.keys(cfg).forEach(function(gid) {
+    var gc = cfg[gid] || {};
+    var pd = loadPlannerData(gid);
+    var bal = loadCurrencyData(gid);           // {curId: amount}
+    var toPulls = ledgerRates(gid);            // 원장 entry → 뽑 환산
+    var pass = loadPassData(gid);
+
+    var balances = {};
+    Object.keys(bal).forEach(function(id) {
+      if (bal[id] != null) balances[currencyName(gid, id) || id] = bal[id];
+    });
+
+    games[gid] = {
+      label: gc.name || gid,
+      version: pd.version || '',
+      version_start: pd.startDate || '',
+      version_end: pd.endDate || plannerAutoEndDate(pd.startDate) || '',
+      monthly_pass_dday: calcMonthlyPassDays(loadMonthlyPassEndDate(gid)),
+      subscriptions: {
+        monthly: (pass.monthly && pass.monthly.composition) || '',
+        version_pass: (pass.regular && pass.regular.composition) || ''
+      },
+      balances: balances
+    };
+
+    loadLedger(gid).forEach(function(e) {
+      if (e.ts < minTs) minTs = e.ts;
+      // 총 과금액은 전체 기간 합산(사이드바와 동일)
+      if (e.price != null) {
+        var ym = ledgerYM(e.ts);
+        if (ym.slice(0, 4) === year) yearSum += e.price;
+        if (ym === curYm) monthSum += e.price;
+      }
+      if (e.ts < cutoff) return;               // 로그는 최근 90일만(전체는 fullHistory)
+      var date = ledgerYMD(e.ts);
+      var memo = e.memo || '';
+      if (e.price != null) {
+        logs.push({ date: date, game: gid, kind: 'spend', unit: 'krw', amount: e.price,
+                    memo: memo, subscription: /구독|월정액|패스/.test(memo) });
+      }
+      if (e.type === 'auto' && e.delta) {
+        logs.push({ date: date, game: gid, kind: e.delta > 0 ? 'income' : 'spend',
+                    unit: currencyName(gid, e.currency) || e.currency,
+                    amount: e.delta, pulls: toPulls(e), memo: (e.price != null ? '' : memo) });
+      }
+    });
+  });
+
+  logs.sort(function(a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+
+  return {
+    schema_version: 1,
+    generated_at: now.toISOString(),
+    period: { from: toLocalYMD(new Date(minTs)), to: toLocalYMD(now) },
+    note: '가챠 과금 트래커 내보내기 · 개인정보 미포함 · balances=현재 잔고, logs=최근 '
+          + (fullHistory ? '전체' : '90일') + ' · unit=krw(원)|뽑환산은 pulls 필드 · subscription:true는 예산 외',
+    total_spend_krw: { this_year: yearSum, this_month: monthSum },
+    games: games,
+    logs: logs
+  };
+}
+
+function _copyText(text, cb) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { cb(true); }, function() { _copyFallback(text, cb); });
+  } else { _copyFallback(text, cb); }
+}
+function _copyFallback(text, cb) {
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok = document.execCommand('copy'); document.body.removeChild(ta); cb(ok);
+  } catch (e) { cb(false); }
+}
+function copyClaudeExport() {
+  var text = JSON.stringify(buildClaudeExport(false), null, 2);
+  _copyText(text, function(ok) {
+    alert(ok ? 'Claude 판정용 데이터를 복사했습니다.\nClaude 대화창에 붙여넣고 판정을 요청하세요.'
+             : '복사 실패 — 브라우저 콘솔에서 buildClaudeExport()로 직접 복사하세요.');
+  });
+}
+
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 4: State Mutations
 

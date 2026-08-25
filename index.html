@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게임 컨트롤 센터</title>
-    <link rel="stylesheet" href="style.css?v=20260825153216">
+    <link rel="stylesheet" href="style.css?v=20260825171515">
   </head>
   <body>
     <div class="app-layout">
@@ -53,6 +53,8 @@
         </div>
         <!-- 총 과금액 (하단 고정 · 항상 표시) -->
         <div id="sidebarSpend" class="sidebar-spend"></div>
+        <!-- Claude 판정용 데이터 복사 (정적 호스팅이라 서버 엔드포인트 대신 클립보드) -->
+        <button id="claudeExportBtn" class="claude-export-btn" onclick="copyClaudeExport()">🤖 Claude 판정용 복사</button>
         <!-- Personal settings save/load -->
         <div class="sidebar-footer">
           <button class="sidebar-footer-btn" onclick="exportPersonalSettings()">저장</button>
@@ -135,8 +137,8 @@
 
     <!-- Scripts: supabase auth first, then engine, then app -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js?v=20260825153216"></script>
-    <script src="evaluationEngine.js?v=20260825153216"></script>
-    <script src="app.js?v=20260825153216"></script>
+    <script src="auth.js?v=20260825171515"></script>
+    <script src="evaluationEngine.js?v=20260825171515"></script>
+    <script src="app.js?v=20260825171515"></script>
   </body>
 </html>
