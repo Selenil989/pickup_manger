@@ -626,38 +626,73 @@ function openBuyListModal() {
   };
 }
 
+var _pcDraft = {};  // 편집 중 패키지 초안 {gid:[{name,pulls,krw}]}
+function _pcRenderPkgs() {
+  var cfg = getGameConfig(), area = document.getElementById('pcPkgArea');
+  if (!area) return;
+  area.innerHTML = Object.keys(cfg).map(function(gid) {
+    var rows = (_pcDraft[gid] || []).map(function(p, i) {
+      return '<div class="pc-pkg-row">'
+        + '<input class="pc-in pc-in-name" data-gid="' + gid + '" data-i="' + i + '" data-f="name" placeholder="패키지 이름" value="' + String(p.name || '').replace(/"/g, '&quot;') + '">'
+        + '<input class="pc-in pc-in-num" data-gid="' + gid + '" data-i="' + i + '" data-f="pulls" type="number" inputmode="numeric" placeholder="뽑" value="' + (p.pulls || '') + '">'
+        + '<input class="pc-in pc-in-num" data-gid="' + gid + '" data-i="' + i + '" data-f="krw" type="number" inputmode="numeric" placeholder="원" value="' + (p.krw || '') + '">'
+        + '<button class="pc-del" data-gid="' + gid + '" data-i="' + i + '" title="삭제">✕</button></div>';
+    }).join('');
+    return '<div class="pc-game"><div class="pc-game-name">' + (cfg[gid].name || gid) + '</div>'
+      + '<div class="pc-pkg-rows">' + rows + '</div>'
+      + '<button class="pc-add" data-gid="' + gid + '">+ 패키지 추가</button></div>';
+  }).join('');
+  area.querySelectorAll('.pc-in').forEach(function(inp) {
+    inp.oninput = function() {
+      var row = (_pcDraft[this.dataset.gid] || [])[+this.dataset.i]; if (!row) return;
+      row[this.dataset.f] = (this.dataset.f === 'name') ? this.value : (parseInt(this.value) || 0);
+    };
+  });
+  area.querySelectorAll('.pc-del').forEach(function(b) {
+    b.onclick = function() { _pcDraft[this.dataset.gid].splice(+this.dataset.i, 1); _pcRenderPkgs(); };
+  });
+  area.querySelectorAll('.pc-add').forEach(function(b) {
+    b.onclick = function() { var g = this.dataset.gid; if (!_pcDraft[g]) _pcDraft[g] = []; _pcDraft[g].push({ name: '', pulls: 0, krw: 0 }); _pcRenderPkgs(); };
+  });
+}
+
 function openPlanConstModal() {
-  var cur = loadPlanConst();
+  var cur = loadPlanConst(), cfg = getGameConfig();
+  _pcDraft = {};
+  Object.keys(cfg).forEach(function(gid) {
+    var arr = (cur.packages && cur.packages[gid]) || [];
+    _pcDraft[gid] = arr.map(function(p) { return { name: p.name || '', pulls: parseInt(p.pulls) || 0, krw: parseInt(p.krw) || 0 }; });
+  });
   var budget = parseInt(cur.monthlyBudgetKrw) || '';
-  var pkgTemplate = { wuwa: [{ name: '월간 팩', pulls: 14, krw: 25000 }], nte: [], endfield: [], zzz: [] };
-  var pkgVal = JSON.stringify((cur.packages && Object.keys(cur.packages).length) ? cur.packages : pkgTemplate, null, 2);
   var modal = document.getElementById('ledgerModal');
   modal.innerHTML =
     '<div class="char-detail-overlay" id="pcOverlay">'
     + '<div class="char-detail-panel" style="max-width:520px;">'
     + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">예산·패키지 설정</div>'
-    + '<div class="detail-header-sub">이 계정에만 저장 · 공개 소스엔 안 들어감</div></div>'
+    + '<div class="detail-header-sub">이 계정에만 저장 · 깡트럭은 자동, 값 패키지만 등록</div></div>'
     + '<button class="detail-close-btn" id="pcClose">✕</button></div>'
     + '<div class="detail-body" style="gap:14px;">'
     + '<div class="edit-row"><label class="edit-label">월 예산 (원)</label>'
     + '<input class="edit-input" id="pcBudget" type="number" inputmode="numeric" value="' + budget + '" placeholder="예) 300000"></div>'
-    + '<div class="edit-row"><label class="edit-label">게임별 값 패키지 (선택 · 순서대로 우선 구매, 없으면 깡트럭만)</label>'
-    + '<textarea id="pcPkg" spellcheck="false" style="width:100%;min-height:200px;font-family:monospace;font-size:var(--fs-xs);white-space:pre;">' + pkgVal.replace(/</g, '&lt;') + '</textarea></div>'
-    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:0;">패키지 = {"게임id":[{name,pulls,krw}]}. 트럭(깡 50연)은 게임 설정값으로 자동 계산되니 안 넣어도 됩니다.</p></div>'
+    + '<div id="pcPkgArea"></div>'
+    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:0;">값 패키지(월간팩·컬렉션 등)를 부족뽑 채우는 순서대로 등록. 남는 건 깡트럭(50연)으로 자동. 안 넣으면 트럭만.</p></div>'
     + '<div class="detail-footer"><button class="detail-btn-cancel" id="pcCancel">취소</button>'
     + '<button class="detail-btn-save" id="pcSave">저장</button></div>'
     + '</div></div>';
   modal.style.display = 'block';
+  _pcRenderPkgs();
   var back = function() { openBuyListModal(); };
   document.getElementById('pcClose').onclick = back;
   document.getElementById('pcCancel').onclick = back;
   document.getElementById('pcOverlay').onclick = function(e) { if (e.target === this) back(); };
   document.getElementById('pcSave').onclick = function() {
     var b = parseInt(document.getElementById('pcBudget').value) || 0;
-    var pkgs;
-    try { pkgs = JSON.parse(document.getElementById('pcPkg').value); }
-    catch (e) { alert('패키지 JSON 형식 오류: ' + e.message); return; }
-    savePlanConst({ monthlyBudgetKrw: b, packages: pkgs });
+    var packages = {};
+    Object.keys(_pcDraft).forEach(function(gid) {
+      var clean = _pcDraft[gid].filter(function(p) { return p.name && p.pulls > 0 && p.krw > 0; });
+      if (clean.length) packages[gid] = clean;
+    });
+    savePlanConst({ monthlyBudgetKrw: b, packages: packages });
     openBuyListModal();
   };
 }

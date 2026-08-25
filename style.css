@@ -1383,6 +1383,18 @@ body.is-admin #analysisActions { display: flex; }
 .buy-budget b { color: #e5a34d; font-weight: 800; }
 .buy-budget--unset { color: var(--muted); }
 .buy-over { color: #e5486d; font-weight: 700; }
+
+/* 예산·패키지 설정 폼 */
+.pc-game { border-top: 1px solid var(--border); padding-top: 10px; }
+.pc-game-name { font-size: var(--fs-sm); font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.pc-pkg-rows { display: flex; flex-direction: column; gap: 6px; }
+.pc-pkg-row { display: grid; grid-template-columns: 1fr 60px 88px 26px; gap: 6px; align-items: center; }
+.pc-in { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: var(--fs-xs); min-width: 0; }
+.pc-in-num { text-align: right; }
+.pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0; line-height: 1; }
+.pc-del:hover { color: #e5486d; }
+.pc-add { margin-top: 6px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 6px; background: none; color: var(--muted); font-size: var(--fs-xs); cursor: pointer; }
+.pc-add:hover { color: var(--text); border-color: var(--muted); }
 .ssp-title { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); margin-bottom: 5px; }
 .ssp-row { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--fs-sm); padding: 1px 0; }
 .ssp-row > span { color: var(--muted); }
