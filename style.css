@@ -1415,8 +1415,10 @@ body.is-admin #analysisActions { display: flex; }
 .pc-in-num { text-align: right; }
 .pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0 4px; line-height: 1; flex-shrink: 0; }
 .pc-del:hover { color: #e5486d; }
-.pc-add { margin-top: 6px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 6px; background: none; color: var(--muted); font-size: var(--fs-xs); cursor: pointer; }
-.pc-add:hover { color: var(--text); border-color: var(--muted); }
+.pc-game-btns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.pc-add, .pc-reset { padding: 6px 10px; border: 1px dashed var(--border); border-radius: 6px; background: none; color: var(--muted); font-size: var(--fs-xs); cursor: pointer; }
+.pc-add:hover, .pc-reset:hover { color: var(--text); border-color: var(--muted); }
+.pc-reset { border-style: solid; }
 .ssp-title { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); margin-bottom: 5px; }
 .ssp-row { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--fs-sm); padding: 1px 0; }
 .ssp-row > span { color: var(--muted); }

@@ -754,10 +754,20 @@ function _pcRenderPkgs() {
         + fld(gid, i, 'uni', '공', p.uni) + fld(gid, i, 'price', '₩', p.price) + fld(gid, i, 'limit', '제한', p.limit) + '</div>'
         + '</div>';
     }).join('');
+    var hasDefault = DEFAULT_PACKAGES[gid] && DEFAULT_PACKAGES[gid].length;
     return '<div class="pc-game"><div class="pc-game-name">' + (cfg[gid].name || gid) + '</div>'
       + '<div class="pc-pkg-rows">' + rows + '</div>'
-      + '<button class="pc-add" data-gid="' + gid + '">+ 패키지 추가</button></div>';
+      + '<div class="pc-game-btns"><button class="pc-add" data-gid="' + gid + '">+ 패키지 추가</button>'
+      + (hasDefault ? '<button class="pc-reset" data-gid="' + gid + '">기본값 불러오기</button>' : '') + '</div></div>';
   }).join('');
+  area.querySelectorAll('.pc-reset').forEach(function(b) {
+    b.onclick = function() {
+      var g = this.dataset.gid;
+      if (!confirm('이 게임 패키지를 조사된 기본값으로 덮어씁니다. 계속할까요?')) return;
+      _pcDraft[g] = (DEFAULT_PACKAGES[g] || []).map(_normPkg);
+      _pcRenderPkgs();
+    };
+  });
   area.querySelectorAll('.pc-in').forEach(function(inp) {
     inp.oninput = function() {
       var row = (_pcDraft[this.dataset.gid] || [])[+this.dataset.i]; if (!row) return;
