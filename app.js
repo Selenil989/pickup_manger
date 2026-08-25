@@ -540,11 +540,10 @@ var VERSION_INCOME = {
 // 패키지 기본 시드 (근사치 — 상점 보고 보정). limit 0/빈칸=무제한(트럭). 순서=우선순위.
 var DEFAULT_PACKAGES = {
   wuwa: [
-    { name: '금빛 지원(캐)', char: 5, weapon: 0, uni: 2.5, price: 12000, limit: 2 },   // 금빛 파도의 무늬 5 + 별소 400
-    { name: '주조 지원(무)', char: 0, weapon: 5, uni: 2.5, price: 12000, limit: 2 },   // 울린 조수의 무늬 5 + 별소 400
-    { name: '월정액(달빛 카드)', char: 0, weapon: 0, uni: 18.75, price: 5900, limit: 1 }, // 달빛300+별소2700=3000
-    { name: '컬렉션 II(달빛 3.7만)', char: 0, weapon: 0, uni: 14, price: 37000, limit: 0 }, // 1980+260=2240 달빛
-    { name: '트럭(달빛 11.9만)', char: 0, weapon: 0, uni: 50, price: 119000, limit: 0 }   // 6480+1600=8080 달빛≈50.5
+    { name: '금빛 파도 컬렉션 1', char: 5, weapon: 0, uni: 2.5, price: 12000, limit: 1 }, // 금빛 파도의 무늬 5 + 별소 400
+    { name: '금빛 파도 컬렉션 2', char: 5, weapon: 0, uni: 2.5, price: 12000, limit: 1 }, // 〃 (버전 한정 2회)
+    { name: '조수 컬렉션',       char: 0, weapon: 5, uni: 2.5, price: 12000, limit: 2 }, // 울린 조수의 무늬 5 + 별소 400
+    { name: '월간지원',          char: 0, weapon: 0, uni: 18.75, price: 5900, limit: 1 } // 달빛 카드 달빛300+별소2700
   ],
   nte: [
     { name: '환석 충전(최고액)', char: 0, weapon: 0, uni: 40, price: 119000, limit: 0 }
