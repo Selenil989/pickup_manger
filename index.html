@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게임 컨트롤 센터</title>
-    <link rel="stylesheet" href="style.css?v=20260825183008">
+    <link rel="stylesheet" href="style.css?v=20260825184647">
   </head>
   <body>
     <div class="app-layout">
@@ -31,6 +31,7 @@
           <button class="nav-tab active" data-tab="analysis">보유 캐릭터</button>
           <button class="nav-tab" data-tab="currency">보유 재화</button>
           <button class="nav-tab" data-tab="ledger">캘린더</button>
+          <button class="nav-tab" data-tab="buylist">🛒 뭘 사야 돼?</button>
         </nav>
 
         <!-- 카드 데이터 갱신 (상단 고정 · 보유 캐릭터 탭에서만) -->
@@ -53,8 +54,6 @@
         </div>
         <!-- 총 과금액 (하단 고정 · 항상 표시) -->
         <div id="sidebarSpend" class="sidebar-spend"></div>
-        <!-- 뭘 사야 돼? (규칙 엔진 · 버전 플래너 목표 기반) -->
-        <button id="buyListBtn" class="side-action-btn" onclick="openBuyListModal()" style="margin:0 16px 8px;width:auto;">🛒 뭘 사야 돼?</button>
         <!-- Claude 판정용 데이터 복사 (정적 호스팅이라 서버 엔드포인트 대신 클립보드) -->
         <button id="claudeExportBtn" class="claude-export-btn" onclick="copyClaudeExport()">🤖 Claude 판정용 복사</button>
         <!-- Personal settings save/load -->
@@ -94,6 +93,13 @@
         <div id="tabLedger" class="tab-page" style="display:none;">
           <div id="ledgerPage" class="ledger-page">
             <!-- populated by renderLedgerPage() -->
+          </div>
+        </div>
+
+        <!-- Tab: 뭘 사야 돼? (구매 계산기) -->
+        <div id="tabBuylist" class="tab-page" style="display:none;">
+          <div id="buylistPage" class="buylist-page">
+            <!-- populated by renderBuylistPage() -->
           </div>
         </div>
 
@@ -139,8 +145,8 @@
 
     <!-- Scripts: supabase auth first, then engine, then app -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js?v=20260825183008"></script>
-    <script src="evaluationEngine.js?v=20260825183008"></script>
-    <script src="app.js?v=20260825183008"></script>
+    <script src="auth.js?v=20260825184647"></script>
+    <script src="evaluationEngine.js?v=20260825184647"></script>
+    <script src="app.js?v=20260825184647"></script>
   </body>
 </html>

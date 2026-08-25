@@ -1385,6 +1385,22 @@ body.is-admin #analysisActions { display: flex; }
 .buy-budget--unset { color: var(--muted); }
 .buy-over { color: #e5486d; font-weight: 700; }
 
+/* 뭘 사야 돼? — 페이지(탭) */
+.buylist-page { padding: 20px; max-width: 760px; margin: 0 auto; }
+.buylist-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.buylist-title { font-size: var(--fs-xl); font-weight: 800; color: var(--text); }
+.buylist-sub { font-size: var(--fs-xs); color: var(--muted); margin-top: 3px; }
+.buylist-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.bl-btn { padding: 8px 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: var(--fs-sm); cursor: pointer; }
+.bl-btn:hover { background: var(--border); }
+.bl-btn--primary { background: var(--accent); color: var(--white); border-color: transparent; }
+.bl-btn--primary:hover { opacity: .85; background: var(--accent); }
+.buylist-body { display: flex; flex-direction: column; gap: 10px; }
+.buy-line--chk, .buy-line--bought { cursor: pointer; }
+.buy-line--chk .bl-chk, .buy-line--bought .bl-chk { margin-right: 6px; vertical-align: middle; }
+.buy-line--bought .buy-line-n { color: var(--muted); text-decoration: line-through; }
+.buy-line--bought .buy-line-r { color: #3ea877; }
+
 /* 예산·패키지 설정 폼 */
 .pc-game { border-top: 1px solid var(--border); padding-top: 10px; }
 .pc-game-name { font-size: var(--fs-sm); font-weight: 700; color: var(--text); margin-bottom: 6px; }
@@ -1691,6 +1707,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   /* 본문 상단이 햄버거 버튼에 가리지 않도록 (id 선택자로 뒤의 base padding을 이김) */
   #resultsPanel { padding-top: 56px; }
   #currencyPage { padding-top: 56px; }
+  #buylistPage { padding-top: 56px; }
 
   /* 제목이 햄버거 버튼을 피하도록 (햄버거는 768 이하에서만) */
   .currency-header-info { padding-left: 48px; }

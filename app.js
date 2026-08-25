@@ -581,8 +581,10 @@ function _thisVersionIncome(gid, startYMD) {
 
 // 풀별 부족(gapC, gapW)을 패키지 테이블(우선순위 순)로 그리디 충당.
 // 패키지가 주는 캐/무는 해당 풀, 공용(uni)은 캐→무 순으로 배분. 트럭(무제한)은 마지막에 반복.
-function fillPackages(gid, gapC, gapW) {
-  var gaps = { c: gapC, w: gapW }, out = [], cost = 0;
+// bought[name]=true 인 유한제한 패키지는 이미 구매로 보고 추천서 제외(boughtList로 반환).
+function fillPackages(gid, gapC, gapW, bought) {
+  bought = bought || {};
+  var gaps = { c: gapC, w: gapW }, out = [], cost = 0, boughtList = [];
   var pkgs = (loadPlanConst().packages || {})[gid] || DEFAULT_PACKAGES[gid] || [];
   function helps(p) { return (p.char > 0 && gaps.c > 0) || (p.weapon > 0 && gaps.w > 0) || (p.uni > 0 && (gaps.c > 0 || gaps.w > 0)); }
   function applyOne(p) {
@@ -595,17 +597,29 @@ function fillPackages(gid, gapC, gapW) {
     var p = { name: raw.name || '패키지', char: _num(raw.char), weapon: _num(raw.weapon), uni: _num(raw.uni), price: _num(raw.price) };
     if (p.char + p.weapon + p.uni <= 0 || p.price <= 0) return;
     var limit = parseInt(raw.limit) || Infinity;   // 0/빈칸 = 무제한
+    var finite = isFinite(limit);
+    if (finite && bought[p.name]) { boughtList.push({ name: p.name }); return; }  // 이미 구매 → 추천서 제외
     var copies = 0, guard = 0;
     while (copies < limit && (gaps.c > 0 || gaps.w > 0) && helps(p) && guard++ < 999) { applyOne(p); copies++; }
     if (copies > 0) {
-      out.push({ name: p.name, copies: copies, price: p.price * copies,
+      out.push({ name: p.name, copies: copies, price: p.price * copies, finite: finite,
         yield: [p.char ? '캐' + _r(p.char * copies) : '', p.weapon ? '무' + _r(p.weapon * copies) : '', p.uni ? '공' + _r(p.uni * copies) : ''].filter(Boolean).join(' ') });
       cost += p.price * copies;
     }
   });
-  return { plan: out, cost: cost, remC: Math.round(gaps.c), remW: Math.round(gaps.w) };
+  return { plan: out, cost: cost, remC: Math.round(gaps.c), remW: Math.round(gaps.w), boughtList: boughtList };
 }
 function _r(n) { return Math.round(n * 10) / 10; }
+// 이미 구매 패키지(버전별) — 체크박스로 토글, 추천서 제외
+function loadBought(gid) { try { var r = localStorage.getItem('pickup_manager_boughtpkgs_' + gid); return r ? JSON.parse(r) : {}; } catch (e) { return {}; } }
+function saveBought(gid, o) { try { localStorage.setItem('pickup_manager_boughtpkgs_' + gid, JSON.stringify(o)); } catch (e) {} }
+function curBought(gid) { var ver = loadPlannerData(gid).version || '_'; return loadBought(gid)[ver] || {}; }
+function toggleBought(gid, name) {
+  var ver = loadPlannerData(gid).version || '_', all = loadBought(gid);
+  if (!all[ver]) all[ver] = {};
+  if (all[ver][name]) delete all[ver][name]; else all[ver][name] = true;
+  saveBought(gid, all);
+}
 
 function buildBuyList() {
   var cfg = getGameConfig(), plan = loadPlanConst();
@@ -614,14 +628,22 @@ function buildBuyList() {
     var pity = calcPitySummary(gid); if (!pity) return;
     var pd = loadPlannerData(gid);
     function g2(half, k) { return (parseInt(half.firstHalf[k]) || 0) + (parseInt(half.secondHalf[k]) || 0); }
-    var cGoal = g2(pd.cur, 'charGoal'), wGoal = g2(pd.cur, 'weaponGoal');
+    // 목표 = 현재 버전 + 다음 버전 (플래너가 둘 다 저장)
+    var cCur = g2(pd.cur, 'charGoal'), wCur = g2(pd.cur, 'weaponGoal');
+    var cNext = g2(pd.next, 'charGoal'), wNext = g2(pd.next, 'weaponGoal');
+    var cGoal = cCur + cNext, wGoal = wCur + wNext, nextHasGoal = (cNext + wNext) > 0;
     var pc = PULL_COST[gid] || {}, gc = getGachaConfig(gid);
     var charAvg = pc.charAvg || gc.charPity || 90, weaponAvg = pc.weaponAvg || gc.weaponPity || 80;
     var need = { c: cGoal * charAvg, w: wGoal * weaponAvg };
     var bal = { c: pity.characterOnlyPulls, w: pity.weaponOnlyPulls, u: pity.commonPulls };
     var VI = VERSION_INCOME[gid] || { c: 0, w: 0, u: 0 };
     var got = _thisVersionIncome(gid, pd.startDate);
-    var remInc = { c: Math.max(0, VI.c - got.c), w: Math.max(0, VI.w - got.w), u: Math.max(0, VI.u - got.u) };
+    // 남은수급 = 이번 버전 잔여 + (다음 버전 목표 있으면) 다음 버전 한 판 더
+    var remInc = {
+      c: Math.max(0, VI.c - got.c) + (nextHasGoal ? VI.c : 0),
+      w: Math.max(0, VI.w - got.w) + (nextHasGoal ? VI.w : 0),
+      u: Math.max(0, VI.u - got.u) + (nextHasGoal ? VI.u : 0)
+    };
     // 전용 재화·수급으로 풀별 1차 부족
     var gapC = Math.max(0, need.c - bal.c - remInc.c);
     var gapW = Math.max(0, need.w - bal.w - remInc.w);
@@ -632,12 +654,12 @@ function buildBuyList() {
     gapC = Math.round(gapC); gapW = Math.round(gapW);
     var hasGoal = (cGoal + wGoal) > 0;
     var row = { gid: gid, name: cfg[gid].name || gid, version: pd.version || '',
-      cGoal: cGoal, wGoal: wGoal, hasGoal: hasGoal,
+      cGoal: cGoal, wGoal: wGoal, nextHasGoal: nextHasGoal, hasGoal: hasGoal,
       needTotal: Math.round(need.c + need.w), balTotal: bal.c + bal.w + bal.u,
       incTotal: remInc.c + remInc.w + remInc.u, gapC: gapC, gapW: gapW, shortfall: gapC + gapW };
     if (hasGoal && row.shortfall > 0) {
-      var fp = fillPackages(gid, gapC, gapW);
-      row.buy = fp.plan; row.cost = fp.cost; row.remC = fp.remC; row.remW = fp.remW; totalCost += fp.cost;
+      var fp = fillPackages(gid, gapC, gapW, curBought(gid));
+      row.buy = fp.plan; row.cost = fp.cost; row.remC = fp.remC; row.remW = fp.remW; row.bought = fp.boughtList; totalCost += fp.cost;
     }
     games.push(row);
   });
@@ -645,28 +667,40 @@ function buildBuyList() {
 }
 
 function _goalStr(g) { return [g.cGoal ? '캐' + g.cGoal : '', g.wGoal ? '무' + g.wGoal : ''].filter(Boolean).join('·'); }
+function _blAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+function _blTxt(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-function openBuyListModal() {
+// 페이지(탭)로 렌더 — 모달/새창 아님
+function renderBuylistPage() {
+  var page = document.getElementById('buylistPage'); if (!page) return;
   var r = buildBuyList();
   var cards = r.games.map(function(g) {
-    var head = '<div class="buy-g-head"><span class="buy-g-name">' + g.name
-      + (g.version ? ' <span class="buy-g-ver">v' + g.version + '</span>' : '') + '</span>'
+    var head = '<div class="buy-g-head"><span class="buy-g-name">' + _blTxt(g.name)
+      + (g.version ? ' <span class="buy-g-ver">v' + _blTxt(g.version) + '</span>' : '') + '</span>'
       + (g.cost != null ? '<span class="buy-g-cost">' + _manwon(g.cost) + '</span>' : '') + '</div>';
     var body;
     if (!g.hasGoal) body = '<div class="buy-g-none">목표 미설정 — 버전 플래너에 목표 입력</div>';
     else if (g.shortfall <= 0) body = '<div class="buy-g-ok">부족 없음 ✅ (필요 ' + g.needTotal + ' ≤ 잔고 ' + g.balTotal + ' + 수급 ' + g.incTotal + ')</div>';
     else {
       var num = '부족 <b>' + g.shortfall + '뽑</b> <span class="buy-g-have">(필요 ' + g.needTotal + ' − 잔고 ' + g.balTotal + ' − 수급 ' + g.incTotal + ')</span>'
+        + (g.nextHasGoal ? ' <span class="buy-g-have">· 현재+다음</span>' : '')
         + ((g.cGoal && g.wGoal) ? '<br><span class="buy-g-have">캐 부족 ' + g.gapC + ' · 무 부족 ' + g.gapW + '</span>' : '');
-      var buyRows = g.buy.map(function(b) {
-        return '<div class="buy-line"><span class="buy-line-n">' + b.name + (b.copies > 1 ? ' ×' + b.copies : '') + '</span>'
+      var rows = g.buy.map(function(b) {
+        if (b.finite) {
+          return '<label class="buy-line buy-line--chk"><span class="buy-line-n"><input type="checkbox" class="bl-chk" data-gid="' + g.gid + '" data-pkg="' + _blAttr(b.name) + '"> ' + _blTxt(b.name) + (b.copies > 1 ? ' ×' + b.copies : '') + '</span>'
+            + '<span class="buy-line-r">+' + b.yield + '뽑 · ' + _won(b.price) + '</span></label>';
+        }
+        return '<div class="buy-line"><span class="buy-line-n">' + _blTxt(b.name) + (b.copies > 1 ? ' ×' + b.copies : '') + '</span>'
           + '<span class="buy-line-r">+' + b.yield + '뽑 · ' + _won(b.price) + '</span></div>';
       }).join('');
-      if ((g.remC || 0) + (g.remW || 0) > 0)
-        buyRows += '<div class="buy-line buy-line--warn"><span class="buy-line-n">⚠ 아직 '
-          + [g.remC ? '캐' + g.remC : '', g.remW ? '무' + g.remW : ''].filter(Boolean).join(' ') + '뽑 부족</span>'
-          + '<span class="buy-line-r">패키지 추가/보정</span></div>';
-      body = '<div class="buy-g-goal">' + _goalStr(g) + ' · ' + num + '</div>' + buyRows;
+      var boughtRows = (g.bought || []).map(function(b) {
+        return '<label class="buy-line buy-line--bought"><span class="buy-line-n"><input type="checkbox" class="bl-chk" checked data-gid="' + g.gid + '" data-pkg="' + _blAttr(b.name) + '"> ' + _blTxt(b.name) + '</span>'
+          + '<span class="buy-line-r">✔ 구매됨</span></label>';
+      }).join('');
+      var warn = ((g.remC || 0) + (g.remW || 0) > 0)
+        ? '<div class="buy-line buy-line--warn"><span class="buy-line-n">⚠ 아직 ' + [g.remC ? '캐' + g.remC : '', g.remW ? '무' + g.remW : ''].filter(Boolean).join(' ') + '뽑 부족</span><span class="buy-line-r">패키지 추가/보정</span></div>'
+        : '';
+      body = '<div class="buy-g-goal">' + _goalStr(g) + ' · ' + num + '</div>' + rows + boughtRows + warn;
     }
     return '<div class="buy-g">' + head + body + '</div>';
   }).join('');
@@ -674,31 +708,27 @@ function openBuyListModal() {
   var budgetHtml = '<div class="buy-budget' + (r.budget ? '' : ' buy-budget--unset') + '">구매 합계 <b>' + _manwon(r.totalCost) + '</b>'
     + (r.budget ? ' · 월 예산 ' + _manwon(r.budget) + (over > 0 ? ' · <span class="buy-over">초과 ' + _manwon(over) + '</span>' : ' · 여유 ' + _manwon(-over)) : ' · 월 예산 미설정 → [예산·패키지]') + '</div>';
 
-  var modal = document.getElementById('ledgerModal');
-  modal.innerHTML =
-    '<div class="char-detail-overlay" id="buyOverlay">'
-    + '<div class="char-detail-panel" style="max-width:520px;">'
-    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">🛒 뭘 사야 돼?</div>'
-    + '<div class="detail-header-sub">' + r.date + ' · 현재 재화 + 플래너 목표 + 남은 수급</div></div>'
-    + '<button class="detail-close-btn" id="buyClose">✕</button></div>'
-    + '<div class="detail-body" style="gap:10px;">' + cards + budgetHtml + '</div>'
-    + '<div class="detail-footer"><button class="detail-btn-cancel" id="buyPlanBtn">예산·패키지</button>'
-    + '<button class="detail-btn-save" id="buyCopyBtn">복사</button></div>'
-    + '</div></div>';
-  modal.style.display = 'block';
-  var close = function() { modal.style.display = 'none'; modal.innerHTML = ''; };
-  document.getElementById('buyClose').onclick = close;
-  document.getElementById('buyOverlay').onclick = function(e) { if (e.target === this) close(); };
-  document.getElementById('buyPlanBtn').onclick = function() { openPlanConstModal(); };
-  document.getElementById('buyCopyBtn').onclick = function() {
-    var txt = '🛒 뭘 사야 돼? (' + r.date + ')\n' + r.games.map(function(g) {
-      if (!g.hasGoal) return '· ' + g.name + ': 목표 미설정';
-      if (g.shortfall <= 0) return '· ' + g.name + ': 부족 없음';
-      return '· ' + g.name + ' (' + _goalStr(g) + ', 부족 ' + g.shortfall + '뽑): '
-        + g.buy.map(function(b) { return b.name + (b.copies > 1 ? '×' + b.copies : '') + '(' + _won(b.price) + ')'; }).join(' + ') + ' = ' + _manwon(g.cost);
-    }).join('\n') + '\n구매 합계 ' + _manwon(r.totalCost) + (r.budget ? ' / 월 예산 ' + _manwon(r.budget) : '');
-    _copyText(txt, function(ok) { alert(ok ? '복사됨' : '복사 실패'); });
-  };
+  page.innerHTML =
+    '<div class="buylist-head"><div class="buylist-head-info"><div class="buylist-title">🛒 뭘 사야 돼?</div>'
+    + '<div class="buylist-sub">' + r.date + ' · 현재 재화 + 플래너 목표(현재+다음) + 남은 수급</div></div>'
+    + '<div class="buylist-actions"><button class="bl-btn bl-btn--primary" id="blPlanBtn">예산·패키지</button>'
+    + '<button class="bl-btn" id="blCopyBtn">복사</button></div></div>'
+    + '<div class="buylist-body">' + cards + budgetHtml + '</div>';
+
+  document.getElementById('blPlanBtn').onclick = function() { openPlanConstModal(); };
+  document.getElementById('blCopyBtn').onclick = function() { _copyBuyList(r); };
+  page.querySelectorAll('.bl-chk').forEach(function(cb) {
+    cb.onchange = function() { toggleBought(this.dataset.gid, this.dataset.pkg); renderBuylistPage(); };
+  });
+}
+function _copyBuyList(r) {
+  var txt = '🛒 뭘 사야 돼? (' + r.date + ')\n' + r.games.map(function(g) {
+    if (!g.hasGoal) return '· ' + g.name + ': 목표 미설정';
+    if (g.shortfall <= 0) return '· ' + g.name + ': 부족 없음';
+    return '· ' + g.name + ' (' + _goalStr(g) + ', 부족 ' + g.shortfall + '뽑): '
+      + g.buy.map(function(b) { return b.name + (b.copies > 1 ? '×' + b.copies : '') + '(' + _won(b.price) + ')'; }).join(' + ') + ' = ' + _manwon(g.cost);
+  }).join('\n') + '\n구매 합계 ' + _manwon(r.totalCost) + (r.budget ? ' / 월 예산 ' + _manwon(r.budget) : '');
+  _copyText(txt, function(ok) { alert(ok ? '복사됨' : '복사 실패'); });
 }
 
 var _pcDraft = {};  // 편집 중 패키지 초안 {gid:[{name,char,weapon,uni,price,limit}]}
@@ -761,7 +791,7 @@ function openPlanConstModal() {
     + '</div></div>';
   modal.style.display = 'block';
   _pcRenderPkgs();
-  var back = function() { openBuyListModal(); };
+  var back = function() { modal.style.display = 'none'; modal.innerHTML = ''; renderBuylistPage(); };
   document.getElementById('pcClose').onclick = back;
   document.getElementById('pcCancel').onclick = back;
   document.getElementById('pcOverlay').onclick = function(e) { if (e.target === this) back(); };
@@ -773,7 +803,7 @@ function openPlanConstModal() {
       if (clean.length) packages[gid] = clean;
     });
     savePlanConst({ monthlyBudgetKrw: b, packages: packages });
-    openBuyListModal();
+    back();
   };
 }
 
@@ -4832,6 +4862,7 @@ function init() {
         document.getElementById("tabAnalysis").style.display  = tab === "analysis"  ? "" : "none";
         document.getElementById("tabCurrency").style.display  = tab === "currency"  ? "" : "none";
         document.getElementById("tabLedger").style.display    = tab === "ledger"    ? "" : "none";
+        document.getElementById("tabBuylist").style.display   = tab === "buylist"   ? "" : "none";
         document.getElementById("analysisSideContent").style.display = tab === "analysis" ? "" : "none";
         // 과금액은 항상 표시(모든 탭), 카드 데이터 갱신은 보유 캐릭터 탭만(관리자)
         document.getElementById("analysisActions").style.display = (tab === "analysis" && !!window.IS_ADMIN) ? "flex" : "none";
@@ -4844,6 +4875,8 @@ function init() {
         } else if (tab === "ledger") {
           if (appState.currentGame) _currencyTab = appState.currentGame;
           renderLedgerPage();
+        } else if (tab === "buylist") {
+          renderBuylistPage();
         } else if (tab === "analysis") {
           // 재화 탭에서 보고 있던 게임을 가챠 분석에도 반영
           var syncGame = _currencyTab || appState.currentGame;
