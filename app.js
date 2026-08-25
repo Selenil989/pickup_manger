@@ -560,6 +560,16 @@ var DEFAULT_PACKAGES = {
   ]
 };
 function _num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+// 패키지 1개를 v3 표준형으로 정규화 — 구버전(v2 {type,pulls,krw}) 자동 마이그레이션(데이터 보존)
+function _normPkg(p) {
+  p = p || {};
+  if (p.char != null || p.weapon != null || p.uni != null || p.price != null) {
+    return { name: p.name || '', char: _num(p.char), weapon: _num(p.weapon), uni: _num(p.uni), price: _num(p.price), limit: _num(p.limit) };
+  }
+  var pulls = _num(p.pulls), t = p.type || 'common';   // v2 → v3
+  return { name: p.name || '', char: t === 'character' ? pulls : 0, weapon: t === 'weapon' ? pulls : 0,
+           uni: (t !== 'character' && t !== 'weapon') ? pulls : 0, price: _num(p.krw), limit: 1 };
+}
 
 // 이번 버전(startYMD 이후) 무료 수급 합계 (풀별 뽑)
 function _thisVersionIncome(gid, startYMD) {
@@ -591,9 +601,9 @@ function fillPackages(gid, gapC, gapW, bought) {
     var uw = Math.min(u, gaps.w); gaps.w -= uw;
   }
   pkgs.forEach(function(raw) {
-    var p = { name: raw.name || '패키지', char: _num(raw.char), weapon: _num(raw.weapon), uni: _num(raw.uni), price: _num(raw.price) };
+    var p = _normPkg(raw); if (!p.name) p.name = '패키지';
     if (p.char + p.weapon + p.uni <= 0 || p.price <= 0) return;
-    var limit = parseInt(raw.limit) || Infinity;   // 0/빈칸 = 무제한
+    var limit = p.limit > 0 ? p.limit : Infinity;   // 0/빈칸 = 무제한
     var finite = isFinite(limit);
     if (finite && bought[p.name]) { boughtList.push({ name: p.name }); return; }  // 이미 구매 → 추천서 제외
     var copies = 0, guard = 0;
@@ -768,7 +778,7 @@ function openPlanConstModal() {
   _pcDraft = {};
   Object.keys(cfg).forEach(function(gid) {
     var arr = (cur.packages && cur.packages[gid]) ? cur.packages[gid] : (DEFAULT_PACKAGES[gid] || []);
-    _pcDraft[gid] = arr.map(function(p) { return { name: p.name || '', char: _num(p.char), weapon: _num(p.weapon), uni: _num(p.uni), price: _num(p.price), limit: _num(p.limit) }; });
+    _pcDraft[gid] = arr.map(_normPkg);   // 구버전 포맷 자동 마이그레이션
   });
   var budget = parseInt(cur.monthlyBudgetKrw) || '';
   var modal = document.getElementById('ledgerModal');

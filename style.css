@@ -1408,9 +1408,9 @@ body.is-admin #analysisActions { display: flex; }
 .pc-pkg { border: 1px solid var(--border); border-radius: 7px; padding: 7px 8px; display: flex; flex-direction: column; gap: 6px; }
 .pc-pkg-l1 { display: flex; gap: 6px; align-items: center; }
 .pc-pkg-l1 .pc-in-name { flex: 1; }
-.pc-pkg-l2 { display: flex; gap: 6px; }
-.pc-f { display: flex; align-items: center; gap: 3px; font-size: var(--fs-2xs); color: var(--muted); flex: 1; min-width: 0; }
-.pc-f .pc-in-num { width: 100%; }
+.pc-pkg-l2 { display: grid; grid-template-columns: 1fr 1fr 1fr 1.7fr 1fr; gap: 5px; }
+.pc-f { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-2xs); color: var(--muted); min-width: 0; }
+.pc-f .pc-in-num { width: 100%; text-align: right; }
 .pc-in { padding: 6px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: var(--fs-xs); min-width: 0; }
 .pc-in-num { text-align: right; }
 .pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0 4px; line-height: 1; flex-shrink: 0; }
