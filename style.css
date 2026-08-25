@@ -1378,6 +1378,7 @@ body.is-admin #analysisActions { display: flex; }
 .buy-g-have { opacity: .8; }
 .buy-line { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: var(--fs-sm); }
 .buy-line-n { color: var(--text); font-weight: 600; }
+.buy-tag { display: inline-block; font-size: var(--fs-2xs); font-weight: 700; background: var(--border); color: var(--muted); border-radius: 4px; padding: 0 4px; margin-right: 5px; }
 .buy-line-r { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .buy-budget { border-top: 1px solid var(--border); padding-top: 10px; font-size: var(--fs-sm); color: var(--text); }
 .buy-budget b { color: #e5a34d; font-weight: 800; }
@@ -1388,8 +1389,9 @@ body.is-admin #analysisActions { display: flex; }
 .pc-game { border-top: 1px solid var(--border); padding-top: 10px; }
 .pc-game-name { font-size: var(--fs-sm); font-weight: 700; color: var(--text); margin-bottom: 6px; }
 .pc-pkg-rows { display: flex; flex-direction: column; gap: 6px; }
-.pc-pkg-row { display: grid; grid-template-columns: 1fr 60px 88px 26px; gap: 6px; align-items: center; }
+.pc-pkg-row { display: grid; grid-template-columns: 1fr 58px 46px 76px 22px; gap: 5px; align-items: center; }
 .pc-in { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: var(--fs-xs); min-width: 0; }
+.pc-sel { padding: 6px 4px; }
 .pc-in-num { text-align: right; }
 .pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0; line-height: 1; }
 .pc-del:hover { color: #e5486d; }
