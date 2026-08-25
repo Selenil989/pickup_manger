@@ -515,10 +515,9 @@ function copyClaudeExport() {
   });
 }
 
-// ── 「뭘 사야 돼?」 규칙 엔진 (파트 A) ──────────────────────────────────────────
-// 목표·부족뽑은 기존 버전 플래너(calcPlannerPhases)에서 재활용. 이 엔진은 그 위에
-// 구매규칙(패키지 순서·상한·이월계좌·이환 박스)만 얹는다. 플랜 상수는 개인 전략이라
-// 공개 리포에 하드코딩 금지 → 비공개 localStorage(→Supabase)에 JSON으로 저장.
+// ── 「뭘 사야 돼?」 — 월 예산 + 현재 재화 + 플래너 목표 → 게임별 구매안(패키지·트럭) ──
+// 목표·부족뽑은 기존 버전 플래너(calcPlannerPhases, 현재+다음 4단계)에서 그대로 재활용.
+// 예산·패키지는 개인값이라 공개 리포 하드코딩 금지 → 비공개 localStorage(→Supabase).
 function loadPlanConst() {
   try { var r = localStorage.getItem('pickup_manager_plan_constants'); return r ? JSON.parse(r) : {}; }
   catch (e) { return {}; }
@@ -526,223 +525,125 @@ function loadPlanConst() {
 function savePlanConst(obj) {
   try { localStorage.setItem('pickup_manager_plan_constants', JSON.stringify(obj)); } catch (e) {}
 }
-// 버전별 bool 플래그(플래너 목표로 표현 못 하는 것만: 이환 박스진행·젠레스 메타강공)
-function loadBuyFlags(gid) {
-  try { var r = localStorage.getItem('pickup_manager_buyflags_' + gid); return r ? JSON.parse(r) : {}; }
-  catch (e) { return {}; }
-}
-function saveBuyFlags(gid, obj) { try { localStorage.setItem('pickup_manager_buyflags_' + gid, JSON.stringify(obj)); } catch (e) {} }
-function curBuyFlag(gid, key) {
-  var ver = loadPlannerData(gid).version || '_';
-  var f = loadBuyFlags(gid)[ver] || {};
-  return !!f[key];
-}
-function setBuyFlag(gid, key, val) {
-  var ver = loadPlannerData(gid).version || '_';
-  var all = loadBuyFlags(gid); if (!all[ver]) all[ver] = {};
-  all[ver][key] = val; saveBuyFlags(gid, all);
-}
-
+function _won(n) { return Math.round(n).toLocaleString() + '원'; }
 function _manwon(n) { return (Math.round(n / 1000) / 10) + '만'; }
-function isCharCurrency(gid, curId) {
-  var cfg = getGameConfig()[gid]; if (!cfg) return false;
-  for (var i = 0; i < cfg.currencies.length; i++) if (cfg.currencies[i].id === curId) return cfg.currencies[i].type === 'character';
-  return false;
-}
-// 현재 버전(cur만, next 제외)의 부족뽑·목표 — 플래너 계산 재활용
-function curVersionShortfall(gid) {
-  var pity = calcPitySummary(gid);
-  if (!pity) return { hasPlanner: false };
-  var pd = loadPlannerData(gid);
-  var curOnly = { cur: pd.cur, next: { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } } };
-  var ph = calcPlannerPhases(curOnly, pity);
-  return { hasPlanner: true, shortfallPulls: Math.round(ph.totalShortfall),
-           charGoal: ph.totalCharGoalCount, weaponGoal: ph.totalWeaponGoalCount,
-           hasGoal: ph.hasAnyGoal, charBalPulls: pity.charPulls, weaponBalPulls: pity.weaponPulls };
-}
-function _spendInWindow(gid, a, b) {
-  var s = 0; loadLedger(gid).forEach(function(e) { if (e.price != null && e.ts >= a && e.ts < b) s += e.price; }); return s;
-}
-function cycleInfo(planStart) {
-  var start = new Date(planStart); if (isNaN(start.getTime())) return null;
-  var now = new Date(), len = 42;
-  var cyc = Math.max(0, Math.floor((now - start) / 86400000 / len));
-  var cs = start.getTime() + cyc * len * 86400000;
-  return { startTs: cs, elapsed: Math.floor((now.getTime() - cs) / 86400000), len: len };
-}
-// 명조 이월 계좌: planStart 이후 완료된 42일 버전마다 (avgBudget − 실지출) 누적 (진행중 버전 제외)
-function wuwaCarryover(plan) {
-  var ps = new Date(plan.planStart); if (isNaN(ps.getTime()) || !plan.wuwa || !plan.wuwa.avgBudget) return null;
-  var now = Date.now(), len = 42 * 86400000, avg = plan.wuwa.avgBudget, total = 0, wStart = ps.getTime();
-  while (wStart + len <= now) { total += (avg - _spendInWindow('wuwa', wStart, wStart + len)); wStart += len; }
-  return Math.round(total);
+
+// 부족뽑을 값 패키지(플랜에 등록된 것, 순서대로) → 남으면 깡트럭(게임 설정)으로 채운 구매안
+function fillPurchase(gid, shortfall) {
+  var out = [], remain = shortfall, cost = 0;
+  var pkgs = ((loadPlanConst().packages || {})[gid] || []).filter(function(p) { return (parseInt(p.pulls) || 0) > 0 && (parseInt(p.krw) || 0) > 0; });
+  pkgs.forEach(function(p) {
+    if (remain <= 0) return;
+    out.push({ name: p.name || '패키지', pulls: parseInt(p.pulls), krw: parseInt(p.krw) });
+    remain -= parseInt(p.pulls); cost += parseInt(p.krw);
+  });
+  var g = getGachaConfig(gid);
+  var tPulls = Math.max(1, parseInt(g.packagePulls) || 50), tPrice = parseInt(g.packagePrice) || 0;
+  if (remain > 0 && tPrice > 0) {
+    var n = Math.ceil(remain / tPulls);
+    out.push({ name: '깡트럭', trucks: n, pulls: n * tPulls, krw: n * tPrice });
+    cost += n * tPrice;
+  }
+  return { plan: out, cost: cost };
 }
 
 function buildBuyList() {
-  var plan = loadPlanConst();
-  var now = new Date();
-  var items = [], lines = [], notices = [], footer = {};
   var cfg = getGameConfig();
-  if (!plan || !Object.keys(plan).length) notices.push('플랜 상수 미입력 — [플랜 상수] 버튼에서 JSON을 저장하세요.');
-
-  // 0. 구독 만료 체크 (월정액 D-day ≤3)
+  var plan = loadPlanConst();
+  var games = [], totalCost = 0;
   Object.keys(cfg).forEach(function(gid) {
-    var d = calcMonthlyPassDays(loadMonthlyPassEndDate(gid));
-    if (d !== null && d <= 3) items.push({ pri: 0, game: (cfg[gid].name || gid), title: '월정액 갱신', krw: null,
-      reason: (d <= 0 ? '만료됨' : 'D-' + d), level: 'warn' });
+    var pity = calcPitySummary(gid); if (!pity) return;
+    var pd = loadPlannerData(gid);
+    var ph = calcPlannerPhases(pd, pity);   // 현재+다음 4단계 모두 반영
+    function g2(half, k) { return (parseInt(half.firstHalf[k]) || 0) + (parseInt(half.secondHalf[k]) || 0); }
+    var row = { gid: gid, name: cfg[gid].name || gid, version: pd.version || '',
+      curC: g2(pd.cur, 'charGoal'), curW: g2(pd.cur, 'weaponGoal'),
+      nextC: g2(pd.next, 'charGoal'), nextW: g2(pd.next, 'weaponGoal'),
+      haveChar: pity.charPulls, hasGoal: ph.hasAnyGoal, shortfall: Math.round(ph.totalShortfall) };
+    if (row.hasGoal && row.shortfall > 0) {
+      var fp = fillPurchase(gid, row.shortfall); row.buy = fp.plan; row.cost = fp.cost; totalCost += fp.cost;
+    }
+    games.push(row);
   });
+  return { date: toLocalYMD(new Date()), games: games, totalCost: totalCost, budget: parseInt(plan.monthlyBudgetKrw) || 0 };
+}
 
-  // 1. 명조
-  if (cfg.wuwa) {
-    var w = plan.wuwa || {}, sfW = curVersionShortfall('wuwa');
-    if (!sfW.hasPlanner) { /* 설정 없음 */ }
-    else if (!sfW.hasGoal) lines.push('명조: 구매 없음 — 여캐 목표 0, 예산 전액 이월');
-    else {
-      var girls = sfW.charGoal, sp = sfW.shortfallPulls;
-      var won = sp * ((PULL_COST.wuwa && PULL_COST.wuwa.won) || 2356);
-      var cap = girls >= 2 ? (w.cap2Girls || 0) : (w.cap1Girl || 0);
-      var reason = '부족 ' + sp + '뽑 ≈ ' + _manwon(won);
-      if (cap) reason += ' / 상한 ' + _manwon(cap);
-      var over = cap ? Math.max(0, won - cap) : 0;
-      if (over > 0) reason += ' · 초과 ' + _manwon(over) + '는 이월계좌 충당';
-      var order = (w.packages || []).map(function(p) { return p.name; }).join(' → ');
-      if (order) reason += ' · 순서: ' + order;
-      items.push({ pri: 1, game: '명조', title: (girls >= 2 ? '여캐 2명' : '여캐 ' + girls + '명') + ' 명전',
-        krw: (cap ? Math.min(won, cap) : won), reason: reason, level: over > 0 ? 'warn' : '' });
-    }
-  }
-
-  // 2. 이환
-  if (cfg.nte) {
-    var n = plan.nte || {}, sfN = curVersionShortfall('nte');
-    if (sfN.hasPlanner && sfN.hasGoal && sfN.shortfallPulls > 0) {
-      var wonN = sfN.shortfallPulls * (n.refillWonPerPull || 3000);
-      items.push({ pri: 2, game: '이환', title: '명전 부족분 환석 충전', krw: wonN,
-        reason: '부족 ' + sfN.shortfallPulls + '뽑 ≈ ' + _manwon(wonN), level: '' });
-    } else if (sfN.hasPlanner && sfN.hasGoal) lines.push('이환: 명전 목표 충족');
-    if (curBuyFlag('nte', 'box')) {
-      if (!n.ponsCurrencyId) notices.push('[이환] 폰즈 재화(ponsCurrencyId) 미설정 — 박스 폰즈 판정 스킵. 이환에 폰즈 재화 추가 후 ID 지정.');
-      else {
-        var pons = parseFloat(loadCurrencyData('nte')[n.ponsCurrencyId]) || 0, floor = n.ponsFloor || 0;
-        if (pons >= floor) items.push({ pri: 2, game: '이환', title: '박스 진행', krw: null,
-          reason: '폰즈 우선(잔 ' + pons.toLocaleString() + ') · 환석은 교환비 나쁜 회차만 · 예상 8~12만', level: '' });
-        else items.push({ pri: 2, game: '이환', title: '⚠ 박스 보류 — 타이쿤 파밍 먼저', krw: null,
-          reason: '폰즈 ' + pons.toLocaleString() + ' < ' + floor.toLocaleString() + ' · 지금 환석 완주 시 +10만 손해 구간', level: 'warn' });
-      }
-      items.push({ pri: 2, game: '이환', title: '버전 한정 패키지 확인', krw: null, reason: '상단 고정 항목', level: '' });
-    }
-  }
-
-  // 3. 엔필
-  if (cfg.endfield) {
-    var e = plan.endfield || {}, pityE = calcPitySummary('endfield'), sfE = curVersionShortfall('endfield');
-    var charBal = pityE ? pityE.charPulls : 0;
-    if (e.charFloorCritical && charBal < e.charFloorCritical)
-      items.push({ pri: 3, game: '엔필', title: '🚨 플랜 재조정 필요', krw: null, reason: '캐뽑 잔고 ' + charBal + ' < ' + e.charFloorCritical, level: 'crit' });
-    else if (e.charFloorWarn && charBal < e.charFloorWarn)
-      items.push({ pri: 3, game: '엔필', title: '⚠ 캐뽑 잔고 경고', krw: null, reason: '캐뽑 잔고 ' + charBal + ' < ' + e.charFloorWarn, level: 'warn' });
-    else lines.push('엔필: 구매 없음 (캐뽑 잔고 ' + charBal + ')');
-    if (sfE.hasPlanner && sfE.charGoal >= 2 && e.weaponPkgName)
-      items.push({ pri: 3, game: '엔필', title: e.weaponPkgName, krw: null, reason: '2명 확보 목표 · 무기고 징표', level: '' });
-    var viol = loadLedger('endfield').some(function(x) { return x.type === 'auto' && x.price != null && x.delta > 0 && isCharCurrency('endfield', x.currency); });
-    if (viol) items.push({ pri: 3, game: '엔필', title: '🚨 규칙 위반: 캐뽑 현금 충전 감지', krw: null, reason: '잔고 소진 전 충전 금지', level: 'crit' });
-  }
-
-  // 4. 젠레스
-  if (cfg.zzz) {
-    if (curBuyFlag('zzz', 'metaAtk')) items.push({ pri: 4, game: '젠레스', title: 'W엔진 예산 검토(적립금 내)', krw: null, reason: '메타·강공 딜러 픽업', level: '' });
-    else lines.push('젠레스: 구매 없음');
-  }
-
-  // 5. 총계
-  var cyc = plan.planStart ? cycleInfo(plan.planStart) : null;
-  if (cyc && plan.versionBudgetKrw) {
-    var spent = 0; Object.keys(cfg).forEach(function(g) { spent += _spendInWindow(g, cyc.startTs, now.getTime() + 1); });
-    footer.cycText = '버전 경과 ' + cyc.elapsed + '/' + cyc.len + '일';
-    footer.spend = spent; footer.budget = plan.versionBudgetKrw;
-    footer.spendPct = Math.round(spent / plan.versionBudgetKrw * 100);
-    footer.pacePct = Math.round(cyc.elapsed / cyc.len * 100);
-  } else notices.push('플랜 가동일(planStart)·버전예산(versionBudgetKrw) 입력 시 페이스/이월 계산.');
-  var carry = wuwaCarryover(plan);
-  if (carry !== null) footer.carryover = carry;
-  var breakK = 0; Object.keys(cfg).forEach(function(g) { loadLedger(g).forEach(function(x) { if (x.price != null && /돌파/.test(x.memo || '')) breakK += x.price; }); });
-  if (breakK > 0) { footer.breakthrough = breakK; footer.breakOk = (carry !== null) ? (breakK <= carry) : null; }
-
-  items.sort(function(a, b) { return a.pri - b.pri; });  // 구독=0 최상단 (|| 9 쓰면 0이 falsy라 꼴찌됨)
-  return { date: toLocalYMD(now), items: items, lines: lines, notices: notices, footer: footer };
+function _buyGoalText(g) {
+  var bits = [];
+  if (g.curC || g.curW) bits.push('현재 ' + [g.curC ? '캐' + g.curC : '', g.curW ? '무' + g.curW : ''].filter(Boolean).join('·'));
+  if (g.nextC || g.nextW) bits.push('다음 ' + [g.nextC ? '캐' + g.nextC : '', g.nextW ? '무' + g.nextW : ''].filter(Boolean).join('·'));
+  return bits.join(' · ');
 }
 
 function openBuyListModal() {
   var r = buildBuyList();
-  var boxOn = curBuyFlag('nte', 'box'), metaOn = curBuyFlag('zzz', 'metaAtk');
-  var itemsHtml = r.items.length ? r.items.map(function(it, i) {
-    var lvl = it.level ? ' buy-item--' + it.level : '';
-    return '<div class="buy-item' + lvl + '"><span class="buy-idx">' + (i + 1) + '</span>'
-      + '<div class="buy-main"><div class="buy-title">[' + it.game + '] ' + it.title
-      + (it.krw != null ? ' <b>' + it.krw.toLocaleString() + '원</b>' : '') + '</div>'
-      + '<div class="buy-reason">' + it.reason + '</div></div></div>';
-  }).join('') : '<div class="buy-empty">지금 살 것 없음 👍</div>';
-  var linesHtml = r.lines.length ? '<div class="buy-lines">' + r.lines.join(' · ') + '</div>' : '';
-  var f = r.footer, footHtml = '';
-  if (f.budget != null) {
-    var pace = f.spendPct <= f.pacePct + 5 ? '정상' : (f.spendPct <= f.pacePct + 20 ? '주의' : '초과');
-    footHtml += '<div class="buy-foot-row">이번 버전 <b>' + _manwon(f.spend) + '/' + _manwon(f.budget) + '</b> (페이스 ' + f.spendPct + '% vs 경과 ' + f.pacePct + '% · ' + pace + ')</div>';
-  }
-  if (f.carryover != null) footHtml += '<div class="buy-foot-row">명조 이월 계좌 <b>' + (f.carryover >= 0 ? '+' : '') + _manwon(f.carryover) + '</b></div>';
-  if (f.breakthrough != null) footHtml += '<div class="buy-foot-row">돌파 지출 ' + _manwon(f.breakthrough) + (f.breakOk === null ? '' : (f.breakOk ? ' · 이월 내 허용 ✅' : ' · 🚨 이월 초과 위반')) + '</div>';
-  var noticeHtml = r.notices.length ? '<div class="buy-notice">' + r.notices.map(function(x) { return '• ' + x; }).join('<br>') + '</div>' : '';
+  var cards = r.games.map(function(g) {
+    var head = '<div class="buy-g-head"><span class="buy-g-name">' + g.name
+      + (g.version ? ' <span class="buy-g-ver">v' + g.version + '</span>' : '') + '</span>'
+      + (g.cost != null ? '<span class="buy-g-cost">' + _manwon(g.cost) + '</span>' : '') + '</div>';
+    var body;
+    if (!g.hasGoal) body = '<div class="buy-g-none">목표 미설정 — 버전 플래너에 현재/다음 목표 입력</div>';
+    else if (g.shortfall <= 0) body = '<div class="buy-g-ok">보유 ' + g.haveChar + '뽑으로 충분 ✅ 추가 구매 없음</div>';
+    else {
+      var buyRows = g.buy.map(function(b) {
+        return '<div class="buy-line"><span class="buy-line-n">' + (b.trucks ? '🚚 깡트럭 ×' + b.trucks : b.name) + '</span>'
+          + '<span class="buy-line-r">' + b.pulls + '뽑 · ' + _won(b.krw) + '</span></div>';
+      }).join('');
+      body = '<div class="buy-g-goal">' + _buyGoalText(g) + ' → 부족 <b>' + g.shortfall + '뽑</b> <span class="buy-g-have">(보유 ' + g.haveChar + '뽑)</span></div>' + buyRows;
+    }
+    return '<div class="buy-g">' + head + body + '</div>';
+  }).join('');
+  var over = r.budget ? (r.totalCost - r.budget) : 0;
+  var budgetHtml = r.budget
+    ? '<div class="buy-budget">구매 합계 <b>' + _manwon(r.totalCost) + '</b> · 월 예산 ' + _manwon(r.budget)
+      + (over > 0 ? ' · <span class="buy-over">초과 ' + _manwon(over) + '</span>' : ' · 여유 ' + _manwon(-over)) + '</div>'
+    : '<div class="buy-budget buy-budget--unset">구매 합계 <b>' + _manwon(r.totalCost) + '</b> · 월 예산 미설정 → [예산·패키지]</div>';
 
   var modal = document.getElementById('ledgerModal');
   modal.innerHTML =
     '<div class="char-detail-overlay" id="buyOverlay">'
     + '<div class="char-detail-panel" style="max-width:520px;">'
-    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">🛒 지금 살 것</div>'
-    + '<div class="detail-header-sub">' + r.date + (f.cycText ? ' · ' + f.cycText : '') + '</div></div>'
+    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">🛒 뭘 사야 돼?</div>'
+    + '<div class="detail-header-sub">' + r.date + ' · 현재 재화 + 플래너 목표 기준</div></div>'
     + '<button class="detail-close-btn" id="buyClose">✕</button></div>'
-    + '<div class="detail-body" style="gap:12px;">'
-    + '<div class="buy-flags"><label><input type="checkbox" id="bfBox"' + (boxOn ? ' checked' : '') + '> 이환 박스 진행중</label>'
-    + '<label><input type="checkbox" id="bfMeta"' + (metaOn ? ' checked' : '') + '> 젠레스 픽업=메타·강공딜러</label></div>'
-    + itemsHtml + linesHtml + (footHtml ? '<div class="buy-foot">' + footHtml + '</div>' : '') + noticeHtml
-    + '</div>'
-    + '<div class="detail-footer"><button class="detail-btn-cancel" id="buyPlanBtn">플랜 상수</button>'
+    + '<div class="detail-body" style="gap:10px;">' + cards + budgetHtml + '</div>'
+    + '<div class="detail-footer"><button class="detail-btn-cancel" id="buyPlanBtn">예산·패키지</button>'
     + '<button class="detail-btn-save" id="buyCopyBtn">복사</button></div>'
     + '</div></div>';
   modal.style.display = 'block';
   var close = function() { modal.style.display = 'none'; modal.innerHTML = ''; };
   document.getElementById('buyClose').onclick = close;
   document.getElementById('buyOverlay').onclick = function(e) { if (e.target === this) close(); };
-  document.getElementById('bfBox').onchange = function() { setBuyFlag('nte', 'box', this.checked); openBuyListModal(); };
-  document.getElementById('bfMeta').onchange = function() { setBuyFlag('zzz', 'metaAtk', this.checked); openBuyListModal(); };
   document.getElementById('buyPlanBtn').onclick = function() { openPlanConstModal(); };
   document.getElementById('buyCopyBtn').onclick = function() {
-    var txt = '🛒 지금 살 것 (' + r.date + (f.cycText ? ', ' + f.cycText : '') + ')\n'
-      + r.items.map(function(it, i) { return (i + 1) + '. [' + it.game + '] ' + it.title + (it.krw != null ? ' ' + it.krw.toLocaleString() + '원' : '') + ' — ' + it.reason; }).join('\n')
-      + (r.lines.length ? '\n—\n' + r.lines.join(' · ') : '')
-      + (f.budget != null ? '\n이번 버전 ' + _manwon(f.spend) + '/' + _manwon(f.budget) : '')
-      + (f.carryover != null ? ' · 명조 이월 ' + (f.carryover >= 0 ? '+' : '') + _manwon(f.carryover) : '');
+    var txt = '🛒 뭘 사야 돼? (' + r.date + ')\n' + r.games.map(function(g) {
+      if (!g.hasGoal) return '· ' + g.name + ': 목표 미설정';
+      if (g.shortfall <= 0) return '· ' + g.name + ': 보유로 충분';
+      return '· ' + g.name + ' (' + _buyGoalText(g) + ', 부족 ' + g.shortfall + '뽑): '
+        + g.buy.map(function(b) { return (b.trucks ? '깡트럭×' + b.trucks : b.name) + '(' + _won(b.krw) + ')'; }).join(' + ') + ' = ' + _manwon(g.cost);
+    }).join('\n') + '\n구매 합계 ' + _manwon(r.totalCost) + (r.budget ? ' / 월 예산 ' + _manwon(r.budget) : '');
     _copyText(txt, function(ok) { alert(ok ? '복사됨' : '복사 실패'); });
   };
 }
 
 function openPlanConstModal() {
   var cur = loadPlanConst();
-  var template = {
-    planStart: '', versionBudgetKrw: 0,
-    wuwa: { avgBudget: 0, cap2Girls: 0, cap1Girl: 0, packages: [{ name: '', krw: 0 }] },
-    nte: { ponsCurrencyId: '', ponsFloor: 0, refillWonPerPull: 3000 },
-    endfield: { charFloorWarn: 0, charFloorCritical: 0, weaponPkgName: '' },
-    zzz: {}
-  };
-  var val = Object.keys(cur).length ? JSON.stringify(cur, null, 2) : JSON.stringify(template, null, 2);
+  var budget = parseInt(cur.monthlyBudgetKrw) || '';
+  var pkgTemplate = { wuwa: [{ name: '월간 팩', pulls: 14, krw: 25000 }], nte: [], endfield: [], zzz: [] };
+  var pkgVal = JSON.stringify((cur.packages && Object.keys(cur.packages).length) ? cur.packages : pkgTemplate, null, 2);
   var modal = document.getElementById('ledgerModal');
   modal.innerHTML =
     '<div class="char-detail-overlay" id="pcOverlay">'
-    + '<div class="char-detail-panel" style="max-width:560px;">'
-    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">플랜 상수 (비공개 저장)</div>'
-    + '<div class="detail-header-sub">개인 전략이라 공개 소스에 안 들어감 · 이 계정에만 저장</div></div>'
+    + '<div class="char-detail-panel" style="max-width:520px;">'
+    + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">예산·패키지 설정</div>'
+    + '<div class="detail-header-sub">이 계정에만 저장 · 공개 소스엔 안 들어감</div></div>'
     + '<button class="detail-close-btn" id="pcClose">✕</button></div>'
-    + '<div class="detail-body"><textarea id="pcText" spellcheck="false" style="width:100%;min-height:320px;font-family:monospace;font-size:var(--fs-xs);white-space:pre;">' + val.replace(/</g, '&lt;') + '</textarea>'
-    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:6px 0 0;">지시서의 PLAN 값을 여기 붙여넣어 저장하세요. planStart=플랜 가동일, packages=[{name,krw}] 구매순서.</p></div>'
+    + '<div class="detail-body" style="gap:14px;">'
+    + '<div class="edit-row"><label class="edit-label">월 예산 (원)</label>'
+    + '<input class="edit-input" id="pcBudget" type="number" inputmode="numeric" value="' + budget + '" placeholder="예) 300000"></div>'
+    + '<div class="edit-row"><label class="edit-label">게임별 값 패키지 (선택 · 순서대로 우선 구매, 없으면 깡트럭만)</label>'
+    + '<textarea id="pcPkg" spellcheck="false" style="width:100%;min-height:200px;font-family:monospace;font-size:var(--fs-xs);white-space:pre;">' + pkgVal.replace(/</g, '&lt;') + '</textarea></div>'
+    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:0;">패키지 = {"게임id":[{name,pulls,krw}]}. 트럭(깡 50연)은 게임 설정값으로 자동 계산되니 안 넣어도 됩니다.</p></div>'
     + '<div class="detail-footer"><button class="detail-btn-cancel" id="pcCancel">취소</button>'
     + '<button class="detail-btn-save" id="pcSave">저장</button></div>'
     + '</div></div>';
@@ -752,9 +653,12 @@ function openPlanConstModal() {
   document.getElementById('pcCancel').onclick = back;
   document.getElementById('pcOverlay').onclick = function(e) { if (e.target === this) back(); };
   document.getElementById('pcSave').onclick = function() {
-    var t = document.getElementById('pcText').value;
-    try { savePlanConst(JSON.parse(t)); openBuyListModal(); }
-    catch (e) { alert('JSON 형식 오류: ' + e.message); }
+    var b = parseInt(document.getElementById('pcBudget').value) || 0;
+    var pkgs;
+    try { pkgs = JSON.parse(document.getElementById('pcPkg').value); }
+    catch (e) { alert('패키지 JSON 형식 오류: ' + e.message); return; }
+    savePlanConst({ monthlyBudgetKrw: b, packages: pkgs });
+    openBuyListModal();
   };
 }
 

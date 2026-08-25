@@ -1365,23 +1365,24 @@ body.is-admin #analysisActions { display: flex; }
 .claude-export-btn { margin: 0 16px 10px; padding: 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: var(--fs-sm); cursor: pointer; }
 .claude-export-btn:hover { background: var(--border); color: var(--text); }
 
-/* 「뭘 사야 돼?」 모달 */
-.buy-flags { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-xs); color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-.buy-flags label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
-.buy-item { display: flex; gap: 10px; padding: 9px 4px; border-bottom: 1px solid var(--border); }
-.buy-item--warn { background: rgba(229,163,77,.08); }
-.buy-item--crit { background: rgba(229,72,109,.10); }
-.buy-idx { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--text); font-size: var(--fs-2xs); font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.buy-main { min-width: 0; }
-.buy-title { font-size: var(--fs-sm); font-weight: 600; color: var(--text); }
-.buy-title b { color: #e5a34d; }
-.buy-reason { font-size: var(--fs-xs); color: var(--muted); margin-top: 2px; word-break: keep-all; }
-.buy-empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: var(--fs-base); }
-.buy-lines { font-size: var(--fs-xs); color: var(--muted); padding: 4px 2px; }
-.buy-foot { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-.buy-foot-row { font-size: var(--fs-sm); color: var(--text); }
-.buy-foot-row b { color: #e5a34d; font-weight: 800; }
-.buy-notice { font-size: var(--fs-xs); color: #e5a34d; background: rgba(229,163,77,.06); border-radius: 7px; padding: 8px 10px; line-height: 1.5; }
+/* 「뭘 사야 돼?」 모달 — 게임별 구매안 카드 */
+.buy-g { border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; }
+.buy-g-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.buy-g-name { font-size: var(--fs-md); font-weight: 700; color: var(--text); }
+.buy-g-ver { font-size: var(--fs-2xs); color: var(--muted); font-weight: 500; }
+.buy-g-cost { font-size: var(--fs-md); font-weight: 800; color: #e5a34d; }
+.buy-g-none { font-size: var(--fs-xs); color: var(--muted); }
+.buy-g-ok { font-size: var(--fs-sm); color: #3ea877; }
+.buy-g-goal { font-size: var(--fs-xs); color: var(--muted); margin-bottom: 6px; }
+.buy-g-goal b { color: #e5486d; font-size: var(--fs-sm); }
+.buy-g-have { opacity: .8; }
+.buy-line { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: var(--fs-sm); }
+.buy-line-n { color: var(--text); font-weight: 600; }
+.buy-line-r { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.buy-budget { border-top: 1px solid var(--border); padding-top: 10px; font-size: var(--fs-sm); color: var(--text); }
+.buy-budget b { color: #e5a34d; font-weight: 800; }
+.buy-budget--unset { color: var(--muted); }
+.buy-over { color: #e5486d; font-weight: 700; }
 .ssp-title { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); margin-bottom: 5px; }
 .ssp-row { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--fs-sm); padding: 1px 0; }
 .ssp-row > span { color: var(--muted); }
