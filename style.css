@@ -1658,19 +1658,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   /* 좁은 폰에선 패스 카드도 세로로 (960대에선 나란히 유지) */
   .currency-header-top .pass-cards { flex-wrap: wrap; }
   .pass-cards .pass-card { flex: 1 1 100%; min-width: 0; }
-}
 
-/* 중간 해상도(≤1080px): 사이드바는 그대로 두고 본문만 세로로 쌓아 가로 넘침·겹침 방지.
-   (데스크톱 레이아웃이 1024~ 기준이라 960 같은 중간폭에서 헤더 카드/플래너가 넘치던 문제) */
-@media (max-width: 1080px) {
-  /* 보유 재화 헤더 → 1행: [제목+부제 | 월정액 배지], 2행: [패스 카드 나란히] */
-  .currency-header-top { flex-wrap: wrap; align-items: flex-start; }
-  .currency-header-info { order: 0; }
-  .currency-header-top .mp-badge { order: 1; }               /* base margin-left:auto 유지 → 우측 정렬 */
-  /* .currency-header-top 접두로 특이도↑ — 뒤에 나오는 base .pass-cards{flex:1}를 이겨 줄바꿈 강제 */
-  .currency-header-top .pass-cards { order: 2; flex: 1 1 100%; max-width: none; }
-
-  /* 재화 행: 데스크톱 8칸 그리드 → 2줄 그리드로 재배치 */
+  /* 재화 행: 데스크톱 8칸 그리드 → 2줄 그리드로 재배치 (폰 전용, 960대는 단일행) */
   .currency-page .currency-row {
     display: grid;
     grid-template-columns: 34px 1fr auto auto;
@@ -1690,6 +1679,19 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   .currency-page .currency-equals { grid-area: conv; justify-self: end; white-space: nowrap; }
   .currency-page .currency-row-actions { grid-area: actions; justify-self: end; }
   .currency-page .currency-type-select { max-width: 100%; }
+}
+
+/* 중간 해상도(≤1080px): 사이드바는 그대로 두고 본문만 세로로 쌓아 가로 넘침·겹침 방지.
+   (데스크톱 레이아웃이 1024~ 기준이라 960 같은 중간폭에서 헤더 카드/플래너가 넘치던 문제) */
+@media (max-width: 1080px) {
+  /* 보유 재화 헤더 → 1행: [제목+부제 | 월정액 배지], 2행: [패스 카드 나란히] */
+  .currency-header-top { flex-wrap: wrap; align-items: flex-start; }
+  .currency-header-info { order: 0; }
+  .currency-header-top .mp-badge { order: 1; }               /* base margin-left:auto 유지 → 우측 정렬 */
+  /* .currency-header-top 접두로 특이도↑ — 뒤에 나오는 base .pass-cards{flex:1}를 이겨 줄바꿈 강제 */
+  .currency-header-top .pass-cards { order: 2; flex: 1 1 100%; max-width: none; }
+
+  /* 재화 입력 행은 960대에선 데스크톱 단일행 유지(공간 충분) — 2줄 재배치는 ≤768에서만 */
 
   /* 플래너 좌우 분할(달성분석 2 : 과금 1) → 세로 스택 */
   .planner-bottom-row { flex-direction: column; }
