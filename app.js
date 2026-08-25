@@ -515,9 +515,10 @@ function copyClaudeExport() {
   });
 }
 
-// ── 「뭘 사야 돼?」 — 월 예산 + 현재 재화 + 플래너 목표 → 게임별 구매안(패키지·트럭) ──
-// 목표·부족뽑은 기존 버전 플래너(calcPlannerPhases, 현재+다음 4단계)에서 그대로 재활용.
-// 예산·패키지는 개인값이라 공개 리포 하드코딩 금지 → 비공개 localStorage(→Supabase).
+// ── 「뭘 사야 돼?」 구매 계산기 (v3) — 풀별(캐/무/공용) 부족 → 그리디 쇼핑리스트 ─────────
+// 필요=플래너 목표×평균뽑, 잔고=현재 재화(type별), 남은수급=버전상수−이번버전 income로그.
+// 패키지는 {char,weapon,uni} 지급(재화+뽑기권 혼합 가능)·가격·구매제한을 앱에서 편집.
+// 월 예산만 개인값(비공개 localStorage). 패키지/수급 상수는 게임 팩트라 기본 시드 제공.
 function loadPlanConst() {
   try { var r = localStorage.getItem('pickup_manager_plan_constants'); return r ? JSON.parse(r) : {}; }
   catch (e) { return {}; }
@@ -528,62 +529,122 @@ function savePlanConst(obj) {
 function _won(n) { return Math.round(n).toLocaleString() + '원'; }
 function _manwon(n) { return (Math.round(n / 1000) / 10) + '만'; }
 
-// 부족분을 캐/무/공용으로 나눠 채운다: 캐릭 패키지→캐 부족, 무기 패키지→무 부족,
-// 공용 패키지·깡트럭→공통(캐·무 어디든). 남는 부족은 깡트럭(게임 설정)으로.
-function fillPurchase(gid, cNeed, wNeed, com) {
-  var out = [], cost = 0;
-  function shortfall() { return Math.max(0, cNeed + wNeed - com); }
-  var pkgs = ((loadPlanConst().packages || {})[gid] || []).filter(function(p) { return (parseInt(p.pulls) || 0) > 0 && (parseInt(p.krw) || 0) > 0; });
-  pkgs.forEach(function(p) {
-    if (shortfall() <= 0) return;
-    var t = p.type || 'common', pulls = parseInt(p.pulls);
-    if (t === 'character' && cNeed <= 0) return;   // 캐 부족 없으면 캐릭 전용 패키지 스킵
-    if (t === 'weapon' && wNeed <= 0) return;       // 무 부족 없으면 무기 전용 패키지 스킵
-    out.push({ name: p.name || '패키지', type: t, pulls: pulls, krw: parseInt(p.krw) });
-    if (t === 'character') cNeed = Math.max(0, cNeed - pulls);
-    else if (t === 'weapon') wNeed = Math.max(0, wNeed - pulls);
-    else com += pulls;
-    cost += parseInt(p.krw);
+// 버전당 무료 수급 상수 (뽑, 근사 — 게임 팩트). c=캐전용 w=무전용 u=공용
+var VERSION_INCOME = {
+  wuwa:     { c: 0,  w: 0,  u: 115 },
+  nte:      { c: 90, w: 80, u: 29 },
+  endfield: { c: 78, w: 45, u: 0 },
+  zzz:      { c: 0,  w: 0,  u: 105 },
+  hsr:      { c: 0,  w: 0,  u: 110 }
+};
+// 패키지 기본 시드 (근사치 — 상점 보고 보정). limit 0/빈칸=무제한(트럭). 순서=우선순위.
+var DEFAULT_PACKAGES = {
+  wuwa: [
+    { name: '1.2만 팩 A', char: 0, weapon: 0, uni: 7.5, price: 12000, limit: 1 },
+    { name: '1.2만 팩 B', char: 0, weapon: 0, uni: 7.5, price: 12000, limit: 1 },
+    { name: '1.2만 팩 C', char: 0, weapon: 0, uni: 7.5, price: 12000, limit: 1 },
+    { name: '월간 팩',    char: 0, weapon: 0, uni: 14,  price: 25000, limit: 1 },
+    { name: '컬렉션 II',  char: 0, weapon: 0, uni: 19.5, price: 37000, limit: 1 },
+    { name: '5.5만 팩',   char: 0, weapon: 0, uni: 27.5, price: 55000, limit: 1 },
+    { name: '트럭',       char: 0, weapon: 0, uni: 50,  price: 119000, limit: 0 }
+  ],
+  nte: [
+    { name: '환석 충전(최고액)', char: 0, weapon: 0, uni: 40, price: 119000, limit: 0 }
+  ],
+  endfield: [
+    { name: '종합 인재 조합', char: 10, weapon: 10, uni: 0, price: 26000, limit: 1 },
+    { name: '트럭(오리지늄)', char: 0, weapon: 0, uni: 50, price: 130000, limit: 0 }
+  ],
+  zzz: [
+    { name: '트럭', char: 0, weapon: 0, uni: 50, price: 117800, limit: 0 }
+  ],
+  hsr: [
+    { name: '트럭', char: 0, weapon: 0, uni: 50, price: 117800, limit: 0 }
+  ]
+};
+function _num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+// 이번 버전(startYMD 이후) 무료 수급 합계 (풀별 뽑)
+function _thisVersionIncome(gid, startYMD) {
+  var inc = { c: 0, w: 0, u: 0 };
+  var cfg = getGameConfig()[gid]; if (!cfg) return inc;
+  var startTs = startYMD ? new Date(startYMD).getTime() : 0;
+  var typeOf = {}, rateOf = {};
+  cfg.currencies.forEach(function(c) { typeOf[c.id] = c.type || 'common'; rateOf[c.id] = c.rate || 1; });
+  loadLedger(gid).forEach(function(e) {
+    if (e.type !== 'auto' || !(e.delta > 0) || e.ts < startTs) return;
+    var pulls = e.delta / (rateOf[e.currency] || 1), t = typeOf[e.currency];
+    if (t === 'character') inc.c += pulls; else if (t === 'weapon') inc.w += pulls; else inc.u += pulls;
   });
-  var g = getGachaConfig(gid);
-  var tPulls = Math.max(1, parseInt(g.packagePulls) || 50), tPrice = parseInt(g.packagePrice) || 0;
-  var rem = shortfall();
-  if (rem > 0 && tPrice > 0) {
-    var n = Math.ceil(rem / tPulls);
-    out.push({ name: '깡트럭', type: 'common', trucks: n, pulls: n * tPulls, krw: n * tPrice });
-    cost += n * tPrice;
-  }
-  return { plan: out, cost: cost };
+  return { c: Math.round(inc.c), w: Math.round(inc.w), u: Math.round(inc.u) };
 }
 
+// 풀별 부족(gapC, gapW)을 패키지 테이블(우선순위 순)로 그리디 충당.
+// 패키지가 주는 캐/무는 해당 풀, 공용(uni)은 캐→무 순으로 배분. 트럭(무제한)은 마지막에 반복.
+function fillPackages(gid, gapC, gapW) {
+  var gaps = { c: gapC, w: gapW }, out = [], cost = 0;
+  var pkgs = (loadPlanConst().packages || {})[gid] || DEFAULT_PACKAGES[gid] || [];
+  function helps(p) { return (p.char > 0 && gaps.c > 0) || (p.weapon > 0 && gaps.w > 0) || (p.uni > 0 && (gaps.c > 0 || gaps.w > 0)); }
+  function applyOne(p) {
+    var c = Math.min(p.char, gaps.c); gaps.c -= c;
+    var w = Math.min(p.weapon, gaps.w); gaps.w -= w;
+    var u = p.uni, uc = Math.min(u, gaps.c); gaps.c -= uc; u -= uc;
+    var uw = Math.min(u, gaps.w); gaps.w -= uw;
+  }
+  pkgs.forEach(function(raw) {
+    var p = { name: raw.name || '패키지', char: _num(raw.char), weapon: _num(raw.weapon), uni: _num(raw.uni), price: _num(raw.price) };
+    if (p.char + p.weapon + p.uni <= 0 || p.price <= 0) return;
+    var limit = parseInt(raw.limit) || Infinity;   // 0/빈칸 = 무제한
+    var copies = 0, guard = 0;
+    while (copies < limit && (gaps.c > 0 || gaps.w > 0) && helps(p) && guard++ < 999) { applyOne(p); copies++; }
+    if (copies > 0) {
+      out.push({ name: p.name, copies: copies, price: p.price * copies,
+        yield: [p.char ? '캐' + _r(p.char * copies) : '', p.weapon ? '무' + _r(p.weapon * copies) : '', p.uni ? '공' + _r(p.uni * copies) : ''].filter(Boolean).join(' ') });
+      cost += p.price * copies;
+    }
+  });
+  return { plan: out, cost: cost, remC: Math.round(gaps.c), remW: Math.round(gaps.w) };
+}
+function _r(n) { return Math.round(n * 10) / 10; }
+
 function buildBuyList() {
-  var cfg = getGameConfig();
-  var plan = loadPlanConst();
+  var cfg = getGameConfig(), plan = loadPlanConst();
   var games = [], totalCost = 0;
   Object.keys(cfg).forEach(function(gid) {
     var pity = calcPitySummary(gid); if (!pity) return;
     var pd = loadPlannerData(gid);
-    var ph = calcPlannerPhases(pd, pity);   // 현재+다음 4단계 모두 반영
     function g2(half, k) { return (parseInt(half.firstHalf[k]) || 0) + (parseInt(half.secondHalf[k]) || 0); }
+    var cGoal = g2(pd.cur, 'charGoal'), wGoal = g2(pd.cur, 'weaponGoal');
+    var pc = PULL_COST[gid] || {}, gc = getGachaConfig(gid);
+    var charAvg = pc.charAvg || gc.charPity || 90, weaponAvg = pc.weaponAvg || gc.weaponPity || 80;
+    var need = { c: cGoal * charAvg, w: wGoal * weaponAvg };
+    var bal = { c: pity.characterOnlyPulls, w: pity.weaponOnlyPulls, u: pity.commonPulls };
+    var VI = VERSION_INCOME[gid] || { c: 0, w: 0, u: 0 };
+    var got = _thisVersionIncome(gid, pd.startDate);
+    var remInc = { c: Math.max(0, VI.c - got.c), w: Math.max(0, VI.w - got.w), u: Math.max(0, VI.u - got.u) };
+    // 전용 재화·수급으로 풀별 1차 부족
+    var gapC = Math.max(0, need.c - bal.c - remInc.c);
+    var gapW = Math.max(0, need.w - bal.w - remInc.w);
+    // 공용(잔고+수급)을 캐→무 순 배분
+    var uni = bal.u + remInc.u;
+    var uc = Math.min(uni, gapC); gapC -= uc; uni -= uc;
+    var uw = Math.min(uni, gapW); gapW -= uw; uni -= uw;
+    gapC = Math.round(gapC); gapW = Math.round(gapW);
+    var hasGoal = (cGoal + wGoal) > 0;
     var row = { gid: gid, name: cfg[gid].name || gid, version: pd.version || '',
-      curC: g2(pd.cur, 'charGoal'), curW: g2(pd.cur, 'weaponGoal'),
-      nextC: g2(pd.next, 'charGoal'), nextW: g2(pd.next, 'weaponGoal'),
-      haveChar: pity.charPulls, hasGoal: ph.hasAnyGoal, shortfall: Math.round(ph.totalShortfall) };
-    if (row.hasGoal && row.shortfall > 0) {
-      var fp = fillPurchase(gid, ph.charNeedCommon, ph.weaponNeedCommon, pity.commonPulls);
-      row.buy = fp.plan; row.cost = fp.cost; totalCost += fp.cost;
+      cGoal: cGoal, wGoal: wGoal, hasGoal: hasGoal,
+      needTotal: Math.round(need.c + need.w), balTotal: bal.c + bal.w + bal.u,
+      incTotal: remInc.c + remInc.w + remInc.u, gapC: gapC, gapW: gapW, shortfall: gapC + gapW };
+    if (hasGoal && row.shortfall > 0) {
+      var fp = fillPackages(gid, gapC, gapW);
+      row.buy = fp.plan; row.cost = fp.cost; row.remC = fp.remC; row.remW = fp.remW; totalCost += fp.cost;
     }
     games.push(row);
   });
   return { date: toLocalYMD(new Date()), games: games, totalCost: totalCost, budget: parseInt(plan.monthlyBudgetKrw) || 0 };
 }
 
-function _buyGoalText(g) {
-  var bits = [];
-  if (g.curC || g.curW) bits.push('현재 ' + [g.curC ? '캐' + g.curC : '', g.curW ? '무' + g.curW : ''].filter(Boolean).join('·'));
-  if (g.nextC || g.nextW) bits.push('다음 ' + [g.nextC ? '캐' + g.nextC : '', g.nextW ? '무' + g.nextW : ''].filter(Boolean).join('·'));
-  return bits.join(' · ');
-}
+function _goalStr(g) { return [g.cGoal ? '캐' + g.cGoal : '', g.wGoal ? '무' + g.wGoal : ''].filter(Boolean).join('·'); }
 
 function openBuyListModal() {
   var r = buildBuyList();
@@ -592,30 +653,33 @@ function openBuyListModal() {
       + (g.version ? ' <span class="buy-g-ver">v' + g.version + '</span>' : '') + '</span>'
       + (g.cost != null ? '<span class="buy-g-cost">' + _manwon(g.cost) + '</span>' : '') + '</div>';
     var body;
-    if (!g.hasGoal) body = '<div class="buy-g-none">목표 미설정 — 버전 플래너에 현재/다음 목표 입력</div>';
-    else if (g.shortfall <= 0) body = '<div class="buy-g-ok">보유 ' + g.haveChar + '뽑으로 충분 ✅ 추가 구매 없음</div>';
+    if (!g.hasGoal) body = '<div class="buy-g-none">목표 미설정 — 버전 플래너에 목표 입력</div>';
+    else if (g.shortfall <= 0) body = '<div class="buy-g-ok">부족 없음 ✅ (필요 ' + g.needTotal + ' ≤ 잔고 ' + g.balTotal + ' + 수급 ' + g.incTotal + ')</div>';
     else {
+      var num = '부족 <b>' + g.shortfall + '뽑</b> <span class="buy-g-have">(필요 ' + g.needTotal + ' − 잔고 ' + g.balTotal + ' − 수급 ' + g.incTotal + ')</span>'
+        + ((g.cGoal && g.wGoal) ? '<br><span class="buy-g-have">캐 부족 ' + g.gapC + ' · 무 부족 ' + g.gapW + '</span>' : '');
       var buyRows = g.buy.map(function(b) {
-        var tag = (b.type && b.type !== 'common') ? '<span class="buy-tag">' + (b.type === 'character' ? '캐' : '무') + '</span>' : '';
-        return '<div class="buy-line"><span class="buy-line-n">' + tag + (b.trucks ? '🚚 깡트럭 ×' + b.trucks : b.name) + '</span>'
-          + '<span class="buy-line-r">' + b.pulls + '뽑 · ' + _won(b.krw) + '</span></div>';
+        return '<div class="buy-line"><span class="buy-line-n">' + b.name + (b.copies > 1 ? ' ×' + b.copies : '') + '</span>'
+          + '<span class="buy-line-r">+' + b.yield + '뽑 · ' + _won(b.price) + '</span></div>';
       }).join('');
-      body = '<div class="buy-g-goal">' + _buyGoalText(g) + ' → 부족 <b>' + g.shortfall + '뽑</b> <span class="buy-g-have">(보유 ' + g.haveChar + '뽑)</span></div>' + buyRows;
+      if ((g.remC || 0) + (g.remW || 0) > 0)
+        buyRows += '<div class="buy-line buy-line--warn"><span class="buy-line-n">⚠ 아직 '
+          + [g.remC ? '캐' + g.remC : '', g.remW ? '무' + g.remW : ''].filter(Boolean).join(' ') + '뽑 부족</span>'
+          + '<span class="buy-line-r">패키지 추가/보정</span></div>';
+      body = '<div class="buy-g-goal">' + _goalStr(g) + ' · ' + num + '</div>' + buyRows;
     }
     return '<div class="buy-g">' + head + body + '</div>';
   }).join('');
   var over = r.budget ? (r.totalCost - r.budget) : 0;
-  var budgetHtml = r.budget
-    ? '<div class="buy-budget">구매 합계 <b>' + _manwon(r.totalCost) + '</b> · 월 예산 ' + _manwon(r.budget)
-      + (over > 0 ? ' · <span class="buy-over">초과 ' + _manwon(over) + '</span>' : ' · 여유 ' + _manwon(-over)) + '</div>'
-    : '<div class="buy-budget buy-budget--unset">구매 합계 <b>' + _manwon(r.totalCost) + '</b> · 월 예산 미설정 → [예산·패키지]</div>';
+  var budgetHtml = '<div class="buy-budget' + (r.budget ? '' : ' buy-budget--unset') + '">구매 합계 <b>' + _manwon(r.totalCost) + '</b>'
+    + (r.budget ? ' · 월 예산 ' + _manwon(r.budget) + (over > 0 ? ' · <span class="buy-over">초과 ' + _manwon(over) + '</span>' : ' · 여유 ' + _manwon(-over)) : ' · 월 예산 미설정 → [예산·패키지]') + '</div>';
 
   var modal = document.getElementById('ledgerModal');
   modal.innerHTML =
     '<div class="char-detail-overlay" id="buyOverlay">'
     + '<div class="char-detail-panel" style="max-width:520px;">'
     + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">🛒 뭘 사야 돼?</div>'
-    + '<div class="detail-header-sub">' + r.date + ' · 현재 재화 + 플래너 목표 기준</div></div>'
+    + '<div class="detail-header-sub">' + r.date + ' · 현재 재화 + 플래너 목표 + 남은 수급</div></div>'
     + '<button class="detail-close-btn" id="buyClose">✕</button></div>'
     + '<div class="detail-body" style="gap:10px;">' + cards + budgetHtml + '</div>'
     + '<div class="detail-footer"><button class="detail-btn-cancel" id="buyPlanBtn">예산·패키지</button>'
@@ -629,48 +693,46 @@ function openBuyListModal() {
   document.getElementById('buyCopyBtn').onclick = function() {
     var txt = '🛒 뭘 사야 돼? (' + r.date + ')\n' + r.games.map(function(g) {
       if (!g.hasGoal) return '· ' + g.name + ': 목표 미설정';
-      if (g.shortfall <= 0) return '· ' + g.name + ': 보유로 충분';
-      return '· ' + g.name + ' (' + _buyGoalText(g) + ', 부족 ' + g.shortfall + '뽑): '
-        + g.buy.map(function(b) { return (b.trucks ? '깡트럭×' + b.trucks : b.name) + '(' + _won(b.krw) + ')'; }).join(' + ') + ' = ' + _manwon(g.cost);
+      if (g.shortfall <= 0) return '· ' + g.name + ': 부족 없음';
+      return '· ' + g.name + ' (' + _goalStr(g) + ', 부족 ' + g.shortfall + '뽑): '
+        + g.buy.map(function(b) { return b.name + (b.copies > 1 ? '×' + b.copies : '') + '(' + _won(b.price) + ')'; }).join(' + ') + ' = ' + _manwon(g.cost);
     }).join('\n') + '\n구매 합계 ' + _manwon(r.totalCost) + (r.budget ? ' / 월 예산 ' + _manwon(r.budget) : '');
     _copyText(txt, function(ok) { alert(ok ? '복사됨' : '복사 실패'); });
   };
 }
 
-var _pcDraft = {};  // 편집 중 패키지 초안 {gid:[{name,type,pulls,krw}]}
-var _PC_TYPES = [['common', '공용'], ['character', '캐릭'], ['weapon', '무기']];
-function _pcTypeOpts(sel) {
-  return _PC_TYPES.map(function(o) { return '<option value="' + o[0] + '"' + (o[0] === (sel || 'common') ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
-}
+var _pcDraft = {};  // 편집 중 패키지 초안 {gid:[{name,char,weapon,uni,price,limit}]}
 function _pcRenderPkgs() {
   var cfg = getGameConfig(), area = document.getElementById('pcPkgArea');
   if (!area) return;
+  function fld(gid, i, f, ph, val) {
+    return '<label class="pc-f">' + ph + '<input class="pc-in pc-in-num" data-gid="' + gid + '" data-i="' + i + '" data-f="' + f + '" type="number" inputmode="decimal" value="' + (val || '') + '"></label>';
+  }
   area.innerHTML = Object.keys(cfg).map(function(gid) {
     var rows = (_pcDraft[gid] || []).map(function(p, i) {
-      return '<div class="pc-pkg-row">'
-        + '<input class="pc-in pc-in-name" data-gid="' + gid + '" data-i="' + i + '" data-f="name" placeholder="패키지 이름" value="' + String(p.name || '').replace(/"/g, '&quot;') + '">'
-        + '<select class="pc-in pc-sel" data-gid="' + gid + '" data-i="' + i + '" data-f="type">' + _pcTypeOpts(p.type) + '</select>'
-        + '<input class="pc-in pc-in-num" data-gid="' + gid + '" data-i="' + i + '" data-f="pulls" type="number" inputmode="numeric" placeholder="뽑" value="' + (p.pulls || '') + '">'
-        + '<input class="pc-in pc-in-num" data-gid="' + gid + '" data-i="' + i + '" data-f="krw" type="number" inputmode="numeric" placeholder="원" value="' + (p.krw || '') + '">'
-        + '<button class="pc-del" data-gid="' + gid + '" data-i="' + i + '" title="삭제">✕</button></div>';
+      return '<div class="pc-pkg">'
+        + '<div class="pc-pkg-l1"><input class="pc-in pc-in-name" data-gid="' + gid + '" data-i="' + i + '" data-f="name" placeholder="패키지 이름" value="' + String(p.name || '').replace(/"/g, '&quot;') + '">'
+        + '<button class="pc-del" data-gid="' + gid + '" data-i="' + i + '" title="삭제">✕</button></div>'
+        + '<div class="pc-pkg-l2">' + fld(gid, i, 'char', '캐', p.char) + fld(gid, i, 'weapon', '무', p.weapon)
+        + fld(gid, i, 'uni', '공', p.uni) + fld(gid, i, 'price', '₩', p.price) + fld(gid, i, 'limit', '제한', p.limit) + '</div>'
+        + '</div>';
     }).join('');
     return '<div class="pc-game"><div class="pc-game-name">' + (cfg[gid].name || gid) + '</div>'
       + '<div class="pc-pkg-rows">' + rows + '</div>'
       + '<button class="pc-add" data-gid="' + gid + '">+ 패키지 추가</button></div>';
   }).join('');
   area.querySelectorAll('.pc-in').forEach(function(inp) {
-    var h = function() {
+    inp.oninput = function() {
       var row = (_pcDraft[this.dataset.gid] || [])[+this.dataset.i]; if (!row) return;
       var f = this.dataset.f;
-      row[f] = (f === 'pulls' || f === 'krw') ? (parseInt(this.value) || 0) : this.value;
+      row[f] = (f === 'name') ? this.value : (_num(this.value));
     };
-    inp.oninput = h; inp.onchange = h;   // onchange = select 대응
   });
   area.querySelectorAll('.pc-del').forEach(function(b) {
     b.onclick = function() { _pcDraft[this.dataset.gid].splice(+this.dataset.i, 1); _pcRenderPkgs(); };
   });
   area.querySelectorAll('.pc-add').forEach(function(b) {
-    b.onclick = function() { var g = this.dataset.gid; if (!_pcDraft[g]) _pcDraft[g] = []; _pcDraft[g].push({ name: '', type: 'common', pulls: 0, krw: 0 }); _pcRenderPkgs(); };
+    b.onclick = function() { var g = this.dataset.gid; if (!_pcDraft[g]) _pcDraft[g] = []; _pcDraft[g].push({ name: '', char: 0, weapon: 0, uni: 0, price: 0, limit: 1 }); _pcRenderPkgs(); };
   });
 }
 
@@ -678,8 +740,8 @@ function openPlanConstModal() {
   var cur = loadPlanConst(), cfg = getGameConfig();
   _pcDraft = {};
   Object.keys(cfg).forEach(function(gid) {
-    var arr = (cur.packages && cur.packages[gid]) || [];
-    _pcDraft[gid] = arr.map(function(p) { return { name: p.name || '', type: p.type || 'common', pulls: parseInt(p.pulls) || 0, krw: parseInt(p.krw) || 0 }; });
+    var arr = (cur.packages && cur.packages[gid]) ? cur.packages[gid] : (DEFAULT_PACKAGES[gid] || []);
+    _pcDraft[gid] = arr.map(function(p) { return { name: p.name || '', char: _num(p.char), weapon: _num(p.weapon), uni: _num(p.uni), price: _num(p.price), limit: _num(p.limit) }; });
   });
   var budget = parseInt(cur.monthlyBudgetKrw) || '';
   var modal = document.getElementById('ledgerModal');
@@ -687,13 +749,13 @@ function openPlanConstModal() {
     '<div class="char-detail-overlay" id="pcOverlay">'
     + '<div class="char-detail-panel" style="max-width:520px;">'
     + '<div class="detail-header"><div class="detail-header-info"><div class="detail-header-name">예산·패키지 설정</div>'
-    + '<div class="detail-header-sub">이 계정에만 저장 · 깡트럭은 자동, 값 패키지만 등록</div></div>'
+    + '<div class="detail-header-sub">지급 뽑을 캐/무/공용으로 · 트럭은 제한 0(무제한) · 순서=우선순위</div></div>'
     + '<button class="detail-close-btn" id="pcClose">✕</button></div>'
     + '<div class="detail-body" style="gap:14px;">'
     + '<div class="edit-row"><label class="edit-label">월 예산 (원)</label>'
     + '<input class="edit-input" id="pcBudget" type="number" inputmode="numeric" value="' + budget + '" placeholder="예) 300000"></div>'
     + '<div id="pcPkgArea"></div>'
-    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:0;">값 패키지(월간팩·컬렉션 등)를 부족뽑 채우는 순서대로 등록. 남는 건 깡트럭(50연)으로 자동. 안 넣으면 트럭만.</p></div>'
+    + '<p style="font-size:var(--fs-xs);color:var(--muted);margin:0;">캐=캐릭전용뽑, 무=무기전용뽑, 공=공용(재화). 재화+뽑기권 같이 주는 패키지는 셋 다 채우면 됨. 제한=구매횟수(트럭 등 무제한은 0).</p></div>'
     + '<div class="detail-footer"><button class="detail-btn-cancel" id="pcCancel">취소</button>'
     + '<button class="detail-btn-save" id="pcSave">저장</button></div>'
     + '</div></div>';
@@ -707,7 +769,7 @@ function openPlanConstModal() {
     var b = parseInt(document.getElementById('pcBudget').value) || 0;
     var packages = {};
     Object.keys(_pcDraft).forEach(function(gid) {
-      var clean = _pcDraft[gid].filter(function(p) { return p.name && p.pulls > 0 && p.krw > 0; });
+      var clean = _pcDraft[gid].filter(function(p) { return p.name && (p.char > 0 || p.weapon > 0 || p.uni > 0) && p.price > 0; });
       if (clean.length) packages[gid] = clean;
     });
     savePlanConst({ monthlyBudgetKrw: b, packages: packages });

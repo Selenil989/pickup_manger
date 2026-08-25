@@ -1378,7 +1378,7 @@ body.is-admin #analysisActions { display: flex; }
 .buy-g-have { opacity: .8; }
 .buy-line { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: var(--fs-sm); }
 .buy-line-n { color: var(--text); font-weight: 600; }
-.buy-tag { display: inline-block; font-size: var(--fs-2xs); font-weight: 700; background: var(--border); color: var(--muted); border-radius: 4px; padding: 0 4px; margin-right: 5px; }
+.buy-line--warn .buy-line-n { color: #e5486d; }
 .buy-line-r { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .buy-budget { border-top: 1px solid var(--border); padding-top: 10px; font-size: var(--fs-sm); color: var(--text); }
 .buy-budget b { color: #e5a34d; font-weight: 800; }
@@ -1388,12 +1388,16 @@ body.is-admin #analysisActions { display: flex; }
 /* 예산·패키지 설정 폼 */
 .pc-game { border-top: 1px solid var(--border); padding-top: 10px; }
 .pc-game-name { font-size: var(--fs-sm); font-weight: 700; color: var(--text); margin-bottom: 6px; }
-.pc-pkg-rows { display: flex; flex-direction: column; gap: 6px; }
-.pc-pkg-row { display: grid; grid-template-columns: 1fr 58px 46px 76px 22px; gap: 5px; align-items: center; }
-.pc-in { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: var(--fs-xs); min-width: 0; }
-.pc-sel { padding: 6px 4px; }
+.pc-pkg-rows { display: flex; flex-direction: column; gap: 8px; }
+.pc-pkg { border: 1px solid var(--border); border-radius: 7px; padding: 7px 8px; display: flex; flex-direction: column; gap: 6px; }
+.pc-pkg-l1 { display: flex; gap: 6px; align-items: center; }
+.pc-pkg-l1 .pc-in-name { flex: 1; }
+.pc-pkg-l2 { display: flex; gap: 6px; }
+.pc-f { display: flex; align-items: center; gap: 3px; font-size: var(--fs-2xs); color: var(--muted); flex: 1; min-width: 0; }
+.pc-f .pc-in-num { width: 100%; }
+.pc-in { padding: 6px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: var(--fs-xs); min-width: 0; }
 .pc-in-num { text-align: right; }
-.pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0; line-height: 1; }
+.pc-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: var(--fs-base); padding: 0 4px; line-height: 1; flex-shrink: 0; }
 .pc-del:hover { color: #e5486d; }
 .pc-add { margin-top: 6px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 6px; background: none; color: var(--muted); font-size: var(--fs-xs); cursor: pointer; }
 .pc-add:hover { color: var(--text); border-color: var(--muted); }
