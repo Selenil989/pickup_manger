@@ -1656,6 +1656,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   /* 제목이 햄버거 버튼을 피하도록 (햄버거는 768 이하에서만) */
   .currency-header-info { padding-left: 48px; }
   /* 좁은 폰에선 패스 카드도 세로로 (960대에선 나란히 유지) */
+  .currency-header-top .pass-cards { flex-wrap: wrap; }
   .pass-cards .pass-card { flex: 1 1 100%; min-width: 0; }
 }
 
@@ -1666,7 +1667,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   .currency-header-top { flex-wrap: wrap; align-items: flex-start; }
   .currency-header-info { order: 0; }
   .currency-header-top .mp-badge { order: 1; }               /* base margin-left:auto 유지 → 우측 정렬 */
-  .pass-cards { order: 2; flex: 1 1 100%; max-width: none; }  /* 다음 줄 전체폭(카드는 base flex로 나란히) */
+  /* .currency-header-top 접두로 특이도↑ — 뒤에 나오는 base .pass-cards{flex:1}를 이겨 줄바꿈 강제 */
+  .currency-header-top .pass-cards { order: 2; flex: 1 1 100%; max-width: none; }
 
   /* 재화 행: 데스크톱 8칸 그리드 → 2줄 그리드로 재배치 */
   .currency-page .currency-row {
