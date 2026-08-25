@@ -668,7 +668,7 @@ function buildBuyList() {
   var breakK = 0; Object.keys(cfg).forEach(function(g) { loadLedger(g).forEach(function(x) { if (x.price != null && /돌파/.test(x.memo || '')) breakK += x.price; }); });
   if (breakK > 0) { footer.breakthrough = breakK; footer.breakOk = (carry !== null) ? (breakK <= carry) : null; }
 
-  items.sort(function(a, b) { return (a.pri || 9) - (b.pri || 9); });
+  items.sort(function(a, b) { return a.pri - b.pri; });  // 구독=0 최상단 (|| 9 쓰면 0이 falsy라 꼴찌됨)
   return { date: toLocalYMD(now), items: items, lines: lines, notices: notices, footer: footer };
 }
 
