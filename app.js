@@ -2015,21 +2015,15 @@ function loadPlannerData(gameId) {
     pd.version   = shared ? shared.version   : (def.version   || '');
     pd.startDate = shared ? shared.startDate : (def.startDate || '');
     pd.endDate   = shared ? (shared.endDate || '') : '';
-    // 종료일이 지났으면 다음 버전으로 자동 진행 — 날짜 기반·결정론적(저장된 버전에 의존 안 해서 재로드해도 안정).
-    // 시작일=이전 종료일, 이후 버전은 42일 주기. 여러 버전 밀렸으면 오늘 기준까지 반복.
-    if (pd.version && pd.startDate) {
+    // 종료일이 지났으면 다음 버전으로 자동 진행 — 어드민이 설정한 실제 종료일(shared)만 기준.
+    // 버전 길이가 게임/버전마다 달라 42일 고정 가정은 안 함. 다음 버전 종료일은 어드민이 새로
+    // 설정할 때까지 미정('')으로 둔다 → 그래서 연쇄로 여러 버전 넘어가지 않고 딱 한 단계만.
+    if (pd.version && pd.endDate) {
       var today = new Date(); today.setHours(0, 0, 0, 0);
-      var curEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
-      var guard = 0;
-      while (curEnd && guard++ < 120) {
-        var end = new Date(curEnd); end.setHours(0, 0, 0, 0);
-        if (end >= today) break;                 // 아직 진행 중(오늘이 마지막 날 포함)
+      var end = new Date(pd.endDate); end.setHours(0, 0, 0, 0);
+      if (!isNaN(end.getTime()) && end < today) {   // 오늘이 마지막 날이면 아직 진행 중(< 이므로 유지)
         var nv = plannerNextVersion(pd.version);
-        if (!nv) break;
-        pd.version   = nv;
-        pd.startDate = curEnd;                    // 다음 버전 시작 = 이전 버전 종료
-        pd.endDate   = '';                        // 이후 버전은 42일 자동
-        curEnd = plannerAutoEndDate(pd.startDate);
+        if (nv) { pd.version = nv; pd.startDate = pd.endDate; pd.endDate = ''; }
       }
     }
     // 목표 이월: 자동 진행/어드민 갱신으로 현재 버전이 목표 설정 시점(_seenVer)과 달라지면 cur←next 1회.
