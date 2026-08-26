@@ -1982,7 +1982,7 @@ function refreshPitySummary(gameId) {
 // ── Planner helpers ───────────────────────────────────────────
 
 // 버전 플래너 기본값 (어드민 계정 기준 현재 버전/시작일).
-// 신규·빈 계정은 이 값으로 시작하고, plannerMaybeRollover가 버전 종료 시 다음 버전으로 자동 이월한다.
+// 신규·빈 계정은 이 값으로 시작하고, loadPlannerData가 버전 종료일이 지나면 다음 버전으로 자동 이월한다.
 // 값이 실제와 달라지면 여기만 갱신하면 전 계정 기본값이 바뀐다(어드민이 관리).
 var DEFAULT_PLANNER = {
   hsr:      { version: '4.4', startDate: '2026-07-15' },
@@ -2015,7 +2015,25 @@ function loadPlannerData(gameId) {
     pd.version   = shared ? shared.version   : (def.version   || '');
     pd.startDate = shared ? shared.startDate : (def.startDate || '');
     pd.endDate   = shared ? (shared.endDate || '') : '';
-    // 공유 버전이 바뀌면(어드민이 다음 버전으로 넘김) 개인 목표 이월: cur←next, next 비움
+    // 종료일이 지났으면 다음 버전으로 자동 진행 — 날짜 기반·결정론적(저장된 버전에 의존 안 해서 재로드해도 안정).
+    // 시작일=이전 종료일, 이후 버전은 42일 주기. 여러 버전 밀렸으면 오늘 기준까지 반복.
+    if (pd.version && pd.startDate) {
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var curEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
+      var guard = 0;
+      while (curEnd && guard++ < 120) {
+        var end = new Date(curEnd); end.setHours(0, 0, 0, 0);
+        if (end >= today) break;                 // 아직 진행 중(오늘이 마지막 날 포함)
+        var nv = plannerNextVersion(pd.version);
+        if (!nv) break;
+        pd.version   = nv;
+        pd.startDate = curEnd;                    // 다음 버전 시작 = 이전 버전 종료
+        pd.endDate   = '';                        // 이후 버전은 42일 자동
+        curEnd = plannerAutoEndDate(pd.startDate);
+      }
+    }
+    // 목표 이월: 자동 진행/어드민 갱신으로 현재 버전이 목표 설정 시점(_seenVer)과 달라지면 cur←next 1회.
+    // 결정론적이라 재로드해도 _seenVer==현재버전이면 재이월 안 함 → 목표 유실 없음.
     if (pd.version && pd._seenVer && pd._seenVer !== pd.version) {
       pd.cur = pd.next;
       pd.next = { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
@@ -2023,6 +2041,7 @@ function loadPlannerData(gameId) {
       savePlannerData(gameId, pd);
     } else if (pd.version && !pd._seenVer) {
       pd._seenVer = pd.version;
+      savePlannerData(gameId, pd);
     }
     return pd;
   } catch(e) {
@@ -2039,34 +2058,6 @@ function savePlannerData(gameId, data) {
   try {
     localStorage.setItem('pickup_manager_planner_' + gameId, JSON.stringify(data));
   } catch(e) {}
-}
-
-// 현재 버전의 종료일이 이미 지났으면, 화면에 미리보기로만 계산되던 "다음 버전"을
-// 실제 현재 버전으로 승격한다 (버전/기간/목표 모두 이월). 앱을 며칠 안 켰다가
-// 다시 켰을 때 여러 버전을 건너뛴 경우를 대비해 지난 기간이 없어질 때까지 반복한다.
-function plannerMaybeRollover(gameId, pd) {
-  var changed = false;
-  var guard = 0;
-  while (guard++ < 60) {
-    var effEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
-    if (!pd.version || !effEnd) break;
-
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var end   = new Date(effEnd); end.setHours(0, 0, 0, 0);
-    if (end >= today) break; // 아직 진행 중이거나 오늘이 마지막 날 — 아직 롤오버 아님
-
-    var nextVer = plannerNextVersion(pd.version);
-    if (!nextVer) break;
-
-    pd.version   = nextVer;
-    pd.startDate = effEnd;          // 다음 버전 시작일 = 이전 종료일(같은 날)
-    pd.endDate   = '';
-    pd.cur  = pd.next || { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
-    pd.next = { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
-    changed = true;
-  }
-  if (changed) savePlannerData(gameId, pd);
-  return pd;
 }
 
 function plannerAutoEndDate(startStr) {
