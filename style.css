@@ -2201,6 +2201,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .lcal-gain { color: #3ecf8e; }
 .lcal-spend { color: #e5686d; }
 .lcal-paid { font-size: var(--fs-sm); color: #e5a34d; font-weight: 800; }
+.lcal-ticket { font-size: var(--fs-2xs); color: #8b9bff; font-weight: 700; }
 .lcal-wd span { font-size: var(--fs-base); }
 .lcal-ver { font-size: var(--fs-2xs); font-weight: 800; color: #b9aeff; background: rgba(139,124,255,.18); padding: 0 5px; border-radius: 5px; line-height: 1.5; }
 .lcal-ver-cur { background: var(--accent, #6d5efc); color: #fff; }
@@ -2232,6 +2233,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .ledger-day-sum { font-size: var(--fs-sm); font-weight: 700; }
 .ledger-day-sum .ledger-sum--gain { color: #3ecf8e; }
 .ledger-day-sum .ledger-sum--spend { color: #e5484d; margin-left: 8px; }
+.ledger-day-sum .ledger-sum--ticket { color: #8b9bff; margin-left: 8px; }
 .ledger-page-footer { margin-top: 12px; display: flex; justify-content: center; }
 
 /* 메모 편집기 — 빠른 금액 버튼 + 무료/유료 분할 */
