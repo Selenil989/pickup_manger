@@ -2803,23 +2803,21 @@ function loadMonthlyDaily(gid) { try { var r = localStorage.getItem('pickup_mana
 function saveMonthlyDaily(gid, obj) { try { localStorage.setItem('pickup_manager_monthly_daily_' + gid, JSON.stringify(obj)); } catch (e) {} }
 function monthlyLastCredit(gid) { try { return localStorage.getItem('pickup_manager_monthly_lastcredit_' + gid) || ''; } catch (e) { return ''; } }
 
-// 월정액이 활성(만료 전)이고 오늘(05시 리셋 기준) 아직 안 줬으면, 일일 지급재화를 유료재화(freeDelta:0)로
-// 자동 기입한다. 하루 1회만(monthlyLastCredit 날짜로 중복 방지). 재화 변경 시 호출.
-function maybeAutoCreditMonthly(gid) {
+// 월정액 일일 지급 처리 — 총량은 안 바꾸고, 지급재화가 늘어난 그 기록의 증가분 중 일일수량만큼을
+// 유료로 표기(freeDelta = delta − 유료분). 즉 +150이면 무료 60·유료 90으로 쪼갬. 하루 1회.
+// entry(원장 항목)를 제자리에서 수정. 조건 안 맞으면 그대로 둠.
+function applyMonthlyDailyToEntry(gid, entry) {
   var d = loadMonthlyDaily(gid);
-  if (!d || !d.currency || !(parseInt(d.amount) > 0)) return false;
+  if (!d || d.currency !== entry.currency || !(parseInt(d.amount) > 0)) return;  // 지급재화가 바뀐 재화일 때만
+  if (!(entry.delta > 0)) return;                            // 증가분만
   var days = calcMonthlyPassDays(loadMonthlyPassEndDate(gid));
-  if (days === null || days < 0) return false;               // 미설정/만료 → 지급 안 함
+  if (days === null || days < 0) return;                     // 미설정/만료
   var todayYmd = toLocalYMD(passResetToday());
-  if (monthlyLastCredit(gid) === todayYmd) return false;     // 오늘 이미 지급함
-  var amount = parseInt(d.amount);
-  var data = loadCurrencyData(gid);
-  var after = (parseInt(data[d.currency]) || 0) + amount;
-  data[d.currency] = after;
-  try { localStorage.setItem('pickup_manager_currency_' + gid, JSON.stringify(data)); } catch (e) {}
-  appendLedger(gid, { ts: Date.now(), type: 'auto', currency: d.currency, delta: amount, balanceAfter: after, freeDelta: 0, memo: '월정액 일일' });
+  if (monthlyLastCredit(gid) === todayYmd) return;           // 오늘 이미 처리함
+  var paid = Math.min(parseInt(d.amount), entry.delta);      // 증가분보다 크면 증가분까지만
+  entry.freeDelta = entry.delta - paid;                      // 나머지는 무료 (총량/delta 불변)
+  entry.memo = entry.memo ? (entry.memo + ' · 월정액 유료 ' + paid) : ('월정액 유료 ' + paid);
   try { localStorage.setItem('pickup_manager_monthly_lastcredit_' + gid, todayYmd); } catch (e) {}
-  return true;
 }
 
 function renderMonthlyPassBadge(gameId) {
@@ -3729,13 +3727,14 @@ function renderCurrencyPage() {
       this.value = num.toLocaleString();
       // 원장 자동 기록: 편집 전후 변동분(±)이 있으면 한 줄 남김
       if (this._ledgerBefore != null && num !== this._ledgerBefore) {
-        appendLedger(this.dataset.game, {
+        var entry = {
           ts: Date.now(), type: 'auto', currency: this.dataset.id,
           delta: num - this._ledgerBefore, balanceAfter: num, memo: ''
-        });
+        };
+        // 월정액 지급재화가 오늘 처음 늘어난 거면 증가분 중 일일수량만큼 유료로 표기(총량 불변)
+        applyMonthlyDailyToEntry(this.dataset.game, entry);
+        appendLedger(this.dataset.game, entry);
         this._ledgerBefore = num;
-        // 그날 첫 재화 변경이면 월정액 일일 지급 자동 기입 → 반영 위해 재렌더
-        if (maybeAutoCreditMonthly(this.dataset.game)) renderCurrencyPage();
       }
     });
     input.addEventListener('keydown', function(e) {
