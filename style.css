@@ -1774,7 +1774,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   top: calc(100% + 8px);
   right: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   background: var(--card, #1e1e1e);
   border: 1px solid var(--border);
@@ -1784,6 +1785,12 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   white-space: nowrap;
 }
+.mp-cfg-field { display: flex; align-items: center; gap: 6px; }
+.mp-cfg-lbl { font-size: var(--fs-xs); color: var(--muted); min-width: 48px; flex-shrink: 0; }
+.mp-cfg-field .mp-cfg-input { flex: 1; min-width: 0; }
+.mp-cfg-amt { max-width: 88px; text-align: right; }
+.mp-cfg-hint { font-size: var(--fs-2xs); color: var(--muted); max-width: 250px; white-space: normal; line-height: 1.4; }
+.mp-cfg-popup .mp-cfg-save { align-self: flex-end; }
 .mp-cfg-input {
   font-size: var(--fs-md);
   padding: 5px 8px;

@@ -2798,19 +2798,50 @@ function calcMonthlyPassDays(endDateStr) {
   return Math.ceil((end - today) / 86400000);
 }
 
+// 월정액 일일 지급 설정: {currency: 재화id, amount: 하루 지급 수량} — 배지 ⚙ 팝업에서 편집(게임별)
+function loadMonthlyDaily(gid) { try { var r = localStorage.getItem('pickup_manager_monthly_daily_' + gid); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+function saveMonthlyDaily(gid, obj) { try { localStorage.setItem('pickup_manager_monthly_daily_' + gid, JSON.stringify(obj)); } catch (e) {} }
+function monthlyLastCredit(gid) { try { return localStorage.getItem('pickup_manager_monthly_lastcredit_' + gid) || ''; } catch (e) { return ''; } }
+
+// 월정액이 활성(만료 전)이고 오늘(05시 리셋 기준) 아직 안 줬으면, 일일 지급재화를 유료재화(freeDelta:0)로
+// 자동 기입한다. 하루 1회만(monthlyLastCredit 날짜로 중복 방지). 재화 변경 시 호출.
+function maybeAutoCreditMonthly(gid) {
+  var d = loadMonthlyDaily(gid);
+  if (!d || !d.currency || !(parseInt(d.amount) > 0)) return false;
+  var days = calcMonthlyPassDays(loadMonthlyPassEndDate(gid));
+  if (days === null || days < 0) return false;               // 미설정/만료 → 지급 안 함
+  var todayYmd = toLocalYMD(passResetToday());
+  if (monthlyLastCredit(gid) === todayYmd) return false;     // 오늘 이미 지급함
+  var amount = parseInt(d.amount);
+  var data = loadCurrencyData(gid);
+  var after = (parseInt(data[d.currency]) || 0) + amount;
+  data[d.currency] = after;
+  try { localStorage.setItem('pickup_manager_currency_' + gid, JSON.stringify(data)); } catch (e) {}
+  appendLedger(gid, { ts: Date.now(), type: 'auto', currency: d.currency, delta: amount, balanceAfter: after, freeDelta: 0, memo: '월정액 일일' });
+  try { localStorage.setItem('pickup_manager_monthly_lastcredit_' + gid, todayYmd); } catch (e) {}
+  return true;
+}
+
 function renderMonthlyPassBadge(gameId) {
   var endDate = loadMonthlyPassEndDate(gameId);
   var days    = calcMonthlyPassDays(endDate);
   var label   = (days === null || days <= 0) ? '만료' : 'D-' + days;
   var cls     = (days === null || days <= 0) ? 'mp-badge--expired' : (days <= 7 ? 'mp-badge--warn' : 'mp-badge--ok');
+  var cfg     = getGameConfig()[gameId];
+  var curOpts = ((cfg && cfg.currencies) || []).map(function(c) { return '<option value="' + c.id + '">' + c.name + '</option>'; }).join('');
   return [
     '<div class="mp-badge ' + cls + '" id="monthlyPassBadge">',
     '  <span class="mp-label">월정액</span>',
     '  <span class="mp-days" id="mpDays">' + label + '</span>',
     '  <button class="mp-add-btn" id="mpAddBtn" data-game="' + gameId + '">+30일</button>',
-    '  <button class="mp-cfg-btn" id="mpCfgBtn" data-game="' + gameId + '" title="날짜 직접 입력">⚙</button>',
+    '  <button class="mp-cfg-btn" id="mpCfgBtn" data-game="' + gameId + '" title="날짜·일일지급 설정">⚙</button>',
     '  <div class="mp-cfg-popup" id="mpCfgPopup" style="display:none;">',
-    '    <input type="date" id="mpCfgDate" class="mp-cfg-input">',
+    '    <div class="mp-cfg-field"><span class="mp-cfg-lbl">만료일</span><input type="date" id="mpCfgDate" class="mp-cfg-input"></div>',
+    '    <div class="mp-cfg-field"><span class="mp-cfg-lbl">일일 지급</span>',
+    '      <select id="mpCfgCur" class="mp-cfg-input">' + curOpts + '</select>',
+    '      <input type="number" inputmode="numeric" id="mpCfgAmount" class="mp-cfg-input mp-cfg-amt" placeholder="수량">',
+    '    </div>',
+    '    <div class="mp-cfg-hint">그날 첫 재화 변경 시 이 수량이 유료재화로 자동 기입됩니다</div>',
     '    <button class="mp-cfg-save" id="mpCfgSave">적용</button>',
     '  </div>',
     '</div>'
@@ -3703,6 +3734,8 @@ function renderCurrencyPage() {
           delta: num - this._ledgerBefore, balanceAfter: num, memo: ''
         });
         this._ledgerBefore = num;
+        // 그날 첫 재화 변경이면 월정액 일일 지급 자동 기입 → 반영 위해 재렌더
+        if (maybeAutoCreditMonthly(this.dataset.game)) renderCurrencyPage();
       }
     });
     input.addEventListener('keydown', function(e) {
@@ -3776,6 +3809,9 @@ function renderCurrencyPage() {
         var cur = loadMonthlyPassEndDate(gid);
         var inp = document.getElementById('mpCfgDate');
         if (inp) inp.value = cur || '';
+        var d = loadMonthlyDaily(gid) || {};
+        var cs = document.getElementById('mpCfgCur'); if (cs && d.currency) cs.value = d.currency;
+        var as = document.getElementById('mpCfgAmount'); if (as) as.value = d.amount || '';
         popup.style.display = 'flex';
       } else {
         popup.style.display = 'none';
@@ -3786,15 +3822,21 @@ function renderCurrencyPage() {
   if (mpCfgSave) {
     mpCfgSave.addEventListener('click', function() {
       var gid = (document.getElementById('mpCfgBtn') || {}).dataset && document.getElementById('mpCfgBtn').dataset.game;
+      if (!gid) return;
+      // 일일 지급 설정(재화·수량) 저장 — 날짜 없이도 저장됨
+      var cs = document.getElementById('mpCfgCur'), as = document.getElementById('mpCfgAmount');
+      if (cs && as) saveMonthlyDaily(gid, { currency: cs.value, amount: parseInt(as.value) || 0 });
+      // 만료일은 입력됐을 때만 저장 + 배지 갱신
       var inp = document.getElementById('mpCfgDate');
-      if (!gid || !inp || !inp.value) return;
-      saveMonthlyPassEndDate(gid, inp.value);
-      var days  = calcMonthlyPassDays(inp.value);
-      var label = (days === null || days <= 0) ? '만료' : 'D-' + days;
-      var badge = document.getElementById('monthlyPassBadge');
-      if (badge) {
-        badge.className = 'mp-badge ' + (days === null || days <= 0 ? 'mp-badge--expired' : days <= 7 ? 'mp-badge--warn' : 'mp-badge--ok');
-        document.getElementById('mpDays').textContent = label;
+      if (inp && inp.value) {
+        saveMonthlyPassEndDate(gid, inp.value);
+        var days  = calcMonthlyPassDays(inp.value);
+        var label = (days === null || days <= 0) ? '만료' : 'D-' + days;
+        var badge = document.getElementById('monthlyPassBadge');
+        if (badge) {
+          badge.className = 'mp-badge ' + (days === null || days <= 0 ? 'mp-badge--expired' : days <= 7 ? 'mp-badge--warn' : 'mp-badge--ok');
+          document.getElementById('mpDays').textContent = label;
+        }
       }
       document.getElementById('mpCfgPopup').style.display = 'none';
     });
