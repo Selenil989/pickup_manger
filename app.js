@@ -2816,7 +2816,7 @@ function applyMonthlyDailyToEntry(gid, entry) {
   if (monthlyLastCredit(gid) === todayYmd) return;           // 오늘 이미 처리함
   var paid = Math.min(parseInt(d.amount), entry.delta);      // 증가분보다 크면 증가분까지만
   entry.freeDelta = entry.delta - paid;                      // 나머지는 무료 (총량/delta 불변)
-  entry.memo = entry.memo ? (entry.memo + ' · 월정액 유료 ' + paid) : ('월정액 유료 ' + paid);
+  entry.monthlySub = true;                                   // 월정액 표기 플래그 — 유료분(delta−freeDelta)이 0이면 태그 자체가 안 뜸
   try { localStorage.setItem('pickup_manager_monthly_lastcredit_' + gid, todayYmd); } catch (e) {}
 }
 
@@ -2992,7 +2992,7 @@ function ledgerRowHtml(gameId, e) {
         var split = (e.freeDelta != null && e.freeDelta !== e.delta);
         if (!e.memo && e.price == null && !split) return '';
         var s = '<span class="ledger-memo-text ledger-memo-inline">';
-        if (split) s += '<span class="ledger-split-tag">무료 ' + e.freeDelta.toLocaleString() + ' · 유료 ' + (e.delta - e.freeDelta).toLocaleString() + '</span>';
+        if (split) s += '<span class="ledger-split-tag">무료 ' + e.freeDelta.toLocaleString() + ' · ' + (e.monthlySub ? '월정액 ' : '') + '유료 ' + (e.delta - e.freeDelta).toLocaleString() + '</span>';
         if (e.memo) s += (split ? ' ' : '') + ledgerEsc(e.memo);
         if (e.price != null) s += '<span class="ledger-price">' + ((e.memo || split) ? ' · ' : '') + e.price.toLocaleString() + '원</span>';
         return s + '</span>';
