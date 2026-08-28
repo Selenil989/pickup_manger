@@ -11,13 +11,13 @@ var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
 
 var origSet = localStorage.setItem.bind(localStorage);
-var syncTimer = null, currentUid = null, loaded = false;   // loaded: 원격 복원이 끝나기 전엔 업로드 금지
-                                                            // (로그인 초기화 중 오래된 로컬이 최신 원격을 덮어쓰는 사고 방지)
-
+var syncTimer = null, currentUid = null, loaded = false, dirty = {};   // loaded: 원격 복원 끝나기 전엔 업로드 금지
+                                                                        // dirty: 이 기기가 마지막 push 이후 실제로 바꾼 키만 추적
 // pickup_manager_* 저장을 감지해 디바운스 업로드 (기존 15곳 저장 코드 무수정)
 localStorage.setItem = function (k, v) {
   origSet(k, v);
   if (currentUid && loaded && k.indexOf('pickup_manager_') === 0) {
+    dirty[k] = true;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(pushData, 1500);
   }
@@ -32,11 +32,34 @@ function collect() {
   return o;
 }
 
+function _parseArr(s) { try { var a = JSON.parse(s); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+// 원장(append형) 병합: 서버+로컬을 ts 기준 합집합 → 한 항목도 안 버림(다른 기기 기록 보존)
+function mergeLedger(serverVal, localVal) {
+  var byTs = {};
+  _parseArr(serverVal).forEach(function (e) { if (e && e.ts != null) byTs[e.ts] = e; });
+  _parseArr(localVal).forEach(function (e) { if (e && e.ts != null) byTs[e.ts] = e; });
+  var out = Object.keys(byTs).map(function (t) { return byTs[t]; }).sort(function (a, b) { return a.ts - b.ts; });
+  return JSON.stringify(out);
+}
+// 통째 덮어쓰기 금지: 서버 최신을 읽어, 이 기기가 바꾼 키만 병합/적용해 저장.
+// → 오래된 기기가 올려도 자기가 안 건드린 키(다른 기기 기록)는 서버 것 그대로 유지.
 function pushData() {
   if (!currentUid) return;
-  sb.from('user_data')
-    .upsert({ user_id: currentUid, data: collect(), updated_at: new Date().toISOString() })
-    .then(function (r) { if (r.error) console.warn('[sync] 업로드 실패:', r.error.message); });
+  var keys = Object.keys(dirty);
+  if (!keys.length) return;
+  dirty = {};   // 이번 사이클에 반영할 키 캡처(이후 새 변경은 다음 사이클)
+  sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle().then(function (r) {
+    if (r.error) { keys.forEach(function (k) { dirty[k] = true; }); console.warn('[sync] 서버 조회 실패, 다음에 재시도:', r.error.message); return; }
+    var server = (r.data && r.data.data) || {};
+    keys.forEach(function (k) {
+      var lv = localStorage.getItem(k);
+      if (lv == null) { delete server[k]; return; }                                   // 로컬에서 삭제된 키
+      else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);  // 원장=합집합
+      else server[k] = lv;                                                            // 상태값(재화·플래너 등)=방금 편집한 로컬 우선
+    });
+    sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
+      .then(function (rr) { if (rr.error) { console.warn('[sync] 업로드 실패:', rr.error.message); keys.forEach(function (k) { dirty[k] = true; }); } });
+  }, function () { keys.forEach(function (k) { dirty[k] = true; }); });
 }
 
 function clearPickupKeys() {
