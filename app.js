@@ -354,25 +354,19 @@ function saveRoster(gameId) {
   });
 }
 
+// 전체 백업: pickup_manager_* 키 통째(메모·원장·재화·플래너·로스터·월정액 등 전부)
 function exportPersonalSettings() {
-  var config = getGameConfig();
-  var currency = {};
-  Object.keys(config).forEach(function(gid) {
-    currency[gid] = loadCurrencyData(gid);
-  });
-
-  var settings = {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    rosters: appState.rosters,
-    currency: currency
-  };
-
+  var keys = {};
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf('pickup_manager_') === 0) keys[k] = localStorage.getItem(k);
+  }
+  var settings = { version: 2, exportedAt: new Date().toISOString(), keys: keys };
   var blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href     = url;
-  a.download = 'pickup_settings_' + toLocalYMD(new Date()) + '.json';
+  a.download = 'pickup_backup_' + toLocalYMD(new Date()) + '.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -390,26 +384,29 @@ function importPersonalSettings() {
     reader.onload = function(ev) {
       try {
         var settings = JSON.parse(ev.target.result);
-        if (!settings.version || !settings.rosters) {
-          alert('올바른 개인 설정 파일이 아닙니다.');
+        if (settings.keys) {
+          // v2 전체 백업: pickup_manager_* 키 통째 복원 (setItem=현재 계정 Supabase에도 반영)
+          if (!confirm('백업 파일 내용으로 현재 데이터를 덮어씁니다. 계속할까요?')) return;
+          Object.keys(settings.keys).forEach(function(k) {
+            if (k.indexOf('pickup_manager_') === 0) { try { localStorage.setItem(k, settings.keys[k]); } catch(err) {} }
+          });
+          alert('전체 백업을 복원했습니다. 새로고침해 반영합니다.');
+          location.reload();
           return;
         }
-        // 로스터 복원
-        Object.keys(settings.rosters).forEach(function(gid) {
-          appState.rosters[gid] = settings.rosters[gid];
-          saveRoster(gid);
-        });
-        // 재화 복원
-        if (settings.currency) {
-          Object.keys(settings.currency).forEach(function(gid) {
+        // v1 구버전 파일 호환 (로스터+재화만)
+        if (settings.rosters) {
+          Object.keys(settings.rosters).forEach(function(gid) { appState.rosters[gid] = settings.rosters[gid]; saveRoster(gid); });
+          if (settings.currency) Object.keys(settings.currency).forEach(function(gid) {
             try { localStorage.setItem('pickup_manager_currency_' + gid, JSON.stringify(settings.currency[gid])); } catch(err) {}
           });
+          renderRoster();
+          if (isCardGridGame(appState.currentGame)) renderCardGrid();
+          if (document.getElementById('tabCurrency').style.display !== 'none') renderCurrencyPage();
+          alert('개인 설정을 불러왔습니다.');
+          return;
         }
-        // 현재 화면 갱신
-        renderRoster();
-        if (isCardGridGame(appState.currentGame)) renderCardGrid();
-        if (document.getElementById('tabCurrency').style.display !== 'none') renderCurrencyPage();
-        alert('개인 설정을 불러왔습니다.');
+        alert('올바른 백업 파일이 아닙니다.');
       } catch(err) {
         alert('파일을 읽는 중 오류가 발생했습니다.');
       }
