@@ -11,12 +11,13 @@ var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
 
 var origSet = localStorage.setItem.bind(localStorage);
-var syncTimer = null, currentUid = null;
+var syncTimer = null, currentUid = null, loaded = false;   // loaded: 원격 복원이 끝나기 전엔 업로드 금지
+                                                            // (로그인 초기화 중 오래된 로컬이 최신 원격을 덮어쓰는 사고 방지)
 
 // pickup_manager_* 저장을 감지해 디바운스 업로드 (기존 15곳 저장 코드 무수정)
 localStorage.setItem = function (k, v) {
   origSet(k, v);
-  if (currentUid && k.indexOf('pickup_manager_') === 0) {
+  if (currentUid && loaded && k.indexOf('pickup_manager_') === 0) {
     clearTimeout(syncTimer);
     syncTimer = setTimeout(pushData, 1500);
   }
@@ -50,12 +51,15 @@ function clearPickupKeys() {
 // 원격을 성공적으로 받은 뒤에만 로컬을 비우고 그 계정 데이터로 교체한다.
 // (네트워크 실패 시엔 로컬을 지우지 않아 데이터 유실 방지)
 function loadAccount(uid) {
+  loaded = false;   // 이 계정 원격 복원이 끝날 때까지 로컬 변경분 업로드 금지
   return sb.from('user_data').select('data').eq('user_id', uid).maybeSingle()
     .then(function (r) {
-      if (r.error) { console.warn('[sync] 복원 실패, 로컬 유지:', r.error.message); return; }
+      if (r.error) { console.warn('[sync] 복원 실패, 로컬 유지:', r.error.message); loaded = true; return; }
       var blob = (r.data && r.data.data) || {};
+      try { origSet('pickup_local_backup', JSON.stringify({ at: new Date().toISOString(), uid: uid, data: collect() })); } catch (e) {}  // 덮기 직전 로컬 백업(비동기화 키 → 사고 시 복구용)
       clearPickupKeys();                                                // 이전 계정 데이터 제거
       Object.keys(blob).forEach(function (k) { origSet(k, blob[k]); }); // origSet=복원 중 재업로드 방지
+      loaded = true;                                                     // 복원 완료 → 이제부터 로컬 변경분 업로드 허용
     });
 }
 
