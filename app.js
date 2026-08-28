@@ -3291,6 +3291,16 @@ function closeLedgerModal() {
   if (m) { m.style.display = 'none'; m.innerHTML = ''; }
 }
 
+// 다른 기기의 실시간 동기화가 로컬에 반영됐을 때 현재 보이는 탭을 다시 그림 (auth.js가 호출)
+window.onRemoteSync = function () {
+  try {
+    var c = document.getElementById('tabCurrency'), l = document.getElementById('tabLedger');
+    if (c && c.style.display !== 'none') renderCurrencyPage();
+    else if (l && l.style.display !== 'none') renderLedgerPage();
+    else if (typeof renderCardGrid === 'function' && appState && isCardGridGame(appState.currentGame)) renderCardGrid();
+  } catch (e) {}
+};
+
 function ledgerFmtDate(ts) {
   var d = new Date(ts), p = function(n) { return n < 10 ? '0' + n : '' + n; };
   return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());

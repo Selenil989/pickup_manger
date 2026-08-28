@@ -11,8 +11,8 @@ var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
 
 var origSet = localStorage.setItem.bind(localStorage);
-var syncTimer = null, currentUid = null, loaded = false, dirty = {};   // loaded: 원격 복원 끝나기 전엔 업로드 금지
-                                                                        // dirty: 이 기기가 마지막 push 이후 실제로 바꾼 키만 추적
+var syncTimer = null, currentUid = null, loaded = false, dirty = {}, rtChannel = null;   // loaded: 원격 복원 끝나기 전엔 업로드 금지
+                                                                        // dirty: 이 기기가 마지막 push 이후 실제로 바꾼 키만 추적. rtChannel: 실시간 구독
 // pickup_manager_* 저장을 감지해 디바운스 업로드 (기존 15곳 저장 코드 무수정)
 localStorage.setItem = function (k, v) {
   origSet(k, v);
@@ -114,6 +114,29 @@ window.saveSharedPlanner = function (game, version, startDate, endDate) {
     .then(function (r) { if (r.error) console.warn('[shared planner] 저장 실패:', r.error.message); return r; });
 };
 
+// 다른 기기가 서버를 바꾸면(Realtime) 로컬에 반영 + 현재 화면 갱신. 내 미저장 편집(dirty)은 안 건드림.
+function applyRemote(blob) {
+  if (!blob) return;
+  var changed = false;
+  Object.keys(blob).forEach(function (k) {
+    if (k.indexOf('pickup_manager_') !== 0 || dirty[k]) return;   // 내 미저장 편집 보호
+    var localVal = localStorage.getItem(k);
+    var nextVal = (k.indexOf('pickup_manager_ledger_') === 0) ? mergeLedger(blob[k], localVal) : blob[k];  // 원장=합집합
+    if (nextVal !== localVal) { origSet(k, nextVal); changed = true; }   // origSet=재업로드 방지
+  });
+  if (changed && window.onRemoteSync) { try { window.onRemoteSync(); } catch (e) {} }
+}
+// 내 계정(user_data) 행이 바뀌면 알림받아 반영. ⚠️ Supabase 대시보드에서 user_data 테이블 Realtime 켜야 동작(안 켜도 저장 시 병합은 됨).
+function subscribeRealtime(uid) {
+  try {
+    if (rtChannel) { sb.removeChannel(rtChannel); rtChannel = null; }
+    rtChannel = sb.channel('ud_' + uid)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_data', filter: 'user_id=eq.' + uid },
+        function (payload) { applyRemote(payload && payload.new && payload.new.data); })
+      .subscribe();
+  } catch (e) { console.warn('[realtime] 구독 실패:', e && e.message); }
+}
+
 function onAuthed(session) {
   if (session.user.id === currentUid) return;   // 같은 계정 재진입은 무시 (중복 init 방지)
   currentUid = session.user.id;
@@ -124,6 +147,7 @@ function onAuthed(session) {
     var gate = document.getElementById('authGate');
     if (gate) gate.style.display = 'none';
     domReady(function () { if (window.appInit) window.appInit(); });
+    subscribeRealtime(currentUid);   // 초기 복원 후 실시간 구독 시작
   });
 }
 
