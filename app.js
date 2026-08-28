@@ -390,8 +390,13 @@ function importPersonalSettings() {
           Object.keys(settings.keys).forEach(function(k) {
             if (k.indexOf('pickup_manager_') === 0) { try { localStorage.setItem(k, settings.keys[k]); } catch(err) {} }
           });
-          alert('전체 백업을 복원했습니다. 새로고침해 반영합니다.');
-          location.reload();
+          // 새로고침 전에 서버 업로드 완료를 기다림 — 안 그러면 디바운스 업로드가 안 뜨고 reload 시 옛 서버가 복원분을 덮음
+          if (window.flushSync) {
+            window.flushSync().then(function(ok) {
+              if (ok) { alert('전체 백업을 복원했습니다(서버 반영 완료). 새로고침합니다.'); location.reload(); }
+              else { alert('복원했지만 서버 업로드에 실패했습니다.\n인터넷 확인 후 잠시 뒤 자동 재시도됩니다. 성공 전엔 새로고침하지 마세요. (내용은 이 기기엔 이미 반영됨)'); }
+            });
+          } else { alert('전체 백업을 복원했습니다. 새로고침합니다.'); location.reload(); }
           return;
         }
         // v1 구버전 파일 호환 (로스터+재화만)
@@ -2879,6 +2884,14 @@ function loadCalBadges(gameId) {
 function saveCalBadges(gameId, obj) {
   try { localStorage.setItem('pickup_manager_calbadge_' + gameId, JSON.stringify(obj)); } catch (e) {}
 }
+var _lastLedgerTs = 0;
+// 같은 밀리초에 두 항목이 생기면 ts가 겹쳐 병합(union)에서 하나가 사라짐 → 이 기기 내에서 단조 증가로 유일 ts 보장
+function newLedgerTs() {
+  var t = Date.now();
+  if (t <= _lastLedgerTs) t = _lastLedgerTs + 1;
+  _lastLedgerTs = t;
+  return t;
+}
 function appendLedger(gameId, entry) {
   var arr = loadLedger(gameId);
   arr.push(entry);
@@ -3569,7 +3582,7 @@ function _openMemoEditor(entry) {
     if (isNew && !m && !hasPrice) { close(); return; }
     var a2 = loadLedger(_ledgerGame);
     if (isNew) {
-      var ne = { ts: Date.now(), type: 'memo', memo: m };
+      var ne = { ts: newLedgerTs(), type: 'memo', memo: m };
       if (hasPrice) ne.price = pv;
       a2.push(ne);
     } else {
@@ -3778,7 +3791,7 @@ function renderCurrencyPage() {
       // 원장 자동 기록: 편집 전후 변동분(±)이 있으면 한 줄 남김
       if (this._ledgerBefore != null && num !== this._ledgerBefore) {
         var entry = {
-          ts: Date.now(), type: 'auto', currency: this.dataset.id,
+          ts: newLedgerTs(), type: 'auto', currency: this.dataset.id,
           delta: num - this._ledgerBefore, balanceAfter: num, memo: ''
         };
         // 월정액 지급재화가 오늘 처음 늘어난 거면 증가분 중 일일수량만큼 유료로 표기(총량 불변)
@@ -3890,13 +3903,16 @@ function renderCurrencyPage() {
       document.getElementById('mpCfgPopup').style.display = 'none';
     });
   }
-  document.addEventListener('click', function mpCfgClose(e) {
-    var popup = document.getElementById('mpCfgPopup');
-    var btn   = document.getElementById('mpCfgBtn');
-    if (popup && btn && !popup.contains(e.target) && !btn.contains(e.target)) {
-      popup.style.display = 'none';
-    }
-  });
+  if (!window._mpCfgCloseBound) {          // 매 렌더마다 document에 리스너가 쌓이던 누수 → 최초 1회만 바인딩(요소는 클릭 시 id로 재조회)
+    window._mpCfgCloseBound = true;
+    document.addEventListener('click', function mpCfgClose(e) {
+      var popup = document.getElementById('mpCfgPopup');
+      var btn   = document.getElementById('mpCfgBtn');
+      if (popup && btn && !popup.contains(e.target) && !btn.contains(e.target)) {
+        popup.style.display = 'none';
+      }
+    });
+  }
 
   // 드래그 앤 드롭 순서 변경
   var rowsEl = page.querySelector('.currency-rows');

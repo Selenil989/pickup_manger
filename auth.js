@@ -51,12 +51,17 @@ function mergeTombstone(serverVal, localVal) {
 // 통째 덮어쓰기 금지: 서버 최신을 읽어, 이 기기가 바꾼 키만 병합/적용해 저장.
 // → 오래된 기기가 올려도 자기가 안 건드린 키(다른 기기 기록)는 서버 것 그대로 유지.
 function pushData() {
-  if (!currentUid) return;
+  if (!currentUid) return Promise.resolve();
   var keys = Object.keys(dirty);
-  if (!keys.length) return;
+  if (!keys.length) return Promise.resolve();
   dirty = {};   // 이번 사이클에 반영할 키 캡처(이후 새 변경은 다음 사이클)
-  sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle().then(function (r) {
-    if (r.error) { keys.forEach(function (k) { dirty[k] = true; }); console.warn('[sync] 서버 조회 실패, 다음에 재시도:', r.error.message); return; }
+  function retry(ks, why) {   // 실패 시 dirty 복구 + 재시도 예약 (재시도 없으면 다음 로그인에 덮여 유실)
+    ks.forEach(function (k) { dirty[k] = true; });
+    console.warn('[sync] ' + why + ', 5초 뒤 재시도');
+    clearTimeout(syncTimer); syncTimer = setTimeout(pushData, 5000);
+  }
+  return sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle().then(function (r) {
+    if (r.error) { retry(keys, '서버 조회 실패: ' + r.error.message); return false; }
     var server = (r.data && r.data.data) || {};
     keys.forEach(function (k) {
       var lv = localStorage.getItem(k);
@@ -65,10 +70,13 @@ function pushData() {
       else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);        // 원장=합집합
       else server[k] = lv;                                                                   // 상태값(재화·플래너 등)=방금 편집한 로컬 우선
     });
-    sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
-      .then(function (rr) { if (rr.error) { console.warn('[sync] 업로드 실패:', rr.error.message); keys.forEach(function (k) { dirty[k] = true; }); } });
-  }, function () { keys.forEach(function (k) { dirty[k] = true; }); });
+    return sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
+      .then(function (rr) { if (rr.error) { retry(keys, '업로드 실패: ' + rr.error.message); return false; } return true; },   // true=성공
+            function () { retry(keys, '업로드 예외'); return false; });
+  }, function () { retry(keys, '서버 조회 예외'); return false; });
 }
+// 디바운스 무시하고 즉시 업로드하고 끝날 때까지 기다림 — 불러오기(import) 후 새로고침 전 등에 사용.
+window.flushSync = function () { clearTimeout(syncTimer); return pushData(); };
 
 function clearPickupKeys() {
   var rm = [];
@@ -91,7 +99,7 @@ function loadAccount(uid) {
       clearPickupKeys();                                                // 이전 계정 데이터 제거
       Object.keys(blob).forEach(function (k) { origSet(k, blob[k]); }); // origSet=복원 중 재업로드 방지
       loaded = true;                                                     // 복원 완료 → 이제부터 로컬 변경분 업로드 허용
-    });
+    }, function (e) { console.warn('[sync] 복원 예외, 로컬 유지:', e && e.message); loaded = true; });  // reject도 로컬 유지+업로드 허용(loaded 멈춤 방지)
 }
 
 function domReady(fn) {
