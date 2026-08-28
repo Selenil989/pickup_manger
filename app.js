@@ -3213,7 +3213,7 @@ function renderLedgerPage() {
       + (calBadges[ymd] ? (Array.isArray(calBadges[ymd]) ? calBadges[ymd] : [calBadges[ymd]]).map(function(tid) { var t = CAL_BADGE_MAP[tid]; return t ? '<span class="lcal-badge-ev" style="--cbc:' + t.color + '">' + t.icon + '<b>' + t.label + '</b></span>' : ''; }).join('') : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
-      + (ag && (ag.tChar || ag.tWeapon || ag.tCommon) ? '<span class="lcal-amt lcal-ticket">🎟' + [ag.tChar ? '캐' + (ag.tChar > 0 ? '+' : '') + ag.tChar : '', ag.tWeapon ? '무' + (ag.tWeapon > 0 ? '+' : '') + ag.tWeapon : '', ag.tCommon ? '권' + (ag.tCommon > 0 ? '+' : '') + ag.tCommon : ''].filter(Boolean).join(' ') + '</span>' : '')
+      + (ag && (ag.tChar || ag.tWeapon || ag.tCommon) ? '<span class="lcal-amt lcal-ticket">🎟' + [ag.tChar ? '캐' + (ag.tChar > 0 ? '+' : '') + ag.tChar : '', ag.tWeapon ? '무' + (ag.tWeapon > 0 ? '+' : '') + ag.tWeapon : '', ag.tCommon ? '공용' + (ag.tCommon > 0 ? '+' : '') + ag.tCommon : ''].filter(Boolean).join(' ') + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
       + '</div>';
   }
@@ -3230,7 +3230,7 @@ function renderLedgerPage() {
   var _tkBits = [];
   if (dTChar) _tkBits.push('캐뽑권 ' + (dTChar > 0 ? '+' : '') + dTChar.toLocaleString());
   if (dTWeapon) _tkBits.push('무뽑권 ' + (dTWeapon > 0 ? '+' : '') + dTWeapon.toLocaleString());
-  if (dTCommon) _tkBits.push('뽑권 ' + (dTCommon > 0 ? '+' : '') + dTCommon.toLocaleString());
+  if (dTCommon) _tkBits.push('뽑기권 ' + (dTCommon > 0 ? '+' : '') + dTCommon.toLocaleString());
   var ticketSum = _tkBits.length ? ' <span class="ledger-sum--ticket">' + _tkBits.join(' · ') + '</span>' : '';
 
   function paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
