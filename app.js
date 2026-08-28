@@ -3093,19 +3093,29 @@ function renderLedgerPage() {
 
   var monthEntries = all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; });
   // 재화 type: 공용(common)은 환산해 획득/소모 합산, 뽑기권(character/weapon)은 환산 안 하고 개수로 따로 집계
-  var typeOf = {};
+  var typeOf = {}, rateOf = {};
   [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
-    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) { if (typeOf[c.id] == null) typeOf[c.id] = c.type || 'common'; });
+    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) { if (typeOf[c.id] == null) { typeOf[c.id] = c.type || 'common'; rateOf[c.id] = c.rate || 1; } });
   });
-  function _isTicket(cid) { var t = typeOf[cid]; return t === 'character' || t === 'weapon'; }
-  var dayAgg = {}, mGain = 0, mSpend = 0, mTChar = 0, mTWeapon = 0;
+  // 뽑기권 분류: 캐/무 전용뽑권 + '공용 뽑기권'(type common인데 rate 1 = 1장=1뽑, 예: 스타레일 전용권·젠레스 마스터테이프).
+  // null = 진짜 공용재화(rate>1, 예: 성옥·환석) → 환산 대상.
+  function _ticketBucket(cid) {
+    var t = typeOf[cid];
+    if (t === 'character') return 'char';
+    if (t === 'weapon') return 'weapon';
+    if ((t === 'common' || t == null) && rateOf[cid] === 1) return 'common';
+    return null;
+  }
+  function _isTicket(cid) { return _ticketBucket(cid) !== null; }
+  var dayAgg = {}, mGain = 0, mSpend = 0, mTChar = 0, mTWeapon = 0, mTCommon = 0;
   monthEntries.forEach(function(e) {
     var d = ledgerYMD(e.ts);
-    if (!dayAgg[d]) dayAgg[d] = { gain: 0, spend: 0, paid: 0, tChar: 0, tWeapon: 0 };
+    if (!dayAgg[d]) dayAgg[d] = { gain: 0, spend: 0, paid: 0, tChar: 0, tWeapon: 0, tCommon: 0 };
     if (e.type === 'auto') {
-      var t = typeOf[e.currency];
-      if (t === 'character')   { dayAgg[d].tChar   += e.delta; mTChar   += e.delta; }   // 캐뽑권 개수(그대로)
-      else if (t === 'weapon') { dayAgg[d].tWeapon += e.delta; mTWeapon += e.delta; }   // 무뽑권 개수(그대로)
+      var b = _ticketBucket(e.currency);
+      if (b === 'char')        { dayAgg[d].tChar   += e.delta; mTChar   += e.delta; }   // 캐뽑권 개수(그대로)
+      else if (b === 'weapon') { dayAgg[d].tWeapon += e.delta; mTWeapon += e.delta; }   // 무뽑권 개수(그대로)
+      else if (b === 'common') { dayAgg[d].tCommon += e.delta; mTCommon += e.delta; }   // 공용뽑권 개수(rate1, 그대로)
       else { var v = toJaehwa(e); if (v > 0) { dayAgg[d].gain += v; mGain += v; } else { dayAgg[d].spend += -v; mSpend += -v; } }
     }
     if (e.price != null) dayAgg[d].paid += e.price;
@@ -3203,7 +3213,7 @@ function renderLedgerPage() {
       + (calBadges[ymd] ? (Array.isArray(calBadges[ymd]) ? calBadges[ymd] : [calBadges[ymd]]).map(function(tid) { var t = CAL_BADGE_MAP[tid]; return t ? '<span class="lcal-badge-ev" style="--cbc:' + t.color + '">' + t.icon + '<b>' + t.label + '</b></span>' : ''; }).join('') : '')
       + (ag && ag.gain ? '<span class="lcal-amt lcal-gain">+' + ag.gain.toLocaleString() + '</span>' : '')
       + (ag && ag.spend ? '<span class="lcal-amt lcal-spend">−' + ag.spend.toLocaleString() + '</span>' : '')
-      + (ag && (ag.tChar || ag.tWeapon) ? '<span class="lcal-amt lcal-ticket">🎟' + [ag.tChar ? '캐' + (ag.tChar > 0 ? '+' : '') + ag.tChar : '', ag.tWeapon ? '무' + (ag.tWeapon > 0 ? '+' : '') + ag.tWeapon : ''].filter(Boolean).join(' ') + '</span>' : '')
+      + (ag && (ag.tChar || ag.tWeapon || ag.tCommon) ? '<span class="lcal-amt lcal-ticket">🎟' + [ag.tChar ? '캐' + (ag.tChar > 0 ? '+' : '') + ag.tChar : '', ag.tWeapon ? '무' + (ag.tWeapon > 0 ? '+' : '') + ag.tWeapon : '', ag.tCommon ? '권' + (ag.tCommon > 0 ? '+' : '') + ag.tCommon : ''].filter(Boolean).join(' ') + '</span>' : '')
       + (ag && ag.paid ? '<span class="lcal-amt lcal-paid">₩' + ag.paid.toLocaleString() + '</span>' : '')
       + '</div>';
   }
@@ -3216,9 +3226,11 @@ function renderLedgerPage() {
   var dSpend = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].spend : mSpend;
   var dTChar = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tChar : mTChar;
   var dTWeapon = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tWeapon : mTWeapon;
+  var dTCommon = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tCommon : mTCommon;
   var _tkBits = [];
   if (dTChar) _tkBits.push('캐뽑권 ' + (dTChar > 0 ? '+' : '') + dTChar.toLocaleString());
   if (dTWeapon) _tkBits.push('무뽑권 ' + (dTWeapon > 0 ? '+' : '') + dTWeapon.toLocaleString());
+  if (dTCommon) _tkBits.push('뽑권 ' + (dTCommon > 0 ? '+' : '') + dTCommon.toLocaleString());
   var ticketSum = _tkBits.length ? ' <span class="ledger-sum--ticket">' + _tkBits.join(' · ') + '</span>' : '';
 
   function paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
