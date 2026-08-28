@@ -41,6 +41,13 @@ function mergeLedger(serverVal, localVal) {
   var out = Object.keys(byTs).map(function (t) { return byTs[t]; }).sort(function (a, b) { return a.ts - b.ts; });
   return JSON.stringify(out);
 }
+// 삭제 표식(ts 배열) 합집합 — 어느 기기서 지운 것이든 모두 모임 → 삭제가 전파되고 되살아나지 않음
+function mergeTombstone(serverVal, localVal) {
+  var set = {};
+  _parseArr(serverVal).forEach(function (t) { set[t] = 1; });
+  _parseArr(localVal).forEach(function (t) { set[t] = 1; });
+  return JSON.stringify(Object.keys(set).map(function (t) { return Number(t); }));
+}
 // 통째 덮어쓰기 금지: 서버 최신을 읽어, 이 기기가 바꾼 키만 병합/적용해 저장.
 // → 오래된 기기가 올려도 자기가 안 건드린 키(다른 기기 기록)는 서버 것 그대로 유지.
 function pushData() {
@@ -53,9 +60,10 @@ function pushData() {
     var server = (r.data && r.data.data) || {};
     keys.forEach(function (k) {
       var lv = localStorage.getItem(k);
-      if (lv == null) { delete server[k]; return; }                                   // 로컬에서 삭제된 키
-      else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);  // 원장=합집합
-      else server[k] = lv;                                                            // 상태값(재화·플래너 등)=방금 편집한 로컬 우선
+      if (lv == null) { delete server[k]; return; }                                          // 로컬에서 삭제된 키
+      else if (k.indexOf('pickup_manager_ledgerdel_') === 0) server[k] = mergeTombstone(server[k], lv);  // 삭제표식=합집합
+      else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);        // 원장=합집합
+      else server[k] = lv;                                                                   // 상태값(재화·플래너 등)=방금 편집한 로컬 우선
     });
     sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
       .then(function (rr) { if (rr.error) { console.warn('[sync] 업로드 실패:', rr.error.message); keys.forEach(function (k) { dirty[k] = true; }); } });
@@ -121,7 +129,10 @@ function applyRemote(blob) {
   Object.keys(blob).forEach(function (k) {
     if (k.indexOf('pickup_manager_') !== 0 || dirty[k]) return;   // 내 미저장 편집 보호
     var localVal = localStorage.getItem(k);
-    var nextVal = (k.indexOf('pickup_manager_ledger_') === 0) ? mergeLedger(blob[k], localVal) : blob[k];  // 원장=합집합
+    var nextVal;
+    if (k.indexOf('pickup_manager_ledgerdel_') === 0) nextVal = mergeTombstone(blob[k], localVal);   // 삭제표식=합집합
+    else if (k.indexOf('pickup_manager_ledger_') === 0) nextVal = mergeLedger(blob[k], localVal);     // 원장=합집합
+    else nextVal = blob[k];
     if (nextVal !== localVal) { origSet(k, nextVal); changed = true; }   // origSet=재업로드 방지
   });
   if (changed && window.onRemoteSync) { try { window.onRemoteSync(); } catch (e) {} }

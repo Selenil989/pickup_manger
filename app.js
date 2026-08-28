@@ -2853,9 +2853,19 @@ function loadCurrencyData(gameId) {
 }
 
 // ── 재화 거래 내역(영수증) 원장 ── append-only, pickup_manager_ 접두사 → 계정별 Supabase 동기화(영구)
-function loadLedger(gameId) {
-  try { var raw = localStorage.getItem('pickup_manager_ledger_' + gameId); return raw ? JSON.parse(raw) : []; }
+// 삭제 표식(tombstone): 지운 항목 ts 목록. 병합이 합집합이라 삭제가 되살아나는 걸 막음(어느 기기서 지워도 유지).
+function loadLedgerTombstone(gameId) {
+  try { var r = localStorage.getItem('pickup_manager_ledgerdel_' + gameId); var a = r ? JSON.parse(r) : []; return Array.isArray(a) ? a : []; }
   catch (e) { return []; }
+}
+function loadLedger(gameId) {
+  try {
+    var raw = localStorage.getItem('pickup_manager_ledger_' + gameId);
+    var arr = raw ? JSON.parse(raw) : [];
+    var del = loadLedgerTombstone(gameId);
+    if (del.length) { var s = {}; del.forEach(function (t) { s[t] = 1; }); arr = arr.filter(function (e) { return !(e && s[e.ts]); }); }  // 지운 항목 제외
+    return arr;
+  } catch (e) { return []; }
 }
 function saveLedger(gameId, arr) {
   try { localStorage.setItem('pickup_manager_ledger_' + gameId, JSON.stringify(arr)); } catch (e) {}
@@ -3455,6 +3465,9 @@ function renderLedgerModal() {
 
 function ledgerDelete(ts) {
   if (!confirm('이 내역을 삭제할까요? (되돌릴 수 없음)')) return;
+  // 삭제 표식 기록 → 병합/다른 기기에서 되살아나지 않음 (표식도 동기화됨)
+  var del = loadLedgerTombstone(_ledgerGame);
+  if (del.indexOf(ts) === -1) { del.push(ts); try { localStorage.setItem('pickup_manager_ledgerdel_' + _ledgerGame, JSON.stringify(del)); } catch (e) {} }
   var arr = loadLedger(_ledgerGame).filter(function(e) { return e.ts !== ts; });
   saveLedger(_ledgerGame, arr);
   ledgerRerender();
