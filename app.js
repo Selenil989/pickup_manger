@@ -3607,6 +3607,9 @@ function saveCurrencyItem(gameId, curId, val) {
   try {
     var data = loadCurrencyData(gameId);
     data[curId] = val;
+    if (!data._ts) data._ts = {};
+    data._ts[curId] = Date.now();   // 필드별 최종수정 시각 — 다기기 병합서 '더 최근에 고친 값'만 남겨 유실 방지
+                                    // ponytail: 벽시계 LWW, 기기 간 시계 오차(수초)만큼만 오정렬 가능 — 개인용엔 충분
     localStorage.setItem("pickup_manager_currency_" + gameId, JSON.stringify(data));
   } catch (e) {}
 }

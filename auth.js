@@ -33,6 +33,23 @@ function collect() {
 }
 
 function _parseArr(s) { try { var a = JSON.parse(s); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+function _parseObj(s) { try { var o = JSON.parse(s); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; } catch (e) { return {}; } }
+// 보유재화(상태값) 병합 — 필드별 최종수정 시각(_ts) 비교해 더 최근 값 채택.
+// → 낡은 기기가 올려도 자기가 안 바꾼 재화는 서버(최근) 값 유지, 각자 다른 재화 동시수정도 둘 다 보존.
+function mergeCurrency(serverVal, localVal) {
+  var s = _parseObj(serverVal), l = _parseObj(localVal);
+  var sT = s._ts || {}, lT = l._ts || {};
+  var out = {}, oT = {}, ids = {};
+  Object.keys(s).forEach(function (k) { if (k !== '_ts') ids[k] = 1; });
+  Object.keys(l).forEach(function (k) { if (k !== '_ts') ids[k] = 1; });
+  Object.keys(ids).forEach(function (k) {
+    var st = sT[k] || 0, lt = lT[k] || 0;
+    if (lt > st) { out[k] = l[k]; oT[k] = lt; }                    // 로컬이 더 최근 편집
+    else { out[k] = (k in s) ? s[k] : l[k]; oT[k] = st || lt; }    // 동률/서버최근 → 서버 우선(낡은 로컬 클로버 방지)
+  });
+  out._ts = oT;
+  return JSON.stringify(out);
+}
 // 원장(append형) 병합: 서버+로컬을 ts 기준 합집합 → 한 항목도 안 버림(다른 기기 기록 보존)
 function mergeLedger(serverVal, localVal) {
   var byTs = {};
@@ -68,7 +85,8 @@ function pushData() {
       if (lv == null) { delete server[k]; return; }                                          // 로컬에서 삭제된 키
       else if (k.indexOf('pickup_manager_ledgerdel_') === 0) server[k] = mergeTombstone(server[k], lv);  // 삭제표식=합집합
       else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);        // 원장=합집합
-      else server[k] = lv;                                                                   // 상태값(재화·플래너 등)=방금 편집한 로컬 우선
+      else if (k.indexOf('pickup_manager_currency_') === 0) server[k] = mergeCurrency(server[k], lv);    // 보유재화=필드별 최근값
+      else server[k] = lv;                                                                   // 그 외 상태값(플래너 등)=방금 편집한 로컬 우선
     });
     return sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
       .then(function (rr) { if (rr.error) { retry(keys, '업로드 실패: ' + rr.error.message); return false; } return true; },   // true=성공
@@ -140,6 +158,7 @@ function applyRemote(blob) {
     var nextVal;
     if (k.indexOf('pickup_manager_ledgerdel_') === 0) nextVal = mergeTombstone(blob[k], localVal);   // 삭제표식=합집합
     else if (k.indexOf('pickup_manager_ledger_') === 0) nextVal = mergeLedger(blob[k], localVal);     // 원장=합집합
+    else if (k.indexOf('pickup_manager_currency_') === 0) nextVal = mergeCurrency(blob[k], localVal); // 보유재화=필드별 최근값
     else nextVal = blob[k];
     if (nextVal !== localVal) { origSet(k, nextVal); changed = true; }   // origSet=재업로드 방지
   });
