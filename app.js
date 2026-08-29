@@ -761,7 +761,7 @@ function renderCardGrid() {
     if (owned) {
       var oe = ownedMap[char.id];
       html += '<span class="card-badge card-badge--dupe">' + ((oe.dupeLevel || 0) > 0 ? oe.dupeLevel + '돌' : '명함') + '</span>';
-      if (oe.weapon && oe.weapon.hasSignature) html += '<span class="card-badge card-badge--weapon">전무</span>';
+      if (oe.weapon && oe.weapon.hasSignature) html += '<span class="card-badge card-badge--weapon">전무R' + (oe.weapon.refinement || 1) + '</span>';   // 전무 정련(R1~R5) 표시
     }
     html += '</div><div class="char-card-icons-right">';
     if (roleFile) html += '<img class="' + iconCls + '" src="' + imgBase + roleFile + '" alt="">';
