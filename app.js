@@ -2892,6 +2892,19 @@ function newLedgerTs() {
   _lastLedgerTs = t;
   return t;
 }
+// 변경량 수정 반영: 편집 항목과 같은 재화의 이후(ts>=) 자동항목 잔고를 diff만큼 이동 + 현재 보유재화도 diff 반영.
+// (delta가 diff만큼 바뀌면 그 시점 이후 running 잔고 전부 같은 양만큼 이동하고, 현재 보유량도 그만큼 달라짐)
+function _ledgerApplyDeltaEdit(arr, editedEntry, diff) {
+  if (!diff) return;
+  arr.forEach(function (x) {
+    if (x.type === 'auto' && x.currency === editedEntry.currency && x.ts >= editedEntry.ts && x.balanceAfter != null) {
+      x.balanceAfter += diff;
+    }
+  });
+  var data = loadCurrencyData(_ledgerGame);
+  var cur = parseInt(data[editedEntry.currency]) || 0;
+  saveCurrencyItem(_ledgerGame, editedEntry.currency, Math.max(0, cur + diff));   // 음수 방지, _ts 스탬프→동기화
+}
 function appendLedger(gameId, entry) {
   var arr = loadLedger(gameId);
   arr.push(entry);
@@ -3514,7 +3527,8 @@ function ledgerAddMemo() { _openMemoEditor(null); }
 var LEDGER_QUICK_AMTS = [[119000, '트럭'], [65000, '반트럭'], [12000, '패스'], [5900, '월정액']];
 function _openMemoEditor(entry) {
   var isNew  = !entry;
-  var isAuto = !!(entry && entry.type === 'auto' && entry.delta > 0);
+  var isAuto = !!(entry && entry.type === 'auto' && entry.delta > 0);   // 유료/무료 split은 획득(양수)만
+  var isAutoEdit = !!(entry && entry.type === 'auto');                  // 변경량 편집은 획득·소모 모두
   var memo   = entry ? (entry.memo || '') : '';
   var price  = entry ? entry.price : null;
   var delta  = isAuto ? entry.delta : 0;
@@ -3538,9 +3552,10 @@ function _openMemoEditor(entry) {
   wrap.className = 'char-detail-overlay ledger-memo-overlay';
   wrap.innerHTML = [
     '<div class="char-detail-panel ledger-memo-editor">',
-    '  <div class="detail-header"><span class="detail-header-name">' + (isNew ? '메모 추가' : '메모 · 가격') + '</span>',
+    '  <div class="detail-header"><span class="detail-header-name">' + (isNew ? '메모 추가' : (isAutoEdit ? '변경량 · 메모' : '메모 · 가격')) + '</span>',
     '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
     '  <div class="ledger-memo-fields">',
+    (isAutoEdit ? '    <label class="ledger-memo-field"><span>변경량 (±)</span><input type="text" inputmode="numeric" id="ledgerDeltaEdit" value="' + entry.delta + '"></label>' : ''),
     '    <label class="ledger-memo-field"><span>메모</span>',
     '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo) + '" placeholder="예: 월정액 결제"></label>',
     '    <label class="ledger-memo-field"><span>가격 (원)</span>',
@@ -3573,11 +3588,20 @@ function _openMemoEditor(entry) {
     var praw = document.getElementById('ledgerMemoPrice').value.replace(/[^0-9]/g, '');
     var pv = parseInt(praw, 10);
     var hasPrice = praw !== '' && !isNaN(pv) && pv > 0;
+    // 변경량 편집(auto 항목, ± 허용) — 빈값/오류면 기존값 유지
+    var newDelta = entry ? entry.delta : 0;
+    if (isAutoEdit) {
+      var draw = document.getElementById('ledgerDeltaEdit').value.replace(/[^0-9-]/g, '');
+      var pd = parseInt(draw, 10);
+      if (!isNaN(pd)) newDelta = pd;
+    }
+    var effDelta = isAutoEdit ? newDelta : delta;   // split 계산 기준(변경량 반영)
     var freeVal = null;
-    if (isAuto) {
+    if (isAuto) {   // 유료/무료 split은 획득(양수)에만
       var praw2 = document.getElementById('ledgerSplitPaid').value.replace(/[^0-9]/g, '');
-      var paidCount = (praw2 === '' || isNaN(parseInt(praw2, 10))) ? 0 : Math.max(0, Math.min(delta, parseInt(praw2, 10)));
-      freeVal = delta - paidCount;  // 무료분 = 전체 − 유료 입력
+      var pos = Math.max(0, effDelta);
+      var paidCount = (praw2 === '' || isNaN(parseInt(praw2, 10))) ? 0 : Math.max(0, Math.min(pos, parseInt(praw2, 10)));
+      freeVal = pos - paidCount;  // 무료분 = 전체 − 유료 입력
     }
     if (isNew && !m && !hasPrice) { close(); return; }
     var a2 = loadLedger(_ledgerGame);
@@ -3590,8 +3614,15 @@ function _openMemoEditor(entry) {
         if (a2[j].ts === entry.ts) {
           a2[j].memo = m;
           if (hasPrice) a2[j].price = pv; else delete a2[j].price;
-          if (isAuto && freeVal != null && freeVal !== delta) a2[j].freeDelta = freeVal;
-          else if (isAuto) delete a2[j].freeDelta;
+          // 변경량 수정 → 차이만큼 (이 항목+이후 같은재화 잔고) 보정 + 현재 보유재화 반영
+          if (isAutoEdit && newDelta !== a2[j].delta) {
+            var diff = newDelta - a2[j].delta;
+            a2[j].delta = newDelta;
+            _ledgerApplyDeltaEdit(a2, a2[j], diff);   // 이 항목+이후 잔고 이동 + 현재 보유재화 반영
+          }
+          // 유료/무료 재조정 (변경량 반영된 effDelta 기준). 소모/0은 split 없음
+          if (isAuto && effDelta > 0 && freeVal != null && freeVal !== effDelta) a2[j].freeDelta = freeVal;
+          else delete a2[j].freeDelta;
           break;
         }
       }
