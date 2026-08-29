@@ -3256,7 +3256,7 @@ function renderLedgerPage() {
     monthEntries.forEach(function(e) { var d = ledgerYMD(e.ts); if (!byDay[d]) { byDay[d] = []; order.push(d); } byDay[d].push(e); });  // monthEntries는 최신순 → 날짜도 최신순
     listHtml = order.length ? order.map(function(d) {
       var ag = dayAgg[d] || { gain: 0, spend: 0, paid: 0, tChar: 0, tWeapon: 0, tCommon: 0 };
-      var dl = parseInt(d.slice(5, 7), 10) + '/' + parseInt(d.slice(8, 10), 10) + ' (' + WD_KO[new Date(d).getDay()] + ')';
+      var dl = parseInt(d.slice(5, 7), 10) + '/' + parseInt(d.slice(8, 10), 10) + ' (' + WD_KO[new Date(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)).getDay()] + ')';  // 로컬 파싱(UTC파싱은 타임존 따라 요일 틀어짐)
       var bits = [];
       if (ag.gain) bits.push('<span class="ledger-sum--gain">획득 +' + ag.gain.toLocaleString() + '</span>');
       if (ag.spend) bits.push('<span class="ledger-sum--spend">소모 −' + ag.spend.toLocaleString() + '</span>');
