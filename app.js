@@ -3244,9 +3244,35 @@ function renderLedgerPage() {
       + '</div>';
   }
 
-  var listEntries = _ledgerDay ? monthEntries.filter(function(e) { return ledgerYMD(e.ts) === _ledgerDay; }) : monthEntries;
-  var rows = listEntries.length ? listEntries.map(function(e) { return ledgerRowHtml(gameId, e); }).join('')
-    : '<div class="ledger-empty">' + (_ledgerDay ? '이 날 기록이 없습니다.' : '이 달 기록이 없습니다. 재화 수량을 바꾸면 자동으로 남습니다.') + '</div>';
+  var WD_KO = ['일', '월', '화', '수', '목', '금', '토'];
+  var listHtml;
+  if (_ledgerDay) {                                          // 특정 날 선택 → 그 날 기록 그대로(flat)
+    var dayList = monthEntries.filter(function(e) { return ledgerYMD(e.ts) === _ledgerDay; });
+    listHtml = dayList.length
+      ? '<div class="ledger-list">' + dayList.map(function(e) { return ledgerRowHtml(gameId, e); }).join('') + '</div>'
+      : '<div class="ledger-empty">이 날 기록이 없습니다.</div>';
+  } else {                                                   // 이 달 전체 → 하루 단위 접힘, 클릭하면 시간별로 펼침(네이티브 details 아코디언)
+    var order = [], byDay = {};
+    monthEntries.forEach(function(e) { var d = ledgerYMD(e.ts); if (!byDay[d]) { byDay[d] = []; order.push(d); } byDay[d].push(e); });  // monthEntries는 최신순 → 날짜도 최신순
+    listHtml = order.length ? order.map(function(d) {
+      var ag = dayAgg[d] || { gain: 0, spend: 0, paid: 0, tChar: 0, tWeapon: 0, tCommon: 0 };
+      var dl = parseInt(d.slice(5, 7), 10) + '/' + parseInt(d.slice(8, 10), 10) + ' (' + WD_KO[new Date(d).getDay()] + ')';
+      var bits = [];
+      if (ag.gain) bits.push('<span class="ledger-sum--gain">획득 +' + ag.gain.toLocaleString() + '</span>');
+      if (ag.spend) bits.push('<span class="ledger-sum--spend">소모 −' + ag.spend.toLocaleString() + '</span>');
+      var tk = [];
+      if (ag.tChar) tk.push('캐뽑권 ' + (ag.tChar > 0 ? '+' : '') + ag.tChar);
+      if (ag.tWeapon) tk.push('무뽑권 ' + (ag.tWeapon > 0 ? '+' : '') + ag.tWeapon);
+      if (ag.tCommon) tk.push('뽑기권 ' + (ag.tCommon > 0 ? '+' : '') + ag.tCommon);
+      if (tk.length) bits.push('<span class="ledger-sum--ticket">' + tk.join(' · ') + '</span>');
+      if (ag.paid) bits.push('<span class="ledger-sum--paid">₩' + ag.paid.toLocaleString() + '</span>');
+      return '<details class="ledger-day-group">'
+        + '<summary class="ledger-day-group-head"><span class="ldg-date">' + dl + '</span>'
+        + '<span class="ldg-sum">' + bits.join(' ') + '<span class="ldg-count">' + byDay[d].length + '건</span></span></summary>'
+        + '<div class="ledger-list">' + byDay[d].map(function(e) { return ledgerRowHtml(gameId, e); }).join('') + '</div>'
+        + '</details>';
+    }).join('') : '<div class="ledger-empty">이 달 기록이 없습니다. 재화 수량을 바꾸면 자동으로 남습니다.</div>';
+  }
   var dayLabel = _ledgerDay ? (parseInt(_ledgerDay.slice(5, 7), 10) + '월 ' + parseInt(_ledgerDay.slice(8, 10), 10) + '일') : '이 달 전체';
   var dGain = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].gain : mGain;
   var dSpend = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].spend : mSpend;
@@ -3307,7 +3333,7 @@ function renderLedgerPage() {
     '<div class="ledger-day-head"><span class="ledger-day-title">' + dayLabel + '</span>',
     '  <span class="ledger-day-sum"><span class="ledger-sum--gain">획득 +' + dGain.toLocaleString() + '</span> <span class="ledger-sum--spend">소모 −' + dSpend.toLocaleString() + '</span>' + ticketSum + '</span>',
     '</div>',
-    '<div class="ledger-list">' + rows + '</div>',
+    listHtml,
     '<div class="ledger-page-footer"><button class="detail-btn-cancel" id="lpAddMemo">＋ 메모 추가</button></div>'
   ].join('');
 

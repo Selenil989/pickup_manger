@@ -2234,6 +2234,22 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .ledger-day-sum .ledger-sum--gain { color: #3ecf8e; }
 .ledger-day-sum .ledger-sum--spend { color: #e5484d; margin-left: 8px; }
 .ledger-day-sum .ledger-sum--ticket { color: #8b9bff; margin-left: 8px; }
+/* 이 달 전체 — 하루 단위 아코디언(클릭하면 시간별로 펼침) */
+.ledger-day-group { max-width: 780px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+.ledger-day-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 10px 4px; cursor: pointer; list-style: none; user-select: none; }
+.ledger-day-group-head::-webkit-details-marker { display: none; }
+.ldg-date { font-size: var(--fs-md); font-weight: 700; white-space: nowrap; }
+.ldg-date::before { content: '▸'; margin-right: 7px; color: var(--muted); display: inline-block; transition: transform .15s; }
+.ledger-day-group[open] > .ledger-day-group-head .ldg-date::before { transform: rotate(90deg); }
+.ledger-day-group-head:hover { background: rgba(255,255,255,.03); }
+.ldg-sum { font-size: var(--fs-sm); font-weight: 700; text-align: right; }
+.ldg-sum .ledger-sum--gain { color: #3ecf8e; }
+.ldg-sum .ledger-sum--spend { color: #e5484d; margin-left: 6px; }
+.ldg-sum .ledger-sum--ticket { color: #8b9bff; margin-left: 6px; }
+.ldg-sum .ledger-sum--paid { color: #e5a34d; margin-left: 6px; }
+.ldg-count { color: var(--muted); font-weight: 600; margin-left: 8px; }
+.ledger-day-group[open] > .ledger-day-group-head { border-bottom: 1px dashed var(--border); }
+.ledger-day-group .ledger-list { padding-left: 6px; }
 .ledger-page-footer { margin-top: 12px; display: flex; justify-content: center; }
 
 /* 메모 편집기 — 빠른 금액 버튼 + 무료/유료 분할 */
