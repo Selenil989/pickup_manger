@@ -44,18 +44,20 @@ if (-not $files) {
 }
 
 # 3) 캐시들에서 getGachaLog 링크 추출 (게임이 잠그고 있어도 공유 읽기)
+# ⚠️ authkey는 금방 만료되므로 '가장 최근 수정된 캐시 파일'의 링크를 골라야 함(옛 세션 링크는 timeout).
 $rx = [regex]'https://[^\x00-\x1F"'' ]*(?:getGachaLog|getLdGachaLog)[^\x00-\x1F"'' ]*'
-$found = @()
+$url = $null
 $anyAuthkey = 0
-foreach ($f in $files) {
+foreach ($f in $files) {              # $files = 최신 수정 순
   $bytes = Read-BytesShared $f.FullName
   if (-not $bytes) { continue }
   $txt = [System.Text.Encoding]::GetEncoding('ISO-8859-1').GetString($bytes)
-  foreach ($m in $rx.Matches($txt)) { $found += $m.Value }
+  $ms = $rx.Matches($txt)
+  if ($ms.Count -gt 0 -and -not $url) { $url = $ms[$ms.Count - 1].Value }   # 첫 매칭 = 가장 최근 파일 = 신선한 authkey
   if ($txt -match 'authkey=') { $anyAuthkey++ }
 }
 
-if ($found.Count -eq 0) {
+if (-not $url) {
   Write-Host "`n[X] 가챠 링크를 못 찾았어요." -ForegroundColor Red
   if ($anyAuthkey -gt 0) {
     Write-Host "    (authkey는 캐시에 있는데 getGachaLog 형태가 아니에요 — 이 메시지를 개발자에게 알려주세요: authkey $anyAuthkey개 발견)" -ForegroundColor Yellow
@@ -66,7 +68,6 @@ if ($found.Count -eq 0) {
   return
 }
 
-# 여러 개면 마지막(가장 최근 파일의 마지막) — 함수가 gacha_type/end_id는 덮어쓰므로 아무 거나 authkey만 살아있으면 됨
-$url = $found[$found.Count - 1]
 Set-Clipboard $url
 Write-Host "`n[OK] 가챠 링크가 클립보드에 복사됐어요! PickupManger 앱에 붙여넣으세요.`n" -ForegroundColor Green
+Write-Host "    (authkey는 금방 만료되니, 복사 후 바로 앱에서 테스트하세요.)" -ForegroundColor DarkGray
