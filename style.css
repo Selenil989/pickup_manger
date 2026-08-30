@@ -2366,20 +2366,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   color: var(--muted);
 }
 
-/* 캐릭터 5★ 확정획득 천장 카운터 */
-.pity-hard { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 12px 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-.pity-hard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.pity-hard-title { font-size: var(--fs-md); font-weight: 700; }
-.pity-hard-count { font-size: var(--fs-lg); font-weight: 800; color: var(--accent); white-space: nowrap; }
-.pity-hard-count input { width: 3.4em; text-align: center; font-size: var(--fs-lg); font-weight: 800; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 3px 4px; margin-right: 2px; }
-.pity-hard-remain { font-size: var(--fs-sm); color: var(--muted); font-weight: 600; }
-.pity-hard-remain strong { font-size: var(--fs-lg); color: var(--text); font-weight: 800; margin: 0 2px; }
-.pity-hard-reach { margin-left: 4px; }
-.pity-hard-btns { display: flex; gap: 6px; }
-.pity-hard-btn { flex: 1; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); font-size: var(--fs-sm); font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
-.pity-hard-btn:hover { border-color: var(--accent); background: var(--accent-bg2); }
-.pity-hard-btn--reset { flex: 2; }
-
 /* ── 36. Version Planner ──────────────────────────────────── */
 
 .planner-section {

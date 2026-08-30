@@ -3671,18 +3671,6 @@ function saveCurrencyItem(gameId, curId, val) {
   } catch (e) {}
 }
 
-// 캐릭터 5★ 확정획득 천장 카운터 — 마지막 5★ 이후 뽑은 횟수(수동). pickup_manager_ 접두사라 자동 동기화(상태값 LWW).
-function loadPityCount(gameId) {
-  try { var r = localStorage.getItem('pickup_manager_pity_' + gameId); var d = r ? JSON.parse(r) : {}; return Math.max(0, parseInt(d.char) || 0); } catch (e) { return 0; }
-}
-function savePityCount(gameId, count) {
-  try {
-    var r = localStorage.getItem('pickup_manager_pity_' + gameId); var d = r ? JSON.parse(r) : {};
-    d.char = Math.max(0, parseInt(count) || 0);
-    localStorage.setItem('pickup_manager_pity_' + gameId, JSON.stringify(d));
-  } catch (e) {}
-}
-
 function renderCurrencyPage() {
   var page = document.getElementById("currencyPage");
   if (!page) return;
@@ -3760,30 +3748,6 @@ function renderCurrencyPage() {
     '</div>'
   ].join('') : '';
 
-  // 캐릭터 5★ 확정획득 천장 — 현재 카운트 / 하드천장, 확정까지 N뽑, 보유재화로 도달 가능한지
-  var gcConf    = getGachaConfig(activeGame);
-  var hardPity  = (gcConf && gcConf.charPity) || (pity && pity.charPity) || 90;
-  var pityCount = loadPityCount(activeGame);
-  var affordChar = pity ? pity.charPulls : totalPulls;   // 보유재화로 가능한 캐릭 뽑수
-  var pityRemain = Math.max(0, hardPity - pityCount);
-  function pityReachText(remain) {
-    return affordChar >= remain ? '· 보유재화로 도달 가능 ✓' : '· 보유재화로 ' + affordChar + '뽑 → ' + (remain - affordChar) + '뽑 부족';
-  }
-  var pityHardHtml = [
-    '<div class="pity-hard">',
-    '  <div class="pity-hard-head">',
-    '    <span class="pity-hard-title">캐릭터 5★ 확정획득</span>',
-    '    <span class="pity-hard-count"><input id="pityHardInput" type="text" inputmode="numeric" value="' + pityCount + '"> / ' + hardPity + '</span>',
-    '  </div>',
-    '  <div class="pity-hard-remain">확정까지 <strong id="pityHardRemain">' + pityRemain + '</strong>뽑 남음 <span id="pityHardReach" class="pity-hard-reach">' + pityReachText(pityRemain) + '</span></div>',
-    '  <div class="pity-hard-btns">',
-    '    <button class="pity-hard-btn" id="pityMinus">−1</button>',
-    '    <button class="pity-hard-btn" id="pityPlus">+1</button>',
-    '    <button class="pity-hard-btn pity-hard-btn--reset" id="pityResetBtn">5★ 획득 · 리셋</button>',
-    '  </div>',
-    '</div>'
-  ].join('');
-
   _plannerCurHalf  = 'first';
   _plannerNextHalf = 'first';
   _plannerCurOpen  = false;
@@ -3813,28 +3777,8 @@ function renderCurrencyPage() {
     '  <span>회</span>',
     '</div>',
     pitySummaryHtml,
-    pityHardHtml,
     renderPlannerSection(activeGame)
   ].join('');
-
-  // 천장 카운터 버튼(+1/−1/리셋) + 직접입력 — 전체 재렌더 없이 표시만 갱신
-  (function () {
-    var input = document.getElementById('pityHardInput');
-    if (!input) return;
-    function apply(c) {
-      c = Math.max(0, parseInt(c) || 0);
-      savePityCount(activeGame, c);
-      input.value = c;
-      var remain = Math.max(0, hardPity - c);
-      var rEl = document.getElementById('pityHardRemain'); if (rEl) rEl.textContent = remain;
-      var reachEl = document.getElementById('pityHardReach'); if (reachEl) reachEl.textContent = pityReachText(remain);
-    }
-    var plus = document.getElementById('pityPlus'), minus = document.getElementById('pityMinus'), reset = document.getElementById('pityResetBtn');
-    if (plus)  plus.addEventListener('click',  function () { apply((parseInt(input.value) || 0) + 1); });
-    if (minus) minus.addEventListener('click', function () { apply((parseInt(input.value) || 0) - 1); });
-    if (reset) reset.addEventListener('click', function () { apply(0); });
-    input.addEventListener('change', function () { apply(this.value); });
-  })();
 
   // 재화 추가
   page.querySelectorAll('.currency-add-btn').forEach(function(btn) {
