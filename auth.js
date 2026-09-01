@@ -164,6 +164,22 @@ function applyRemote(blob) {
   });
   if (changed && window.onRemoteSync) { try { window.onRemoteSync(); } catch (e) {} }
 }
+// 다른 기기 변경분을 보려고 매번 로그아웃/로그인 안 하도록: 탭이 다시 보이거나 포커스되면 서버 최신본을 당겨와 병합.
+// Realtime(대시보드 토글) 미설정이어도 "앱 열면 최신"이 되게 하는 확실한 방법.
+var _lastPull = 0;
+function pullLatest() {
+  if (!currentUid || !loaded) return;
+  var now = Date.now();
+  if (now - _lastPull < 3000) return;   // 3초 스로틀(포커스 연타 방지)
+  _lastPull = now;
+  sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle()
+    .then(function (r) { if (!r.error && r.data) applyRemote(r.data.data); }, function () {});
+}
+window.pullLatest = pullLatest;
+domReady(function () {
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') pullLatest(); });
+  window.addEventListener('focus', pullLatest);
+});
 // 내 계정(user_data) 행이 바뀌면 알림받아 반영. ⚠️ Supabase 대시보드에서 user_data 테이블 Realtime 켜야 동작(안 켜도 저장 시 병합은 됨).
 function subscribeRealtime(uid) {
   try {
