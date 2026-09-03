@@ -172,8 +172,10 @@ function pullLatest() {
   var now = Date.now();
   if (now - _lastPull < 800) return;   // 스로틀(포커스 연타 방지, 3000→800)
   _lastPull = now;
+  window.syncInFlight = true;   // 당겨오는 중 표시 — 이 사이 편집은 오래된 상태라 월정액 자동등록 등 보류
   sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle()
-    .then(function (r) { if (!r.error && r.data) applyRemote(r.data.data); }, function () {});
+    .then(function (r) { if (!r.error && r.data) applyRemote(r.data.data); window.syncInFlight = false; },
+          function () { window.syncInFlight = false; });
 }
 window.pullLatest = pullLatest;
 domReady(function () {

@@ -2809,6 +2809,7 @@ function monthlyLastCredit(gid) { try { return localStorage.getItem('pickup_mana
 // 유료로 표기(freeDelta = delta − 유료분). 즉 +150이면 무료 60·유료 90으로 쪼갬. 하루 1회.
 // entry(원장 항목)를 제자리에서 수정. 조건 안 맞으면 그대로 둠.
 function applyMonthlyDailyToEntry(gid, entry) {
+  if (window.syncInFlight) return;   // 서버 최신본 당겨오는 중이면 '오늘 이미 지급했는지'가 오래된 값 → 월정액 중복등록 방지 위해 보류
   var d = loadMonthlyDaily(gid);
   if (!d || d.currency !== entry.currency || !(parseInt(d.amount) > 0)) return;  // 지급재화가 바뀐 재화일 때만
   if (!(entry.delta > 0)) return;                            // 증가분만
