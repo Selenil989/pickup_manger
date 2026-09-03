@@ -19,7 +19,7 @@ localStorage.setItem = function (k, v) {
   if (currentUid && loaded && k.indexOf('pickup_manager_') === 0) {
     dirty[k] = true;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(pushData, 1500);
+    syncTimer = setTimeout(pushData, 600);   // 업로드 디바운스(빠른 반영 위해 1500→600)
   }
 };
 
@@ -170,7 +170,7 @@ var _lastPull = 0;
 function pullLatest() {
   if (!currentUid || !loaded) return;
   var now = Date.now();
-  if (now - _lastPull < 3000) return;   // 3초 스로틀(포커스 연타 방지)
+  if (now - _lastPull < 800) return;   // 스로틀(포커스 연타 방지, 3000→800)
   _lastPull = now;
   sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle()
     .then(function (r) { if (!r.error && r.data) applyRemote(r.data.data); }, function () {});
