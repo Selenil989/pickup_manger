@@ -3529,12 +3529,28 @@ function renderLedgerModal() {
 }
 
 function ledgerDelete(ts) {
-  if (!confirm('이 내역을 삭제할까요? (되돌릴 수 없음)')) return;
+  var arr = loadLedger(_ledgerGame);
+  var target = null;
+  for (var i = 0; i < arr.length; i++) { if (arr[i].ts === ts) { target = arr[i]; break; } }
+  // 자동(재화변경) 기록이면 삭제 = 그 변경 취소 → 보유재화도 delta만큼 되돌림
+  var isAuto = !!(target && target.type === 'auto' && typeof target.delta === 'number' && target.delta !== 0);
+  var msg = isAuto
+    ? '이 기록(' + currencyName(_ledgerGame, target.currency) + ' ' + (target.delta > 0 ? '+' : '') + target.delta.toLocaleString() + ')을 삭제할까요?\n보유재화도 그만큼 ' + (target.delta > 0 ? '줄어듭니다' : '늘어납니다') + '. (되돌릴 수 없음)'
+    : '이 내역을 삭제할까요? (되돌릴 수 없음)';
+  if (!confirm(msg)) return;
   // 삭제 표식 기록 → 병합/다른 기기에서 되살아나지 않음 (표식도 동기화됨)
   var del = loadLedgerTombstone(_ledgerGame);
   if (del.indexOf(ts) === -1) { del.push(ts); try { localStorage.setItem('pickup_manager_ledgerdel_' + _ledgerGame, JSON.stringify(del)); } catch (e) {} }
-  var arr = loadLedger(_ledgerGame).filter(function(e) { return e.ts !== ts; });
-  saveLedger(_ledgerGame, arr);
+  if (isAuto) {
+    // 이후 같은재화 잔고 + 현재 보유재화를 delta만큼 되돌림(음수 방지)
+    arr.forEach(function (x) {
+      if (x.type === 'auto' && x.currency === target.currency && x.ts > target.ts && x.balanceAfter != null) x.balanceAfter -= target.delta;
+    });
+    var data = loadCurrencyData(_ledgerGame);
+    var cur = parseInt(data[target.currency]) || 0;
+    saveCurrencyItem(_ledgerGame, target.currency, Math.max(0, cur - target.delta));
+  }
+  saveLedger(_ledgerGame, arr.filter(function (e) { return e.ts !== ts; }));
   ledgerRerender();
 }
 
