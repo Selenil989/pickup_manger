@@ -3565,6 +3565,16 @@ function ledgerSetMemo(ts) {
 // 새 독립 메모 항목 추가
 function ledgerAddMemo() { _openMemoEditor(null); }
 
+// 지정 날짜(YYYY-MM-DD)에 메모를 놓기 위한 ts — 그 날의 현재 시각 기준, 기존 ts와 안 겹치게(union 병합 유실 방지)
+function ledgerTsForDate(ymd) {
+  var n = new Date(), p = ymd.split('-');
+  var t = new Date(+p[0], +p[1] - 1, +p[2], n.getHours(), n.getMinutes(), n.getSeconds(), n.getMilliseconds()).getTime();
+  var used = {};
+  loadLedger(_ledgerGame).forEach(function (e) { if (e && e.ts != null) used[e.ts] = 1; });
+  while (used[t]) t++;
+  return t;
+}
+
 // entry=null이면 새 메모 생성, 아니면 해당 항목 편집.
 // auto 획득 항목은 무료/유료 분할(무료분만 무료 재화로 집계) 입력을 제공한다.
 var LEDGER_QUICK_AMTS = [[119000, '트럭'], [65000, '반트럭'], [12000, '패스'], [5900, '월정액']];
@@ -3599,6 +3609,7 @@ function _openMemoEditor(entry) {
     '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
     '  <div class="ledger-memo-fields">',
     (isAutoEdit ? '    <label class="ledger-memo-field"><span>변경량 (±)</span><input type="text" inputmode="numeric" id="ledgerDeltaEdit" value="' + entry.delta + '"></label>' : ''),
+    (isNew ? '    <label class="ledger-memo-field"><span>날짜</span><input type="date" id="ledgerMemoDate" value="' + (_ledgerDay || ledgerYMD(Date.now())) + '"></label>' : ''),
     '    <label class="ledger-memo-field"><span>메모</span>',
     '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo) + '" placeholder="예: 월정액 결제"></label>',
     '    <label class="ledger-memo-field"><span>가격 (원)</span>',
@@ -3649,9 +3660,12 @@ function _openMemoEditor(entry) {
     if (isNew && !m && !hasPrice) { close(); return; }
     var a2 = loadLedger(_ledgerGame);
     if (isNew) {
-      var ne = { ts: newLedgerTs(), type: 'memo', memo: m };
+      var dEl = document.getElementById('ledgerMemoDate');
+      var ymd = (dEl && dEl.value) ? dEl.value : ledgerYMD(Date.now());
+      var ne = { ts: ledgerTsForDate(ymd), type: 'memo', memo: m };
       if (hasPrice) ne.price = pv;
       a2.push(ne);
+      _ledgerMonth = ymd.slice(0, 7); _ledgerDay = ymd;   // 새 메모가 보이도록 그 날짜로 이동
     } else {
       for (var j = 0; j < a2.length; j++) {
         if (a2[j].ts === entry.ts) {
