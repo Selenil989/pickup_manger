@@ -3586,8 +3586,9 @@ function _openMemoEditor(entry) {
   var price  = entry ? entry.price : null;
   var delta  = isAuto ? entry.delta : 0;
   var freeD  = isAuto ? (entry.freeDelta != null ? entry.freeDelta : delta) : 0;
-  // 날짜 입력칸: 새 메모거나 기존 '메모' 항목 수정 시 (auto 재화기록은 잔고 순서 얽힘 방지 위해 제외)
-  var showDate = isNew || (entry && entry.type === 'memo');
+  // 날짜 입력칸: 새 메모 + 기존 항목(메모·재화기록) 모두. 재화기록 날짜변경은 보유재화 불변(재배치만),
+  // [잔고] 스냅샷은 그대로라 옮긴 날짜선 실제 잔고와 다르게 보일 수 있음(기록 위치 교정용).
+  var showDate = true;
   var defDate  = isNew ? (_ledgerDay || ledgerYMD(Date.now())) : ledgerYMD(entry.ts);
 
   var quickBtns = LEDGER_QUICK_AMTS.map(function(q) {
