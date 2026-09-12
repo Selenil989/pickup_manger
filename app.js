@@ -3600,6 +3600,7 @@ function _openMemoEditor(entry) {
     '    <div class="ledger-split-row">',
     '      <label>유료 <input type="text" inputmode="numeric" id="ledgerSplitPaid" value="' + (delta - freeD) + '"></label>',
     '      <span>무료 <b id="ledgerSplitFree">' + freeD + '</b></span>',
+    '      <label class="ledger-monthly-check"><input type="checkbox" id="ledgerMonthlySub"' + (entry && entry.monthlySub ? ' checked' : '') + '> 월정액</label>',
     '    </div>',
     '    <div class="ledger-split-note">유료분은 재화 환산하지 않습니다(결제 금액은 위 \'가격\'에 입력). 무료분만 무료 재화 획득으로 집계됩니다.</div>',
     '  </div>'
@@ -3684,6 +3685,9 @@ function _openMemoEditor(entry) {
           // 유료/무료 재조정 (변경량 반영된 effDelta 기준). 소모/0은 split 없음
           if (isAuto && effDelta > 0 && freeVal != null && freeVal !== effDelta) a2[j].freeDelta = freeVal;
           else delete a2[j].freeDelta;
+          // 월정액 체크 → 유료분이 있을 때 '월정액 유료'로 표기 (freeDelta가 delta와 같으면=유료0이라 태그 자체가 안 뜸)
+          var _msChk = document.getElementById('ledgerMonthlySub');
+          if (_msChk && _msChk.checked) a2[j].monthlySub = true; else delete a2[j].monthlySub;
           // 날짜 변경(메모 항목) → 옛 ts 삭제표식 + 새 날짜의 ts로 재배치(다기기 병합서 중복/유실 방지)
           if (showDate) {
             var dEl2 = document.getElementById('ledgerMemoDate');
