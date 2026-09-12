@@ -3586,6 +3586,9 @@ function _openMemoEditor(entry) {
   var price  = entry ? entry.price : null;
   var delta  = isAuto ? entry.delta : 0;
   var freeD  = isAuto ? (entry.freeDelta != null ? entry.freeDelta : delta) : 0;
+  // 날짜 입력칸: 새 메모거나 기존 '메모' 항목 수정 시 (auto 재화기록은 잔고 순서 얽힘 방지 위해 제외)
+  var showDate = isNew || (entry && entry.type === 'memo');
+  var defDate  = isNew ? (_ledgerDay || ledgerYMD(Date.now())) : ledgerYMD(entry.ts);
 
   var quickBtns = LEDGER_QUICK_AMTS.map(function(q) {
     return '<button type="button" class="ledger-quick-btn" data-amt="' + q[0] + '">' + q[0].toLocaleString() + '원<em>' + q[1] + '</em></button>';
@@ -3609,7 +3612,7 @@ function _openMemoEditor(entry) {
     '    <button class="detail-close-btn" data-act="cancel">&#x2715;</button></div>',
     '  <div class="ledger-memo-fields">',
     (isAutoEdit ? '    <label class="ledger-memo-field"><span>변경량 (±)</span><input type="text" inputmode="numeric" id="ledgerDeltaEdit" value="' + entry.delta + '"></label>' : ''),
-    (isNew ? '    <label class="ledger-memo-field"><span>날짜</span><input type="date" id="ledgerMemoDate" value="' + (_ledgerDay || ledgerYMD(Date.now())) + '"></label>' : ''),
+    (showDate ? '    <label class="ledger-memo-field"><span>날짜</span><input type="date" id="ledgerMemoDate" value="' + defDate + '"></label>' : ''),
     '    <label class="ledger-memo-field"><span>메모</span>',
     '      <input type="text" id="ledgerMemoText" value="' + ledgerEsc(memo) + '" placeholder="예: 월정액 결제"></label>',
     '    <label class="ledger-memo-field"><span>가격 (원)</span>',
@@ -3680,6 +3683,17 @@ function _openMemoEditor(entry) {
           // 유료/무료 재조정 (변경량 반영된 effDelta 기준). 소모/0은 split 없음
           if (isAuto && effDelta > 0 && freeVal != null && freeVal !== effDelta) a2[j].freeDelta = freeVal;
           else delete a2[j].freeDelta;
+          // 날짜 변경(메모 항목) → 옛 ts 삭제표식 + 새 날짜의 ts로 재배치(다기기 병합서 중복/유실 방지)
+          if (showDate) {
+            var dEl2 = document.getElementById('ledgerMemoDate');
+            var newYmd = (dEl2 && dEl2.value) ? dEl2.value : ledgerYMD(a2[j].ts);
+            if (newYmd !== ledgerYMD(a2[j].ts)) {
+              var del2 = loadLedgerTombstone(_ledgerGame);
+              if (del2.indexOf(a2[j].ts) === -1) { del2.push(a2[j].ts); try { localStorage.setItem('pickup_manager_ledgerdel_' + _ledgerGame, JSON.stringify(del2)); } catch (e) {} }
+              a2[j].ts = ledgerTsForDate(newYmd);
+              _ledgerMonth = newYmd.slice(0, 7); _ledgerDay = newYmd;   // 옮긴 날짜가 보이도록 이동
+            }
+          }
           break;
         }
       }
