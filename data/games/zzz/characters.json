@@ -848,5 +848,35 @@
     "releaseDate": "2026-09-09",
     "releaseOrder": null,
     "isReleased": false
+  },
+  {
+    "id": "phoenix",
+    "name": "Phoenix",
+    "nameKo": "피닉스",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "fire",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-10-21",
+    "isReleased": false,
+    "releaseOrder": null
+  },
+  {
+    "id": "severian",
+    "name": "Severian",
+    "nameKo": "세베리안",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "attack",
+    "element": "wind",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-11-11",
+    "isReleased": false,
+    "releaseOrder": null
   }
 ]

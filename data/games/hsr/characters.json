@@ -1453,5 +1453,20 @@
     "releaseDate": "2026-09-12",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "pearl",
+    "name": "Pearl",
+    "nameKo": "펄",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "elation",
+    "element": "ice",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": 5,
+    "releaseDate": "2026-09-28",
+    "isReleased": true,
+    "version": ""
   }
 ]

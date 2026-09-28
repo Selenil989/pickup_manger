@@ -313,5 +313,35 @@
     "releaseDate": "2026-04-29",
     "isReleased": true,
     "version": "1.0"
+  },
+  {
+    "id": "blackbird",
+    "name": "Blackbird",
+    "nameKo": "레이븐",
+    "gameId": "nte",
+    "rarity": 5,
+    "role": "maindps",
+    "element": "psyche",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-09-30",
+    "isReleased": false,
+    "version": "1.0"
+  },
+  {
+    "id": "akanerin",
+    "name": "Akane Rin",
+    "nameKo": "아카네 린",
+    "gameId": "nte",
+    "rarity": 5,
+    "role": "maindps",
+    "element": "lakshana",
+    "specialElement": null,
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-10-21",
+    "isReleased": false,
+    "version": "1.0"
   }
 ]

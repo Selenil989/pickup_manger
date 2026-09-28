@@ -958,5 +958,37 @@
     "releaseDate": "2026-09-10",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "hsin",
+    "name": "Hsin",
+    "nameKo": "여우의 별자리",
+    "gameId": "wuwa",
+    "rarity": 5,
+    "role": null,
+    "element": "electro",
+    "specialElement": null,
+    "weaponType": "rectifier",
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-09-30",
+    "isReleased": false,
+    "version": ""
+  },
+  {
+    "id": "suoming",
+    "name": "Suoming",
+    "nameKo": "쇄명",
+    "gameId": "wuwa",
+    "rarity": 5,
+    "role": null,
+    "element": "electro",
+    "specialElement": null,
+    "weaponType": "sword",
+    "image": "",
+    "basePerformance": null,
+    "releaseDate": "2026-10-22",
+    "isReleased": false,
+    "version": ""
   }
 ]
