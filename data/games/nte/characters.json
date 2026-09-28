@@ -323,7 +323,7 @@
     "role": "maindps",
     "element": "psyche",
     "specialElement": null,
-    "image": "",
+    "image": "blackbird.png",
     "basePerformance": null,
     "releaseDate": "2026-09-30",
     "isReleased": false,
