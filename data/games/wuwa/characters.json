@@ -990,5 +990,21 @@
     "releaseDate": "2026-10-22",
     "isReleased": false,
     "version": ""
+  },
+  {
+    "id": "lily",
+    "name": "Lily",
+    "nameKo": "릴리",
+    "gameId": "wuwa",
+    "rarity": 5,
+    "role": null,
+    "element": "spectro",
+    "specialElement": null,
+    "weaponType": "pistols",
+    "image": "lily.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-11-12",
+    "isReleased": false,
+    "version": ""
   }
 ]

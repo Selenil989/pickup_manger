@@ -478,5 +478,35 @@
     "releaseDate": "2026-09-02",
     "isReleased": false,
     "version": "1.5"
+  },
+  {
+    "id": "si",
+    "name": "Si",
+    "nameKo": "사",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "support",
+    "element": "ice",
+    "specialElement": null,
+    "image": "si.webp",
+    "basePerformance": 5,
+    "releaseDate": "2026-10-15",
+    "isReleased": true,
+    "version": ""
+  },
+  {
+    "id": "argent_flow",
+    "name": "Argent Flow",
+    "nameKo": "명하",
+    "gameId": "endfield",
+    "rarity": 6,
+    "role": "guard",
+    "element": "electric",
+    "specialElement": null,
+    "image": "argent_flow.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-11-05",
+    "isReleased": false,
+    "version": ""
   }
 ]
