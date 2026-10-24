@@ -446,7 +446,8 @@ function setGame(gameId) {
         for (var _j = 0; _j < savedChars.length; _j++) {
           var _sc = savedChars[_j];
           if (_used[_sc.id]) continue;
-          if (_srcById[_sc.id]) { _merged.push(_sourceWins ? _srcById[_sc.id] : _sc); }
+          // 동기화 게임도 image는 리포 값 사용 — 이미지 파일명 변경(.png→.webp) 시 저장된 옛 이름이 덮어써 깨지는 것 방지
+          if (_srcById[_sc.id]) { _merged.push(_sourceWins ? _srcById[_sc.id] : (_srcById[_sc.id].image ? Object.assign({}, _sc, { image: _srcById[_sc.id].image }) : _sc)); }
           else { _merged.push(_sc); }  // 사용자 생성 캐릭터
           _used[_sc.id] = true;
         }
