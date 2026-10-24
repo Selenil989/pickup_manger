@@ -878,5 +878,35 @@
     "releaseDate": "2026-11-11",
     "isReleased": false,
     "releaseOrder": null
+  },
+  {
+    "id": "kafka",
+    "name": "Kafka",
+    "nameKo": "카프카",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "anomaly",
+    "element": "electric",
+    "specialElement": null,
+    "image": "카프카.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-12-02",
+    "isReleased": false,
+    "releaseOrder": null
+  },
+  {
+    "id": "robin",
+    "name": "Robin",
+    "nameKo": "로빈",
+    "gameId": "zzz",
+    "rarity": 5,
+    "role": "defense",
+    "element": "ether",
+    "specialElement": null,
+    "image": "로빈.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-12-02",
+    "isReleased": false,
+    "releaseOrder": null
   }
 ]

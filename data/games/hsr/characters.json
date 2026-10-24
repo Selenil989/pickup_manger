@@ -1468,5 +1468,20 @@
     "releaseDate": "2026-09-28",
     "isReleased": true,
     "version": ""
+  },
+  {
+    "id": "aha",
+    "name": "Aeon★Aha",
+    "nameKo": "에이언즈★아하",
+    "gameId": "hsr",
+    "rarity": 5,
+    "role": "elation",
+    "element": "quantum",
+    "specialElement": null,
+    "image": "aha.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-11-11",
+    "isReleased": false,
+    "version": ""
   }
 ]
