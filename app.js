@@ -1953,8 +1953,16 @@ function calcPitySummary(gameId) {
     else if (t === 'weapon')    weaponOnly += pulls;
     else                        common     += pulls;
   });
-  var totalChar   = common + charOnly;
-  var totalWeapon = common + weaponOnly;
+  // 공용 재화 배분(표시용): 캐릭터 목표(현재 버전 → 다음 버전 순)에 먼저 쓰고, 남은 공용만 무기 쪽으로.
+  // 캐릭터 목표가 없으면 공용은 전부 캐릭터 쪽. 목표 부족분 계산은 calcPlannerPhases가 따로 한다.
+  var charAvg = (PULL_COST[gameId] && PULL_COST[gameId].charAvg) || gacha.charPity;
+  var pd = loadPlannerData(gameId);
+  var charNeed = [pd.cur.firstHalf, pd.cur.secondHalf, pd.next.firstHalf, pd.next.secondHalf].reduce(function(s, h) {
+    return s + Math.max(0, parseInt(h && h.charGoal) || 0) * charAvg;
+  }, 0);
+  var commonToChar = charNeed > 0 ? Math.min(common, Math.max(0, charNeed - charOnly)) : common;
+  var totalChar   = charOnly + commonToChar;
+  var totalWeapon = weaponOnly + (common - commonToChar);
   return {
     commonPulls:        common,
     characterOnlyPulls: charOnly,
@@ -1965,7 +1973,7 @@ function calcPitySummary(gameId) {
     charPity:           gacha.charPity,
     weaponPity:         gacha.weaponPity,
     // 목표·부족·과금 계산은 평균 기댓값(charAvg/weaponAvg) 기준으로 — 천장(최악)이 아닌 현실 기댓값
-    charAvg:            (PULL_COST[gameId] && PULL_COST[gameId].charAvg)   || gacha.charPity,
+    charAvg:            charAvg,
     weaponAvg:          (PULL_COST[gameId] && PULL_COST[gameId].weaponAvg) || gacha.weaponPity,
     charPityCount:      gacha.charPity   > 0 ? (totalChar   / gacha.charPity).toFixed(2)   : '0.00',
     weaponPityCount:    gacha.weaponPity > 0 ? (totalWeapon / gacha.weaponPity).toFixed(2) : '0.00'
@@ -2417,6 +2425,7 @@ function renderPlannerCost(costResult) {
 function updatePlannerResult(gameId, pd) {
   var pity  = calcPitySummary(gameId);
   if (!pity) return;
+  refreshPitySummary(gameId);   // 캐릭터 목표가 바뀌면 캐릭터/무기 예상 뽑기 배분도 달라짐
   var gacha       = getGachaConfig(gameId);
   var totalPhases = calcPlannerPhases(pd, pity);
   var costResult  = calcCost(totalPhases, gacha, pd);
