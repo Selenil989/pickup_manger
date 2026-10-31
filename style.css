@@ -2178,7 +2178,10 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 /* 외부 일정 사이트(subgamecals) 새 탭 링크 — 헤더 우측 고정 */
 .ledger-sched-link { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,.03); color: var(--muted); font-size: var(--fs-sm); font-weight: 600; text-decoration: none; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
 .ledger-sched-link:hover { border-color: var(--accent, #6d5efc); color: var(--text); background: rgba(109,94,252,.12); }
-@media (max-width: 768px) { .ledger-sched-link { position: static; transform: none; display: inline-flex; margin: 8px auto 0; } .ledger-cal-head { flex-wrap: wrap; } }
+/* 오늘 날짜로 이동 — 헤더 왼쪽(오른쪽 게임 일정 링크와 대칭) */
+.ledger-today-btn { position: absolute; left: 0; top: 50%; transform: translateY(-50%); padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,.03); color: var(--muted); font-size: var(--fs-sm); font-weight: 700; cursor: pointer; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
+.ledger-today-btn:hover { border-color: var(--accent, #6d5efc); color: var(--text); background: rgba(109,94,252,.12); }
+@media (max-width: 768px) { .ledger-today-btn { position: static; transform: none; } .ledger-sched-link { position: static; transform: none; display: inline-flex; margin: 8px auto 0; } .ledger-cal-head { flex-wrap: wrap; } }
 .ledger-cal-title { font-size: var(--fs-xl); font-weight: 800; min-width: 120px; text-align: center; }
 .ledger-cal { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: 12px; padding: 8px; margin-bottom: 14px; }
 .lcal-wd { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }

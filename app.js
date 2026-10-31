@@ -2927,7 +2927,7 @@ function currencyName(gameId, curId) {
 }
 
 var _ledgerGame = null;
-var _ledgerMonth = null;  // 보고 있는 월 'YYYY-MM' (null이면 최신 월)
+var _ledgerMonth = null;  // 보고 있는 월 'YYYY-MM' (null이면 오늘이 속한 달)
 var _ledgerDay = null;    // 달력에서 선택한 날 'YYYY-MM-DD' (null이면 월 전체)
 
 // 달력 커스텀 일정 뱃지 타입 (subgamecals 스타일 — 색상·아이콘으로 구분). 더블클릭으로 추가.
@@ -3119,11 +3119,7 @@ function renderLedgerPage() {
 
   var all = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });
   var toJaehwa = ledgerRates(gameId);
-  if (!_ledgerMonth) {
-    var mp = [], sm = {};
-    all.forEach(function(e) { var ym = ledgerYM(e.ts); if (!sm[ym]) { sm[ym] = true; mp.push(ym); } });
-    _ledgerMonth = mp[0] || ledgerYM(new Date().getTime());
-  }
+  if (!_ledgerMonth) _ledgerMonth = ledgerYM(Date.now());   // 기본은 오늘이 속한 달(기록 없는 새 달이어도)
   var y = parseInt(_ledgerMonth.slice(0, 4), 10), m = parseInt(_ledgerMonth.slice(5, 7), 10);
 
   var monthEntries = all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; });
@@ -3323,6 +3319,7 @@ function renderLedgerPage() {
 
   page.innerHTML = [
     '<div class="ledger-cal-head">',
+    '  <button class="ledger-today-btn" id="lpToday" title="오늘 날짜로 이동">오늘</button>',
     '  <button class="ledger-nav-btn" id="lpPrev" title="이전 달">◀</button>',
     '  <span class="ledger-cal-title">' + y + '년 ' + m + '월</span>',
     '  <button class="ledger-nav-btn" id="lpNext" title="다음 달">▶</button>',
@@ -3348,6 +3345,7 @@ function renderLedgerPage() {
 
   document.getElementById('lpPrev').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, -1)); });
   document.getElementById('lpNext').addEventListener('click', function() { ledgerGoMonth(ymShift(_ledgerMonth, 1)); });
+  document.getElementById('lpToday').addEventListener('click', function() { _ledgerMonth = ledgerYM(Date.now()); _ledgerDay = ledgerYMD(Date.now()); renderLedgerPage(); });
   var _lvbE = document.getElementById('lvbEditVer'); if (_lvbE) _lvbE.addEventListener('click', function() { openPlannerConfigModal(gameId); });
   var addb = document.getElementById('lpAddMemo'); if (addb) addb.addEventListener('click', ledgerAddMemo);
   // 단일클릭=날짜 선택, 더블클릭=일정 뱃지. 단일클릭은 재렌더로 셀을 교체하므로
@@ -4695,6 +4693,7 @@ function init() {
           renderCurrencyPage();
         } else if (tab === "ledger") {
           if (appState.currentGame) _currencyTab = appState.currentGame;
+          _ledgerMonth = null; _ledgerDay = null;   // 캘린더 열 때마다 오늘이 속한 달로
           renderLedgerPage();
         } else if (tab === "analysis") {
           // 재화 탭에서 보고 있던 게임을 가챠 분석에도 반영
