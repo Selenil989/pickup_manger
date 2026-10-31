@@ -10,18 +10,24 @@ var ADMIN_EMAIL = 'dbdjvmfos@gmail.com';   // 이 계정만 관리자(메타/카
 // PKCE(기본)는 모바일 크롬에서 code_verifier 교환이 실패하는 경우가 있어, 모바일 구글 로그인 안정성을 위해 implicit 사용.
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
 
-var origSet = localStorage.setItem.bind(localStorage);
+var origSet = localStorage.setItem.bind(localStorage), origRemove = localStorage.removeItem.bind(localStorage);
 var syncTimer = null, currentUid = null, loaded = false, dirty = {}, rtChannel = null;   // loaded: 원격 복원 끝나기 전엔 업로드 금지
                                                                         // dirty: 이 기기가 마지막 push 이후 실제로 바꾼 키만 추적. rtChannel: 실시간 구독
-// pickup_manager_* 저장을 감지해 디바운스 업로드 (기존 15곳 저장 코드 무수정)
-localStorage.setItem = function (k, v) {
-  origSet(k, v);
+var inflight = {}, pushChain = Promise.resolve(), pushGen = 0;   // inflight: 업로드 중인 키(원격 반영이 덮지 않게). pushGen: 업로드 시작/끝마다 증가
+// 아직 못 올린 키 목록을 저장소에도 기록 — 600ms 안에 새로고침/앱 종료/오프라인이어도 다음 로드 때 살림 (pickup_manager_ 접두사 아님=동기화 제외)
+var DIRTY_KEY = 'pickup_sync_dirty';
+function saveDirty() { try { origSet(DIRTY_KEY, JSON.stringify({ uid: currentUid, keys: Object.keys(dirty).concat(Object.keys(inflight)) })); } catch (e) {} }
+function markDirty(k) {
   if (currentUid && loaded && k.indexOf('pickup_manager_') === 0) {
     dirty[k] = true;
+    saveDirty();
     clearTimeout(syncTimer);
     syncTimer = setTimeout(pushData, 600);   // 업로드 디바운스(빠른 반영 위해 1500→600)
   }
-};
+}
+// pickup_manager_* 저장·삭제를 감지해 디바운스 업로드 (기존 저장 코드 무수정). 삭제도 올려야 다른 기기/재로그인 때 안 되살아남
+localStorage.setItem = function (k, v) { origSet(k, v); markDirty(k); };
+localStorage.removeItem = function (k) { origRemove(k); markDirty(k); };
 
 function collect() {
   var o = {};
@@ -65,33 +71,54 @@ function mergeTombstone(serverVal, localVal) {
   _parseArr(localVal).forEach(function (t) { set[t] = 1; });
   return JSON.stringify(Object.keys(set).map(function (t) { return Number(t); }));
 }
+// 키 종류별 병합. localWins=true: 업로드(방금 편집한 로컬 우선) / false: 원격 반영(같은 원장 항목은 서버 수정본 우선)
+function mergeKey(k, serverVal, localVal, localWins) {
+  if (k.indexOf('pickup_manager_ledgerdel_') === 0) return mergeTombstone(serverVal, localVal);   // 삭제표식=합집합
+  if (k.indexOf('pickup_manager_ledger_') === 0) return localWins ? mergeLedger(serverVal, localVal) : mergeLedger(localVal, serverVal);  // 원장=합집합
+  if (k.indexOf('pickup_manager_currency_') === 0) return mergeCurrency(serverVal, localVal);    // 보유재화=필드별 최근값
+  return localWins ? localVal : serverVal;                                                       // 그 외 상태값(플래너 등)
+}
 // 통째 덮어쓰기 금지: 서버 최신을 읽어, 이 기기가 바꾼 키만 병합/적용해 저장.
 // → 오래된 기기가 올려도 자기가 안 건드린 키(다른 기기 기록)는 서버 것 그대로 유지.
-function pushData() {
-  if (!currentUid) return Promise.resolve();
+// 업로드는 한 번에 하나씩(pushChain) — 동시에 돌면 먼저 읽은 쪽이 나중에 써서 다른 업로드를 되돌림.
+function pushData() { pushChain = pushChain.then(doPush, doPush); return pushChain; }
+function doPush() {
+  var uid = currentUid;
+  if (!uid || !loaded) return Promise.resolve(true);
   var keys = Object.keys(dirty);
-  if (!keys.length) return Promise.resolve();
+  if (!keys.length) return Promise.resolve(true);   // 올릴 것 없음 = 성공
   dirty = {};   // 이번 사이클에 반영할 키 캡처(이후 새 변경은 다음 사이클)
-  function retry(ks, why) {   // 실패 시 dirty 복구 + 재시도 예약 (재시도 없으면 다음 로그인에 덮여 유실)
-    ks.forEach(function (k) { dirty[k] = true; });
+  keys.forEach(function (k) { inflight[k] = true; });
+  pushGen++;
+  function settle() { keys.forEach(function (k) { delete inflight[k]; }); pushGen++; saveDirty(); }
+  function retry(why) {   // 실패 시 dirty 복구 + 재시도 예약 (재시도 없으면 다음 로그인에 덮여 유실)
+    keys.forEach(function (k) { dirty[k] = true; });
+    settle();
     console.warn('[sync] ' + why + ', 5초 뒤 재시도');
     clearTimeout(syncTimer); syncTimer = setTimeout(pushData, 5000);
+    return false;
   }
-  return sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle().then(function (r) {
-    if (r.error) { retry(keys, '서버 조회 실패: ' + r.error.message); return false; }
+  return sb.from('user_data').select('data').eq('user_id', uid).maybeSingle().then(function (r) {
+    if (r.error) return retry('서버 조회 실패: ' + r.error.message);
     var server = (r.data && r.data.data) || {};
     keys.forEach(function (k) {
       var lv = localStorage.getItem(k);
-      if (lv == null) { delete server[k]; return; }                                          // 로컬에서 삭제된 키
-      else if (k.indexOf('pickup_manager_ledgerdel_') === 0) server[k] = mergeTombstone(server[k], lv);  // 삭제표식=합집합
-      else if (k.indexOf('pickup_manager_ledger_') === 0) server[k] = mergeLedger(server[k], lv);        // 원장=합집합
-      else if (k.indexOf('pickup_manager_currency_') === 0) server[k] = mergeCurrency(server[k], lv);    // 보유재화=필드별 최근값
-      else server[k] = lv;                                                                   // 그 외 상태값(플래너 등)=방금 편집한 로컬 우선
+      if (lv == null) delete server[k];   // 로컬에서 삭제된 키
+      else server[k] = mergeKey(k, server[k], lv, true);
     });
-    return sb.from('user_data').upsert({ user_id: currentUid, data: server, updated_at: new Date().toISOString() })
-      .then(function (rr) { if (rr.error) { retry(keys, '업로드 실패: ' + rr.error.message); return false; } return true; },   // true=성공
-            function () { retry(keys, '업로드 예외'); return false; });
-  }, function () { retry(keys, '서버 조회 예외'); return false; });
+    return sb.from('user_data').upsert({ user_id: uid, data: server, updated_at: new Date().toISOString() })
+      .then(function (rr) {
+        if (rr.error) return retry('업로드 실패: ' + rr.error.message);
+        settle();
+        // 병합 결과(다른 기기 기록 포함)를 로컬에도 반영 — 그사이 다시 편집된 키는 제외
+        var changed = false;
+        keys.forEach(function (k) {
+          if (!dirty[k] && k in server && localStorage.getItem(k) !== server[k]) { origSet(k, server[k]); changed = true; }
+        });
+        if (changed && window.onRemoteSync) { try { window.onRemoteSync(); } catch (e) {} }
+        return true;   // true=성공
+      }, function () { return retry('업로드 예외'); });
+  }, function () { return retry('서버 조회 예외'); });
 }
 // 디바운스 무시하고 즉시 업로드하고 끝날 때까지 기다림 — 불러오기(import) 후 새로고침 전 등에 사용.
 window.flushSync = function () { clearTimeout(syncTimer); return pushData(); };
@@ -102,7 +129,7 @@ function clearPickupKeys() {
     var k = localStorage.key(i);
     if (k.indexOf('pickup_manager_') === 0) rm.push(k);
   }
-  rm.forEach(function (k) { localStorage.removeItem(k); });
+  rm.forEach(function (k) { origRemove(k); });
 }
 
 // 원격을 성공적으로 받은 뒤에만 로컬을 비우고 그 계정 데이터로 교체한다.
@@ -113,10 +140,24 @@ function loadAccount(uid) {
     .then(function (r) {
       if (r.error) { console.warn('[sync] 복원 실패, 로컬 유지:', r.error.message); loaded = true; return; }
       var blob = (r.data && r.data.data) || {};
+      // 지난 세션에 못 올린 편집(새로고침·앱 종료·오프라인) — 같은 계정이면 서버본에 병합해 살리고 다시 올림
+      var pend = {};
+      try {
+        var pd = JSON.parse(localStorage.getItem(DIRTY_KEY) || 'null');
+        if (pd && pd.uid === uid) (pd.keys || []).forEach(function (k) {
+          var lv = localStorage.getItem(k);
+          if (lv != null) pend[k] = mergeKey(k, blob[k], lv, true);
+        });
+      } catch (e) {}
       try { origSet('pickup_local_backup', JSON.stringify({ at: new Date().toISOString(), uid: uid, data: collect() })); } catch (e) {}  // 덮기 직전 로컬 백업(비동기화 키 → 사고 시 복구용)
       clearPickupKeys();                                                // 이전 계정 데이터 제거
-      Object.keys(blob).forEach(function (k) { origSet(k, blob[k]); }); // origSet=복원 중 재업로드 방지
+      try {
+        Object.keys(blob).forEach(function (k) { origSet(k, blob[k]); }); // origSet=복원 중 재업로드 방지
+        Object.keys(pend).forEach(function (k) { origSet(k, pend[k]); dirty[k] = true; });
+      } catch (e) { console.warn('[sync] 복원 중 저장 실패:', e && e.message); }   // 용량 초과여도 앱은 뜨게
       loaded = true;                                                     // 복원 완료 → 이제부터 로컬 변경분 업로드 허용
+      saveDirty();
+      if (Object.keys(pend).length) pushData();
     }, function (e) { console.warn('[sync] 복원 예외, 로컬 유지:', e && e.message); loaded = true; });  // reject도 로컬 유지+업로드 허용(loaded 멈춤 방지)
 }
 
@@ -153,34 +194,38 @@ function applyRemote(blob) {
   if (!blob) return;
   var changed = false;
   Object.keys(blob).forEach(function (k) {
-    if (k.indexOf('pickup_manager_') !== 0 || dirty[k]) return;   // 내 미저장 편집 보호
+    if (k.indexOf('pickup_manager_') !== 0 || dirty[k] || inflight[k]) return;   // 내 미저장·업로드 중 편집 보호
     var localVal = localStorage.getItem(k);
-    var nextVal;
-    if (k.indexOf('pickup_manager_ledgerdel_') === 0) nextVal = mergeTombstone(blob[k], localVal);   // 삭제표식=합집합
-    else if (k.indexOf('pickup_manager_ledger_') === 0) nextVal = mergeLedger(blob[k], localVal);     // 원장=합집합
-    else if (k.indexOf('pickup_manager_currency_') === 0) nextVal = mergeCurrency(blob[k], localVal); // 보유재화=필드별 최근값
-    else nextVal = blob[k];
+    var nextVal = mergeKey(k, blob[k], localVal, false);
     if (nextVal !== localVal) { origSet(k, nextVal); changed = true; }   // origSet=재업로드 방지
   });
   if (changed && window.onRemoteSync) { try { window.onRemoteSync(); } catch (e) {} }
 }
 // 다른 기기 변경분을 보려고 매번 로그아웃/로그인 안 하도록: 탭이 다시 보이거나 포커스되면 서버 최신본을 당겨와 병합.
 // Realtime(대시보드 토글) 미설정이어도 "앱 열면 최신"이 되게 하는 확실한 방법.
-var _lastPull = 0;
-function pullLatest() {
+var _lastPull = 0, _pulls = 0;
+function pullLatest(force) {
   if (!currentUid || !loaded) return;
   var now = Date.now();
-  if (now - _lastPull < 800) return;   // 스로틀(포커스 연타 방지, 3000→800)
+  if (force !== true && now - _lastPull < 800) return;   // 스로틀(포커스 연타 방지, 3000→800)
   _lastPull = now;
+  _pulls++;
   window.syncInFlight = true;   // 당겨오는 중 표시 — 이 사이 편집은 오래된 상태라 월정액 자동등록 등 보류
+  var gen = pushGen;
+  function done() { if (--_pulls <= 0) { _pulls = 0; window.syncInFlight = false; } }
   sb.from('user_data').select('data').eq('user_id', currentUid).maybeSingle()
-    .then(function (r) { if (!r.error && r.data) applyRemote(r.data.data); window.syncInFlight = false; },
-          function () { window.syncInFlight = false; });
+    .then(function (r) {
+      if (r.error || !r.data) return;
+      if (gen === pushGen) applyRemote(r.data.data);
+      else pushChain.then(function () { pullLatest(true); });   // 그사이 업로드가 오갔으면 낡은 스냅샷 → 버리고 업로드 끝난 뒤 다시
+    })
+    .then(done, done);
 }
 window.pullLatest = pullLatest;
 domReady(function () {
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') pullLatest(); });
-  window.addEventListener('focus', pullLatest);
+  // 숨겨질 때(앱 전환·탭 닫기 직전) 대기 중인 편집을 바로 올림
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') pullLatest(); else window.flushSync(); });
+  window.addEventListener('focus', function () { pullLatest(); });
 });
 // 내 계정(user_data) 행이 바뀌면 알림받아 반영. ⚠️ Supabase 대시보드에서 user_data 테이블 Realtime 켜야 동작(안 켜도 저장 시 병합은 됨).
 function subscribeRealtime(uid) {
@@ -188,7 +233,7 @@ function subscribeRealtime(uid) {
     if (rtChannel) { sb.removeChannel(rtChannel); rtChannel = null; }
     rtChannel = sb.channel('ud_' + uid)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'user_data', filter: 'user_id=eq.' + uid },
-        function (payload) { applyRemote(payload && payload.new && payload.new.data); })
+        function () { pullLatest(true); })   // 알림만 받고 최신본은 pull로 — 페이로드 순서·크기 문제 없이 한 경로로 반영
       .subscribe();
   } catch (e) { console.warn('[realtime] 구독 실패:', e && e.message); }
 }
@@ -198,8 +243,8 @@ function onAuthed(session) {
   currentUid = session.user.id;
   window.IS_ADMIN = (session.user.email === ADMIN_EMAIL);
   document.body.classList.toggle('is-admin', session.user.email === ADMIN_EMAIL);
-  fetchSharedPlanner();   // 병렬, fire-and-forget — 실패/지연해도 로그인은 막지 않음(코드 기본값 폴백)
-  loadAccount(currentUid).then(function () {
+  // 공유 플래너(버전/기간)도 함께 받고 시작 — 먼저 그리면 코드 기본값(옛 버전)으로 계산됨. 실패해도 resolve(코드 기본값 폴백)
+  Promise.all([loadAccount(currentUid), fetchSharedPlanner()]).then(function () {
     var gate = document.getElementById('authGate');
     if (gate) gate.style.display = 'none';
     domReady(function () { if (window.appInit) window.appInit(); });
@@ -239,5 +284,5 @@ domReady(function () {
 // 로드 시 저장된 세션이 있으면 INITIAL_SESSION, 로그인하면 SIGNED_IN 이벤트로 진입
 sb.auth.onAuthStateChange(function (evt, session) {
   if (session) onAuthed(session);
-  else if (evt === 'SIGNED_OUT') { currentUid = null; clearPickupKeys(); document.body.classList.remove('is-admin'); }
+  else if (evt === 'SIGNED_OUT') { currentUid = null; clearPickupKeys(); origRemove(DIRTY_KEY); location.reload(); }   // 다른 탭 로그아웃·토큰 만료도 로그인 화면으로
 });

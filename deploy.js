@@ -13,7 +13,10 @@ if (!/\?v=\d+/.test(html)) {
 html = html.replace(/\?v=\d+/g, '?v=' + v);
 fs.writeFileSync('index.html', html);
 
-const msg = (process.argv.slice(2).join(' ') || 'chore: deploy') + ' (v' + v + ')';
+// 버전 표기는 첫 줄(제목) 끝에 — 마지막 줄에 붙이면 Co-Authored-By 트레일러가 깨짐
+const lines = (process.argv.slice(2).join(' ') || 'chore: deploy').split('\n');
+lines[0] += ' (v' + v + ')';
+const msg = lines.join('\n');
 // -u: 추적 중인 파일의 변경만 스테이징 (새 untracked 파일/시크릿을 실수로 담지 않도록).
 // 새 파일을 배포에 포함하려면 먼저 git add 로 명시적으로 추가할 것.
 execSync('git add -u', { stdio: 'inherit' });

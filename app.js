@@ -373,6 +373,16 @@ function exportPersonalSettings() {
   URL.revokeObjectURL(url);
 }
 
+// 불러온 재화 수량을 '지금 편집한 값'으로 표시 — 안 그러면 서버의 더 최근 _ts에 져서 복원이 무시됨
+function restampCurrency(json) {
+  try {
+    var o = JSON.parse(json) || {}, now = Date.now();
+    o._ts = {};
+    Object.keys(o).forEach(function(id) { if (id !== '_ts') o._ts[id] = now; });
+    return JSON.stringify(o);
+  } catch (e) { return json; }
+}
+
 function importPersonalSettings() {
   var input   = document.createElement('input');
   input.type  = 'file';
@@ -388,7 +398,7 @@ function importPersonalSettings() {
           // v2 전체 백업: pickup_manager_* 키 통째 복원 (setItem=현재 계정 Supabase에도 반영)
           if (!confirm('백업 파일 내용으로 현재 데이터를 덮어씁니다. 계속할까요?')) return;
           Object.keys(settings.keys).forEach(function(k) {
-            if (k.indexOf('pickup_manager_') === 0) { try { localStorage.setItem(k, settings.keys[k]); } catch(err) {} }
+            if (k.indexOf('pickup_manager_') === 0) { try { localStorage.setItem(k, k.indexOf('pickup_manager_currency_') === 0 ? restampCurrency(settings.keys[k]) : settings.keys[k]); } catch(err) {} }
           });
           // 새로고침 전에 서버 업로드 완료를 기다림 — 안 그러면 디바운스 업로드가 안 뜨고 reload 시 옛 서버가 복원분을 덮음
           if (window.flushSync) {
@@ -403,7 +413,7 @@ function importPersonalSettings() {
         if (settings.rosters) {
           Object.keys(settings.rosters).forEach(function(gid) { appState.rosters[gid] = settings.rosters[gid]; saveRoster(gid); });
           if (settings.currency) Object.keys(settings.currency).forEach(function(gid) {
-            try { localStorage.setItem('pickup_manager_currency_' + gid, JSON.stringify(settings.currency[gid])); } catch(err) {}
+            try { localStorage.setItem('pickup_manager_currency_' + gid, restampCurrency(JSON.stringify(settings.currency[gid]))); } catch(err) {}
           });
           renderRoster();
           if (isCardGridGame(appState.currentGame)) renderCardGrid();
@@ -428,6 +438,7 @@ function setGame(gameId) {
   appState.currentGame = gameId;
   return loadGameData(gameId)
     .then(function(data) {
+      if (appState.currentGame !== gameId) return;   // 그사이 다른 게임 선택됨 → 늦게 온 응답 무시
       var savedChars = loadCharactersFromLocalStorage(gameId);
       if (savedChars && savedChars.length > 0) {
         // 저장 목록(순서·사용자 생성)을 유지하며 source(characters.json)와 병합한다.
@@ -461,9 +472,7 @@ function setGame(gameId) {
       appState.meta = data.meta;
       appState.banner = data.banner;
 
-      if (!appState.rosters[gameId]) {
-        appState.rosters[gameId] = loadRoster(gameId);
-      }
+      appState.rosters[gameId] = loadRoster(gameId);   // 저장소가 정본(다른 기기 동기화분 반영) — saveRoster가 즉시 저장하므로 유실 없음
 
       appState.selectedCharacterId = null;
       appState.evaluationResult = null;
@@ -1134,12 +1143,18 @@ function openCharacterCreate() {
   document.getElementById('charEditModal').style.display = 'block';
 }
 
+// 편집할 포지션 필드 — 이환(_noRoleIcon)은 아이콘만 숨기는 표식이라 실제 값은 role에 저장
+function charEditRoleField() {
+  var rf = (CARD_GRID_CONFIG[appState.currentGame] || {}).roleField;
+  return (!rf || rf === '_noRoleIcon') ? 'role' : rf;
+}
+
 function renderCharacterEditModal() {
   var d        = _editDraft;
   var isCreate = _editIsCreate;
 
   // 게임별 포지션 필드: 명조는 role이 없어 weaponType(무기)을 편집한다.
-  var _rf      = (CARD_GRID_CONFIG[appState.currentGame] || {}).roleField || 'role';
+  var _rf      = charEditRoleField();
   var posValue = _rf === 'weaponType' ? (d.weaponType || '') : (d.role || '');
   var posLabel = _rf === 'weaponType' ? '무기' : '역할';
 
@@ -1187,6 +1202,7 @@ function renderCharacterEditModal() {
     '<input class="edit-input" id="edit-image" type="text" value="' + (d.image || '').replace(/"/g, '&quot;') + '" placeholder="예: 벨리나.webp"></div>' +
     '<div class="edit-row"><label class="edit-label">희귀도</label>' +
     '<select class="edit-select" id="edit-rarity">' +
+    (d.rarity === 6 || appState.characters.some(function(c) { return c.rarity === 6; }) ? '<option value="6"' + (d.rarity === 6 ? ' selected' : '') + '>6성</option>' : '') +
     '<option value="5"' + (d.rarity === 5 ? ' selected' : '') + '>S (5성)</option>' +
     '<option value="4"' + (d.rarity === 4 ? ' selected' : '') + '>A (4성)</option>' +
     '</select></div>' +
@@ -1268,7 +1284,7 @@ function saveCharacterEdit() {
     isReleased:     _editDraft.isReleased
   };
   // 포지션 값은 게임별 필드에 저장 (명조=weaponType, 그 외=role)
-  var _saveRf = (CARD_GRID_CONFIG[appState.currentGame] || {}).roleField || 'role';
+  var _saveRf = charEditRoleField();
   updates[_saveRf] = gv('edit-role') || null;
 
   if (_editIsCreate) {
@@ -2037,7 +2053,8 @@ function loadPlannerData(gameId) {
     }
     // 목표 이월: 자동 진행/어드민 갱신으로 현재 버전이 목표 설정 시점(_seenVer)과 달라지면 cur←next 1회.
     // 결정론적이라 재로드해도 _seenVer==현재버전이면 재이월 안 함 → 목표 유실 없음.
-    if (pd.version && pd._seenVer && pd._seenVer !== pd.version) {
+    // 버전이 앞으로 갈 때만 이월 — 공유값 로드 전 코드 기본값(옛 버전)이 잠깐 잡히거나 어드민이 날짜를 되돌려도 목표 안 날아감
+    if (pd.version && pd._seenVer && plannerVerCmp(pd.version, pd._seenVer) > 0) {
       pd.cur = pd.next;
       pd.next = { firstHalf: { charGoal: 0, weaponGoal: 0 }, secondHalf: { charGoal: 0, weaponGoal: 0 } };
       pd._seenVer = pd.version;
@@ -2069,6 +2086,11 @@ function plannerAutoEndDate(startStr) {
   if (isNaN(d.getTime())) return '';
   d.setDate(d.getDate() + 42);
   return toLocalYMD(d);
+}
+
+function plannerVerCmp(a, b) {
+  var x = String(a).split('.'), y = String(b).split('.');
+  return ((parseInt(x[0]) || 0) - (parseInt(y[0]) || 0)) || ((parseInt(x[1]) || 0) - (parseInt(y[1]) || 0));
 }
 
 function plannerNextVersion(vStr) {
@@ -2216,9 +2238,10 @@ function calcCost(phases, gacha, pd) {
 
   // 월평균: 버전 시작일~종료일 기준, halfDays = versionDays / 2
   var monthlyCost = null;
-  if (hasPkgInfo && pd.startDate && pd.endDate) {
+  var _costEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
+  if (hasPkgInfo && pd.startDate && _costEnd) {
     var s = new Date(pd.startDate); s.setHours(0,0,0,0);
-    var e = new Date(pd.endDate);   e.setHours(0,0,0,0);
+    var e = new Date(_costEnd);     e.setHours(0,0,0,0);
     var versionDays = Math.max(0, (e - s) / 86400000);
     var halfDays    = versionDays / 2;
     var activeCnt   = (phases.phaseResults || []).filter(function(ph) { return ph.hasGoal; }).length;
@@ -2312,10 +2335,11 @@ function renderPlannerCalcCards(curPhases, nextPhases, totalPhases, curSim, next
 
   function renderCard(title, modifier, phases, sim) {
     var dimCls     = phases.hasAnyGoal ? '' : ' pacc-card--dim';
-    var charOwned  = phases.characterOnlyPulls + phases.commonPulls;
-    var weaponOwned = phases.weaponOnlyPulls   + phases.commonPulls;
     var charReq    = phases.totalCharRequired;
     var weaponReq  = phases.totalWeaponRequired;
+    var commonToChar = Math.min(phases.commonPulls, Math.max(0, charReq - phases.characterOnlyPulls));
+    var charOwned  = phases.characterOnlyPulls + commonToChar;
+    var weaponOwned = phases.weaponOnlyPulls   + (phases.commonPulls - commonToChar);
     var charShort  = Math.max(0, charReq  - charOwned);
     var weaponShort = Math.max(0, weaponReq - weaponOwned);
     var charOk     = charShort  === 0;
@@ -3279,11 +3303,12 @@ function renderLedgerPage() {
     }).join('') : '<div class="ledger-empty">이 달 기록이 없습니다. 재화 수량을 바꾸면 자동으로 남습니다.</div>';
   }
   var dayLabel = _ledgerDay ? (parseInt(_ledgerDay.slice(5, 7), 10) + '월 ' + parseInt(_ledgerDay.slice(8, 10), 10) + '일') : '이 달 전체';
-  var dGain = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].gain : mGain;
-  var dSpend = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].spend : mSpend;
-  var dTChar = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tChar : mTChar;
-  var dTWeapon = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tWeapon : mTWeapon;
-  var dTCommon = _ledgerDay && dayAgg[_ledgerDay] ? dayAgg[_ledgerDay].tCommon : mTCommon;
+  var _da = _ledgerDay ? (dayAgg[_ledgerDay] || { gain: 0, spend: 0, tChar: 0, tWeapon: 0, tCommon: 0 }) : null;   // 기록 없는 날=0 (월 합계 아님)
+  var dGain = _da ? _da.gain : mGain;
+  var dSpend = _da ? _da.spend : mSpend;
+  var dTChar = _da ? _da.tChar : mTChar;
+  var dTWeapon = _da ? _da.tWeapon : mTWeapon;
+  var dTCommon = _da ? _da.tCommon : mTCommon;
   var _tkBits = [];
   if (dTChar) _tkBits.push('캐뽑권 ' + (dTChar > 0 ? '+' : '') + dTChar.toLocaleString());
   if (dTWeapon) _tkBits.push('무뽑권 ' + (dTWeapon > 0 ? '+' : '') + dTWeapon.toLocaleString());
@@ -3375,10 +3400,13 @@ function closeLedgerModal() {
 // 다른 기기의 실시간 동기화가 로컬에 반영됐을 때 현재 보이는 탭을 다시 그림 (auth.js가 호출)
 window.onRemoteSync = function () {
   try {
+    // 메모리 캐시(로스터·카드 순서)를 저장소에서 다시 읽음 — 안 그러면 다음 저장이 낡은 메모리로 다른 기기 변경분을 덮어씀
+    Object.keys(appState.rosters).forEach(function (g) { appState.rosters[g] = loadRoster(g); });
+    _charCustomOrder = null;
     var c = document.getElementById('tabCurrency'), l = document.getElementById('tabLedger');
     if (c && c.style.display !== 'none') renderCurrencyPage();
     else if (l && l.style.display !== 'none') renderLedgerPage();
-    else if (typeof renderCardGrid === 'function' && appState && isCardGridGame(appState.currentGame)) renderCardGrid();
+    if (appState.currentGame && isCardGridGame(appState.currentGame)) setGame(appState.currentGame);   // 캐릭터 목록 재병합 + 카드 다시 그림
   } catch (e) {}
 };
 
@@ -3960,7 +3988,7 @@ function renderCurrencyPage() {
       var base    = passResetToday();
       if (endDate) {
         var d = new Date(endDate); d.setHours(0,0,0,0);
-        base = d;
+        if (d > base) base = d;   // 이미 만료됐으면 오늘부터 30일 (지난 날짜에 더하면 그대로 만료)
       }
       base.setDate(base.getDate() + 30);
       var newEnd = toLocalYMD(base);
