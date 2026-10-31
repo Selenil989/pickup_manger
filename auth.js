@@ -13,7 +13,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: '
 var origSet = localStorage.setItem.bind(localStorage), origRemove = localStorage.removeItem.bind(localStorage);
 var syncTimer = null, currentUid = null, loaded = false, dirty = {}, rtChannel = null;   // loaded: 원격 복원 끝나기 전엔 업로드 금지
                                                                         // dirty: 이 기기가 마지막 push 이후 실제로 바꾼 키만 추적. rtChannel: 실시간 구독
-var inflight = {}, pushChain = Promise.resolve(), pushGen = 0;   // inflight: 업로드 중인 키(원격 반영이 덮지 않게). pushGen: 업로드 시작/끝마다 증가
+var inflight = {}, pushChain = Promise.resolve(), pushGen = 0, pushFails = 0;   // inflight: 업로드 중인 키(원격 반영이 덮지 않게). pushGen: 업로드 시작/끝마다 증가
 // 아직 못 올린 키 목록을 저장소에도 기록 — 600ms 안에 새로고침/앱 종료/오프라인이어도 다음 로드 때 살림 (pickup_manager_ 접두사 아님=동기화 제외)
 var DIRTY_KEY = 'pickup_sync_dirty';
 function saveDirty() { try { origSet(DIRTY_KEY, JSON.stringify({ uid: currentUid, keys: Object.keys(dirty).concat(Object.keys(inflight)) })); } catch (e) {} }
@@ -57,10 +57,13 @@ function mergeCurrency(serverVal, localVal) {
   return JSON.stringify(out);
 }
 // 원장(append형) 병합: 서버+로컬을 ts 기준 합집합 → 한 항목도 안 버림(다른 기기 기록 보존)
+// 같은 항목(ts)이 양쪽에 있으면 수정 시각(mt)이 더 최근인 쪽, 같으면 두 번째 인자 쪽
 function mergeLedger(serverVal, localVal) {
   var byTs = {};
   _parseArr(serverVal).forEach(function (e) { if (e && e.ts != null) byTs[e.ts] = e; });
-  _parseArr(localVal).forEach(function (e) { if (e && e.ts != null) byTs[e.ts] = e; });
+  _parseArr(localVal).forEach(function (e) {
+    if (e && e.ts != null && !(byTs[e.ts] && (byTs[e.ts].mt || 0) > (e.mt || 0))) byTs[e.ts] = e;
+  });
   var out = Object.keys(byTs).map(function (t) { return byTs[t]; }).sort(function (a, b) { return a.ts - b.ts; });
   return JSON.stringify(out);
 }
@@ -94,8 +97,11 @@ function doPush() {
   function retry(why) {   // 실패 시 dirty 복구 + 재시도 예약 (재시도 없으면 다음 로그인에 덮여 유실)
     keys.forEach(function (k) { dirty[k] = true; });
     settle();
-    console.warn('[sync] ' + why + ', 5초 뒤 재시도');
-    clearTimeout(syncTimer); syncTimer = setTimeout(pushData, 5000);
+    pushFails++;
+    var wait = Math.min(60000, 5000 * Math.pow(2, pushFails - 1));   // 5초→10→20→40→60초 (영구 오류에 무한 연타 방지)
+    console.warn('[sync] ' + why + ', ' + (wait / 1000) + '초 뒤 재시도');
+    clearTimeout(syncTimer); syncTimer = setTimeout(pushData, wait);
+    syncBadge();
     return false;
   }
   return sb.from('user_data').select('data').eq('user_id', uid).maybeSingle().then(function (r) {
@@ -110,6 +116,7 @@ function doPush() {
       .then(function (rr) {
         if (rr.error) return retry('업로드 실패: ' + rr.error.message);
         settle();
+        pushFails = 0; syncBadge();
         // 병합 결과(다른 기기 기록 포함)를 로컬에도 반영 — 그사이 다시 편집된 키는 제외
         var changed = false;
         keys.forEach(function (k) {
@@ -119,6 +126,14 @@ function doPush() {
         return true;   // true=성공
       }, function () { return retry('업로드 예외'); });
   }, function () { return retry('서버 조회 예외'); });
+}
+// 업로드가 실패 중일 때만 화면 구석에 미동기화 건수 표시 (성공하면 사라짐)
+function syncBadge() {
+  var el = document.getElementById('syncPending');
+  var n = Object.keys(dirty).length + Object.keys(inflight).length;
+  if (!pushFails || !n) { if (el) el.parentNode.removeChild(el); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'syncPending'; el.className = 'sync-pending'; document.body.appendChild(el); }
+  el.textContent = '동기화 대기 ' + n + '건 · 재시도 중';
 }
 // 디바운스 무시하고 즉시 업로드하고 끝날 때까지 기다림 — 불러오기(import) 후 새로고침 전 등에 사용.
 window.flushSync = function () { clearTimeout(syncTimer); return pushData(); };

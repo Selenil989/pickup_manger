@@ -300,7 +300,7 @@ function syncRosterFromFile() {
           migrated = true;
         }
       }
-      if (migrated) {
+      if (migrated && IS_LOCAL_DEV) {
         fetch('http://localhost:3001/api/save-roster', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -318,6 +318,8 @@ function syncRosterFromFile() {
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 3: Data Saving
+
+var IS_LOCAL_DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 
 function buildRosterPayload() {
   var now = new Date().toISOString();
@@ -345,6 +347,7 @@ function saveRoster(gameId) {
   } catch (err) {
     console.error("로스터 저장 실패:", err);
   }
+  if (!IS_LOCAL_DEV) return;   // roster.json 파일 저장은 로컬 개발 서버 전용 — 배포본에선 매번 실패 요청만 남김
   fetch('http://localhost:3001/api/save-roster', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -520,37 +523,9 @@ function toggleRosterCharacter(characterId) {
   saveRoster(appState.currentGame);
   renderRoster();
 
-  if (appState.selectedCharacterId) {
-    runAnalysis();
-  } else if (isCardGridGame(appState.currentGame)) {
+  if (isCardGridGame(appState.currentGame)) {
     renderCardGrid();
   }
-}
-
-function addRosterCharacter(characterId) {
-  if (!appState.currentGame || !appState.rosters[appState.currentGame]) return;
-  var roster = appState.rosters[appState.currentGame];
-  for (var i = 0; i < roster.characters.length; i++) {
-    if (roster.characters[i].characterId === characterId) return;
-  }
-  roster.characters.push({ characterId: characterId, dupeLevel: 0, weapon: { hasSignature: false, refinement: 0 }, isLeveledUp: false, memo: '' });
-  saveRoster(appState.currentGame);
-  renderRoster();
-  if (appState.selectedCharacterId) { runAnalysis(); } else if (isCardGridGame(appState.currentGame)) { renderCardGrid(); }
-}
-
-function removeRosterCharacter(characterId) {
-  if (!appState.currentGame || !appState.rosters[appState.currentGame]) return;
-  var roster = appState.rosters[appState.currentGame];
-  var idx = -1;
-  for (var i = 0; i < roster.characters.length; i++) {
-    if (roster.characters[i].characterId === characterId) { idx = i; break; }
-  }
-  if (idx === -1) return;
-  roster.characters.splice(idx, 1);
-  saveRoster(appState.currentGame);
-  renderRoster();
-  if (appState.selectedCharacterId) { runAnalysis(); } else if (isCardGridGame(appState.currentGame)) { renderCardGrid(); }
 }
 
 function loadCharCustomOrder(gameId) {
@@ -563,48 +538,6 @@ function saveCharCustomOrder(gameId, order) {
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 5: Analysis
-
-function runAnalysis() {
-  var character = null;
-  for (var i = 0; i < appState.characters.length; i++) {
-    if (appState.characters[i].id === appState.selectedCharacterId) {
-      character = appState.characters[i];
-      break;
-    }
-  }
-
-  var meta = appState.previewMeta[appState.selectedCharacterId] || null;
-  if (!meta) {
-    for (var j = 0; j < appState.meta.length; j++) {
-      if (appState.meta[j].characterId === appState.selectedCharacterId) {
-        meta = appState.meta[j];
-        break;
-      }
-    }
-  }
-
-  var roster = appState.rosters[appState.currentGame];
-
-  if (!character || !roster) {
-    return;
-  }
-
-  var result = evaluate(character, meta, roster, appState.characters, appState.banner, appState.config);
-  appState.evaluationResult = result;
-
-  if (result.noMetaData) {
-    renderNoMeta(character);
-  } else {
-    renderResults(result);
-    if (meta && meta._isPreview) {
-      var _panel = document.getElementById('resultsPanel');
-      var _banner = document.createElement('div');
-      _banner.className = 'preview-banner';
-      _banner.textContent = '⚡ GPT Preview 데이터 적용 중 — meta.json은 변경되지 않습니다';
-      _panel.insertBefore(_banner, _panel.firstChild);
-    }
-  }
-}
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────
 // Section 6: Rendering
@@ -627,7 +560,7 @@ function renderGameSelect() {
     btn.className = 'game-card' + (gameId === appState.currentGame ? ' active' : '');
     btn.dataset.game = gameId;
     btn.draggable = true;
-    btn.innerHTML = iconHtml + '<span class="game-card-name">' + (config[gameId].name || gameId) + '</span>';
+    btn.innerHTML = iconHtml + '<span class="game-card-name">' + escAttr(config[gameId].name || gameId) + '</span>';
     list.appendChild(btn);
   }
 }
@@ -759,14 +692,14 @@ function renderCardGrid() {
 
     html += '<div class="char-card' + (owned ? ' owned' : '') + '" draggable="true" data-char-id="' + char.id + '">';
     if (dc.image) {
-      html += '<img class="char-card-image" src="' + imgBase + dc.image + imgQ + '" alt="' + dc.name + '" loading="lazy">';
+      html += '<img class="char-card-image" src="' + imgBase + escAttr(dc.image) + imgQ + '" alt="' + escAttr(dc.name) + '" loading="lazy" onerror="this.style.visibility=\'hidden\'">';
     } else {
       html += '<div class="char-card-image char-card-no-img"></div>';
     }
     var iconCls = 'char-card-icon' + (cfg.iconBackdrop ? ' char-card-icon--backdrop' : '');
     // 좌상단 스택: [랭크(ZZZ만)] → [출시예정] → [돌파] → [전무] 순. 랭크 없으면 출시예정이 최상단.
     html += '<div class="char-card-icons"><div class="char-card-icons-left">';
-    if (rarityFile) html += '<img class="' + iconCls + '" src="' + imgBase + rarityFile + '" alt="">';
+    if (rarityFile) html += '<img class="' + iconCls + '" src="' + imgBase + rarityFile + '" alt="" onerror="this.style.visibility=\'hidden\'">';
     if (!charIsReleased(dc)) html += '<span class="card-badge card-badge--upcoming">출시 예정</span>';
     if (owned) {
       var oe = ownedMap[char.id];
@@ -774,11 +707,11 @@ function renderCardGrid() {
       if (oe.weapon && oe.weapon.hasSignature) html += '<span class="card-badge card-badge--weapon">전무R' + (oe.weapon.refinement || 1) + '</span>';   // 전무 정련(R1~R5) 표시
     }
     html += '</div><div class="char-card-icons-right">';
-    if (roleFile) html += '<img class="' + iconCls + '" src="' + imgBase + roleFile + '" alt="">';
-    if (elementFile) html += '<img class="' + iconCls + '" src="' + imgBase + elementFile + '" alt="">';
+    if (roleFile) html += '<img class="' + iconCls + '" src="' + imgBase + roleFile + '" alt="" onerror="this.style.visibility=\'hidden\'">';
+    if (elementFile) html += '<img class="' + iconCls + '" src="' + imgBase + elementFile + '" alt="" onerror="this.style.visibility=\'hidden\'">';
     html += '</div></div>';
     if (owned) html += '<div class="char-card-owned-overlay"></div>';
-    html += '<div class="char-card-name">' + (dc.nameKo || dc.name) + '</div>';
+    html += '<div class="char-card-name">' + escAttr(dc.nameKo || dc.name) + '</div>';
     html += '</div>';
   }
 
@@ -939,7 +872,7 @@ function renderCharacterDetailModal() {
     '<div class="char-detail-panel">' +
     '<div class="detail-header">' +
     '<div class="detail-header-info">' +
-    '<span class="detail-header-name">' + (char.nameKo || char.name) + '</span>' +
+    '<span class="detail-header-name">' + escAttr(char.nameKo || char.name) + '</span>' +
     releaseLabel +
     '</div>' +
     '<button class="detail-close-btn" onclick="closeCharacterDetail()">&#x2715;</button>' +
@@ -1033,43 +966,7 @@ function saveCharacterDetail() {
 function _persistAndReanalyze() {
   saveRoster(appState.currentGame);
   renderRoster();
-  if (appState.selectedCharacterId) runAnalysis();
-  else if (isCardGridGame(appState.currentGame)) renderCardGrid();
-}
-
-// 분석 top strip 인라인 보유/돌파/전무 컨트롤 — 모달 없이 roster에 즉시 반영.
-function _ownEntry(charId) {
-  var roster = appState.rosters[appState.currentGame];
-  if (!roster) return null;
-  for (var i = 0; i < roster.characters.length; i++) {
-    if (roster.characters[i].characterId === charId) return roster.characters[i];
-  }
-  return null;
-}
-function inlineSetOwned(charId, owned) {
-  if (!appState.rosters[appState.currentGame]) appState.rosters[appState.currentGame] = { characters: [] };
-  var roster = appState.rosters[appState.currentGame];
-  var idx = -1;
-  for (var i = 0; i < roster.characters.length; i++) if (roster.characters[i].characterId === charId) { idx = i; break; }
-  if (owned && idx === -1) {
-    roster.characters.push({ characterId: charId, dupeLevel: 0, weapon: { hasSignature: false, refinement: 1 }, isLeveledUp: false, memo: '' });
-  } else if (!owned && idx !== -1) {
-    roster.characters.splice(idx, 1);
-  }
-  _persistAndReanalyze();
-}
-function inlineSetDupe(charId, level) {
-  var e = _ownEntry(charId);
-  if (!e) return;                 // 미보유 시 무시 (버튼 disabled)
-  e.dupeLevel = level;
-  _persistAndReanalyze();
-}
-function inlineToggleSig(charId) {
-  var e = _ownEntry(charId);
-  if (!e) return;
-  if (!e.weapon) e.weapon = { hasSignature: false, refinement: 1 };
-  e.weapon.hasSignature = !e.weapon.hasSignature;
-  _persistAndReanalyze();
+  if (isCardGridGame(appState.currentGame)) renderCardGrid();
 }
 
 function deleteCharacterFromDetail() {
@@ -1211,9 +1108,9 @@ function renderCharacterEditModal() {
     '<div class="edit-row"><label class="edit-label">속성</label>' +
     '<select class="edit-select" id="edit-element">' + elemOpts + '</select></div>' +
     '<div class="edit-row"><label class="edit-label">특수속성</label>' +
-    '<input class="edit-input" id="edit-specialElement" type="text" value="' + (d.specialElement || '') + '" placeholder="MIYABI / YIXUAN / SHUNGUANG"></div>' +
+    '<input class="edit-input" id="edit-specialElement" type="text" value="' + escAttr(d.specialElement) + '" placeholder="MIYABI / YIXUAN / SHUNGUANG"></div>' +
     '<div class="edit-row"><label class="edit-label">출시일</label>' +
-    '<input class="edit-input" id="edit-releaseDate" type="text" value="' + (d.releaseDate || '') + '" placeholder="yyyy-mm-dd"></div>' +
+    '<input class="edit-input" id="edit-releaseDate" type="text" value="' + escAttr(d.releaseDate) + '" placeholder="yyyy-mm-dd"></div>' +
     '<div class="edit-row"><label class="edit-label">출시 순서</label>' +
     '<input class="edit-input" id="edit-releaseOrder" type="number" min="1" value="' + (d.releaseOrder || '') + '" placeholder="미입력 시 자동"></div>' +
     '<div class="edit-row"><label class="edit-label">출시 여부</label>' +
@@ -1317,18 +1214,6 @@ function loadCharactersFromLocalStorage(gameId) {
   } catch(e) { return null; }
 }
 
-function downloadCharactersPreview() {
-  var blob = new Blob([JSON.stringify(appState.characters, null, 2)], { type: 'application/json' });
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href = url;
-  a.download = appState.currentGame + '.characters.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 function closeCharacterEdit() {
   _editCharId   = null;
   _editDraft    = null;
@@ -1373,465 +1258,6 @@ function renderRoster() {
   }
 }
 
-// gachaGuide는 표시 전용이다 — app.js는 계산하지 않는다.
-// 파츠 보유 판단은 evaluationEngine이 계산한 guideAccount로 받아서 표시만 한다.
-// meta.gachaGuide가 없으면 빈 문자열을 반환해 기존 화면과 완전히 동일하게 둔다.
-// 향후 시너지(futureLinks)를 "뽑을 이유(긍정 요인)" 문구로 변환한다.
-// 사용자 요청: 향후 시너지를 별도 섹션이 아니라 긍정 요인에 합쳐서 표시.
-function futureSynergyReasons(meta) {
-  return (meta.futureLinks || []).map(function(fl) {
-    var name = fl.characterId;
-    for (var i = 0; i < appState.characters.length; i++) {
-      if (appState.characters[i].id === fl.characterId) {
-        name = appState.characters[i].nameKo || appState.characters[i].name;
-        break;
-      }
-    }
-    return name + '와 향후 시너지' + (fl.synergy ? ' (' + fl.synergy + ')' : '');
-  });
-}
-
-function renderGachaGuideSection(meta, guideAccount) {
-  var guide = meta.gachaGuide;
-  // gachaGuide가 없어도 parts 객체를 반환해야 renderResults의 gg.party 등이 undefined(→NaN)가 안 된다.
-  var EMPTY_PARTS = { features: '', party: '', coreParts: '', altParts: '', altEquip: '', recommendReconsider: '', sources: '' };
-  if (!guide) return EMPTY_PARTS;
-
-  // guideAccount(evaluationEngine 계산): 이 가이드의 파츠 중 내가 보유한 id 모음.
-  // guideAccount가 없으면(계정 판단 미수행) 뱃지 없이 이름만 표시한다.
-  var ownedMap = {};
-  if (guideAccount) {
-    function collectOwned(blocks) {
-      (blocks || []).forEach(function(b) {
-        (b.ownedCharacterIds || []).forEach(function(id) { ownedMap[id] = true; });
-      });
-    }
-    collectOwned(guideAccount.partyRequirements);
-    collectOwned(guideAccount.corePartners);
-    collectOwned(guideAccount.alternativePartners);
-  }
-
-  var GG_ROLE_LABEL = {
-    // 공통/개념
-    support: '지원', debuffer: '디버퍼', healer: '힐러', tank: '탱커',
-    // ZZZ
-    attack: '강공', stun: '격파', anomaly: '이상', defense: '방어', rupture: '명파',
-    // HSR (운명)
-    nihility: '공허', erudition: '지식', hunt: '수렵', destruction: '파멸',
-    harmony: '화합', preservation: '보존', abundance: '풍요', remembrance: '기억', elation: '환락'
-  };
-  function ggRoleLabel(r) { return GG_ROLE_LABEL[r] || r; }
-
-  function ggCharName(id) {
-    for (var i = 0; i < appState.characters.length; i++) {
-      if (appState.characters[i].id === id) {
-        return appState.characters[i].nameKo || appState.characters[i].name || id;
-      }
-    }
-    return id;
-  }
-  // 계정 판단이 있으면 캐릭터 이름 옆에 보유/미보유 뱃지를 붙인다.
-  function ggCharTag(id) {
-    var name = ggCharName(id);
-    if (!guideAccount) return name;
-    return ownedMap[id]
-      ? name + '<span class="own-badge own-yes">보유</span>'
-      : name + '<span class="own-badge own-no">미보유</span>';
-  }
-  function ggCharNames(ids) {
-    if (!ids || ids.length === 0) return '';
-    var out = [];
-    for (var i = 0; i < ids.length; i++) out.push(ggCharTag(ids[i]));
-    return out.join(' ');
-  }
-
-  // 파티 조건 충족 상태 뱃지
-  var GG_STATUS = {
-    met:     { t: '조건 충족',   c: 'gg-st-met' },
-    partial: { t: '일부 보유',   c: 'gg-st-partial' },
-    unmet:   { t: '조건 미충족', c: 'gg-st-unmet' },
-    unknown: { t: '확인 불가',   c: 'gg-st-unknown' }
-  };
-  function statusBadge(status) {
-    var s = GG_STATUS[status] || GG_STATUS.unknown;
-    return '<span class="gg-status ' + s.c + '">' + s.t + '</span>';
-  }
-
-  var GG_REQ_TYPE_LABEL = { all: '전원 필요', one_of: '택 1', role: '역할 조건' };
-
-  // 각 섹션을 문자열로 따로 담아 반환한다. renderResults가 3단 구조
-  // (결론 → 핵심 근거 → 접힌 상세)로 순서를 제어한다.
-  var parts = {
-    features: '', party: '', coreParts: '', altParts: '',
-    altEquip: '', recommendReconsider: '', sources: ''
-  };
-
-  // 캐릭터 특징 (상세 — 접기)
-  var keyFeatures = guide.keyFeatures || [];
-  if (keyFeatures.length > 0) {
-    var fh = '<details class="result-block gg-collapsible"><summary class="result-label">캐릭터 특징</summary>';
-    fh += '<div class="gg-feature-grid">';
-    for (var i = 0; i < keyFeatures.length; i++) {
-      var f = keyFeatures[i];
-      if (!f) continue;
-      fh += '<div class="gg-feature-card">';
-      fh += '<div class="gg-feature-title">' + (f.title || '') + '</div>';
-      fh += '<div class="gg-feature-desc">' + (f.description || '') + '</div>';
-      fh += '</div>';
-    }
-    fh += '</div></details>';
-    parts.features = fh;
-  }
-
-  // 파티 구성 조건 (핵심 — 항상). 시스템 작동 조건이며 고점 추천 파티가 아님을 명시.
-  var partyReq = guide.partyRequirements || [];
-  if (partyReq.length > 0) {
-    var ph = '<div class="result-block"><div class="result-label">파티 구성 조건</div>';
-    ph += '<div class="gg-hint">스킬이 정상 작동하기 위한 시스템 조건입니다 — 고점 추천 조합이 아닙니다.</div>';
-    for (var i = 0; i < partyReq.length; i++) {
-      var r = partyReq[i];
-      if (!r) continue;
-      var reqAcc = guideAccount && guideAccount.partyRequirements ? guideAccount.partyRequirements[i] : null;
-      ph += '<div class="gg-req-row">';
-      ph += '<span class="badge">' + (GG_REQ_TYPE_LABEL[r.type] || r.type || '조건') + '</span>';
-      if (reqAcc) ph += statusBadge(reqAcc.status);
-      var reqNames = ggCharNames(r.characterIds);
-      var reqRoles = (r.roles || []).map(ggRoleLabel).join(', ');
-      if (reqNames) ph += '<span class="gg-req-targets">' + reqNames + '</span>';
-      if (reqRoles) ph += '<span class="gg-req-targets">' + reqRoles + '</span>';
-      if (r.description) ph += '<div class="gg-req-desc">' + r.description + '</div>';
-      ph += '</div>';
-    }
-    ph += '</div>';
-    parts.party = ph;
-  }
-
-  // 핵심 파츠 (핵심 — 항상)
-  var coreP = guide.corePartners || [];
-  if (coreP.length > 0) {
-    var ch = '<div class="result-block"><div class="result-label">핵심 파츠</div>';
-    for (var i = 0; i < coreP.length; i++) {
-      var p = coreP[i];
-      if (!p) continue;
-      ch += '<div class="gg-partner-row">';
-      ch += '<div class="gg-partner-names">' + (ggCharNames(p.characterIds) || '(대상 없음)') + '</div>';
-      if (p.description) ch += '<div class="gg-partner-desc">' + p.description + '</div>';
-      ch += '</div>';
-    }
-    ch += '</div>';
-    parts.coreParts = ch;
-  }
-
-  // 대체 및 범용 파츠 (핵심 — 항상)
-  var altP = guide.alternativePartners || [];
-  if (altP.length > 0) {
-    var ah = '<div class="result-block"><div class="result-label">대체 및 범용 파츠</div>';
-    for (var i = 0; i < altP.length; i++) {
-      var ap = altP[i];
-      if (!ap) continue;
-      var apRoles = (ap.roles || []).map(ggRoleLabel).join(', ');
-      ah += '<div class="gg-partner-row">';
-      ah += '<div class="gg-partner-names">' + (ggCharNames(ap.characterIds) || '(대상 없음)') + (apRoles ? ' <span class="gg-partner-role">' + apRoles + '</span>' : '') + '</div>';
-      if (ap.description) ah += '<div class="gg-partner-desc">' + ap.description + '</div>';
-      ah += '</div>';
-    }
-    ah += '</div>';
-    parts.altParts = ah;
-  }
-
-  // 대체 장비 (상세 — 접기)
-  var altEq = guide.alternativeEquipment || [];
-  if (altEq.length > 0) {
-    var eh = '<details class="result-block gg-collapsible"><summary class="result-label">대체 장비</summary>';
-    for (var i = 0; i < altEq.length; i++) {
-      var e = altEq[i];
-      if (!e) continue;
-      eh += '<div class="gg-partner-row">';
-      eh += '<div class="gg-partner-names">' + (e.name || '') + '</div>';
-      if (e.description) eh += '<div class="gg-partner-desc">' + e.description + '</div>';
-      eh += '</div>';
-    }
-    eh += '</details>';
-    parts.altEquip = eh;
-  }
-
-  // 이런 계정에 추천 · 다시 생각 (상세 — 접기, 하나의 접이식으로 묶음)
-  // 계정과 직접 비교한 결과가 아닌 일반 조건이므로 상세로 내린다.
-  var recFor = guide.recommendedFor || [];
-  var reconsider = guide.reconsiderIf || [];
-  if (recFor.length > 0 || reconsider.length > 0) {
-    var rh = '<details class="result-block gg-collapsible"><summary class="result-label">이런 계정에 추천 · 다시 생각</summary>';
-    rh += '<div class="gg-hint">계정과 직접 비교한 결과가 아닌 일반 조건입니다 — 자신의 상황과 비교해보세요.</div>';
-    if (recFor.length > 0) {
-      rh += '<div class="gg-sublabel">👍 이런 계정에 추천</div><ul class="gg-checklist">';
-      for (var i = 0; i < recFor.length; i++) rh += '<li>' + recFor[i] + '</li>';
-      rh += '</ul>';
-    }
-    if (reconsider.length > 0) {
-      rh += '<div class="gg-sublabel gg-sublabel-warn">⚠️ 이런 경우 다시 생각</div><ul class="gg-checklist gg-checklist-warn">';
-      for (var i = 0; i < reconsider.length; i++) rh += '<li>' + reconsider[i] + '</li>';
-      rh += '</ul>';
-    }
-    rh += '</details>';
-    parts.recommendReconsider = rh;
-  }
-
-  // 출처 (상세 — 접기). 공식/참고 구분은 sources[].name 텍스트에 이미 반영됨.
-  var sources = meta.sources || [];
-  if (sources.length > 0) {
-    var sh = '<details class="result-block gg-sources gg-collapsible"><summary class="result-label">출처</summary>';
-    sh += '<ul class="gg-source-list">';
-    for (var i = 0; i < sources.length; i++) {
-      var s = sources[i];
-      if (!s) continue;
-      sh += '<li>';
-      if (s.url) {
-        sh += '<a href="' + escAttr(s.url) + '" target="_blank" rel="noopener noreferrer">' + (s.name || s.url) + '</a>';
-      } else {
-        sh += (s.name || '');
-      }
-      sh += '</li>';
-    }
-    sh += '</ul></details>';
-    parts.sources = sh;
-  }
-
-  return parts;
-}
-
-// 뽑을 이유/스킵 이유 목록에서 완전 중복(공백 정규화 후 동일)을 제거한다.
-function dedupeReasons(arr) {
-  var seen = {}, out = [];
-  for (var i = 0; i < arr.length; i++) {
-    var key = String(arr[i]).replace(/\s+/g, ' ').trim();
-    if (!key || seen[key]) continue;
-    seen[key] = true;
-    out.push(arr[i]);
-  }
-  return out;
-}
-
-function renderResults(result) {
-  function scoreBadge(score) {
-    if (score == null) return '';
-    var cls   = score >= 9.0 ? 'badge-high'   : score >= 6.0 ? 'badge-medium'   : 'badge-low';
-    var label = score >= 9.0 ? 'HIGH'          : score >= 6.0 ? 'MEDIUM'          : 'LOW';
-    return '<span class="badge ' + cls + '">' + label + '</span>';
-  }
-
-  var character = result.character;
-  var meta = result.meta;
-  var finalPct = Math.round((result.finalScore / 10) * 100);
-
-  var roster = appState.rosters[appState.currentGame] || { characters: [] };
-  var ownEntry = null;
-  for (var _oi = 0; _oi < roster.characters.length; _oi++) {
-    if (roster.characters[_oi].characterId === character.id) { ownEntry = roster.characters[_oi]; break; }
-  }
-  var isOwned = !!ownEntry;
-  var verdictLabel = result.finalScore >= 8.5 ? '필수 뽑기'
-                   : result.finalScore >= 7.0 ? '추천'
-                   : result.finalScore >= 5.5 ? '선택'
-                   : '비추천';
-  var pullClass = result.finalScore >= 8.5 ? 'must-pull'
-                : result.finalScore >= 7.0 ? 'recommended'
-                : result.finalScore >= 5.5 ? 'optional'
-                : 'skip';
-
-  var uncScore  = (meta.uncertainty && meta.uncertainty.score != null) ? meta.uncertainty.score : 0;
-  var fomoScore = (meta.fomoRisk && meta.fomoRisk.score != null) ? meta.fomoRisk.score : 0;
-  // 최종 투자선은 evaluationEngine이 계산한 값을 그대로 쓴다 (app.js는 표시만).
-  var action = result.investmentTier;
-
-  function kpiTile(icon, label, score, badgeHtml, captionHtml) {
-    var pct = Math.round((score / 10) * 100);
-    var display = parseFloat(score.toFixed(1));
-    return '<div class="kpi-tile">' +
-      '<div class="kpi-tile-head"><span class="kpi-tile-icon">' + icon + '</span>' + label + '</div>' +
-      '<div class="kpi-tile-value-row"><span class="kpi-tile-value">' + display + '</span>' + (badgeHtml || '') + '</div>' +
-      '<div class="kpi-tile-bar-track"><div class="kpi-tile-bar" style="width:' + pct + '%;background:var(--accent)"></div></div>' +
-      (captionHtml || '') +
-      '</div>';
-  }
-
-  var html = '';
-
-  html += '<div class="results-container">';
-
-  // 상단 바: 목록(좌) + 보유/돌파/전무 인라인 컨트롤(중) + 설정 톱니바퀴(우)
-  // 인라인 컨트롤은 모달 없이 즉시 roster에 반영 → 점수·카드 뱃지 갱신. 미보유 시 돌파/전무는 비활성.
-  var _dup   = ownEntry ? (ownEntry.dupeLevel || 0) : 0;
-  var _sig   = ownEntry && ownEntry.weapon ? ownEntry.weapon.hasSignature : false;
-  var _odis  = ownEntry ? '' : ' disabled';
-  var ownCtl = '<div class="own-ctl">'
-    + '<button class="own-ctl-btn' + (ownEntry ? ' active' : '') + '" onclick="inlineSetOwned(\'' + character.id + '\',' + (ownEntry ? 'false' : 'true') + ')">'
-      + (ownEntry ? '✓ 보유' : '미보유') + '</button>'
-    + '<span class="own-ctl-sep">돌파</span>';
-  for (var _di = 0; _di <= 6; _di++) {
-    ownCtl += '<button class="own-ctl-num' + (_dup === _di ? ' active' : '') + '"' + _odis
-      + ' onclick="inlineSetDupe(\'' + character.id + '\',' + _di + ')">' + _di + '</button>';
-  }
-  ownCtl += '<button class="own-ctl-btn own-ctl-sig' + (_sig ? ' active' : '') + '"' + _odis
-    + ' onclick="inlineToggleSig(\'' + character.id + '\')">전무 ' + (_sig ? '✓' : '✕') + '</button></div>';
-
-  html += '<div class="results-topbar">'
-        + '<button class="results-back-btn" onclick="goBackToCards()">← 목록</button>'
-        + ownCtl
-        + '<button class="results-gear-btn" title="캐릭터 설정" onclick="openCharacterDetail(\'' + character.id + '\')">⚙</button>'
-        + '</div>';
-
-  // Verdict Hero: 최종 추천도 + 추천 행동 통합
-  var inlineBadge = isOwned
-    ? '<span class="verdict-inline verdict-owned">보유중</span>'
-    : '<span class="verdict-inline">' + verdictLabel + '</span>';
-  var _aCss = {
-    high_investment: 'action-full', card_weapon: 'action-hold', wait_2w: 'action-wait',
-    efficient_breakthrough: 'action-full', card_only: 'action-char', skip: 'action-skip'
-  };
-  html += '<div class="result-block verdict-hero pull-' + pullClass + ' ' + (_aCss[action] || '') + '">';
-  html += '<div class="verdict-hero-top"><div class="result-label">최종 추천도' + inlineBadge + '</div></div>';
-  html += '<div class="verdict-hero-score-row">';
-  html += '<div class="final-score verdict-hero-score">' + parseFloat(result.finalScore.toFixed(1)) + '<span class="verdict-hero-score-unit"> / 10</span></div>';
-  html += '<div class="verdict-hero-bar-col"><div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar" style="width:' + finalPct + '%"></div></div></div></div>';
-  html += '</div>';
-  html += '<div class="verdict-final"><span class="verdict-final-label">내 계정 기준 투자선</span><span class="action-label verdict-final-tier">' + (result.investmentTierLabel || '') + '</span></div>';
-  if (result.investmentReasons && result.investmentReasons.length > 0) {
-    html += '<div class="sub-note">' + result.investmentReasons.join(' · ') + '</div>';
-  }
-  if (result.isCurrentPickup) html += '<div class="pickup-badge">현재 픽업 중</div>';
-  if (fomoScore >= 7) html += '<div class="fomo-warn">⚠️ 불안 과금 주의 — 충분히 고민 후 결정하세요</div>';
-  html += '</div>';
-
-  // ── 가챠 가이드 파츠 (부분별로 받아 3단 구조로 배치) ──
-  var gg = renderGachaGuideSection(meta, result.guideAccount);
-  var hasGuide = !!meta.gachaGuide;
-  if (hasGuide) html += '<div class="gg-heading">📖 가챠 가이드</div>';
-
-  // ── Tier 2-a: 계정 맞춤 파츠 (이 앱의 핵심 — 항상 표시) ──
-  html += gg.party + gg.coreParts + gg.altParts;
-
-  // ── Tier 2-b: 숫자 요약 (KPI 타일 + 명함/돌파/전무) ──
-  var confClass = meta.confidence >= 0.80 ? 'confidence-high'
-                : meta.confidence >= 0.60 ? 'confidence-mid'
-                : 'confidence-low';
-  html += '<div class="kpi-grid">';
-  html += kpiTile('📈', '메타 성능', meta.metaScore, scoreBadge(meta.metaScore),
-    '<div class="kpi-tile-caption confidence-note ' + confClass + '">신뢰도 ' + Math.round(meta.confidence * 100) + '%</div>');
-  html += kpiTile('🏦', '계정 체급', result.accountGrowth, scoreBadge(result.accountGrowth),
-    '<div class="kpi-tile-caption">높을수록 내 계정 기여 큼</div>');
-  html += kpiTile('🔮', '미래 가치', meta.futureScore, scoreBadge(meta.futureScore),
-    '<div class="kpi-tile-caption">높을수록 미래에도 가치</div>');
-  html += kpiTile('♻️', '대체 가능성', meta.replacementScore, '',
-    '<div class="kpi-tile-caption">높을수록 대체 용이</div>');
-  html += kpiTile('❓', '불확실성', uncScore, '',
-    '<div class="kpi-tile-caption">높을수록 판단 보류 권장</div>');
-  html += '</div>';
-
-  var btRecommended = meta.breakthroughRecommendation.recommendedBreakthrough;
-  html += '<div class="trio-split">';
-  html += '<div class="trio-col">';
-  html += '<div class="trio-label">명함 추천도' + scoreBadge(meta.characterRecommendation.score) + '</div>';
-  html += '<div class="trio-value">' + parseFloat(meta.characterRecommendation.score.toFixed(1)) + '</div>';
-  html += '<div class="trio-sub">' + meta.characterRecommendation.reason + '</div>';
-  html += '</div>';
-  html += '<div class="trio-col">';
-  html += '<div class="trio-label">돌파 추천도' + scoreBadge(meta.breakthroughRecommendation.score) + '</div>';
-  html += '<div class="trio-value">' + parseFloat(meta.breakthroughRecommendation.score.toFixed(1)) + '</div>';
-  html += '<div class="trio-sub">추천 돌파 : ' + (btRecommended || '정보 없음') + '<br>' + meta.breakthroughRecommendation.reason + '</div>';
-  html += '</div>';
-  html += '<div class="trio-col">';
-  html += '<div class="trio-label">전무 가치' + scoreBadge(meta.weaponRecommendation.score) + '</div>';
-  html += '<div class="trio-value">' + parseFloat(meta.weaponRecommendation.score.toFixed(1)) + '</div>';
-  html += '<div class="trio-sub">' + meta.weaponRecommendation.reason + '</div>';
-  html += '</div>';
-  html += '</div>';
-
-  // ── Tier 2-c: 장단점 (정리된 이유만) ──
-  // 위에는 meta가 정리한 뽑을/스킵 이유만 간결하게. 커뮤니티 원문 긍정/부정은
-  // 아래 '커뮤니티 원문' 접이식으로 내려 중복·장황함을 없앤다.
-  var commSummary = meta.communitySummary || null;
-  var pros = dedupeReasons((meta.pullReasons || []).concat(futureSynergyReasons(meta)));
-  var cons = dedupeReasons((meta.skipReasons || []).slice());
-  if (pros.length > 0 || cons.length > 0) {
-    html += '<div class="two-col-grid">';
-    html += '<div class="result-block"><div class="result-label">👍 뽑아야 할 이유</div><ul class="reason-list">';
-    for (var pj = 0; pj < pros.length; pj++) html += '<li>' + pros[pj] + '</li>';
-    html += '</ul></div>';
-    html += '<div class="result-block"><div class="result-label">👎 뽑지 말아야 할 이유</div><ul class="reason-list reason-skip">';
-    for (var cj = 0; cj < cons.length; cj++) html += '<li>' + cons[cj] + '</li>';
-    html += '</ul></div>';
-    html += '</div>';
-  }
-
-  // ── Tier 3: 상세 (접기 — 기본 숨김) ──
-  html += gg.features;
-
-  // 커뮤니티 원문 — 긍정/부정은 위 통합 장단점으로 흡수했고, 여기선 정성 요약만.
-  var commDetail = '';
-  function _csSec(label, cls, text) {
-    return '<div class="summary-section"><div class="summary-label' + (cls ? ' ' + cls : '') + '">' + label + '</div><div class="summary-text">' + text + '</div></div>';
-  }
-  function _csList(label, cls, items, listCls) {
-    var h = '<div class="summary-section"><div class="summary-label' + (cls ? ' ' + cls : '') + '">' + label + '</div><ul class="reason-list' + (listCls ? ' ' + listCls : '') + '">';
-    for (var i = 0; i < items.length; i++) h += '<li>' + items[i] + '</li>';
-    return h + '</ul></div>';
-  }
-  if (commSummary) {
-    if (commSummary.metaPosition)     commDetail += _csSec('메타 위치', '', commSummary.metaPosition);
-    if (commSummary.commonEvaluation) commDetail += _csSec('공통 평가', '', commSummary.commonEvaluation);
-    if (commSummary.commonOpinion)    commDetail += _csSec('공통 의견', '', commSummary.commonOpinion);
-    if (commSummary.pros && commSummary.pros.length)         commDetail += _csList('장점', 'comm-pos', commSummary.pros, '');
-    if (commSummary.positive && commSummary.positive.length) commDetail += _csList('긍정', 'comm-pos', commSummary.positive, '');
-    if (commSummary.cons && commSummary.cons.length)         commDetail += _csList('단점', 'comm-neg', commSummary.cons, 'reason-skip');
-    if (commSummary.negative && commSummary.negative.length) commDetail += _csList('부정', 'comm-neg', commSummary.negative, 'reason-skip');
-    if (commSummary.concerns)         commDetail += _csSec('실전 우려', 'comm-note', commSummary.concerns);
-    if (commSummary.concern)          commDetail += _csSec('우려', 'comm-note', commSummary.concern);
-    if (commSummary.investmentNote)   commDetail += _csSec('투자 메모', '', commSummary.investmentNote);
-  }
-  if (commDetail) {
-    html += '<details class="result-block gg-collapsible"><summary class="result-label">커뮤니티 원문</summary>' + commDetail + '</details>';
-  }
-
-  html += gg.recommendReconsider;
-  html += gg.altEquip;
-  html += gg.sources;
-
-  // 불확실 요인 — 상세로 내려 접어둠
-  var uncReasons = (meta.uncertainty && meta.uncertainty.reasons) || [];
-  if (uncReasons.length > 0) {
-    html += '<details class="result-block gg-collapsible"><summary class="result-label">불확실 요인</summary>';
-    html += '<div class="kpi-notes"><div>' + uncReasons.join(' / ') + '</div></div></details>';
-  }
-
-  html += '</div>';
-
-  document.getElementById("resultsPanel").innerHTML = html;
-}
-
-function renderNoMeta(character) {
-  document.getElementById("resultsPanel").innerHTML =
-    '<div class="results-container">' +
-    '<div class="results-topbar">' +
-      '<button class="results-back-btn" onclick="goBackToCards()">← 목록</button>' +
-      '<button class="results-gear-btn" title="캐릭터 설정" onclick="openCharacterDetail(\'' + character.id + '\')">⚙</button>' +
-    '</div>' +
-    '<div class="results-placeholder">' +
-    '<p><strong>' + (character.nameKo || character.name) + '</strong>의 메타 데이터가 아직 등록되지 않았습니다.</p>' +
-    '<p class="sub-note">현재 픽업 캐릭터의 메타 분석이 완료되면 자동으로 표시됩니다.</p>' +
-    '</div></div>';
-}
-
-// 분석 화면에서 카드 목록으로 돌아가기
-function goBackToCards() {
-  appState.selectedCharacterId = null;
-  appState.evaluationResult = null;
-  if (isCardGridGame(appState.currentGame)) {
-    renderCardGrid();
-  } else {
-    renderPlaceholder("캐릭터를 선택하세요.");
-  }
-}
-
 function renderPlaceholder(message) {
   document.getElementById("resultsPanel").innerHTML =
     '<div class="results-placeholder"><p>' + message + '</p></div>';
@@ -1868,23 +1294,6 @@ function onGameChange(gameId) {
     return;
   }
   setGame(gameId);
-}
-
-function onCharacterChange(characterId) {
-  appState.selectedCharacterId = characterId || null;
-  if (appState.selectedCharacterId) {
-    runAnalysis();
-  } else if (isCardGridGame(appState.currentGame)) {
-    renderCardGrid();
-  } else {
-    renderPlaceholder("캐릭터를 선택해주세요.");
-  }
-}
-
-function onAnalyzeClick() {
-  if (appState.selectedCharacterId) {
-    runAnalysis();
-  }
 }
 
 // 관리자 버튼 → 대기열(data/pending-tasks.json)에 기록. Claude가 대화 중 읽어서 처리한다.
@@ -2671,20 +2080,6 @@ function bindPlannerEvents(gameId) {
     if (!btn) return;
     var id = btn.id;
 
-    if (id === 'plannerAdvanceBtn') {
-      var pd = loadPlannerData(gameId);
-      flushGoalInputs(pd);
-      savePlannerData(gameId, pd);              // 현재 입력한 목표 저장 (목표 이월은 loadPlannerData가 버전변경 감지해 처리)
-      var nextVer = plannerNextVersion(pd.version);
-      var effEnd  = pd.endDate || plannerAutoEndDate(pd.startDate);
-      var newStart = effEnd || '';   // 다음 버전 시작일 = 현재 버전 종료일(같은 날)
-      var newEnd  = newStart ? plannerAutoEndDate(newStart) : '';
-      // 버전/기간은 공유(어드민) — 전 유저 반영. 각 유저 목표는 다음 로드 때 cur←next 자동 이월.
-      if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, nextVer || pd.version, newStart || pd.startDate, newEnd);
-      renderCurrencyPage();
-      return;
-    }
-
     var halfMap = {
       plannerCurFirstBtn:   { which: 'cur',  half: 'first'  },
       plannerCurSecondBtn:  { which: 'cur',  half: 'second' },
@@ -2861,7 +2256,7 @@ function renderMonthlyPassBadge(gameId) {
   var label   = (days === null || days <= 0) ? '만료' : 'D-' + days;
   var cls     = (days === null || days <= 0) ? 'mp-badge--expired' : (days <= 7 ? 'mp-badge--warn' : 'mp-badge--ok');
   var cfg     = getGameConfig()[gameId];
-  var curOpts = ((cfg && cfg.currencies) || []).map(function(c) { return '<option value="' + c.id + '">' + c.name + '</option>'; }).join('');
+  var curOpts = ((cfg && cfg.currencies) || []).map(function(c) { return '<option value="' + c.id + '">' + escAttr(c.name) + '</option>'; }).join('');
   return [
     '<div class="mp-badge ' + cls + '" id="monthlyPassBadge">',
     '  <span class="mp-label">월정액</span>',
@@ -2905,8 +2300,14 @@ function loadLedger(gameId) {
     return arr;
   } catch (e) { return []; }
 }
+// 내용이 바뀐 기존 항목엔 수정 시각(mt) 기록 — 동기화 병합이 같은 항목이면 더 최근 수정본을 택함(다른 기기의 낡은 사본이 덮지 않게)
 function saveLedger(gameId, arr) {
-  try { localStorage.setItem('pickup_manager_ledger_' + gameId, JSON.stringify(arr)); } catch (e) {}
+  try {
+    var key = 'pickup_manager_ledger_' + gameId, prev = {}, now = Date.now();
+    try { (JSON.parse(localStorage.getItem(key)) || []).forEach(function (e) { if (e) prev[e.ts] = JSON.stringify(e); }); } catch (e) {}
+    arr.forEach(function (e) { if (e && prev[e.ts] && prev[e.ts] !== JSON.stringify(e)) e.mt = now; });
+    localStorage.setItem(key, JSON.stringify(arr));
+  } catch (e) {}
 }
 
 // 달력 날짜별 커스텀 뱃지 — 더블클릭으로 추가/편집. 개인 저장(pickup_manager_ 접두사 → 계정 동기화).
@@ -2967,23 +2368,11 @@ var CAL_BADGE_MAP = {};
 CAL_BADGE_TYPES.forEach(function(t) { CAL_BADGE_MAP[t.id] = t; });
 var _calClickTimer = null, _calClickYmd = null;  // 단일/더블 클릭 판별
 
-function openLedgerModal(gameId) {
-  _ledgerGame = gameId;
-  _ledgerMonth = null;  // 열 때마다 최신 월부터
-  renderLedgerModal();
-  document.getElementById('ledgerModal').style.display = 'block';
-}
-
 // ts → 'YYYY-MM'
 function ledgerYM(ts) {
   var d = new Date(ts);
   var m = d.getMonth() + 1;
   return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m;
-}
-// 'YYYY-MM' → '2026년 8월'
-function ledgerYMLabel(ym) {
-  var p = ym.split('-');
-  return p[0] + '년 ' + parseInt(p[1], 10) + '월';
 }
 function ledgerGoMonth(ym) {
   _ledgerMonth = ym;
@@ -2991,11 +2380,10 @@ function ledgerGoMonth(ym) {
   ledgerRerender();
 }
 
-// 활성 뷰(내역 탭 or 모달)를 다시 그림
+// 내역 탭이 보이면 다시 그림
 function ledgerRerender() {
   var tab = document.getElementById('tabLedger');
   if (tab && tab.style.display !== 'none') renderLedgerPage();
-  else renderLedgerModal();
   renderSidebarSpend();  // 과금액 갱신
 }
 
@@ -3024,13 +2412,6 @@ function ledgerRates(gameId) {
     var pv = pullVal[e.currency] != null ? pullVal[e.currency] : baseRate;
     return Math.round(e.delta * (pv / r));
   };
-}
-// 큰 수 축약 (달력 셀용)
-function ledgerAbbr(n) {
-  var a = Math.abs(n);
-  if (a >= 10000) return Math.round(n / 1000) + 'k';
-  if (a >= 1000)  return (n / 1000).toFixed(1) + 'k';
-  return '' + n;
 }
 // 원장 한 줄 HTML (auto / memo 공용) — 모달·페이지 공용
 function ledgerRowHtml(gameId, e) {
@@ -3392,11 +2773,6 @@ function renderLedgerPage() {
   page.querySelectorAll('.ledger-del-btn').forEach(function(b) { b.addEventListener('click', function() { ledgerDelete(parseInt(this.dataset.ts, 10)); }); });
 }
 
-function closeLedgerModal() {
-  var m = document.getElementById('ledgerModal');
-  if (m) { m.style.display = 'none'; m.innerHTML = ''; }
-}
-
 // 다른 기기의 실시간 동기화가 로컬에 반영됐을 때 현재 보이는 탭을 다시 그림 (auth.js가 호출)
 window.onRemoteSync = function () {
   try {
@@ -3416,150 +2792,6 @@ function ledgerFmtDate(ts) {
 }
 function ledgerEsc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function renderLedgerModal() {
-  var gameId  = _ledgerGame;
-  var all = loadLedger(gameId).slice().sort(function(a, b) { return b.ts - a.ts; });  // 최신순
-
-  // 월별로 나누기: 존재하는 월 목록(최신순) + 현재 보는 월 결정
-  var monthsPresent = [];
-  var seenM = {};
-  all.forEach(function(e) { var ym = ledgerYM(e.ts); if (!seenM[ym]) { seenM[ym] = true; monthsPresent.push(ym); } });
-  if (!_ledgerMonth || monthsPresent.indexOf(_ledgerMonth) === -1) _ledgerMonth = monthsPresent[0] || null;
-
-  var entries = _ledgerMonth ? all.filter(function(e) { return ledgerYM(e.ts) === _ledgerMonth; }) : [];
-  // 재화 환산 헬퍼 (요약·집계 공용): 뽑기권(rate=1 등)도 프리미엄 재화 단위로 맞춘다.
-  // 게임마다 프리미엄 재화 rate가 다르므로(환석 160, 엔드필드 오리지늄 500 …) 그 게임 재화
-  // config에서 기준 rate = 가장 큰 rate를 뽑아 환산: delta × (기준rate / 재화rate).
-  // rate는 코드 정본(CURRENCY_CONFIG) 우선, 없는 커스텀 재화만 사용자 config로 보충.
-  var _rate = {}, _pullVal = {};
-  [(typeof CURRENCY_CONFIG !== 'undefined' ? CURRENCY_CONFIG[gameId] : null), getGameConfig()[gameId]].forEach(function(cfg) {
-    if (cfg && cfg.currencies) cfg.currencies.forEach(function(c) {
-      if (_rate[c.id] == null) { _rate[c.id] = c.rate || 1; if (c.pullValue != null) _pullVal[c.id] = c.pullValue; }
-    });
-  });
-  var _baseRate = 1;
-  Object.keys(_rate).forEach(function(k) { if (_rate[k] > _baseRate) _baseRate = _rate[k]; });
-  // pv = 이 재화 "1뽑의 재화 가치"(기본=baseRate). 무기고 증표처럼 뽑 가치가 다른 재화만 pullValue로 지정.
-  function _toJaehwa(e) {
-    var r  = _rate[e.currency] || _baseRate;
-    var pv = _pullVal[e.currency] != null ? _pullVal[e.currency] : _baseRate;
-    return Math.round(e.delta * (pv / r));
-  }
-
-  // 이 달 획득/소모 — 재화 환산으로 통일(뽑기권 포함)해 아래 무료 획득 집계와 단위를 맞춤
-  var gained = 0, spent = 0;
-  entries.forEach(function(e) {
-    if (e.type === 'auto') { var _v = _toJaehwa(e); if (_v > 0) gained += _v; else spent += -_v; }
-  });
-
-  // 유료(가격 있음)/무료(가격 없음) 집계 — 월/연은 둘 다, 총합은 유료만
-  var curYear = _ledgerMonth ? _ledgerMonth.slice(0, 4) : '';
-  var mPaid = 0, mPaidN = 0, mFree = 0;   // 이 달 (mFree = 무료 획득 재화 환산)
-  var yPaid = 0, yPaidN = 0, yFree = 0;   // 올해
-  var tPaid = 0, tPaidN = 0;              // 전체(유료만)
-  all.forEach(function(e) {
-    var ym = ledgerYM(e.ts), inYear = ym.slice(0, 4) === curYear, inMonth = ym === _ledgerMonth;
-    if (e.price != null) {
-      tPaid += e.price; tPaidN++;
-      if (inYear) { yPaid += e.price; yPaidN++; }
-      if (inMonth) { mPaid += e.price; mPaidN++; }
-    } else if (e.type === 'auto' && e.delta > 0) {
-      // 무료 획득: 가격 없는 자동 획득분을 재화(환석 단위)로 환산해 합산
-      var _jv = _toJaehwa(e);
-      if (inYear) yFree += _jv;
-      if (inMonth) mFree += _jv;
-    }
-  });
-  function _paidHtml(sum, n) { return '<span class="lps-paid">유료 <b>' + sum.toLocaleString() + '원</b>' + (n ? ' <em>(' + n + ')</em>' : '') + '</span>'; }
-  function _freeHtml(amt) { return '<span class="lps-free">무료 획득 <b>' + amt.toLocaleString() + '</b></span>'; }
-  var priceSummary = all.length ? [
-    '<div class="ledger-price-summary">',
-    '  <div class="lps-row"><span class="lps-label">이 달</span>' + _paidHtml(mPaid, mPaidN) + _freeHtml(mFree) + '</div>',
-    '  <div class="lps-row"><span class="lps-label">' + curYear + '년</span>' + _paidHtml(yPaid, yPaidN) + _freeHtml(yFree) + '</div>',
-    '  <div class="lps-row lps-total"><span class="lps-label">총합</span>' + _paidHtml(tPaid, tPaidN) + '</div>',
-    '</div>'
-  ].join('') : '';
-
-  // 월 네비게이션 (◀ 이전 달 / ▶ 다음 달, 기록 있는 달끼리 이동)
-  var curIdx  = _ledgerMonth ? monthsPresent.indexOf(_ledgerMonth) : -1;
-  var olderYM = curIdx >= 0 && curIdx < monthsPresent.length - 1 ? monthsPresent[curIdx + 1] : null;  // 더 과거
-  var newerYM = curIdx > 0 ? monthsPresent[curIdx - 1] : null;                                        // 더 최근
-  var monthNav = _ledgerMonth ? [
-    '<div class="ledger-monthnav">',
-    '  <button class="ledger-nav-btn" id="ledgerOlder"' + (olderYM ? ' data-ym="' + olderYM + '"' : ' disabled') + ' title="이전 달">◀</button>',
-    '  <span class="ledger-month-label">' + ledgerYMLabel(_ledgerMonth) + ' <span class="ledger-month-count">· ' + entries.length + '건</span></span>',
-    '  <button class="ledger-nav-btn" id="ledgerNewer"' + (newerYM ? ' data-ym="' + newerYM + '"' : ' disabled') + ' title="다음 달">▶</button>',
-    '</div>'
-  ].join('') : '';
-
-  var rows = entries.length ? entries.map(function(e) {
-    if (e.type === 'memo') {
-      return '<div class="ledger-row ledger-row--memo">'
-        + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
-        + '<span class="ledger-memo-mark">📝</span>'
-        + '<span class="ledger-memo-text">' + ledgerEsc(e.memo)
-          + (e.price != null ? '<span class="ledger-price"> · ' + e.price.toLocaleString() + '원</span>' : '')
-          + '</span>'
-        + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="메모 수정">✎</button>'
-        + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
-        + '</div>';
-    }
-    var sign = e.delta > 0 ? '+' : '';
-    var cls  = e.delta > 0 ? 'ledger-gain' : 'ledger-spend';
-    return '<div class="ledger-row">'
-      + '<span class="ledger-date">' + ledgerFmtDate(e.ts) + '</span>'
-      + '<span class="ledger-cur">' + ledgerEsc(currencyName(gameId, e.currency)) + '</span>'
-      + '<span class="ledger-delta ' + cls + '">' + sign + e.delta.toLocaleString() + '</span>'
-      + '<span class="ledger-balance">' + (e.balanceAfter != null ? e.balanceAfter.toLocaleString() : '') + '</span>'
-      + '<button class="ledger-memo-btn" data-ts="' + e.ts + '" title="이 항목 메모">📝</button>'
-      + '<button class="ledger-del-btn" data-ts="' + e.ts + '" title="삭제">🗑</button>'
-      + ((e.memo || e.price != null)
-          ? '<span class="ledger-memo-text ledger-memo-inline">'
-            + (e.memo ? ledgerEsc(e.memo) : '')
-            + (e.price != null ? '<span class="ledger-price">' + (e.memo ? ' · ' : '') + e.price.toLocaleString() + '원</span>' : '')
-            + '</span>'
-          : '')
-      + '</div>';
-  }).join('') : '<div class="ledger-empty">아직 기록이 없습니다. 재화 수량을 바꾸면 여기에 자동으로 남습니다.</div>';
-
-  document.getElementById('ledgerModal').innerHTML = [
-    '<div class="char-detail-overlay" id="ledgerOverlay">',
-    '  <div class="char-detail-panel ledger-panel">',
-    '    <div class="detail-header">',
-    '      <span class="detail-header-name">거래 내역 (영수증)</span>',
-    '      <button class="detail-close-btn" id="ledgerCloseX">✕</button>',
-    '    </div>',
-    monthNav,
-    '    <div class="ledger-summary">',
-    '      <span class="ledger-sum ledger-sum--gain">획득 +' + gained.toLocaleString() + '</span>',
-    '      <span class="ledger-sum ledger-sum--spend">소모 −' + spent.toLocaleString() + '</span>',
-    '    </div>',
-    priceSummary,
-    '    <div class="ledger-list">' + rows + '</div>',
-    '    <div class="detail-footer ledger-footer">',
-    '      <button class="detail-btn-cancel" id="ledgerAddMemoBtn">＋ 메모 추가</button>',
-    '      <button class="detail-btn-save" id="ledgerCloseBtn">닫기</button>',
-    '    </div>',
-    '  </div>',
-    '</div>'
-  ].join('');
-
-  document.getElementById('ledgerOverlay').addEventListener('click', function(e) { if (e.target === this) closeLedgerModal(); });
-  document.getElementById('ledgerCloseX').addEventListener('click', closeLedgerModal);
-  document.getElementById('ledgerCloseBtn').addEventListener('click', closeLedgerModal);
-  var _addBtn = document.getElementById('ledgerAddMemoBtn');
-  if (_addBtn) _addBtn.addEventListener('click', ledgerAddMemo);
-  var _older = document.getElementById('ledgerOlder'), _newer = document.getElementById('ledgerNewer');
-  if (_older && _older.dataset.ym) _older.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
-  if (_newer && _newer.dataset.ym) _newer.addEventListener('click', function() { ledgerGoMonth(this.dataset.ym); });
-  document.getElementById('ledgerModal').querySelectorAll('.ledger-memo-btn').forEach(function(b) {
-    b.addEventListener('click', function() { ledgerSetMemo(parseInt(this.dataset.ts, 10)); });
-  });
-  document.getElementById('ledgerModal').querySelectorAll('.ledger-del-btn').forEach(function(b) {
-    b.addEventListener('click', function() { ledgerDelete(parseInt(this.dataset.ts, 10)); });
-  });
 }
 
 function ledgerDelete(ts) {
@@ -3778,16 +3010,16 @@ function renderCurrencyPage() {
     var val = saved[cur.id] || 0;
     var pulls = Math.floor(val / cur.rate);
     var iconHtml = cur.icon
-      ? '<img class="currency-icon" src="' + cur.icon + '" alt="" onerror="if(this.src.indexOf(\'.webp\')===-1){this.src=this.src.replace(/\\.[^.]+$/,\'.webp\')}else{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}" />'
-        + '<div class="currency-icon-fallback" style="display:none">' + cur.name.charAt(0) + '</div>'
-      : '<div class="currency-icon-fallback" style="display:flex">' + cur.name.charAt(0) + '</div>';
+      ? '<img class="currency-icon" src="' + escAttr(cur.icon) + '" alt="" onerror="if(this.src.indexOf(\'.webp\')===-1){this.src=this.src.replace(/\\.[^.]+$/,\'.webp\')}else{this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}" />'
+        + '<div class="currency-icon-fallback" style="display:none">' + escAttr(cur.name.charAt(0)) + '</div>'
+      : '<div class="currency-icon-fallback" style="display:flex">' + escAttr(cur.name.charAt(0)) + '</div>';
     var t = cur.type || 'common';
     var typeSelect = '<select class="currency-type-select" data-game="' + activeGame + '" data-id="' + cur.id + '">'
       + '<option value="common"'    + (t === 'common'    ? ' selected' : '') + '>공용</option>'
       + '<option value="character"' + (t === 'character' ? ' selected' : '') + '>캐릭터</option>'
       + '<option value="weapon"'    + (t === 'weapon'    ? ' selected' : '') + '>무기</option>'
       + '</select>';
-    var nameHtml = (cur.note ? cur.name + '<span class="currency-note">' + cur.note + '</span>' : cur.name) + typeSelect;
+    var nameHtml = (cur.note ? escAttr(cur.name) + '<span class="currency-note">' + escAttr(cur.note) + '</span>' : escAttr(cur.name)) + typeSelect;
     return [
       '<div class="currency-row" draggable="true" data-id="' + cur.id + '">',
       '  <span class="drag-handle">⠿</span>',
@@ -3797,7 +3029,7 @@ function renderCurrencyPage() {
       '    data-id="' + cur.id + '" data-game="' + activeGame + '" data-rate="' + cur.rate + '" />',
       '  <span class="currency-unit">개</span>',
       '  <span class="currency-equals">= <strong class="currency-pulls" data-id="' + cur.id + '">' + pulls + '</strong>뽑</span>',
-      '  <span class="currency-desc">' + cur.desc + '</span>',
+      '  <span class="currency-desc">' + escAttr(cur.desc) + '</span>',
       '  <div class="currency-row-actions">',
       '    <button class="currency-row-btn" data-action="edit" data-game="' + activeGame + '" data-id="' + cur.id + '">✏</button>',
       '    <button class="currency-row-btn" data-action="delete" data-game="' + activeGame + '" data-id="' + cur.id + '">✕</button>',
@@ -4619,7 +3851,7 @@ function openPlannerConfigModal(gameId) {
 }
 
 function escAttr(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────

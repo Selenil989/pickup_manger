@@ -3691,3 +3691,18 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-size: var(--fs-base);
   word-break: break-all;
 }
+
+/* 업로드 실패 중 미동기화 건수 (auth.js syncBadge) */
+.sync-pending {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--low);
+  color: var(--low);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+}

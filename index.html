@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게임 컨트롤 센터</title>
-    <link rel="stylesheet" href="style.css?v=20261031155539">
+    <link rel="stylesheet" href="style.css?v=20261031160634">
   </head>
   <body>
     <div class="app-layout">
@@ -70,8 +70,7 @@
           <section class="panel panel-right" id="resultsPanel" aria-label="분석 결과">
             <!--
               innerHTML set by:
-              - renderResults(result)    → analysis output
-              - renderNoMeta(character)  → no meta data message
+              - renderCardGrid()         → character cards
               - renderPlaceholder(msg)   → idle/loading message
               - renderError(msg)         → error message
             -->
@@ -134,9 +133,9 @@
     </div>
 
     <!-- Scripts: supabase auth first, then engine, then app -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js?v=20261031155539"></script>
-    <script src="evaluationEngine.js?v=20261031155539"></script>
-    <script src="app.js?v=20261031155539"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+    <script src="auth.js?v=20261031160634"></script>
+    <script src="evaluationEngine.js?v=20261031160634"></script>
+    <script src="app.js?v=20261031160634"></script>
   </body>
 </html>
