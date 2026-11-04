@@ -49,7 +49,9 @@ var GAME_META = {
   hsr:      { iconText: 'SR', iconBg: '#1a1040', iconColor: '#a78bfa' },
   wuwa:     { iconText: 'WW', iconBg: '#0a1f1a', iconColor: '#34d399' },
   endfield: { iconText: 'EF', iconBg: '#0d1f0a', iconColor: '#4ade80' },
-  nte:      { iconText: 'NE', iconBg: '#0f1a2e', iconColor: '#60a5fa' }
+  nte:      { iconText: 'NE', iconBg: '#0f1a2e', iconColor: '#60a5fa' },
+  silverpalace: { iconText: 'SP', iconBg: '#1f1414', iconColor: '#f0a8a0' },
+  ananta:   { iconText: 'AN', iconBg: '#2a0f12', iconColor: '#f87171' }
 };
 
 // ── Currency ──────────────────────────────────────────────────────────────────
@@ -69,7 +71,9 @@ var CARD_GRID_CONFIG = {
   hsr:      { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true },
   wuwa:     { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, roleField: 'weaponType', excludeNamePattern: /^Rover:/i },
   endfield: { iconExt: '.png',  rarityIcon: false, minRarity: 5, iconBackdrop: true, excludeNamePattern: /^Endministrator/i },
-  nte:      { iconExt: '.svg',  rarityIcon: false, minRarity: 4, iconBackdrop: true, roleField: '_noRoleIcon' }
+  nte:      { iconExt: '.svg',  rarityIcon: false, minRarity: 4, iconBackdrop: true, roleField: '_noRoleIcon' },
+  // 실버 팰리스: 출시 전(2026-12-14)이라 등급·속성·역할 미공개 → 아이콘 없이 카드만
+  silverpalace: { iconExt: '.png', rarityIcon: false, minRarity: 0, iconBackdrop: true, roleField: '_noRoleIcon' }
 };
 // 서버 /api/sync-characters 가 자동 동기화(신규 캐릭터/이미지/아이콘/출시일)를
 // 지원하는 게임 목록 — server.js의 SYNC_HANDLERS와 맞춰서 관리한다.
@@ -161,7 +165,10 @@ var CURRENCY_CONFIG = {
       { id: 'nteCur3', name: '진실의 주사위', icon: 'assets/icons/nte/nte3.webp', rate: 1, desc: '1개 = 1뽑', note: null, type: 'character' },
       { id: 'nteCur4', name: '삼중 열쇠',   icon: 'assets/icons/nte/nte4.webp', rate: 1, desc: '10개 = 10뽑 (10개 단위)', note: null, type: 'weapon'    }
     ]
-  }
+  },
+  // 출시 전 게임 — 정식 재화 명칭·천장이 공개되면 채운다(지금은 + 재화 추가로 직접 입력)
+  silverpalace: { name: '실버 팰리스', currencies: [] },
+  ananta:       { name: '무한대',     currencies: [] }   // 캐릭터 가챠 없음(전원 스토리 획득) → 카드 없음
 };
 
 var GACHA_CONFIG = {
@@ -1281,7 +1288,7 @@ function onGameChange(gameId) {
     return;
   }
   var config = getGameConfig();
-  if (config[gameId] && config[gameId].isCustom) {
+  if ((config[gameId] && config[gameId].isCustom) || !isCardGridGame(gameId)) {   // 카드 없는 게임(커스텀·무한대)
     appState.currentGame = gameId;
     appState.characters = [];
     appState.meta = [];
@@ -1290,7 +1297,7 @@ function onGameChange(gameId) {
     appState.previewMeta = {};
     document.getElementById("metaUpdateBtn").disabled = true;
     document.getElementById("cardSyncBtn").disabled = true;
-    renderPlaceholder("이 게임은 가챠 분석 데이터가 없습니다.\n보유 재화 탭에서 재화를 관리할 수 있습니다.");
+    renderPlaceholder("이 게임은 캐릭터 카드가 없습니다.\n보유 재화 탭에서 재화를 관리할 수 있습니다.");
     return;
   }
   setGame(gameId);
@@ -3788,6 +3795,8 @@ function init() {
           firstCard.classList.add("active");
           onGameChange(firstCard.dataset.game);
         }
+        var cur = document.querySelector('.nav-tab[data-tab="currency"]');   // 첫 화면 = 보유 재화
+        if (cur) cur.click();
       });
     })
     .catch(function() {
