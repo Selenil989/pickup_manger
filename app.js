@@ -1513,6 +1513,7 @@ function calcSingleVersionPhases(halfDataList, startPity) {
   var weaponSpecRemain = startPity.weaponOnlyPulls    || 0;
   var totalCharReq = 0, totalWeaponReq = 0, totalSf = 0;
   var totalCharGoalCount = 0, totalWeaponGoalCount = 0;
+  var halfSf = [];
 
   halfDataList.forEach(function(halfData) {
     var cGoal = Math.max(0, parseInt(halfData.charGoal)   || 0);
@@ -1536,6 +1537,7 @@ function calcSingleVersionPhases(halfDataList, startPity) {
     totalSf        += phaseSf;
     totalCharReq   += cReq;
     totalWeaponReq += wReq;
+    halfSf.push({ hasGoal: cGoal > 0 || wGoal > 0, sf: phaseSf });
   });
 
   return {
@@ -1548,7 +1550,8 @@ function calcSingleVersionPhases(halfDataList, startPity) {
       totalShortfall:      totalSf,
       hasAnyGoal:          (totalCharReq + totalWeaponReq) > 0,
       totalCharGoalCount:  totalCharGoalCount,
-      totalWeaponGoalCount:totalWeaponGoalCount
+      totalWeaponGoalCount:totalWeaponGoalCount,
+      halfSf:              halfSf
     },
     residual: {
       commonPulls:        commonRemain,
@@ -1618,11 +1621,16 @@ function testPlannerCalcInvariant() {
 // 목표 달성 카드: 버전마다 [목표 → 보유로 채운 만큼 / 부족 → 금액 · 확률] 한 줄 + 합계.
 // 지금 손에 있는 재화만 쓴다(앞으로 들어올 재화는 획득 여부를 확인할 수 없어 넣지 않음).
 function renderGoalCard(rows, pity, gacha, sims) {
+  var head = '<div class="goal-card-head"><span class="goal-card-title">목표 달성</span>'
+    + '<span class="goal-card-own">지금 보유 ' + (pity.charPulls + pity.weaponPulls) + '뽑 (캐릭터 ' + pity.charPulls + ' · 무기 ' + pity.weaponPulls + ')</span></div>';
   if (!rows[0].ph.hasAnyGoal && !rows[1].ph.hasAnyGoal) {
-    return '<p class="planner-hint-text">위 버전 카드의 전반/후반에 캐릭터·무기 목표를 넣으면 부족한 뽑기와 금액을 계산합니다.</p>';
+    return '<div class="goal-card">' + head + '<p class="planner-hint-text">위 버전 카드의 전반/후반에 캐릭터·무기 목표를 넣으면 부족한 뽑기와 금액을 계산합니다.</p></div>';
   }
   var hasPkg = gacha.packagePrice > 0 && gacha.packagePulls > 0;
-  function won(sf) { return Math.round(sf / gacha.packagePulls * gacha.packagePrice).toLocaleString() + '원'; }
+  function manwon(sf) {   // 약 22.9만 원 (1만 원 미만은 원 단위)
+    var w = Math.round(sf / gacha.packagePulls * gacha.packagePrice);
+    return '약 ' + (w >= 10000 ? Math.round(w / 1000) / 10 + '만 원' : w.toLocaleString() + '원');
+  }
   var totalSf = 0;
 
   var rowsHtml = rows.map(function(r, i) {
@@ -1636,21 +1644,21 @@ function renderGoalCard(rows, pity, gacha, sims) {
     var left = r.left.commonPulls + r.left.characterOnlyPulls + r.left.weaponOnlyPulls;
     totalSf += sf;
     var haveW = Math.round(have / need * 100);
-    var goals = [], parts = [];
-    if (ph.totalCharGoalCount)   { goals.push('캐릭터 ' + ph.totalCharGoalCount);   parts.push('캐릭터 ' + ph.totalCharGoalCount + '×' + pity.charAvg); }
-    if (ph.totalWeaponGoalCount) { goals.push('무기 ' + ph.totalWeaponGoalCount); parts.push('무기 ' + ph.totalWeaponGoalCount + '×' + pity.weaponAvg); }
+    var sub = r.dday ? [r.dday] : [], parts = [];
+    if (ph.totalCharGoalCount)   { sub.push('캐릭터 ' + ph.totalCharGoalCount);  parts.push('캐릭터 ' + ph.totalCharGoalCount + '×' + pity.charAvg); }
+    if (ph.totalWeaponGoalCount) { sub.push('무기 ' + ph.totalWeaponGoalCount); parts.push('무기 ' + ph.totalWeaponGoalCount + '×' + pity.weaponAvg); }
     var rate = sims[i] ? (sims[i].rate * 100).toFixed(1) + '%' : '--';
     return [
       '<div class="goal-row">',
-      '<div class="goal-row-head"><span class="goal-ver">' + r.label + '</span><span class="goal-sub">' + goals.join(' · ') + '</span>',
+      '<div class="goal-row-head"><span class="goal-ver">' + r.label + '</span><span class="goal-sub">' + sub.join(' · ') + '</span>',
       '<span class="goal-rate">달성 확률 ' + rate + '</span></div>',
       '<div class="goal-bar">',
-      have > 0 ? '<div class="goal-bar-have" style="width:' + haveW + '%">' + (haveW >= 18 ? '보유 ' + Math.round(have) : '') + '</div>' : '',
-      sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 18 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
+      have > 0 ? '<div class="goal-bar-have" style="width:' + haveW + '%">' + (haveW >= 12 ? '보유 ' + Math.round(have) : '') + '</div>' : '',
+      sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 12 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
       '</div>',
-      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남은 재화로 계산' : '') + '</span>',
+      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + '</span>',
       sf > 0
-        ? '<strong class="goal-short">부족 ' + Math.round(sf) + '뽑' + (hasPkg ? ' · ' + won(sf) : '') + '</strong>'
+        ? '<strong class="goal-short">' + (hasPkg ? manwon(sf) : '부족 ' + Math.round(sf) + '뽑') + '</strong>'
         : '<strong class="goal-ok">충분 · ' + Math.round(left) + '뽑 남음</strong>',
       '</div>',
       '</div>'
@@ -1658,10 +1666,46 @@ function renderGoalCard(rows, pity, gacha, sims) {
   }).join('');
 
   var total = totalSf > 0
-    ? '<span>합계 부족 ' + Math.round(totalSf) + '뽑</span><strong>' + (hasPkg ? won(totalSf) + ' <small>(1트럭 ' + (totalSf / gacha.packagePulls).toFixed(1) + '개)</small>' : '') + '</strong>'
+    ? '<span>합계 부족 ' + Math.round(totalSf) + '뽑</span>'
+      + (hasPkg ? '<span><strong>' + manwon(totalSf) + '</strong> <small>· ' + gacha.packagePulls + '뽑 패키지 ' + (totalSf / gacha.packagePulls).toFixed(1) + '개</small></span>' : '')
     : '<span class="goal-ok">지금 보유 재화로 목표 달성 가능</span>';
-  var pkgHint = totalSf > 0 && !hasPkg ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 1트럭 정보를 입력하면 금액이 나옵니다.</p>' : '';
-  return rowsHtml + '<div class="goal-total">' + total + '</div>' + pkgHint;
+  return '<div class="goal-card">' + head + rowsHtml + '<div class="goal-total">' + total + '</div></div>';
+}
+
+// 과금 계산 칸: 버전별 전반/후반 예상 과금 + 필요 트럭·총 예상 금액 (부족 뽑수 ÷ 1트럭 뽑수 × 1트럭 가격)
+function renderPlannerCost(rows, gacha) {
+  if (!(gacha.packagePrice > 0 && gacha.packagePulls > 0)) {
+    return '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 1트럭 정보를 입력하면 과금을 계산합니다.</p>';
+  }
+  function won(sf) { return Math.round(sf / gacha.packagePulls * gacha.packagePrice); }
+  function cell(h, halfLabel) {
+    return [
+      '<div class="cost-phase-cell' + (!h.hasGoal ? ' cost-phase-cell--dim' : '') + '">',
+      '<span class="cost-phase-label">' + halfLabel + '</span>',
+      '<span class="cost-phase-amount">' + won(h.sf).toLocaleString() + '원</span>',
+      '</div>'
+    ].join('');
+  }
+  function verCard(r, isCur) {
+    var h = r.ph.halfSf;
+    if (!h[0].hasGoal && !h[1].hasGoal) return '';
+    return [
+      '<div class="cost-ver-card' + (isCur ? ' cost-ver-card--cur' : '') + '">',
+      '<div class="cost-ver-label">' + r.label + '</div>',
+      '<div class="cost-ver-halves">', cell(h[0], '전반'), cell(h[1], '후반'), '</div>',
+      '</div>'
+    ].join('');
+  }
+  var cards   = verCard(rows[0], true) + verCard(rows[1], false);
+  var totalSf = rows[0].ph.totalShortfall + rows[1].ph.totalShortfall;
+  return [
+    cards ? '<div class="planner-cum-title">구간별 예상 과금</div>' + cards + '<div class="planner-cost-divider"></div>' : '',
+    totalSf === 0 ? '<p class="planner-hint-text planner-hint-text--ok" style="margin-bottom:6px">과금 없이 달성 가능합니다.</p>' : '',
+    '<div class="planner-calc-rows planner-calc-rows--cost">',
+    '<div class="planner-cr"><span>필요 트럭</span><strong>' + (totalSf / gacha.packagePulls).toFixed(1) + '</strong><span>트럭</span></div>',
+    '<div class="planner-cr"><span>총 예상 금액</span><strong>' + won(totalSf).toLocaleString() + '</strong><span>원</span></div>',
+    '</div>'
+  ].join('');
 }
 
 function updatePlannerResult(gameId, pd) {
@@ -1671,15 +1715,18 @@ function updatePlannerResult(gameId, pd) {
   var gacha = getGachaConfig(gameId);
   var r     = calcVersionGoals(pd, pity);
   var nextVer = plannerNextVersion(pd.version);
+  var cr = r.cur.residual;
   var rows = [
-    { label: '이번 버전' + (pd.version ? ' ' + escAttr(pd.version) : ''), ph: r.cur.phases,  left: r.cur.residual },
-    { label: '다음 버전' + (nextVer ? ' ' + escAttr(nextVer) : ''),        ph: r.next.phases, left: r.next.residual }
+    { label: '이번 버전' + (pd.version ? ' ' + escAttr(pd.version) : ''), ph: r.cur.phases,  left: cr, dday: plannerDDay(pd.endDate || plannerAutoEndDate(pd.startDate)).text },
+    { label: '다음 버전' + (nextVer ? ' ' + escAttr(nextVer) : ''),        ph: r.next.phases, left: r.next.residual, start: cr.commonPulls + cr.characterOnlyPulls + cr.weaponOnlyPulls }
   ];
   function paint(sims) {
     var el = document.getElementById('plannerCalcResult');
     if (el) el.innerHTML = renderGoalCard(rows, pity, gacha, sims);
   }
   paint([null, null]);
+  var costEl = document.getElementById('plannerCostResult');
+  if (costEl) costEl.innerHTML = renderPlannerCost(rows, gacha);
   if (rows[0].ph.hasAnyGoal || rows[1].ph.hasAnyGoal) {
     getGachaRulesCached(gameId).then(function(rules) {
       paint([computePlannerSim(rows[0].ph, rules, gameId), computePlannerSim(rows[1].ph, rules, gameId)]);
@@ -1798,9 +1845,14 @@ function renderPlannerSection(gameId) {
     '<div class="planner-section">',
     '  <div class="planner-title">버전 플래너<button class="planner-config-btn" id="plannerConfigBtn">⚙</button></div>',
     '  <div id="plannerSummary">' + renderPlannerSummaryHtml(pd) + '</div>',
-    '  <div class="planner-group">',
-    '    <div class="planner-group-label">목표 달성</div>',
-    '    <div id="plannerCalcResult"></div>',   // 내용은 렌더 직후 updatePlannerResult가 채움
+    '  <div class="planner-bottom-row">',   // 두 칸 내용은 렌더 직후 updatePlannerResult가 채움
+    '    <div class="planner-group planner-group--full">',
+    '      <div id="plannerCalcResult"></div>',
+    '    </div>',
+    '    <div class="planner-group planner-group--half">',
+    '      <div class="planner-group-label">과금 계산</div>',
+    '      <div id="plannerCostResult"></div>',
+    '    </div>',
     '  </div>',
     '</div>'
   ].join('');

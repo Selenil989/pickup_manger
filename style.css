@@ -1692,6 +1692,10 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 
   /* 재화 입력 행은 960대에선 데스크톱 단일행 유지(공간 충분) — 2줄 재배치는 ≤768에서만 */
 
+  /* 목표 달성 | 과금 계산 → 세로 스택 */
+  .planner-bottom-row { flex-direction: column; }
+  .planner-bottom-row .planner-group--full { border-right: none; border-bottom: 1px solid var(--border); }
+
 }
 
 /* ── 32. Currency Page ────────────────────────────────────── */
@@ -2608,44 +2612,82 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-weight: 600;
 }
 
+/* --- 목표 달성(2) | 과금 계산(1) 나란히 --- */
+.planner-bottom-row { display: flex; border-top: 1px solid var(--border); }
+.planner-bottom-row .planner-group--full { flex: 2; min-width: 0; border-right: 1px solid var(--border); border-bottom: none; }
+.planner-bottom-row .planner-group--half { flex: 1; min-width: 0; border-bottom: none; }
+
 /* --- 목표 달성 카드 (버전별 한 줄 + 합계) --- */
-.goal-row { padding: 10px 0; border-top: 1px solid var(--border); }
-.goal-row:first-child { border-top: none; padding-top: 2px; }
+.goal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.goal-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.goal-card-title { font-size: var(--fs-lg); font-weight: 600; color: var(--text); }
+.goal-card-own   { font-size: var(--fs-sm); color: var(--muted); }
+.goal-row { padding: 12px 0; border-top: 1px solid var(--border); }
 .goal-row--dim { opacity: 0.45; }
-.goal-row-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.goal-ver  { font-weight: 600; color: var(--text); }
+.goal-row-head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.goal-ver  { font-size: var(--fs-lg); font-weight: 600; color: var(--text); }
 .goal-sub  { font-size: var(--fs-sm); color: var(--muted); }
 .goal-rate { margin-left: auto; font-size: var(--fs-sm); color: var(--muted); }
 .goal-bar {
   display: flex;
   height: 22px;
   margin: 8px 0 6px;
-  border-radius: 5px;
+  border-radius: 8px;
   overflow: hidden;
-  background: var(--surface);
+  background: var(--bg);
   font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
 }
 .goal-bar > div { display: flex; align-items: center; padding-left: 6px; white-space: nowrap; overflow: hidden; }
-.goal-bar-have  { background: var(--accent-bg); color: var(--accent); }
-.goal-bar-short { flex: 1; background: var(--must-bg); color: var(--must); }
+.goal-bar-have  { background: #9FE1CB; color: #085041; }
+.goal-bar-short { flex: 1; background: #F5C4B3; color: #712B13; }
 .goal-row-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
-.goal-short { color: var(--must); }
-.goal-ok    { color: var(--rec); }
+.goal-short { color: var(--must); font-weight: 600; }
+.goal-ok    { color: var(--rec); font-weight: 600; }
 .goal-total {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid var(--accent);
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
   font-size: var(--fs-md);
   color: var(--text);
 }
-.goal-total strong { font-size: var(--fs-xl); font-weight: 700; color: var(--must); }
-.goal-total small  { font-size: var(--fs-sm); font-weight: 400; color: var(--muted); }
+.goal-total strong { font-size: var(--fs-2xl); font-weight: 600; }
+.goal-total small  { font-size: var(--fs-sm); color: var(--muted); }
+
+/* --- 과금 계산: 구간별 예상 과금 카드 + 필요 트럭·총 예상 금액 --- */
+.planner-cum-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin-bottom: 6px; }
+.cost-ver-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+.cost-ver-card--cur { border-color: var(--accent); }
+.cost-ver-label {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.cost-ver-card--cur .cost-ver-label { color: var(--accent); background: rgba(123,97,255,0.07); border-color: var(--accent); }
+.cost-ver-halves { display: flex; }
+.cost-phase-cell { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.cost-phase-cell + .cost-phase-cell { border-left: 1px solid var(--border); }
+.cost-phase-label  { font-size: var(--fs-xs); color: var(--muted); }
+.cost-phase-amount { font-size: var(--fs-base); font-weight: 700; color: var(--text); }
+.cost-phase-cell--dim .cost-phase-amount { font-size: var(--fs-md); font-weight: 400; color: var(--muted); }
+.planner-cost-divider { border: none; border-top: 1px dashed var(--border); margin: 8px 0; }
+.planner-calc-rows { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.planner-calc-rows--cost { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.planner-cr { display: flex; align-items: baseline; gap: 6px; font-size: var(--fs-md); color: var(--muted); }
+.planner-cr strong { font-size: var(--fs-2xl); font-weight: 700; color: var(--text); min-width: 50px; }
 
 /* ── 37. Analysis Dashboard Redesign (renderResults only) ─── */
 
