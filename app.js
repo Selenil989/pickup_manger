@@ -1379,7 +1379,7 @@ function calcPitySummary(gameId) {
     else                        common     += pulls;
   });
   // 공용 재화 배분(표시용): 캐릭터 목표(현재 버전 → 다음 버전 순)에 먼저 쓰고, 남은 공용만 무기 쪽으로.
-  // 캐릭터 목표가 없으면 공용은 전부 캐릭터 쪽. 목표 부족분 계산은 calcPlannerPhases가 따로 한다.
+  // 캐릭터 목표가 없으면 공용은 전부 캐릭터 쪽. 목표 부족분 계산은 calcVersionGoals가 따로 한다.
   var charAvg = (PULL_COST[gameId] && PULL_COST[gameId].charAvg) || gacha.charPity;
   var pd = loadPlannerData(gameId);
   var charNeed = [pd.cur.firstHalf, pd.cur.secondHalf, pd.next.firstHalf, pd.next.secondHalf].reduce(function(s, h) {
@@ -1392,16 +1392,14 @@ function calcPitySummary(gameId) {
     commonPulls:        common,
     characterOnlyPulls: charOnly,
     weaponOnlyPulls:    weaponOnly,
-    // 기존 display 호환 유지 (총 예상 뽑기 표시용)
+    // 상단 '지금 보유' 줄의 캐릭터/무기 배분 표시용
     charPulls:          totalChar,
     weaponPulls:        totalWeapon,
     charPity:           gacha.charPity,
     weaponPity:         gacha.weaponPity,
     // 목표·부족·과금 계산은 평균 기댓값(charAvg/weaponAvg) 기준으로 — 천장(최악)이 아닌 현실 기댓값
     charAvg:            charAvg,
-    weaponAvg:          (PULL_COST[gameId] && PULL_COST[gameId].weaponAvg) || gacha.weaponPity,
-    charPityCount:      gacha.charPity   > 0 ? (totalChar   / gacha.charPity).toFixed(2)   : '0.00',
-    weaponPityCount:    gacha.weaponPity > 0 ? (totalWeapon / gacha.weaponPity).toFixed(2) : '0.00'
+    weaponAvg:          (PULL_COST[gameId] && PULL_COST[gameId].weaponAvg) || gacha.weaponPity
   };
 }
 
@@ -1410,9 +1408,7 @@ function refreshPitySummary(gameId) {
   if (!pity) return;
   var el;
   el = document.getElementById('pityCharPulls');   if (el) el.textContent = pity.charPulls;
-  el = document.getElementById('pityCharCount');   if (el) el.textContent = pity.charPityCount;
   el = document.getElementById('pityWeaponPulls'); if (el) el.textContent = pity.weaponPulls;
-  el = document.getElementById('pityWeaponCount'); if (el) el.textContent = pity.weaponPityCount;
 }
 
 // ── Planner helpers ───────────────────────────────────────────
@@ -1511,69 +1507,6 @@ function plannerNextVersion(vStr) {
 
 // ── Planner Calc (계산 전용 순수 함수) ────────────────────────
 
-function calcPlannerPhases(pd, pity) {
-  var phaseData = [
-    { label: '현재 전반', data: pd.cur.firstHalf  },
-    { label: '현재 후반', data: pd.cur.secondHalf },
-    { label: '다음 전반', data: pd.next.firstHalf  },
-    { label: '다음 후반', data: pd.next.secondHalf }
-  ];
-  var commonRemain     = pity.commonPulls        || 0;
-  var charSpecRemain   = pity.characterOnlyPulls || 0;
-  var weaponSpecRemain = pity.weaponOnlyPulls    || 0;
-  var totalCharReq = 0, totalWeaponReq = 0, totalSf = 0;
-  var totalCharGoalCount = 0, totalWeaponGoalCount = 0;
-  var phaseResults = [];
-
-  phaseData.forEach(function(ph) {
-    var cGoal = Math.max(0, parseInt(ph.data.charGoal)   || 0);
-    var wGoal = Math.max(0, parseInt(ph.data.weaponGoal) || 0);
-    totalCharGoalCount   += cGoal;
-    totalWeaponGoalCount += wGoal;
-    var cReq  = cGoal * (pity.charAvg   || pity.charPity);
-    var wReq  = wGoal * (pity.weaponAvg || pity.weaponPity);
-
-    // 캐릭터 전용 재화 먼저 소비
-    var cFromSpec   = Math.min(charSpecRemain, cReq);
-    charSpecRemain -= cFromSpec;
-    var cNeedCommon = cReq - cFromSpec;
-
-    // 무기 전용 재화 먼저 소비
-    var wFromSpec    = Math.min(weaponSpecRemain, wReq);
-    weaponSpecRemain -= wFromSpec;
-    var wNeedCommon  = wReq - wFromSpec;
-
-    // 공용 재화에서 나머지 합산하여 한 번만 차감
-    var totalNeedCommon = cNeedCommon + wNeedCommon;
-    var phaseSf         = Math.max(0, totalNeedCommon - commonRemain);
-    commonRemain        = Math.max(0, commonRemain - totalNeedCommon);
-
-    totalSf        += phaseSf;
-    totalCharReq   += cReq;
-    totalWeaponReq += wReq;
-    phaseResults.push({ label: ph.label, hasGoal: cGoal > 0 || wGoal > 0, totalSf: phaseSf });
-  });
-
-  var charNeedCommon   = Math.max(0, totalCharReq   - (pity.characterOnlyPulls || 0));
-  var weaponNeedCommon = Math.max(0, totalWeaponReq - (pity.weaponOnlyPulls    || 0));
-
-  return {
-    commonPulls:        pity.commonPulls        || 0,
-    characterOnlyPulls: pity.characterOnlyPulls || 0,
-    weaponOnlyPulls:    pity.weaponOnlyPulls    || 0,
-    totalCharRequired:  totalCharReq,
-    totalWeaponRequired:totalWeaponReq,
-    charNeedCommon:     charNeedCommon,
-    weaponNeedCommon:   weaponNeedCommon,
-    totalCommonNeeded:  charNeedCommon + weaponNeedCommon,
-    totalShortfall:     totalSf,
-    hasAnyGoal:         (totalCharReq + totalWeaponReq) > 0,
-    totalCharGoalCount:   totalCharGoalCount,
-    totalWeaponGoalCount: totalWeaponGoalCount,
-    phaseResults:       phaseResults
-  };
-}
-
 function calcSingleVersionPhases(halfDataList, startPity) {
   var commonRemain     = startPity.commonPulls        || 0;
   var charSpecRemain   = startPity.characterOnlyPulls || 0;
@@ -1629,87 +1562,43 @@ function calcSingleVersionPhases(halfDataList, startPity) {
   };
 }
 
-function calcCost(phases, gacha, pd) {
-  var sfSum = (phases.phaseResults || []).reduce(function(s, ph) { return s + ph.totalSf; }, 0);
-  console.assert(sfSum === phases.totalShortfall,
-    '[planner] invariant fail: phaseSfSum(' + sfSum + ') !== totalShortfall(' + phases.totalShortfall + ')');
-
-  var pkgPrice = Math.max(0, parseInt(gacha.packagePrice) || 0);
-  var pkgPulls = Math.max(1, parseInt(gacha.packagePulls) || 1);
-  var hasPkgInfo = pkgPrice > 0 && gacha.packagePulls > 0;
-  var trucks    = phases.totalShortfall > 0 ? phases.totalShortfall / pkgPulls : 0;
-  var totalCost = Math.round(trucks * pkgPrice);
-
-  // 구간별 과금
-  var phaseCosts = (phases.phaseResults || []).map(function(ph) {
-    return { label: ph.label, hasGoal: ph.hasGoal, cost: Math.round(ph.totalSf / pkgPulls * pkgPrice) };
-  });
-
-  // 월평균: 버전 시작일~종료일 기준, halfDays = versionDays / 2
-  var monthlyCost = null;
-  var _costEnd = pd.endDate || plannerAutoEndDate(pd.startDate);
-  if (hasPkgInfo && pd.startDate && _costEnd) {
-    var s = new Date(pd.startDate); s.setHours(0,0,0,0);
-    var e = new Date(_costEnd);     e.setHours(0,0,0,0);
-    var versionDays = Math.max(0, (e - s) / 86400000);
-    var halfDays    = versionDays / 2;
-    var activeCnt   = (phases.phaseResults || []).filter(function(ph) { return ph.hasGoal; }).length;
-    var goalDays    = activeCnt * halfDays;
-    var months      = Math.max(1, goalDays / 30);
-    monthlyCost     = Math.round(totalCost / months);
-  }
-
-  return {
-    phaseCosts:     phaseCosts,
-    totalShortfall: phases.totalShortfall,
-    trucks:         trucks,
-    totalCost:      totalCost,
-    monthlyCost:    monthlyCost,
-    hasPkgInfo:     hasPkgInfo
-  };
+// 이번 → 다음 버전 순으로 보유 재화를 소비(이번 버전에서 남은 재화가 다음 버전으로)
+function calcVersionGoals(pd, pity) {
+  var cur  = calcSingleVersionPhases([pd.cur.firstHalf, pd.cur.secondHalf], pity);
+  var next = calcSingleVersionPhases([pd.next.firstHalf, pd.next.secondHalf], cur.residual);
+  return { cur: cur, next: next };
 }
 
 function testPlannerCalcInvariant() {
-  function run(desc, pity, pd, expTotalSf, expCommonNeeded) {
-    var r = calcPlannerPhases(pd, pity);
-    var sfSum = r.phaseResults.reduce(function(s, ph) { return s + ph.totalSf; }, 0);
-    var pass = sfSum === r.totalShortfall
-            && r.totalShortfall  === expTotalSf
-            && r.totalCommonNeeded === expCommonNeeded;
-    if (pass) {
-      console.log('[TEST OK] ' + desc +
-        ' | totalSf=' + r.totalShortfall + ' commonNeeded=' + r.totalCommonNeeded + ' phaseSfSum=' + sfSum);
-    } else {
-      console.error('[TEST FAIL] ' + desc, {
-        sfSum: sfSum, totalShortfall: r.totalShortfall,
-        totalCommonNeeded: r.totalCommonNeeded,
-        expTotalSf: expTotalSf, expCommonNeeded: expCommonNeeded
-      });
-    }
-    return pass;
+  function run(desc, pity, pd, expTotalSf) {
+    var r  = calcVersionGoals(pd, pity);
+    var sf = r.cur.phases.totalShortfall + r.next.phases.totalShortfall;
+    if (sf === expTotalSf) console.log('[TEST OK] ' + desc + ' | totalSf=' + sf);
+    else console.error('[TEST FAIL] ' + desc, { totalSf: sf, expTotalSf: expTotalSf });
+    return sf === expTotalSf;
   }
 
   var allPass = true;
   // 승인 예시: 공용167 + 캐릭터전용3 + 무기전용0, 목표 캐릭터270 + 무기80
   var p1 = { commonPulls: 167, characterOnlyPulls: 3, weaponOnlyPulls: 0,
              charPulls: 170, weaponPulls: 167, charPity: 90, weaponPity: 80 };
-  allPass &= run('승인예시: 공167+캐전3+무전0, 목표캐270+무80 → 부족180 공용필요347',
+  allPass &= run('승인예시: 공167+캐전3+무전0, 목표캐270+무80 → 부족180',
     p1,
     { cur:  { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:3,weaponGoal:1} },
       next: { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} } },
-    180, 347);
+    180);
 
   allPass &= run('분산목표: 현재후반캐2+무1 / 다음전반캐1 → 부족180 동일',
     p1,
     { cur:  { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:2,weaponGoal:1} },
       next: { firstHalf:{charGoal:1,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} } },
-    180, 347);
+    180);
 
   allPass &= run('목표 없음 → 부족0',
     p1,
     { cur:  { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} },
       next: { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} } },
-    0, 0);
+    0);
 
   // 보유 충분 케이스
   var p2 = { commonPulls: 400, characterOnlyPulls: 50, weaponOnlyPulls: 20,
@@ -1718,7 +1607,7 @@ function testPlannerCalcInvariant() {
     p2,
     { cur:  { firstHalf:{charGoal:1,weaponGoal:1}, secondHalf:{charGoal:0,weaponGoal:0} },
       next: { firstHalf:{charGoal:0,weaponGoal:0}, secondHalf:{charGoal:0,weaponGoal:0} } },
-    0, 100);  // charNeed=max(0,90-50)=40, weaponNeed=max(0,80-20)=60 → 총100, 공용400 충분
+    0);
 
   console.log(allPass ? '[planner] 모든 계산 검증 통과' : '[planner] 계산 검증 실패 항목 있음');
   return !!allPass;
@@ -1726,160 +1615,74 @@ function testPlannerCalcInvariant() {
 
 // ── Planner Render (표시 전용 — 계산 없음) ────────────────────
 
-function renderPlannerCalcCards(curPhases, nextPhases, totalPhases, curSim, nextSim, totalSim) {
-  var hasAnything = curPhases.hasAnyGoal || nextPhases.hasAnyGoal || totalPhases.hasAnyGoal;
-  if (!hasAnything) {
-    return '<p class="planner-hint-text">캐릭터/무기 목표를 입력하면 달성 가능 여부를 계산합니다.</p>';
+// 목표 달성 카드: 버전마다 [목표 → 보유로 채운 만큼 / 부족 → 금액 · 확률] 한 줄 + 합계.
+// 지금 손에 있는 재화만 쓴다(앞으로 들어올 재화는 획득 여부를 확인할 수 없어 넣지 않음).
+function renderGoalCard(rows, pity, gacha, sims) {
+  if (!rows[0].ph.hasAnyGoal && !rows[1].ph.hasAnyGoal) {
+    return '<p class="planner-hint-text">위 버전 카드의 전반/후반에 캐릭터·무기 목표를 넣으면 부족한 뽑기와 금액을 계산합니다.</p>';
   }
+  var hasPkg = gacha.packagePrice > 0 && gacha.packagePulls > 0;
+  function won(sf) { return Math.round(sf / gacha.packagePulls * gacha.packagePrice).toLocaleString() + '원'; }
+  var totalSf = 0;
 
-  var tipIcon = '<span class="cmp-tip" data-tip="현재 보유 재화, 확정 여부를 기준으로 목표한 캐릭터/무기를 획득할 확률입니다.">ⓘ</span>';
-
-  function rateStr(sim, hasGoal, field) {
-    if (!hasGoal) return '100%';
-    if (!sim) return '--';
-    var v = sim[field];
-    if (v === null || v === undefined) return '100%';
-    return (v * 100).toFixed(1) + '%';
-  }
-
-  function renderCard(title, modifier, phases, sim) {
-    var dimCls     = phases.hasAnyGoal ? '' : ' pacc-card--dim';
-    var charReq    = phases.totalCharRequired;
-    var weaponReq  = phases.totalWeaponRequired;
-    var commonToChar = Math.min(phases.commonPulls, Math.max(0, charReq - phases.characterOnlyPulls));
-    var charOwned  = phases.characterOnlyPulls + commonToChar;
-    var weaponOwned = phases.weaponOnlyPulls   + (phases.commonPulls - commonToChar);
-    var charShort  = Math.max(0, charReq  - charOwned);
-    var weaponShort = Math.max(0, weaponReq - weaponOwned);
-    var charOk     = charShort  === 0;
-    var weaponOk   = weaponShort === 0;
-    var totalOk    = phases.totalShortfall === 0;
-
-    var charRateStr   = rateStr(sim, phases.hasAnyGoal, 'charRate');
-    var weaponRateStr = rateStr(sim, phases.hasAnyGoal, 'weaponRate');
-    var totalRateStr  = rateStr(sim, phases.hasAnyGoal, 'rate');
-
-    function dataCol(req, owned, short, ok, rateVal) {
-      var statusHtml = ok ? '충분 🟢' : '부족 ' + short + ' 🔴';
-      return [
-        '<div class="pacc-col-left">',
-        '<span class="pacc-row-goal">목표 <strong>' + req + '</strong></span>',
-        '<span class="pacc-row-status ' + (ok ? 'pacc-ok' : 'pacc-lack') + '">' + statusHtml + '</span>',
-        '</div>',
-        '<div class="pacc-col-right">',
-        '<span class="pacc-row-owned">보유 <strong>' + owned + '</strong></span>',
-        '<span class="pacc-row-rate">확률 ' + rateVal + '</span>',
-        '</div>'
-      ].join('');
+  var rowsHtml = rows.map(function(r, i) {
+    var ph = r.ph;
+    if (!ph.hasAnyGoal) {
+      return '<div class="goal-row goal-row--dim"><div class="goal-row-head"><span class="goal-ver">' + r.label + '</span><span class="goal-sub">목표 없음</span></div></div>';
     }
-
+    var need = ph.totalCharRequired + ph.totalWeaponRequired;
+    var sf   = ph.totalShortfall;
+    var have = need - sf;
+    var left = r.left.commonPulls + r.left.characterOnlyPulls + r.left.weaponOnlyPulls;
+    totalSf += sf;
+    var haveW = Math.round(have / need * 100);
+    var goals = [], parts = [];
+    if (ph.totalCharGoalCount)   { goals.push('캐릭터 ' + ph.totalCharGoalCount);   parts.push('캐릭터 ' + ph.totalCharGoalCount + '×' + pity.charAvg); }
+    if (ph.totalWeaponGoalCount) { goals.push('무기 ' + ph.totalWeaponGoalCount); parts.push('무기 ' + ph.totalWeaponGoalCount + '×' + pity.weaponAvg); }
+    var rate = sims[i] ? (sims[i].rate * 100).toFixed(1) + '%' : '--';
     return [
-      '<div class="pacc-card' + modifier + dimCls + '">',
-      '<div class="pacc-card-title">' + title + '</div>',
-      '<div class="pacc-card-body">',
-      '<span class="pacc-lbl">캐릭터</span>',
-      dataCol(charReq,   charOwned,   charShort,   charOk,   charRateStr),
-      '<div class="pacc-sep"></div>',
-      '<span class="pacc-lbl">무기</span>',
-      dataCol(weaponReq, weaponOwned, weaponShort, weaponOk, weaponRateStr),
-      '<div class="pacc-divider"></div>',
-      '<div class="pacc-total-row">',
-      '<span class="pacc-total-sf ' + (totalOk ? 'pacc-ok' : 'pacc-lack') + '">',
-      totalOk ? '총 부족 없음' : '총 부족 <strong>' + phases.totalShortfall + '</strong>회',
-      '</span>',
-      '<div class="pacc-total-rate"><span class="pacc-total-rate-lbl">실제 성공 확률(참고) ' + tipIcon + '</span><strong class="' + (totalOk ? 'pacc-ok' : 'pacc-lack') + '">' + totalRateStr + '</strong></div>',
+      '<div class="goal-row">',
+      '<div class="goal-row-head"><span class="goal-ver">' + r.label + '</span><span class="goal-sub">' + goals.join(' · ') + '</span>',
+      '<span class="goal-rate">달성 확률 ' + rate + '</span></div>',
+      '<div class="goal-bar">',
+      have > 0 ? '<div class="goal-bar-have" style="width:' + haveW + '%">' + (haveW >= 18 ? '보유 ' + Math.round(have) : '') + '</div>' : '',
+      sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 18 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
       '</div>',
-      '</div>',
-      '</div>'
-    ].join('');
-  }
-
-  return [
-    '<div class="pacc-grid">',
-    renderCard('이번 버전', ' pacc-card--cur',   curPhases,   curSim),
-    renderCard('다음 버전', ' pacc-card--next',  nextPhases,  nextSim),
-    renderCard('전체 합산', ' pacc-card--total', totalPhases, totalSim),
-    '</div>'
-  ].join('');
-}
-
-function renderPlannerCost(costResult) {
-  if (!costResult || !costResult.hasPkgInfo) {
-    return '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 1트럭 정보를 입력하면 과금을 계산합니다.</p>';
-  }
-
-  // 버전 카드 생성
-  var pc = costResult.phaseCosts || [];
-  function cell(ph, halfLabel) {
-    if (!ph) ph = { hasGoal: false, cost: 0 };
-    return [
-      '<div class="cost-phase-cell' + (!ph.hasGoal ? ' cost-phase-cell--dim' : '') + '">',
-      '<span class="cost-phase-label">' + halfLabel + '</span>',
-      '<span class="cost-phase-amount">' + ph.cost.toLocaleString() + '원</span>',
-      '</div>'
-    ].join('');
-  }
-  function verCard(verLabel, ph1, ph2, isCur) {
-    if (!ph1.hasGoal && !ph2.hasGoal) return '';
-    return [
-      '<div class="cost-ver-card' + (isCur ? ' cost-ver-card--cur' : '') + '">',
-      '<div class="cost-ver-label">' + verLabel + '</div>',
-      '<div class="cost-ver-halves">',
-      cell(ph1, '전반'), cell(ph2, '후반'),
+      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남은 재화로 계산' : '') + '</span>',
+      sf > 0
+        ? '<strong class="goal-short">부족 ' + Math.round(sf) + '뽑' + (hasPkg ? ' · ' + won(sf) : '') + '</strong>'
+        : '<strong class="goal-ok">충분 · ' + Math.round(left) + '뽑 남음</strong>',
       '</div>',
       '</div>'
     ].join('');
-  }
-  var curCard  = verCard('현재 버전', pc[0] || {}, pc[1] || {}, true);
-  var nextCard = verCard('다음 버전', pc[2] || {}, pc[3] || {}, false);
-  var hasCards = curCard || nextCard;
+  }).join('');
 
-  var okMsg = costResult.totalShortfall === 0
-    ? '<p class="planner-hint-text planner-hint-text--ok" style="margin-bottom:6px">과금 없이 달성 가능합니다.</p>'
-    : '';
-
-  var monthlyRow = costResult.monthlyCost !== null
-    ? '<div class="planner-cr planner-cr--monthly"><span>월 평균</span><strong>' + costResult.monthlyCost.toLocaleString() + '</strong><span>원</span></div>'
-    : '';
-
-  return [
-    hasCards ? '<div class="planner-cum-title">구간별 예상 과금</div>' : '',
-    curCard, nextCard,
-    hasCards ? '<div class="planner-cost-divider"></div>' : '',
-    okMsg,
-    '<div class="planner-calc-rows planner-calc-rows--cost">',
-    '<div class="planner-cr"><span>필요 트럭</span><strong>' + costResult.trucks.toFixed(1) + '</strong><span>트럭</span></div>',
-    '<div class="planner-cr"><span>총 예상 금액</span><strong>' + costResult.totalCost.toLocaleString() + '</strong><span>원</span></div>',
-    monthlyRow,
-    '</div>'
-  ].join('');
+  var total = totalSf > 0
+    ? '<span>합계 부족 ' + Math.round(totalSf) + '뽑</span><strong>' + (hasPkg ? won(totalSf) + ' <small>(1트럭 ' + (totalSf / gacha.packagePulls).toFixed(1) + '개)</small>' : '') + '</strong>'
+    : '<span class="goal-ok">지금 보유 재화로 목표 달성 가능</span>';
+  var pkgHint = totalSf > 0 && !hasPkg ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 1트럭 정보를 입력하면 금액이 나옵니다.</p>' : '';
+  return rowsHtml + '<div class="goal-total">' + total + '</div>' + pkgHint;
 }
 
 function updatePlannerResult(gameId, pd) {
   var pity  = calcPitySummary(gameId);
   if (!pity) return;
-  refreshPitySummary(gameId);   // 캐릭터 목표가 바뀌면 캐릭터/무기 예상 뽑기 배분도 달라짐
-  var gacha       = getGachaConfig(gameId);
-  var totalPhases = calcPlannerPhases(pd, pity);
-  var costResult  = calcCost(totalPhases, gacha, pd);
-
-  var _cr    = calcSingleVersionPhases([pd.cur.firstHalf, pd.cur.secondHalf], pity);
-  var _nr    = calcSingleVersionPhases([pd.next.firstHalf, pd.next.secondHalf], _cr.residual);
-  var curPhases  = _cr.phases;
-  var nextPhases = _nr.phases;
-
-  var calcEl = document.getElementById('plannerCalcResult');
-  var costEl = document.getElementById('plannerCostResult');
-  if (calcEl) calcEl.innerHTML = renderPlannerCalcCards(curPhases, nextPhases, totalPhases, null, null, null);
-  if (costEl) costEl.innerHTML = renderPlannerCost(costResult);
-
-  if (totalPhases.hasAnyGoal) {
+  refreshPitySummary(gameId);   // 캐릭터 목표가 바뀌면 캐릭터/무기 보유 배분도 달라짐
+  var gacha = getGachaConfig(gameId);
+  var r     = calcVersionGoals(pd, pity);
+  var nextVer = plannerNextVersion(pd.version);
+  var rows = [
+    { label: '이번 버전' + (pd.version ? ' ' + escAttr(pd.version) : ''), ph: r.cur.phases,  left: r.cur.residual },
+    { label: '다음 버전' + (nextVer ? ' ' + escAttr(nextVer) : ''),        ph: r.next.phases, left: r.next.residual }
+  ];
+  function paint(sims) {
+    var el = document.getElementById('plannerCalcResult');
+    if (el) el.innerHTML = renderGoalCard(rows, pity, gacha, sims);
+  }
+  paint([null, null]);
+  if (rows[0].ph.hasAnyGoal || rows[1].ph.hasAnyGoal) {
     getGachaRulesCached(gameId).then(function(rules) {
-      var curSim   = computePlannerSim(curPhases,   rules, gameId);
-      var nextSim  = computePlannerSim(nextPhases,  rules, gameId);
-      var totalSim = computePlannerSim(totalPhases, rules, gameId);
-      var calcEl2  = document.getElementById('plannerCalcResult');
-      if (calcEl2) calcEl2.innerHTML = renderPlannerCalcCards(curPhases, nextPhases, totalPhases, curSim, nextSim, totalSim);
+      paint([computePlannerSim(rows[0].ph, rules, gameId), computePlannerSim(rows[1].ph, rules, gameId)]);
     });
   }
 }
@@ -1990,51 +1793,14 @@ function renderPlannerSummaryHtml(pd) {
 }
 
 function renderPlannerSection(gameId) {
-  var pd      = loadPlannerData(gameId);
-  var pity    = calcPitySummary(gameId);
-  var endDate = pd.endDate || plannerAutoEndDate(pd.startDate);
-
-  var emptyPhaseResults = [
-    { label: '현재 전반', hasGoal: false, totalSf: 0 },
-    { label: '현재 후반', hasGoal: false, totalSf: 0 },
-    { label: '다음 전반', hasGoal: false, totalSf: 0 },
-    { label: '다음 후반', hasGoal: false, totalSf: 0 }
-  ];
-  var emptyPhases = { hasAnyGoal: false, commonPulls: 0, characterOnlyPulls: 0, weaponOnlyPulls: 0, totalCharRequired: 0, totalWeaponRequired: 0, charNeedCommon: 0, weaponNeedCommon: 0, totalCommonNeeded: 0, totalShortfall: 0, totalCharGoalCount: 0, totalWeaponGoalCount: 0, phaseResults: emptyPhaseResults };
-  var gacha       = getGachaConfig(gameId);
-  var totalPhases = pity ? calcPlannerPhases(pd, pity) : emptyPhases;
-  var costResult  = calcCost(totalPhases, gacha, pd);
-
-  var curPhases, nextPhases;
-  if (pity) {
-    var _cr  = calcSingleVersionPhases([pd.cur.firstHalf, pd.cur.secondHalf], pity);
-    var _nr  = calcSingleVersionPhases([pd.next.firstHalf, pd.next.secondHalf], _cr.residual);
-    curPhases  = _cr.phases;
-    nextPhases = _nr.phases;
-  } else {
-    curPhases  = emptyPhases;
-    nextPhases = emptyPhases;
-  }
-
+  var pd = loadPlannerData(gameId);
   return [
     '<div class="planner-section">',
     '  <div class="planner-title">버전 플래너<button class="planner-config-btn" id="plannerConfigBtn">⚙</button></div>',
     '  <div id="plannerSummary">' + renderPlannerSummaryHtml(pd) + '</div>',
-
-    '  <div class="planner-body">',
-    '  <div class="planner-bottom-row">',
-
-    '    <div class="planner-group planner-group--full planner-group--result">',
-    '      <div class="planner-group-label">달성 분석</div>',
-    '      <div id="plannerCalcResult">' + renderPlannerCalcCards(curPhases, nextPhases, totalPhases, null, null, null) + '</div>',
-    '    </div>',
-
-    '    <div class="planner-group planner-group--half">',
-    '      <div class="planner-group-label">과금 계산</div>',
-    '      <div id="plannerCostResult">' + renderPlannerCost(costResult) + '</div>',
-    '    </div>',
-
-    '  </div>',
+    '  <div class="planner-group">',
+    '    <div class="planner-group-label">목표 달성</div>',
+    '    <div id="plannerCalcResult"></div>',   // 내용은 렌더 직후 updatePlannerResult가 채움
     '  </div>',
     '</div>'
   ].join('');
@@ -3043,26 +2809,6 @@ function renderCurrencyPage() {
   }, 0);
 
   var pity = calcPitySummary(activeGame);
-  var pitySummaryHtml = pity ? [
-    '<div class="pity-summary">',
-    '  <div class="pity-card">',
-    '    <span class="pity-label">캐릭터 뽑기 가능</span>',
-    '    <div class="pity-value-row"><strong class="pity-value" id="pityCharPulls">' + pity.charPulls + '</strong><span class="pity-unit">회</span></div>',
-    '  </div>',
-    '  <div class="pity-card pity-card--accent">',
-    '    <span class="pity-label">캐릭터 천장 (÷' + pity.charPity + ')</span>',
-    '    <div class="pity-value-row"><strong class="pity-value" id="pityCharCount">' + pity.charPityCount + '</strong><span class="pity-unit">회</span></div>',
-    '  </div>',
-    '  <div class="pity-card">',
-    '    <span class="pity-label">무기 뽑기 가능</span>',
-    '    <div class="pity-value-row"><strong class="pity-value" id="pityWeaponPulls">' + pity.weaponPulls + '</strong><span class="pity-unit">회</span></div>',
-    '  </div>',
-    '  <div class="pity-card pity-card--accent">',
-    '    <span class="pity-label">무기 천장 (÷' + pity.weaponPity + ')</span>',
-    '    <div class="pity-value-row"><strong class="pity-value" id="pityWeaponCount">' + pity.weaponPityCount + '</strong><span class="pity-unit">회</span></div>',
-    '  </div>',
-    '</div>'
-  ].join('') : '';
 
   _plannerCurHalf  = 'first';
   _plannerNextHalf = 'first';
@@ -3088,11 +2834,11 @@ function renderCurrencyPage() {
     '  <button class="ledger-open-btn" data-game="' + activeGame + '">📋 내역</button>',
     '</div>',
     '<div class="currency-total">',
-    '  <span>총 예상 뽑기</span>',
+    '  <span>지금 보유</span>',
     '  <strong id="currencyTotalPulls">' + totalPulls + '</strong>',
-    '  <span>회</span>',
+    '  <span>뽑</span>',
+    pity ? '  <span class="currency-total-split">캐릭터 <b id="pityCharPulls">' + pity.charPulls + '</b> · 무기 <b id="pityWeaponPulls">' + pity.weaponPulls + '</b></span>' : '',
     '</div>',
-    pitySummaryHtml,
     renderPlannerSection(activeGame)
   ].join('');
 

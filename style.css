@@ -913,7 +913,6 @@ select {
   background: var(--accent-bg2);
 }
 
-
 /* ── 23. Character Manager (gear / + card / edit modal) ─── */
 .card-gear-btn {
   position: absolute;
@@ -1693,12 +1692,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 
   /* 재화 입력 행은 960대에선 데스크톱 단일행 유지(공간 충분) — 2줄 재배치는 ≤768에서만 */
 
-  /* 플래너 좌우 분할(달성분석 2 : 과금 1) → 세로 스택 */
-  .planner-bottom-row { flex-direction: column; }
-  .planner-bottom-row .planner-group--full,
-  .planner-bottom-row .planner-group--half:first-child { border-right: none; border-bottom: 1px solid var(--border); }
-  .planner-top-row { flex-direction: column; }
-  .planner-top-row .planner-group--half:first-child { border-right: none; border-bottom: 1px solid var(--border); }
 }
 
 /* ── 32. Currency Page ────────────────────────────────────── */
@@ -1815,7 +1808,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-size: var(--fs-md);
   color: var(--muted);
 }
-
 
 .pass-cards {
   display: flex;
@@ -2045,8 +2037,10 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   margin: 0 2px;
 }
 
-/* ── 33. Currency Edit UI ─────────────────────────────────── */
+.currency-total-split { margin-left: 8px; font-size: var(--fs-sm); color: var(--muted); }
+.currency-total-split b { color: var(--text); font-weight: 600; }
 
+/* ── 33. Currency Edit UI ─────────────────────────────────── */
 
 /* Override currency-row to include action buttons column */
 .currency-row {
@@ -2316,61 +2310,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   color: var(--text);
 }
 
-/* ── 35. Pity Summary ─────────────────────────────────────── */
-
-.pity-summary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(min-content, 1fr));
-  gap: 8px;
-  padding: 12px 16px 16px;
-  border-top: 1px solid var(--border);
-}
-
-.pity-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.pity-card--accent {
-  border-color: var(--accent);
-  background: var(--accent-bg2);
-}
-
-.pity-label {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  white-space: nowrap;
-}
-
-.pity-value-row {
-  display: flex;
-  align-items: baseline;
-  gap: 5px;
-}
-
-.pity-value {
-  font-size: var(--fs-3xl);
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
-}
-
-.pity-card--accent .pity-value {
-  color: var(--accent);
-}
-
-.pity-unit {
-  font-size: var(--fs-md);
-  color: var(--muted);
-}
-
 /* ── 36. Version Planner ──────────────────────────────────── */
 
 .planner-section {
@@ -2406,39 +2345,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .planner-config-btn:hover {
   opacity: 1;
   color: var(--accent);
-}
-
-.planner-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.planner-top-row {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-}
-
-.planner-top-row .planner-group--half {
-  flex: 1;
-  border-bottom: none;
-}
-
-.planner-top-row .planner-group--half:first-child {
-  border-right: 1px solid var(--border);
-}
-
-.planner-group--third {
-  flex: 1;
-  min-width: 0;
-}
-
-.planner-top-row .planner-group--third {
-  border-bottom: none;
-}
-
-.planner-top-row .planner-group--third:not(:last-child) {
-  border-right: 1px solid var(--border);
 }
 
 .planner-group {
@@ -2515,68 +2421,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   background: var(--surface);
   border-radius: 5px;
   min-height: 16px;
-}
-
-.planner-calc-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.planner-calc-rows--cost {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-}
-
-.planner-cr {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: var(--fs-md);
-  color: var(--muted);
-}
-
-.planner-cr strong {
-  font-size: var(--fs-2xl);
-  font-weight: 700;
-  color: var(--text);
-  min-width: 50px;
-}
-
-.planner-cr--lack strong {
-  color: var(--must);
-}
-
-.planner-cr--monthly strong {
-  color: var(--accent);
-}
-
-.planner-sub {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  opacity: 0.7;
-  margin-left: 2px;
-}
-
-.planner-badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: var(--fs-base);
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-.planner-badge--ok {
-  background: rgba(77, 255, 145, 0.12);
-  color: var(--rec);
-}
-
-.planner-badge--lack {
-  background: rgba(255, 77, 109, 0.12);
-  color: var(--must);
 }
 
 .planner-hint-text {
@@ -2724,82 +2568,6 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   width: 54px !important;
 }
 
-/* --- Planner bottom row (달성 분석 | 과금 계산) --- */
-.planner-bottom-row {
-  display: flex;
-  border-top: 1px solid var(--border);
-}
-
-.planner-bottom-row .planner-group--half {
-  flex: 1;
-  border-bottom: none;
-}
-
-.planner-bottom-row .planner-group--half:first-child {
-  border-right: 1px solid var(--border);
-}
-
-.planner-bottom-row .planner-group--full {
-  flex: 2;
-  border-right: 1px solid var(--border);
-  border-bottom: none;
-  display: flex;
-  flex-direction: column;
-}
-.planner-bottom-row .planner-group--full #plannerCalcResult {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.planner-bottom-row .planner-group--full .pacc-grid {
-  align-items: start;
-}
-.pacc-card {
-  display: flex;
-  flex-direction: column;
-}
-.pacc-card-body {
-  display: grid;
-  grid-template-columns: auto 1fr 1fr;
-  align-items: center;
-  column-gap: 8px;
-  padding: 4px 10px 8px;
-}
-
-/* --- 2버전 누적 목표 --- */
-.planner-cumulative {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--border);
-}
-
-.planner-cum-title {
-  font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--accent);
-  margin-bottom: 6px;
-}
-
-.planner-advance-btn {
-  margin-top: 8px;
-  padding: 4px 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05);
-  color: var(--muted);
-  font-size: var(--fs-sm);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-  display: block;
-}
-
-.planner-advance-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(123,97,255,0.1);
-}
-
 /* --- 전반/후반 토글 --- */
 /* 전반/후반 실제 날짜 구간 (버전 플래너) */
 .planner-half-sched {
@@ -2840,241 +2608,44 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-weight: 600;
 }
 
-/* --- 달성 분석 3카드 그리드 --- */
-.pacc-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 6px;
-}
-@media (max-width: 720px) {
-  .pacc-grid { grid-template-columns: 1fr; }
-}
-.pacc-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(255,255,255,0.02);
-  position: relative;
-}
-.pacc-card--cur   { border-color: var(--accent); }
-.pacc-card--dim   { opacity: 0.45; }
-.pacc-card-title {
-  font-size: var(--fs-base);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  padding: 6px 10px 5px;
-  border-bottom: 1px solid var(--border);
-  border-radius: 8px 8px 0 0;
-}
-.pacc-card--cur   .pacc-card-title { color: var(--accent); background: rgba(123,97,255,0.07); }
-.pacc-card--next  .pacc-card-title { color: var(--muted);  background: rgba(255,255,255,0.02); }
-.pacc-card--total .pacc-card-title { color: var(--muted);  background: rgba(255,255,255,0.02); }
-.pacc-lbl {
-  color: var(--muted);
-  font-size: var(--fs-md);
-  white-space: nowrap;
-  padding: 6px 0;
-  align-self: center;
-}
-.pacc-col-left,
-.pacc-col-right {
+/* --- 목표 달성 카드 (버전별 한 줄 + 합계) --- */
+.goal-row { padding: 10px 0; border-top: 1px solid var(--border); }
+.goal-row:first-child { border-top: none; padding-top: 2px; }
+.goal-row--dim { opacity: 0.45; }
+.goal-row-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.goal-ver  { font-weight: 600; color: var(--text); }
+.goal-sub  { font-size: var(--fs-sm); color: var(--muted); }
+.goal-rate { margin-left: auto; font-size: var(--fs-sm); color: var(--muted); }
+.goal-bar {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px 0;
+  height: 22px;
+  margin: 8px 0 6px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--surface);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
 }
-.pacc-col-left {
-  padding-left: 16px;
-}
-.pacc-sep {
-  grid-column: 1 / -1;
-  border-top: 1px solid var(--border);
-}
-.pacc-row-goal,
-.pacc-row-owned {
-  font-size: var(--fs-base);
-  color: var(--text-dim);
-  white-space: nowrap;
-}
-.pacc-row-goal strong,
-.pacc-row-owned strong {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--text);
-}
-.pacc-row-status {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.pacc-row-rate {
-  font-size: var(--fs-md);
-  font-weight: 700;
-  color: var(--text);
-  white-space: nowrap;
-}
-.pacc-ok   { color: var(--rec); }
-.pacc-lack { color: var(--must); }
-.pacc-divider {
-  grid-column: 1 / -1;
-  border-top: 1px solid var(--border);
-  margin: 2px 0;
-}
-.pacc-total-row {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 4px;
-}
-.pacc-total-sf { font-weight: 600; font-size: var(--fs-lg); }
-.pacc-total-rate {
+.goal-bar > div { display: flex; align-items: center; padding-left: 6px; white-space: nowrap; overflow: hidden; }
+.goal-bar-have  { background: var(--accent-bg); color: var(--accent); }
+.goal-bar-short { flex: 1; background: var(--must-bg); color: var(--must); }
+.goal-row-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
+.goal-short { color: var(--must); }
+.goal-ok    { color: var(--rec); }
+.goal-total {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--accent);
   font-size: var(--fs-md);
-  color: var(--muted);
-}
-.pacc-total-rate-lbl { display: flex; align-items: center; gap: 3px; }
-.pacc-total-rate strong { font-size: var(--fs-xl); font-weight: 700; }
-.pacc-total-rate .cmp-tip::after {
-  right: auto;
-  left: 0;
-  top: auto;
-  bottom: 130%;
-}
-
-/* --- 달성 분석 가로 비교 테이블 --- */
-.planner-cmp-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-base);
-  margin-top: 6px;
-  margin-bottom: 6px;
-}
-.planner-cmp-table tr + tr td {
-  border-top: 1px solid var(--border);
-}
-.planner-cmp-label {
-  padding: 6px 4px 6px 0;
-  color: var(--text-muted);
-  font-size: var(--fs-sm);
-  white-space: nowrap;
-  width: 36px;
-}
-.planner-cmp-cell {
-  padding: 6px 8px;
-  color: var(--text-dim);
-}
-.planner-cmp-cell strong {
-  font-size: var(--fs-base);
-  font-weight: 700;
   color: var(--text);
 }
-.planner-cmp-status {
-  padding: 6px 4px;
-  font-size: var(--fs-base);
-  font-weight: 600;
-  text-align: right;
-  white-space: nowrap;
-}
-.planner-cmp-ok   { color: var(--rec); }
-.planner-cmp-lack { color: var(--must); }
-.planner-cmp-th-blank { border: none; padding: 0; }
-.planner-cmp-th-rate  { text-align: right; font-size: var(--fs-sm); color: var(--text-muted, #888); padding-bottom: 4px; font-weight: normal; border: none; }
-.cmp-tip { position: relative; cursor: help; font-style: normal; }
-.cmp-tip::after {
-  content: attr(data-tip);
-  position: absolute; right: 0; top: 130%;
-  width: 220px; background: var(--card, #1e1e1e); border: 1px solid var(--border, #333);
-  border-radius: 6px; padding: 7px 10px; font-size: var(--fs-sm); color: var(--text, #eee);
-  white-space: normal; line-height: 1.5; z-index: 200; display: none; pointer-events: none;
-}
-.cmp-tip:hover::after { display: block; }
-.planner-cmp-row--common td { border-top: 1px solid var(--border); padding-top: 6px; }
-.planner-cmp-rate {
-  padding: 6px 4px;
-  font-size: var(--fs-base);
-  font-weight: 700;
-  color: var(--text);
-  text-align: right;
-  white-space: nowrap;
-}
-
-/* --- 총 부족 한 줄 강조 --- */
-.planner-total-shortfall {
-  margin-top: 8px;
-  padding: 7px 10px;
-  border-radius: 6px;
-  font-size: var(--fs-md);
-  font-weight: 600;
-}
-.planner-total-shortfall strong { font-size: var(--fs-xl); }
-.planner-total-shortfall--ok {
-  background: rgba(77,255,145,0.1);
-  color: var(--rec);
-}
-.planner-total-shortfall--lack {
-  background: rgba(255,77,109,0.1);
-  color: var(--must);
-}
-
-/* --- 구간별 예상 과금 카드 --- */
-.cost-ver-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 6px;
-}
-.cost-ver-card--cur {
-  border-color: var(--accent);
-}
-.cost-ver-label {
-  font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  padding: 4px 10px;
-  background: rgba(255,255,255,0.03);
-  border-bottom: 1px solid var(--border);
-}
-.cost-ver-card--cur .cost-ver-label {
-  color: var(--accent);
-  background: rgba(123,97,255,0.07);
-  border-color: var(--accent);
-}
-.cost-ver-halves {
-  display: flex;
-}
-.cost-phase-cell {
-  flex: 1;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.cost-phase-cell + .cost-phase-cell {
-  border-left: 1px solid var(--border);
-}
-.cost-phase-label {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-}
-.cost-phase-amount {
-  font-size: var(--fs-base);
-  font-weight: 700;
-  color: var(--text);
-}
-.cost-phase-cell--dim .cost-phase-amount {
-  font-size: var(--fs-md);
-  font-weight: 400;
-  color: var(--muted);
-}
-.planner-cost-divider {
-  border: none;
-  border-top: 1px dashed var(--border);
-  margin: 8px 0;
-}
+.goal-total strong { font-size: var(--fs-xl); font-weight: 700; color: var(--must); }
+.goal-total small  { font-size: var(--fs-sm); font-weight: 400; color: var(--muted); }
 
 /* ── 37. Analysis Dashboard Redesign (renderResults only) ─── */
 
