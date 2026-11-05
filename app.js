@@ -173,12 +173,13 @@ var CURRENCY_CONFIG = {
 
 // supplyPulls: 버전당 무과금 수급(한정 캐릭터 배너용 뽑기, 월정액·패스·상시·무기전용 제외) — 출시·주년·새 시즌 버전 빼고 최근 버전 평균(2026-11).
 //   명조 3.1·3.2·3.4~3.7(WuWaBuild) / 젠레스 2.1~2.3·3.2·3.3 / 엔드필드 1.1~1.6(Neptune Impact) / 이환 1.1·1.2·1.4(NTEBuild)
+// monthlyPulls·passPulls: 버전당 월정액·패스로 더 받는 뽑수(같은 출처의 월정액/패스 시나리오 차이 + 게임별 패스 구성)
 var GACHA_CONFIG = {
-  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 101 },
+  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 101, monthlyPulls: 23, passPulls: 9 },
   hsr:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 },
-  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95 },
-  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 130000, packagePulls: 50, supplyPulls: 91 },
-  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95 }
+  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95, monthlyPulls: 24, passPulls: 9 },
+  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 130000, packagePulls: 50, supplyPulls: 91, monthlyPulls: 17, passPulls: 5 },
+  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95, monthlyPulls: 23, passPulls: 8 }
 };
 
 // 뽑기 원가 — 깡트럭 뽑당 원 + 평균 명함/전무 뽑수(기댓값). 엔드필드는 재화 구조가 달라
@@ -1350,11 +1351,13 @@ function getGachaConfig(gameId) {
     pullCost:     cfg.pullCost     != null ? cfg.pullCost     : def.pullCost,
     packagePrice: cfg.packagePrice != null ? cfg.packagePrice : def.packagePrice,
     packagePulls: cfg.packagePulls != null ? cfg.packagePulls : def.packagePulls,
-    supplyPulls:  cfg.supplyPulls  != null ? cfg.supplyPulls  : (def.supplyPulls || 0)   // 버전당 수급 뽑수(목표 달성 '수급 보기'용)
+    supplyPulls:  cfg.supplyPulls  != null ? cfg.supplyPulls  : (def.supplyPulls || 0),   // 버전당 수급 뽑수(목표 달성 수급 토글용)
+    monthlyPulls: cfg.monthlyPulls != null ? cfg.monthlyPulls : (def.monthlyPulls || 0),
+    passPulls:    cfg.passPulls    != null ? cfg.passPulls    : (def.passPulls || 0)
   };
 }
 
-function saveGachaConfig(gameId, charPity, weaponPity, pullCost, packagePrice, packagePulls, supplyPulls) {
+function saveGachaConfig(gameId, charPity, weaponPity, pullCost, packagePrice, packagePulls, supplyPulls, monthlyPulls, passPulls) {
   var config = getGameConfig();
   if (!config[gameId]) return;
   config[gameId].charPity     = charPity;
@@ -1363,6 +1366,8 @@ function saveGachaConfig(gameId, charPity, weaponPity, pullCost, packagePrice, p
   config[gameId].packagePrice = packagePrice;
   config[gameId].packagePulls = packagePulls;
   config[gameId].supplyPulls  = supplyPulls;
+  config[gameId].monthlyPulls = monthlyPulls;
+  config[gameId].passPulls    = passPulls;
   saveGameConfig(config);
 }
 
@@ -1631,12 +1636,17 @@ function testPlannerCalcInvariant() {
 
 // 목표 달성 카드: 버전마다 [목표 → 보유로 채운 만큼 / 부족 → 금액 · 확률] 한 줄 + 합계.
 // 지금 손에 있는 재화만 쓴다(앞으로 들어올 재화는 획득 여부를 확인할 수 없어 넣지 않음).
-// showSupply: [수급 보기] 켜면 버전당 수급 뽑수를 보유 막대 위에 0부터 겹쳐 그림(계산엔 안 넣음 — 이미 받은 몫이 보유에 섞여 있어서)
-function renderGoalCard(rows, pity, gacha, sims, showSupply) {
-  var supply = showSupply ? (gacha.supplyPulls || 0) : 0;
-  var supplyHint = showSupply && !supply ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 버전당 수급 뽑수를 넣으면 막대에 겹쳐 보여줍니다.</p>' : '';
+// 수급 토글(무과금·월정액·패스): 켠 것의 버전당 뽑수를 합쳐 보유 막대 위에 0부터 겹쳐 그림
+// (계산엔 안 넣음 — 이미 받은 몫이 보유에 섞여 있어서). on = { supply, monthly, pass }
+var SUPPLY_TOGGLES = [['supply', '무과금 수급', 'supplyPulls'], ['monthly', '월정액', 'monthlyPulls'], ['pass', '패스', 'passPulls']];
+function renderGoalCard(rows, pity, gacha, sims, on) {
+  var sParts = SUPPLY_TOGGLES.filter(function(t) { return on[t[0]] && gacha[t[2]] > 0; }).map(function(t) { return [t[1].replace(' 수급', ''), gacha[t[2]]]; });
+  var supply = sParts.reduce(function(a, p) { return a + p[1]; }, 0);
+  var supplyText = sParts.length > 1 ? sParts.map(function(p) { return p[0] + ' ' + p[1]; }).join(' + ') + ' = ' + supply + '뽑' : (sParts.length ? sParts[0][0] + ' ' + supply + '뽑' : '');
+  var supplyHint = SUPPLY_TOGGLES.some(function(t) { return on[t[0]] && !(gacha[t[2]] > 0); })
+    ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 버전당 수급(무과금·월정액·패스) 값을 넣으면 막대에 겹쳐 보여줍니다.</p>' : '';
   var head = '<div class="goal-card-head"><span class="goal-card-title">목표 달성</span>'
-    + '<button type="button" class="goal-supply-toggle' + (showSupply ? ' is-on' : '') + '" data-act="supply" aria-pressed="' + !!showSupply + '">수급 보기</button>'
+    + SUPPLY_TOGGLES.map(function(t) { return '<button type="button" class="goal-supply-toggle' + (on[t[0]] ? ' is-on' : '') + '" data-act="' + t[0] + '" aria-pressed="' + !!on[t[0]] + '">' + t[1] + '</button>'; }).join('')
     + '<span class="goal-card-own">지금 보유 ' + (pity.charPulls + pity.weaponPulls) + '뽑 (캐릭터 ' + pity.charPulls + ' · 무기 ' + pity.weaponPulls + ')</span></div>';
   if (!rows[0].ph.hasAnyGoal && !rows[1].ph.hasAnyGoal) {
     return '<div class="goal-card">' + head + supplyHint + '<p class="planner-hint-text">위 버전 카드의 전반/후반에 캐릭터·무기 목표를 넣으면 부족한 뽑기와 금액을 계산합니다.</p></div>';
@@ -1672,7 +1682,7 @@ function renderGoalCard(rows, pity, gacha, sims, showSupply) {
       sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 12 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
       supply ? '<div class="goal-bar-supply" style="width:' + Math.min(100, Math.round(supply / need * 100)) + '%"><span>수급 ' + supply + '</span></div>' : '',
       '</div>',
-      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + (supply ? ' · 버전 수급 ' + supply + '뽑' : '') + '</span>',
+      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + (supply ? ' · 수급 ' + supplyText : '') + '</span>',
       sf > 0
         ? '<strong class="goal-short">' + (hasPkg ? manwon(sf) : '부족 ' + Math.round(sf) + '뽑') + '</strong>'
         : '<strong class="goal-ok">충분 · ' + Math.round(left) + '뽑 남음</strong>',
@@ -1738,7 +1748,7 @@ function updatePlannerResult(gameId, pd) {
   ];
   function paint(sims) {
     var el = document.getElementById('plannerCalcResult');
-    if (el) el.innerHTML = renderGoalCard(rows, pity, gacha, sims, !!pd.showSupply);
+    if (el) el.innerHTML = renderGoalCard(rows, pity, gacha, sims, { supply: !!pd.showSupply, monthly: !!pd.showMonthly, pass: !!pd.showPass });
   }
   paint([null, null]);
   var costEl = document.getElementById('plannerCostResult');
@@ -1897,9 +1907,11 @@ function bindPlannerEvents(gameId) {
 
   var calcBox = document.getElementById('plannerCalcResult');
   if (calcBox) calcBox.addEventListener('click', function(e) {
-    if (!e.target.closest || !e.target.closest('[data-act="supply"]')) return;
+    var btn = e.target.closest && e.target.closest('[data-act]');
+    var key = btn && { supply: 'showSupply', monthly: 'showMonthly', pass: 'showPass' }[btn.dataset.act];
+    if (!key) return;
     var pd = loadPlannerData(gameId);
-    pd.showSupply = !pd.showSupply;
+    pd[key] = !pd[key];
     savePlannerData(gameId, pd);
     refreshResult(pd);
   });
@@ -3559,9 +3571,19 @@ function openGachaConfigModal(gameId) {
     '      </div>',
     '      <div style="font-size: var(--fs-2xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:2px;">수급 재화</div>',
     '      <div class="edit-row">',
-    '        <label class="edit-label">버전당 수급</label>',
-    '        <input class="edit-input" id="gcaSupply" type="number" min="0" step="1" value="' + (gacha.supplyPulls || '') + '" placeholder="예: 120" style="max-width:110px;" />',
-    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑 (목표 달성 [수급 보기]에만 표시)</span>',
+    '        <label class="edit-label">무과금 (버전당)</label>',
+    '        <input class="edit-input" id="gcaSupply" type="number" min="0" step="1" value="' + (gacha.supplyPulls || '') + '" placeholder="예: 95" style="max-width:110px;" />',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑</span>',
+    '      </div>',
+    '      <div class="edit-row">',
+    '        <label class="edit-label">월정액 (버전당)</label>',
+    '        <input class="edit-input" id="gcaMonthly" type="number" min="0" step="1" value="' + (gacha.monthlyPulls || '') + '" placeholder="예: 24" style="max-width:110px;" />',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑</span>',
+    '      </div>',
+    '      <div class="edit-row">',
+    '        <label class="edit-label">패스 (버전당)</label>',
+    '        <input class="edit-input" id="gcaPass" type="number" min="0" step="1" value="' + (gacha.passPulls || '') + '" placeholder="예: 9" style="max-width:110px;" />',
+    '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑 (목표 달성 수급 토글에만 표시)</span>',
     '      </div>',
     '    </div>',
     '    <div class="detail-footer">',
@@ -3585,7 +3607,9 @@ function openGachaConfigModal(gameId) {
     var packagePrice = Math.max(0, parseInt(document.getElementById('gcaPkgPrice').value)   || 0);
     var packagePulls = Math.max(0, parseInt(document.getElementById('gcaPkgPulls').value)   || 0);
     var supplyPulls  = Math.max(0, parseInt(document.getElementById('gcaSupply').value)     || 0);
-    saveGachaConfig(gameId, charPity, weaponPity, pullCost, packagePrice, packagePulls, supplyPulls);
+    var monthlyPulls = Math.max(0, parseInt(document.getElementById('gcaMonthly').value)    || 0);
+    var passPulls    = Math.max(0, parseInt(document.getElementById('gcaPass').value)       || 0);
+    saveGachaConfig(gameId, charPity, weaponPity, pullCost, packagePrice, packagePulls, supplyPulls, monthlyPulls, passPulls);
     close();
     renderCurrencyPage();
   };
