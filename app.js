@@ -171,7 +171,7 @@ var CURRENCY_CONFIG = {
   ananta:       { name: '무한대',     currencies: [] }   // 캐릭터 가챠 없음(전원 스토리 획득) → 카드 없음
 };
 
-// supplyPulls: 버전당 무과금 수급(한정 캐릭터 배너용 뽑기, 월정액·패스·상시·무기전용 제외) — 출시·주년·새 시즌 버전 빼고 최근 버전 평균(2026-11).
+// supplyPulls: 버전별 배포 재화 = 버전당 무과금 수급(한정 캐릭터 배너용 뽑기, 월정액·패스·상시·무기전용 제외) — 출시·주년·새 시즌 버전 빼고 최근 버전 평균(2026-11).
 //   명조 3.1·3.2·3.4~3.7(WuWaBuild) / 젠레스 2.1~2.3·3.2·3.3 / 엔드필드 1.1~1.6(Neptune Impact) / 이환 1.1·1.2·1.4(NTEBuild)
 // monthlyPulls·passPulls: 버전당 월정액·패스로 더 받는 뽑수(같은 출처의 월정액/패스 시나리오 차이 + 게임별 패스 구성)
 var GACHA_CONFIG = {
@@ -1636,10 +1636,11 @@ function testPlannerCalcInvariant() {
 
 // 목표 달성 카드: 버전마다 [목표 → 보유로 채운 만큼 / 부족 → 금액 · 확률] 한 줄 + 합계.
 // 지금 손에 있는 재화만 쓴다(앞으로 들어올 재화는 획득 여부를 확인할 수 없어 넣지 않음).
-// 수급 토글(무과금·월정액·패스): 켠 것의 버전당 뽑수를 합쳐 보유 막대 위에 0부터 겹쳐 그림
+// 수급 토글(버전별 배포 재화·월정액·패스): 켠 것의 버전당 뽑수를 합쳐 보유 막대 위에 0부터 겹쳐 그림
 // (계산엔 안 넣음 — 이미 받은 몫이 보유에 섞여 있어서). on = { supply, monthly, pass }
-var SUPPLY_TOGGLES = [['supply', '무과금 수급', 'supplyPulls'], ['monthly', '월정액', 'monthlyPulls'], ['pass', '패스', 'passPulls']];
-// 켠 수급 항목을 무과금 → 월정액 → 패스 순으로 이어 붙인 색 구간(막대 폭 넘는 부분은 자름)
+// [토글 키, 토글 이름, 막대·아랫줄 짧은 이름, 설정 필드]
+var SUPPLY_TOGGLES = [['supply', '버전별 배포 재화', '배포 재화', 'supplyPulls'], ['monthly', '월정액', '월정액', 'monthlyPulls'], ['pass', '패스', '패스', 'passPulls']];
+// 켠 수급 항목을 배포 재화 → 월정액 → 패스 순으로 이어 붙인 색 구간(막대 폭 넘는 부분은 자름)
 function supplyBands(sParts, need) {
   var off = 0;
   return sParts.map(function(p) {
@@ -1652,11 +1653,11 @@ function supplyBands(sParts, need) {
 }
 
 function renderGoalCard(rows, pity, gacha, sims, on) {
-  var sParts = SUPPLY_TOGGLES.filter(function(t) { return on[t[0]] && gacha[t[2]] > 0; }).map(function(t) { return [t[1].replace(' 수급', ''), gacha[t[2]], t[0]]; });
+  var sParts = SUPPLY_TOGGLES.filter(function(t) { return on[t[0]] && gacha[t[3]] > 0; }).map(function(t) { return [t[2], gacha[t[3]], t[0]]; });
   var supply = sParts.reduce(function(a, p) { return a + p[1]; }, 0);
   var supplyText = sParts.length > 1 ? sParts.map(function(p) { return p[0] + ' ' + p[1]; }).join(' + ') + ' = ' + supply + '뽑' : (sParts.length ? sParts[0][0] + ' ' + supply + '뽑' : '');
-  var supplyHint = SUPPLY_TOGGLES.some(function(t) { return on[t[0]] && !(gacha[t[2]] > 0); })
-    ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 버전당 수급(무과금·월정액·패스) 값을 넣으면 막대에 겹쳐 보여줍니다.</p>' : '';
+  var supplyHint = SUPPLY_TOGGLES.some(function(t) { return on[t[0]] && !(gacha[t[3]] > 0); })
+    ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 버전별 배포 재화·월정액·패스 값을 넣으면 막대에 겹쳐 보여줍니다.</p>' : '';
   var head = '<div class="goal-card-head"><span class="goal-card-title">목표 달성</span>'
     + SUPPLY_TOGGLES.map(function(t) { return '<button type="button" class="goal-supply-toggle goal-supply-toggle--' + t[0] + (on[t[0]] ? ' is-on' : '') + '" data-act="' + t[0] + '" aria-pressed="' + !!on[t[0]] + '">' + t[1] + '</button>'; }).join('')
     + '<span class="goal-card-own">지금 보유 ' + (pity.charPulls + pity.weaponPulls) + '뽑 (캐릭터 ' + pity.charPulls + ' · 무기 ' + pity.weaponPulls + ')</span></div>';
@@ -1694,7 +1695,7 @@ function renderGoalCard(rows, pity, gacha, sims, on) {
       sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 12 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
       supplyBands(sParts, need),
       '</div>',
-      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + (supply ? ' · 수급 ' + supplyText : '') + '</span>',
+      '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + (supply ? ' · ' + supplyText : '') + '</span>',
       sf > 0
         ? '<strong class="goal-short">' + (hasPkg ? manwon(sf) : '부족 ' + Math.round(sf) + '뽑') + '</strong>'
         : '<strong class="goal-ok">충분 · ' + Math.round(left) + '뽑 남음</strong>',
@@ -3583,7 +3584,7 @@ function openGachaConfigModal(gameId) {
     '      </div>',
     '      <div style="font-size: var(--fs-2xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:2px;">수급 재화</div>',
     '      <div class="edit-row">',
-    '        <label class="edit-label">무과금 (버전당)</label>',
+    '        <label class="edit-label">버전별 배포 재화</label>',
     '        <input class="edit-input" id="gcaSupply" type="number" min="0" step="1" value="' + (gacha.supplyPulls || '') + '" placeholder="예: 95" style="max-width:110px;" />',
     '        <span style="font-size: var(--fs-base);color:var(--muted);">뽑</span>',
     '      </div>',
