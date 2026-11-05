@@ -2626,7 +2626,20 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 }
 .goal-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
 .goal-card-title { font-size: var(--fs-lg); font-weight: 600; color: var(--text); }
-.goal-card-own   { font-size: var(--fs-sm); color: var(--muted); }
+.goal-card-own   { font-size: var(--fs-sm); color: var(--muted); margin-left: auto; }
+.goal-supply-toggle {
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+.goal-supply-toggle::before { content: '○ '; }
+.goal-supply-toggle.is-on { border-color: #7F77DD; color: #CECBF6; background: rgba(127,119,221,0.18); }
+.goal-supply-toggle.is-on::before { content: '● '; }
+.goal-supply-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .goal-row { padding: 12px 0; border-top: 1px solid var(--border); }
 .goal-row--dim { opacity: 0.45; }
 .goal-row-head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
@@ -2634,6 +2647,7 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .goal-sub  { font-size: var(--fs-sm); color: var(--muted); }
 .goal-rate { margin-left: auto; font-size: var(--fs-sm); color: var(--muted); }
 .goal-bar {
+  position: relative;
   display: flex;
   height: 22px;
   margin: 8px 0 6px;
@@ -2646,6 +2660,20 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .goal-bar > div { display: flex; align-items: center; padding-left: 6px; white-space: nowrap; overflow: hidden; }
 .goal-bar-have  { background: #9FE1CB; color: #085041; }
 .goal-bar-short { flex: 1; background: #F5C4B3; color: #712B13; }
+/* 수급 띠: 보유 막대와 0부터 겹쳐 그림(반투명) — 끝에 수급량 */
+.goal-bar > .goal-bar-supply {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding: 0 6px 0 0;
+  justify-content: flex-end;
+  background: rgba(127, 119, 221, 0.42);
+  border-right: 2px solid #534AB7;
+  color: #26215C;
+  font-weight: 600;
+  pointer-events: none;
+}
 .goal-row-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
 .goal-short { color: var(--must); font-weight: 600; }
 .goal-ok    { color: var(--rec); font-weight: 600; }
