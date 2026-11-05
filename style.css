@@ -2663,12 +2663,21 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
 .goal-bar-have  { background: #9FE1CB; color: #085041; }
 .goal-bar-short { flex: 1; background: #F5C4B3; color: #712B13; }
 /* 수급 띠: 보유 막대와 0부터 겹쳐 그림(반투명) — 끝에 수급량 */
-.goal-bar > .goal-bar-supply {
+.goal-bar > .goal-bar-supply-wrap {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
-  padding: 0 6px 0 0;
+  width: max-content;   /* 라벨 합보다 좁아지지 않게 — 실제 비율은 인라인 min-width(%) */
+  max-width: 100%;
+  padding: 0;
+  pointer-events: none;
+}
+.goal-bar-supply {
+  display: flex;
+  align-items: center;
+  min-width: max-content;
+  padding: 0 6px;
   justify-content: flex-end;
   background: rgba(127, 119, 221, 0.42);
   border-right: 2px solid #534AB7;
@@ -2676,8 +2685,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-weight: 600;
   pointer-events: none;
 }
-.goal-bar > .goal-bar-supply--monthly { background: rgba(239, 159, 39, 0.62); border-right-color: #854F0B; color: #412402; }
-.goal-bar > .goal-bar-supply--pass    { background: rgba(55, 138, 221, 0.55); border-right-color: #0C447C; color: #042C53; }
+.goal-bar-supply--monthly { background: rgba(239, 159, 39, 0.62); border-right-color: #854F0B; color: #412402; }
+.goal-bar-supply--pass    { background: rgba(55, 138, 221, 0.55); border-right-color: #0C447C; color: #042C53; }
 .goal-row-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
 .goal-short { color: var(--must); font-weight: 600; }
 .goal-ok    { color: var(--rec); font-weight: 600; }

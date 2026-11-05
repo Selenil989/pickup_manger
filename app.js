@@ -1640,16 +1640,16 @@ function testPlannerCalcInvariant() {
 // (계산엔 안 넣음 — 이미 받은 몫이 보유에 섞여 있어서). on = { supply, monthly, pass }
 // [토글 키, 토글 이름, 막대·아랫줄 짧은 이름, 설정 필드]
 var SUPPLY_TOGGLES = [['supply', '버전별 배포 재화', '배포 재화', 'supplyPulls'], ['monthly', '월정액', '월정액', 'monthlyPulls'], ['pass', '패스', '패스', 'passPulls']];
-// 켠 수급 항목을 배포 재화 → 월정액 → 패스 순으로 이어 붙인 색 구간(막대 폭 넘는 부분은 자름)
+// 켠 수급 항목을 배포 재화 → 월정액 → 패스 순으로 이어 붙인 색 구간.
+// 띠 전체는 실제 합계 비율(최대 막대 폭)이되, 각 구간은 라벨이 들어갈 만큼 최소 폭을 보장 — 작은 패스도 '패스 9'가 보이게(눈금은 근사)
 function supplyBands(sParts, need) {
-  var off = 0;
-  return sParts.map(function(p) {
-    var l = Math.min(100, off / need * 100), w = Math.min(100, (off + p[1]) / need * 100) - l;
-    off += p[1];
-    if (w <= 0) return '';
-    return '<div class="goal-bar-supply goal-bar-supply--' + p[2] + '" style="left:' + l.toFixed(1) + '%;width:' + w.toFixed(1) + '%">'
-      + (w >= 12 ? '<span>' + p[0] + ' ' + p[1] + '</span>' : w >= 4 ? '<span>' + p[1] + '</span>' : '') + '</div>';   // 좁으면 숫자만
-  }).join('');
+  if (!sParts.length) return '';
+  var pct = Math.min(100, sParts.reduce(function(a, p) { return a + p[1]; }, 0) / need * 100);
+  return '<div class="goal-bar-supply-wrap" style="min-width:' + pct.toFixed(1) + '%">'
+    + sParts.map(function(p) {
+        return '<div class="goal-bar-supply goal-bar-supply--' + p[2] + '" style="flex:' + p[1] + ' 1 0"><span>' + p[0] + ' ' + p[1] + '</span></div>';
+      }).join('')
+    + '</div>';
 }
 
 function renderGoalCard(rows, pity, gacha, sims, on) {
