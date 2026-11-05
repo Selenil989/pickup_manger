@@ -343,5 +343,35 @@
     "releaseDate": "2026-10-21",
     "isReleased": false,
     "version": "1.0"
+  },
+  {
+    "id": "elyms",
+    "name": "Elyms",
+    "nameKo": "엘림",
+    "gameId": "nte",
+    "rarity": 5,
+    "role": null,
+    "element": "cosmos",
+    "specialElement": null,
+    "image": "elyms.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-11-11",
+    "isReleased": false,
+    "version": "1.5"
+  },
+  {
+    "id": "exe",
+    "name": "Exe",
+    "nameKo": "Exe",
+    "gameId": "nte",
+    "rarity": 5,
+    "role": "maindps",
+    "element": "chaos",
+    "specialElement": null,
+    "image": "exe.webp",
+    "basePerformance": null,
+    "releaseDate": "2026-12-02",
+    "isReleased": false,
+    "version": "1.5"
   }
 ]
