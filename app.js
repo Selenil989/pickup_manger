@@ -1639,14 +1639,26 @@ function testPlannerCalcInvariant() {
 // 수급 토글(무과금·월정액·패스): 켠 것의 버전당 뽑수를 합쳐 보유 막대 위에 0부터 겹쳐 그림
 // (계산엔 안 넣음 — 이미 받은 몫이 보유에 섞여 있어서). on = { supply, monthly, pass }
 var SUPPLY_TOGGLES = [['supply', '무과금 수급', 'supplyPulls'], ['monthly', '월정액', 'monthlyPulls'], ['pass', '패스', 'passPulls']];
+// 켠 수급 항목을 무과금 → 월정액 → 패스 순으로 이어 붙인 색 구간(막대 폭 넘는 부분은 자름)
+function supplyBands(sParts, need) {
+  var off = 0;
+  return sParts.map(function(p) {
+    var l = Math.min(100, off / need * 100), w = Math.min(100, (off + p[1]) / need * 100) - l;
+    off += p[1];
+    if (w <= 0) return '';
+    return '<div class="goal-bar-supply goal-bar-supply--' + p[2] + '" style="left:' + l.toFixed(1) + '%;width:' + w.toFixed(1) + '%">'
+      + (w >= 12 ? '<span>' + p[0] + ' ' + p[1] + '</span>' : w >= 4 ? '<span>' + p[1] + '</span>' : '') + '</div>';   // 좁으면 숫자만
+  }).join('');
+}
+
 function renderGoalCard(rows, pity, gacha, sims, on) {
-  var sParts = SUPPLY_TOGGLES.filter(function(t) { return on[t[0]] && gacha[t[2]] > 0; }).map(function(t) { return [t[1].replace(' 수급', ''), gacha[t[2]]]; });
+  var sParts = SUPPLY_TOGGLES.filter(function(t) { return on[t[0]] && gacha[t[2]] > 0; }).map(function(t) { return [t[1].replace(' 수급', ''), gacha[t[2]], t[0]]; });
   var supply = sParts.reduce(function(a, p) { return a + p[1]; }, 0);
   var supplyText = sParts.length > 1 ? sParts.map(function(p) { return p[0] + ' ' + p[1]; }).join(' + ') + ' = ' + supply + '뽑' : (sParts.length ? sParts[0][0] + ' ' + supply + '뽑' : '');
   var supplyHint = SUPPLY_TOGGLES.some(function(t) { return on[t[0]] && !(gacha[t[2]] > 0); })
     ? '<p class="planner-hint-text">게임 관리 → ⚙ 천장 설정에서 버전당 수급(무과금·월정액·패스) 값을 넣으면 막대에 겹쳐 보여줍니다.</p>' : '';
   var head = '<div class="goal-card-head"><span class="goal-card-title">목표 달성</span>'
-    + SUPPLY_TOGGLES.map(function(t) { return '<button type="button" class="goal-supply-toggle' + (on[t[0]] ? ' is-on' : '') + '" data-act="' + t[0] + '" aria-pressed="' + !!on[t[0]] + '">' + t[1] + '</button>'; }).join('')
+    + SUPPLY_TOGGLES.map(function(t) { return '<button type="button" class="goal-supply-toggle goal-supply-toggle--' + t[0] + (on[t[0]] ? ' is-on' : '') + '" data-act="' + t[0] + '" aria-pressed="' + !!on[t[0]] + '">' + t[1] + '</button>'; }).join('')
     + '<span class="goal-card-own">지금 보유 ' + (pity.charPulls + pity.weaponPulls) + '뽑 (캐릭터 ' + pity.charPulls + ' · 무기 ' + pity.weaponPulls + ')</span></div>';
   if (!rows[0].ph.hasAnyGoal && !rows[1].ph.hasAnyGoal) {
     return '<div class="goal-card">' + head + supplyHint + '<p class="planner-hint-text">위 버전 카드의 전반/후반에 캐릭터·무기 목표를 넣으면 부족한 뽑기와 금액을 계산합니다.</p></div>';
@@ -1680,7 +1692,7 @@ function renderGoalCard(rows, pity, gacha, sims, on) {
       '<div class="goal-bar">',
       have > 0 ? '<div class="goal-bar-have" style="width:' + haveW + '%">' + (haveW >= 12 ? '보유 ' + Math.round(have) : '') + '</div>' : '',
       sf > 0 ? '<div class="goal-bar-short">' + (100 - haveW >= 12 ? '부족 ' + Math.round(sf) : '') + '</div>' : '',
-      supply ? '<div class="goal-bar-supply" style="width:' + Math.min(100, Math.round(supply / need * 100)) + '%"><span>수급 ' + supply + '</span></div>' : '',
+      supplyBands(sParts, need),
       '</div>',
       '<div class="goal-row-foot"><span>필요 ' + Math.round(need) + '뽑 = ' + parts.join(' + ') + (i === 1 ? ' · 이번 버전에서 남는 재화 ' + Math.round(r.start) : '') + (supply ? ' · 수급 ' + supplyText : '') + '</span>',
       sf > 0
