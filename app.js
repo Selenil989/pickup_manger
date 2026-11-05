@@ -171,12 +171,14 @@ var CURRENCY_CONFIG = {
   ananta:       { name: '무한대',     currencies: [] }   // 캐릭터 가챠 없음(전원 스토리 획득) → 카드 없음
 };
 
+// supplyPulls: 버전당 무과금 수급(한정 캐릭터 배너용 뽑기, 월정액·패스·상시·무기전용 제외) — 출시·주년·새 시즌 버전 빼고 최근 버전 평균(2026-11).
+//   명조 3.1·3.2·3.4~3.7(WuWaBuild) / 젠레스 2.1~2.3·3.2·3.3 / 엔드필드 1.1~1.6(Neptune Impact) / 이환 1.1·1.2·1.4(NTEBuild)
 var GACHA_CONFIG = {
-  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 110 },
+  zzz:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 101 },
   hsr:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 },
-  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 120 },
-  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 130000, packagePulls: 50, supplyPulls: 100 },
-  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50 }
+  wuwa:     { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95 },
+  endfield: { charPity: 80, weaponPity: 80, pullCost: 160, packagePrice: 130000, packagePulls: 50, supplyPulls: 91 },
+  nte:      { charPity: 90, weaponPity: 80, pullCost: 160, packagePrice: 117800, packagePulls: 50, supplyPulls: 95 }
 };
 
 // 뽑기 원가 — 깡트럭 뽑당 원 + 평균 명함/전무 뽑수(기댓값). 엔드필드는 재화 구조가 달라
