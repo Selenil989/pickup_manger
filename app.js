@@ -1459,6 +1459,8 @@ function loadPlannerData(gameId) {
     }
     // 버전/기간은 공유(어드민) 값 우선 → 없으면 코드 기본값. 게임 공통 사실이라 개인 저장분을 덮어쓴다.
     var shared = (window.getSharedPlanner && window.getSharedPlanner(gameId)) || null;
+    // 어드민이 따로 지정한 다음 버전(이름·종료일). 시작일은 항상 현재 종료일(같은 날)이라 저장값은 안 씀
+    var sharedNext = (window.getSharedPlanner && window.getSharedPlanner(gameId + ':next')) || null;
     var def    = DEFAULT_PLANNER[gameId] || {};
     pd.version   = shared ? shared.version   : (def.version   || '');
     pd.startDate = shared ? shared.startDate : (def.startDate || '');
@@ -1466,14 +1468,21 @@ function loadPlannerData(gameId) {
     // 종료일이 지났으면 다음 버전으로 자동 진행. 종료일 = 다음 버전 시작일(같은 날 겹침) → 그날 정오(12:00)에 교체.
     // 종료일은 어드민이 넣은 실제 날짜 우선, 없으면 화면에 보이는 자동 종료일(시작+42일) — 어드민이 한동안 안 고쳐도
     // 지난 버전들을 연달아 넘김(2026-11: 젠레스가 3.1 설정에서 3.2에 멈춰 있던 문제). 로컬 날짜로 파싱(UTC 밀림 방지)
+    // 지정된 다음 버전은 저장 때의 시작일(= 그때 현재 종료일)이 이 경계와 같을 때만 씀 — 공유 현재값이 묵어 있어도 엉뚱한 단계로 안 건너뜀
+    function _nextAt(endYmd) { return sharedNext && sharedNext.version && sharedNext.startDate === endYmd ? sharedNext : null; }
     for (var _g = 0; pd.version && _g < 24; _g++) {
       var _end = pd.endDate || plannerAutoEndDate(pd.startDate);
       var _em  = /^(\d{4})-(\d{2})-(\d{2})/.exec(_end || '');
       if (!_em || new Date() < new Date(+_em[1], +_em[2] - 1, +_em[3], 12, 0, 0)) break;
-      var nv = plannerNextVersion(pd.version);
+      var _nx = _nextAt(_end);
+      var nv  = _nx ? _nx.version : plannerNextVersion(pd.version);
       if (!nv) break;
-      pd.version = nv; pd.startDate = _end; pd.endDate = '';
+      pd.version = nv; pd.startDate = _end; pd.endDate = _nx ? (_nx.endDate || '') : '';   // 지정값이면 그 종료일까지 확정
     }
+    // 화면용 다음 버전: 이 경계에 지정값이 있으면 그것, 아니면 자동(이름 +0.1, 종료 = 시작+42일)
+    var _nxNow = _nextAt(pd.endDate || plannerAutoEndDate(pd.startDate));
+    pd.nextVersion = _nxNow ? _nxNow.version : plannerNextVersion(pd.version);
+    pd.nextEndDate = _nxNow ? (_nxNow.endDate || '') : '';
     // 목표 이월: 자동 진행/어드민 갱신으로 현재 버전이 목표 설정 시점(_seenVer)과 달라지면 cur←next 1회.
     // 결정론적이라 재로드해도 _seenVer==현재버전이면 재이월 안 함 → 목표 유실 없음.
     // 버전이 앞으로 갈 때만 이월 — 공유값 로드 전 코드 기본값(옛 버전)이 잠깐 잡히거나 어드민이 날짜를 되돌려도 목표 안 날아감
@@ -1755,7 +1764,7 @@ function updatePlannerResult(gameId, pd) {
   refreshPitySummary(gameId);   // 캐릭터 목표가 바뀌면 캐릭터/무기 보유 배분도 달라짐
   var gacha = getGachaConfig(gameId);
   var r     = calcVersionGoals(pd, pity);
-  var nextVer = plannerNextVersion(pd.version);
+  var nextVer = pd.nextVersion || plannerNextVersion(pd.version);
   var cr = r.cur.residual;
   var rows = [
     { label: '이번 버전' + (pd.version ? ' ' + escAttr(pd.version) : ''), ph: r.cur.phases,  left: cr, dday: plannerDDay(pd.endDate || plannerAutoEndDate(pd.startDate)).text },
@@ -1790,9 +1799,9 @@ function renderPlannerSummaryHtml(pd) {
   var endDate   = pd.endDate   || '';
   var autoEnd   = (startDate && !endDate) ? plannerAutoEndDate(startDate) : '';
   var effEnd    = endDate || autoEnd;
-  var nextVer   = plannerNextVersion(pd.version);
+  var nextVer   = pd.nextVersion || plannerNextVersion(pd.version);
   var nextStart = effEnd || '';   // 다음 버전 시작일 = 현재 버전 종료일(같은 날)
-  var nextEnd   = nextStart ? plannerAutoEndDate(nextStart) : '';
+  var nextEnd   = nextStart ? (pd.nextEndDate || plannerAutoEndDate(nextStart)) : '';
   var dd        = plannerDDay(effEnd);
 
   if (!pd.version && !startDate) return '';
@@ -2453,11 +2462,12 @@ function renderLedgerPage() {
     if (!(_period > 0)) _period = 42;
     var _addDays = function(ymd, n) { var d = new Date(ymd); d.setDate(d.getDate() + n); return toLocalYMD(d); };
     // 앞으로: 현재→다음 경계는 실제 종료일, 그 이후는 실제 주기로 추정
+    var _nextVer = pd.nextVersion || plannerNextVersion(pd.version);
     var _v = pd.version, _s = pd.startDate;
     for (var _f = 0; _f < 12 && _v && _s; _f++) {
       verMarks[_s] = _v;
-      var _ns = (_s === pd.startDate) ? _curEnd : _addDays(_s, _period);
-      var _nv = plannerNextVersion(_v);
+      var _ns = (_f === 0) ? _curEnd : (_f === 1 && pd.nextEndDate) ? pd.nextEndDate : _addDays(_s, _period);
+      var _nv = (_f === 0) ? _nextVer : plannerNextVersion(_v);
       if (!_ns || !_nv) break;
       _v = _nv; _s = _ns;
     }
@@ -2472,7 +2482,7 @@ function renderLedgerPage() {
     }
     var _st = new Date(pd.startDate); _st.setHours(0, 0, 0, 0);
     var _td2 = new Date(); _td2.setHours(0, 0, 0, 0);
-    curVerInfo = { ver: pd.version, start: pd.startDate, end: _curEnd, dplus: Math.round((_td2 - _st) / 86400000), next: plannerNextVersion(pd.version) };
+    curVerInfo = { ver: pd.version, start: pd.startDate, end: _curEnd, dplus: Math.round((_td2 - _st) / 86400000), next: _nextVer };
   }
   // 날짜 → 그 날의 버전, 버전 → 은은한 배경색
   var verBounds = Object.keys(verMarks).sort().map(function(k) { return { d: k, v: verMarks[k] }; });
@@ -3674,6 +3684,16 @@ function openPlannerConfigModal(gameId) {
     '      <p id="pcfHalfHint"    style="font-size: var(--fs-xs);color:var(--muted);margin:0;">후반 = 버전 종료일까지 나머지 (기본 전반 21일 = 3주)</p>',
     '      <p id="pcfAutoHint"    style="font-size: var(--fs-xs);color:var(--muted);margin:0;">' + initialHints.autoEndHint + '</p>',
     '      <p id="pcfNextHint"    style="font-size: var(--fs-xs);color:var(--acc,#7b68ee);margin:0;">' + initialHints.nextStartHint + '</p>',
+    '      <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px;font-size: var(--fs-xs);color:var(--muted);">다음 버전 (시작일 = 현재 버전 종료일)</div>',
+    '      <div class="edit-row">',
+    '        <label class="edit-label">다음 버전</label>',
+    '        <input class="edit-input" id="pcfNextVersion" type="text" placeholder="예: 3.8" value="' + escAttr(pd.nextVersion || plannerNextVersion(pd.version) || '') + '" style="max-width:100px;" />',
+    '      </div>',
+    '      <div class="edit-row">',
+    '        <label class="edit-label">다음 종료일</label>',
+    '        <input class="edit-input" id="pcfNextEndDate" type="date" value="' + escAttr(pd.nextEndDate || '') + '" />',
+    '      </div>',
+    '      <p style="font-size: var(--fs-xs);color:var(--muted);margin:0;">비우면 다음 버전 시작일 + 42일(6주)</p>',
     '    </div>',
     '    <div class="detail-footer">',
     '      <button class="detail-btn-cancel" id="pcfCancelBtn">취소</button>',
@@ -3707,7 +3727,14 @@ function openPlannerConfigModal(gameId) {
     // 시작일이 비어 있으면 이전 버전 종료일(같은 날)로 보정
     if (!sDate && eDate && pd.endDate) sDate = pd.endDate;
     // 버전/기간은 공유 설정(어드민만) — Supabase에 저장돼 전 유저에 반영. 목표는 개인 유지.
-    if (window.saveSharedPlanner) window.saveSharedPlanner(gameId, version, sDate, eDate);
+    var nVer = document.getElementById('pcfNextVersion').value.trim();
+    var nEnd = document.getElementById('pcfNextEndDate').value;
+    if (nEnd && eDate && nEnd <= eDate) { alert('다음 버전 종료일은 현재 버전 종료일(' + eDate + ')보다 뒤여야 합니다.'); return; }
+    if (window.saveSharedPlanner) {
+      window.saveSharedPlanner(gameId, version, sDate, eDate);
+      // 다음 버전은 '<게임>:next' 행 — 시작일은 규칙대로 현재 종료일
+      if (nVer) window.saveSharedPlanner(gameId + ':next', nVer, eDate, nEnd);
+    }
     // 전반 기간은 개인 플래너 blob에 저장(pickup_manager_ 접두사라 계정 동기화). 기본 21일.
     var fhd = parseInt(document.getElementById('pcfFirstHalf').value) || 21;
     if (fhd < 1) fhd = 21;

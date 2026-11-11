@@ -3360,3 +3360,8 @@ body:not(.is-admin) .planner-advance-btn { display: none; }
   font-size: var(--fs-sm);
   pointer-events: none;
 }
+
+/* 날짜 입력 달력 아이콘 — 어두운 배경에서 안 보여서 흰색으로. color-scheme: dark면 크롬이 아이콘·달력 팝업을 밝은색/어두운 테마로 그림(invert 필터와 같이 쓰면 다시 검게 됨) */
+input[type="date"] { color-scheme: dark; }
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.9; cursor: pointer; }
+input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
